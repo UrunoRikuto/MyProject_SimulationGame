@@ -5,7 +5,9 @@
 constexpr float ce_fCameraRotate(0.001f);
 
 CCameraDebug::CCameraDebug()
-	: m_fRadXZ(0.0f), m_fRadY(DirectX::XMConvertToRadians(125.0f)), m_fRadius(50.0f)
+	: m_fRadXZ(0.0f)
+	, m_fRadY(DirectX::XMConvertToRadians(125.0f))
+	, m_fRadius(50.0f)
 {
 
 }

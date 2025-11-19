@@ -33,7 +33,7 @@ void CSceneGame::Init()
 	CScene::Init();
 
 	// カメラの種類をゲーム用カメラに設定
-	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_DEBUG);
+	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);
 
 	// テスト用ゲームオブジェクトの追加
 	AddGameObject<CTestObject>(Tag::GameObject, "TestObject");

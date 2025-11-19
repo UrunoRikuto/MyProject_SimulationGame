@@ -70,7 +70,6 @@ void CModelRenderer::Draw()
     Model* pModel = std::get<ModelParam>(m_RendererObjectMap.find(m_sKey.c_str())->second.m_Data).m_pModel;
 
     pModel->SetVertexShader(m_pVS);
-
     pModel->SetPixelShader(m_pPS);
 
     // モデルの描画

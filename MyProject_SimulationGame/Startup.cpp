@@ -21,6 +21,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 bool g_bEnd = false;
 HWND myHWnd;
 DWORD myFPS = 0;				//直近のFPS
+// 1フレーム内でホイールが動いたか
+static int g_MouseWheelDelta = 0;
 
 /*************************//*
 @brief		|エントリーポイント
@@ -163,8 +165,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_DESTROY:
+	{
 		PostQuitMessage(0);
-		break;
+	}
+	break;
+	case WM_MOUSEWHEEL:
+	{
+		int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		g_MouseWheelDelta += delta;
+	}
+	break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
@@ -196,3 +206,19 @@ int GetFPS()
 	return myFPS;
 }
 
+/*************************//*
+	@brief		|マウスホイールの回転量取得
+	@return		| マウスホイールの回転量
+*//*************************/
+int GetMouseWheelDelta()
+{
+	return g_MouseWheelDelta;
+}
+
+/*************************//*
+	@brief		|リセットマウスホイールの回転量
+*//*************************/
+void ResetMouseWheelDelta()
+{
+	g_MouseWheelDelta = 0;
+}

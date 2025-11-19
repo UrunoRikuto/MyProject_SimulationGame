@@ -115,3 +115,15 @@ bool IsMouseHover(DirectX::XMFLOAT2 inPos, DirectX::XMFLOAT2 inSize)
 
     return false;
 }
+
+// マウスホイールが上に回されたかどうか
+bool IsMouseWheelUp()
+{
+    return (GetMouseWheelDelta() > 0);
+}
+
+// マウスホイールが下に回されたかどうか
+bool IsMouseWheelDown()
+{
+    return (GetMouseWheelDelta() < 0);
+}

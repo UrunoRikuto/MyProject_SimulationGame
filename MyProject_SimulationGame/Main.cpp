@@ -148,6 +148,15 @@ void Update()
 		}
 	}
 
+	// 終了コマンド
+	if (IsKeyPress(VK_ESCAPE))
+	{
+		if(IsKeyTrigger(VK_DELETE))
+		{
+			AppEnd();
+		}
+	}
+
 	// Imguiの更新
 	CImguiSystem::GetInstance()->Update();
 }

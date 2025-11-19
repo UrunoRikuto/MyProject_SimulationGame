@@ -27,4 +27,8 @@ bool IsMouseButtonTrigger(DWORD dwBtnID);
 bool IsMouseButtonRelease(DWORD dwBtnID);
 bool IsMouseHover(DirectX::XMFLOAT2 inPos, DirectX::XMFLOAT2 inSize);
 
+// マウスホイール
+bool IsMouseWheelUp();
+bool IsMouseWheelDown();
+
 #endif // __INPUT_H__

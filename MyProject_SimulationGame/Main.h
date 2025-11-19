@@ -49,5 +49,13 @@ HWND GetMyWindow();
 // @brief フレームレート取得
 int GetFPS();
 
+// @brief マウスホイールの回転量取得
+// @return 回転量
+int GetMouseWheelDelta();
+
+// @brief リセットマウスホイールの回転量
+void ResetMouseWheelDelta();
+
+
 // @brief デバッグモードかどうか取得
 bool IsDebugMode();
