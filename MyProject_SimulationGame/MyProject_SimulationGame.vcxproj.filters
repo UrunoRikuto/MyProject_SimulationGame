@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="シェーダー">
+      <UniqueIdentifier>{d30ed09e-b0ce-49d9-bd01-c5003ee2b9ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル">
+      <UniqueIdentifier>{1ba6dbee-b66b-4911-bc7e-f9a10f7ce464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\App">
+      <UniqueIdentifier>{315a8135-77c7-4394-9264-beeb066ad49b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Model">
+      <UniqueIdentifier>{a6cff4d1-b2ee-459b-8724-ebec5797f742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Input">
+      <UniqueIdentifier>{44d16d38-db17-4fed-ad03-687fbe7f0466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Buffer">
+      <UniqueIdentifier>{3943d2fd-8b4f-461e-99b1-c9b2e8ba6761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Shader">
+      <UniqueIdentifier>{6fffb987-80a2-470b-bb55-3deb713806e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Texture">
+      <UniqueIdentifier>{00254e52-b838-49f5-b267-e4e2fbf4aec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\DirectX">
+      <UniqueIdentifier>{151a5d3f-8131-4f69-af08-8d07c997b556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Geometory">
+      <UniqueIdentifier>{c95f7316-57ee-4e38-8345-d7f023abf9fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Utility">
+      <UniqueIdentifier>{326996f5-df49-4186-b60d-8ca8fbb66416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Camera">
+      <UniqueIdentifier>{6b98df0f-3585-4dbf-b70c-184d1501550f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Imgui">
+      <UniqueIdentifier>{4ede4711-8a93-4436-9b54-fdbd103807f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Sprite">
+      <UniqueIdentifier>{1904ad49-4e82-4d46-a638-016e94f21dee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Transition">
+      <UniqueIdentifier>{7c536632-d434-4342-9c2d-4143ee4e7153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Load">
+      <UniqueIdentifier>{acb4d8dd-a2c7-485c-89b1-97c91a510706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Component">
+      <UniqueIdentifier>{17c5a446-26c1-4280-8a98-dac8104b60a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Component\Collision">
+      <UniqueIdentifier>{1536ce56-cdec-4e19-b3b2-ff1de18fa395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Component\Renderer">
+      <UniqueIdentifier>{9834039e-d4dd-4ec0-8ed3-abfeceb9a74c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject">
+      <UniqueIdentifier>{fa752cc7-e8ff-45d0-8ea8-933f6e8006ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\TestObject">
+      <UniqueIdentifier>{0d24192c-6c33-408d-88df-ff774436cdf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Scene">
+      <UniqueIdentifier>{e1202c01-80bb-40f7-9cd1-83000149f264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\Imgui\System">
+      <UniqueIdentifier>{aa9d48a8-4962-427d-bf28-199f842fa78b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main.h">
+      <Filter>コードファイル\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>コードファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>コードファイル\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshBuffer.h">
+      <Filter>コードファイル\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>コードファイル\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>コードファイル\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>コードファイル\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX.h">
+      <Filter>コードファイル\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometory.h">
+      <Filter>コードファイル\Geometory</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="StructMath.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>コードファイル\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraDebug.h">
+      <Filter>コードファイル\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraGame.h">
+      <Filter>コードファイル\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Oparation.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>コードファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>コードファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionBase.h">
+      <Filter>コードファイル\Component\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionObb.h">
+      <Filter>コードファイル\Component\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererComponent.h">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite3DRenderer.h">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="BillboardRenderer.h">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>コードファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>コードファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Transition.h">
+      <Filter>コードファイル\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLoad.h">
+      <Filter>コードファイル\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObject.h">
+      <Filter>コードファイル\GameObject\TestObject</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_dx11.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_win32.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiSystem.h">
+      <Filter>コードファイル\Imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>コードファイル\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Startup.cpp">
+      <Filter>コードファイル\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>コードファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model_anime.cpp">
+      <Filter>コードファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model_check.cpp">
+      <Filter>コードファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model_get.cpp">
+      <Filter>コードファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model_morph.cpp">
+      <Filter>コードファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>コードファイル\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBuffer.cpp">
+      <Filter>コードファイル\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>コードファイル\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>コードファイル\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>コードファイル\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX.cpp">
+      <Filter>コードファイル\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometory.cpp">
+      <Filter>コードファイル\Geometory</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>コードファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraDebug.cpp">
+      <Filter>コードファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraGame.cpp">
+      <Filter>コードファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>コードファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>コードファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionBase.cpp">
+      <Filter>コードファイル\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionObb.cpp">
+      <Filter>コードファイル\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererComponent.cpp">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite3DRenderer.cpp">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="BillboardRenderer.cpp">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>コードファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>コードファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Transition.cpp">
+      <Filter>コードファイル\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLoad.cpp">
+      <Filter>コードファイル\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>コードファイル\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObject.cpp">
+      <Filter>コードファイル\GameObject\TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_dx11.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_win32.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>コードファイル\Imgui\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiSystem.cpp">
+      <Filter>コードファイル\Imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Easing.inl">
+      <Filter>コードファイル\Utility</Filter>
+    </None>
+    <None Include="StructMath.inl">
+      <Filter>コードファイル\Utility</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PS_TexColor.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Object.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Sprite.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Sprite.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
