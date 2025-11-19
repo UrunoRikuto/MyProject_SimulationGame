@@ -111,10 +111,7 @@ void CImguiSystem::Draw()
 	DrawUpdateTick();
 	DrawCollision();
 	DrawFPS();
-
-	// 選択しているゲームオブジェクトが存在する場合
-	// 選択しているオブジェクトのインスペクター表示処理
-	if (m_pGameObject)m_pGameObject->Inspecter();
+	DrawInspecter();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -231,6 +228,31 @@ void CImguiSystem::DrawCameraParam()
 
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| インスペクター表示
+*//****************************************/
+void CImguiSystem::DrawInspecter()
+{
+	// 選択しているゲームオブジェクトが存在する場合
+	if (m_pGameObject)
+	{
+		// インスペクター表示処理を呼び出す
+		m_pGameObject->Inspecter();
+	}
+	// 選択しているゲームオブジェクトが存在しない場合
+	else
+	{
+		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, 20));
+		ImGui::SetNextWindowSize(ImVec2(280, 300));
+		ImGui::Begin("Inspecter");
+		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
+		ImGui::Text("No Selected Object");
+		ImGui::EndChild();
+		ImGui::End();
+	}
+
 }
 
 /****************************************//*

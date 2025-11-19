@@ -55,6 +55,9 @@ private:
 	// @brief カメラのパラメータ表示
 	void DrawCameraParam();
 
+	// @brief インスペクター表示
+	void DrawInspecter();
+
 	// @brief 更新を止めるチェックボックス表示
 	void DrawUpdateTick();
 
