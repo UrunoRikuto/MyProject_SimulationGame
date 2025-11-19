@@ -122,9 +122,13 @@ void CImguiSystem::Draw()
 *//****************************************/
 void CImguiSystem::DrawHierarchy()
 {
-	ImGui::SetNextWindowPos(ImVec2(20, 20));
+	ImGui::SetNextWindowPos(ImVec2(20, 25));
 	ImGui::SetNextWindowSize(ImVec2(280, 300));
 	ImGui::Begin("Hierarchy");
+	if (ImGui::Button("Clear"))
+	{
+		m_pGameObject = nullptr;
+	}
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
 
 	auto Objects = GetScene()->GetIDVec();
@@ -178,7 +182,6 @@ void CImguiSystem::DrawHierarchy()
 
 		std::advance(itr, nItrCount);
 	}
-
 	ImGui::EndChild();
 	ImGui::End();
 }
@@ -201,6 +204,10 @@ void CImguiSystem::DrawCameraParam()
 	ImGui::Begin("Camera");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 160), ImGuiWindowFlags_NoTitleBar);
 
+	if (ImGui::Button("Reset"))
+	{
+		CCamera::GetInstance()->Init();
+	}
 
 	if (ImGui::CollapsingHeader(std::string("[Transform]").c_str()))
 	{
@@ -245,9 +252,9 @@ void CImguiSystem::DrawInspecter()
 	else
 	{
 		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, 20));
-		ImGui::SetNextWindowSize(ImVec2(280, 300));
+		ImGui::SetNextWindowSize(ImVec2(280, SCREEN_HEIGHT - 140));
 		ImGui::Begin("Inspecter");
-		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
+		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 500), ImGuiWindowFlags_NoTitleBar);
 		ImGui::Text("No Selected Object");
 		ImGui::EndChild();
 		ImGui::End();

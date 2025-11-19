@@ -7,6 +7,7 @@ class CCameraDebug : public CCamera
 public:
 	CCameraDebug();
 	virtual ~CCameraDebug();
+	virtual void Init() override final;
 	virtual void Update() final;
 private:
 	float m_fRadXZ;

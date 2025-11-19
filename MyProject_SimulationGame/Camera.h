@@ -20,6 +20,7 @@ public:
 	CCamera();
 	virtual ~CCamera();
 	virtual void Update() = 0;
+	virtual void Init() = 0;
 	
 public:
 	// ==============================

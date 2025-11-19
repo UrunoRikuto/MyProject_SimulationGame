@@ -18,6 +18,19 @@ CCameraDebug::~CCameraDebug()
 
 }
 
+void CCameraDebug::Init()
+{
+	m_fRadXZ = 0.0f;
+	m_fRadY = DirectX::XMConvertToRadians(125.0f);
+	m_fRadius = 50.0f;
+	m_f3Look = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	// カメラの初期座標を設定
+	m_f3Pos.x = cosf(m_fRadY) * sinf(m_fRadXZ) * m_fRadius + m_f3Look.x;
+	m_f3Pos.y = sinf(m_fRadY) * m_fRadius + m_f3Look.y;
+	m_f3Pos.z = cosf(m_fRadY) * cosf(m_fRadXZ) * m_fRadius + m_f3Look.z;
+}
+
 void CCameraDebug::Update()
 {
 	// カメラの座標と注視点を使い、前方向ベクトルを取得

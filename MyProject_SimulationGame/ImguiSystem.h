@@ -48,7 +48,12 @@ public:
 	// @brief 更新処理を管理するフラグの取得
 	// @return true:更新処理を行う false:更新処理を止める
 	bool IsUpdate() { return m_bUpdate; }
+
+	// @brief 選択しているゲームオブジェクトの取得
+	// @return 選択しているゲームオブジェクトのポインタ
+	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
 private:
+
 	// @brief 階層表示
 	void DrawHierarchy();
 
