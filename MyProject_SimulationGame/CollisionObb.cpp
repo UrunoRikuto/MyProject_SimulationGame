@@ -99,6 +99,18 @@ bool CCollisionObb::IsHit(CCollisionBase* other)
 	return true;				// 当たっている
 }
 
+// @brief 更新処理
+void CCollisionObb::Update()
+{
+	// コリジョンが有効でない時は更新を行わない
+	if (!m_bActive) return;
+
+	// コンポーネントに紐付けられているGameObjectから座標情報とサイズ情報を取得し、コリジョン情報に反映する
+	CGameObject* pGameObject = GetGameObject();
+	SetCenter(pGameObject->GetPos());
+	SetSize(pGameObject->GetSize());
+}
+
 // @brief 描画処理
 void CCollisionObb::Draw()
 {

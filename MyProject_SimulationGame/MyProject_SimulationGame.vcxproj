@@ -139,6 +139,7 @@
     <ClInclude Include="CollisionBase.h" />
     <ClInclude Include="CollisionObb.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Human.h" />
     <ClInclude Include="ImguiSystem.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="CollisionBase.cpp" />
     <ClCompile Include="CollisionObb.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Human.cpp" />
     <ClCompile Include="ImguiSystem.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />

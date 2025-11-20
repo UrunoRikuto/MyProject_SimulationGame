@@ -24,6 +24,9 @@ public:
 	// コンストラクタの継承
 	using CCollisionBase::CCollisionBase;
 
+	// @brief 更新処理
+	void Update() override;
+
 	// @brief 描画処理
 	void Draw() override;
 
@@ -46,7 +49,7 @@ public:
 
 	// @brief コリジョンのサイズをセット
 	// @param inSize：コリジョンのサイズ
-	void SetSize(const DirectX::XMFLOAT3& inSize) { m_tCollisionInfo.m_f3HalfSize = inSize / 2.0f; }
+	void SetSize(const DirectX::XMFLOAT3& inSize) { m_tCollisionInfo.m_f3HalfSize = (inSize * m_f3SizeScale) / 2.0f; }
 
 	// @brief OBB用パラメータの取得
 	// @return OBB用パラメータ
@@ -56,8 +59,18 @@ public:
 	// @param inInfo：OBB用パラメータ
 	void SetCollisionInfo(ObbInfo inInfo) { m_tCollisionInfo = inInfo; }
 
+	// @brief サイズの倍率をセット
+	void SetSizeScale(const DirectX::XMFLOAT3& inScale) { m_f3SizeScale = inScale; }
+
+	// @brief サイズの倍率を取得
+	// @return サイズの倍率
+	DirectX::XMFLOAT3 GetSizeScale() { return m_f3SizeScale; }
+
 private:
 	// @brief OBB用パラメータ
 	ObbInfo m_tCollisionInfo;
+
+	// @brief サイズの倍率
+	DirectX::XMFLOAT3 m_f3SizeScale = { 1.0f, 1.0f, 1.0f };
 
 };

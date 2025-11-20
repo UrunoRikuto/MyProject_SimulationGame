@@ -70,6 +70,9 @@
     <Filter Include="コードファイル\Imgui\System">
       <UniqueIdentifier>{aa9d48a8-4962-427d-bf28-199f842fa78b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\Human">
+      <UniqueIdentifier>{e336f92f-eb97-4c31-81d7-4d48de688259}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -192,6 +195,9 @@
     <ClInclude Include="ImguiSystem.h">
       <Filter>コードファイル\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Human.h">
+      <Filter>コードファイル\GameObject\Human</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -310,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="ImguiSystem.cpp">
       <Filter>コードファイル\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Human.cpp">
+      <Filter>コードファイル\GameObject\Human</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

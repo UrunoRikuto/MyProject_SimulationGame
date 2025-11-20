@@ -17,6 +17,9 @@ void CObjectLoad::LoadAll()
 
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel", 1.0f, Model::Flip::None);
+
+	// Humanモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Human.obj"), "Human", 1.0f, Model::Flip::None);
 }
 
 

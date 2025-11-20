@@ -7,6 +7,7 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "TestObject.h"
+#include "Human.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -37,6 +38,9 @@ void CSceneGame::Init()
 
 	// テスト用ゲームオブジェクトの追加
 	AddGameObject<CTestObject>(Tag::GameObject, "TestObject");
+
+	// 人間オブジェクトの追加
+	AddGameObject<CHuman>(Tag::GameObject, "Human");
 }
 
 /****************************************//*
