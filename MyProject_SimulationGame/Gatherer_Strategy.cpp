@@ -8,6 +8,7 @@
 #include "Main.h"
 #include "Oparation.h"
 #include "Structmath.h"
+#include "ImguiSystem.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -73,5 +74,13 @@ void CGatherer_Strategy::DoWork()
 		m_eCurrentState = WorkState::SearchAndMove;
 	}
 	break;
+	}
+
+	if (m_pTarget)
+	{
+		// デバックログで蝶敵の名前を表示
+		std::string sTargetName = m_pTarget->GetID().m_sName;
+		sTargetName = "TargetObject: " + sTargetName + std::to_string(m_pTarget->GetID().m_nSameCount);
+		CImguiSystem::GetInstance()->AddDebugLog(sTargetName, true);
 	}
 }
