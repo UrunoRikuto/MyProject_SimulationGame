@@ -73,6 +73,24 @@
     <Filter Include="コードファイル\GameObject\Human">
       <UniqueIdentifier>{e336f92f-eb97-4c31-81d7-4d48de688259}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System">
+      <UniqueIdentifier>{295189ba-8034-4c9a-b9ee-455c221ca4ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job">
+      <UniqueIdentifier>{33b23793-0cc1-40c5-b9cf-06e0acf986f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Collect">
+      <UniqueIdentifier>{dcc19a5d-8509-47a1-a7c7-e170c5b067c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Wood">
+      <UniqueIdentifier>{eb884754-1140-4515-804e-b7b03445c0fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Neet">
+      <UniqueIdentifier>{493bb747-ad3c-405e-a81c-14b087a2b104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Operator">
+      <UniqueIdentifier>{3e487a6f-784a-4770-bc2d-44fd2ac51eb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -198,6 +216,17 @@
     <ClInclude Include="Human.h">
       <Filter>コードファイル\GameObject\Human</Filter>
     </ClInclude>
+    <ClInclude Include="Job_Strategy.h">
+      <Filter>コードファイル\System\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Collect_Strategy.h">
+      <Filter>コードファイル\System\Job\Collect</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodCollect_Job.h" />
+    <ClInclude Include="Neet_Job.h" />
+    <ClInclude Include="JobOperator.h">
+      <Filter>コードファイル\System\Job\Operator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -319,6 +348,11 @@
     </ClCompile>
     <ClCompile Include="Human.cpp">
       <Filter>コードファイル\GameObject\Human</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodCollect_Job.cpp" />
+    <ClCompile Include="Neet_Job.cpp" />
+    <ClCompile Include="JobOperator.cpp">
+      <Filter>コードファイル\System\Job\Operator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

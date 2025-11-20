@@ -13,6 +13,8 @@
 	@brief　	| コンストラクタ
 *//****************************************/
 CHuman::CHuman()
+	: CGameObject()
+	, m_pJob(std::make_unique<CNeet_Job>())
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -75,6 +77,10 @@ void CHuman::Update()
 {
 	// 基底クラスの更新処理
 	CGameObject::Update();
+
+	// 仕事処理
+	if(m_pJob)m_pJob->DoWork();
+
 }
 
 /****************************************//*
@@ -98,12 +104,49 @@ int CHuman::Inspecter(bool isEnd)
 	// (位置情報、サイズ情報、回転情報)
 	int nItemCount = CGameObject::Inspecter(false);
 
+	/**** 職業表示 ****/
 
+	// 折りたたみヘッダーの表示
+	if (ImGui::CollapsingHeader("Job"))
+	{
+		// 現在の職業を文字列で取得
+		std::string currentJob = m_pJob->GetJobName();
+		// 表示
+		ImGui::Text(("JobName: " + currentJob).c_str());
 
+		// Combo 用（string → const char* の配列に変換）
+		std::vector<const char*> items;
+		for (auto& s : JobNames) items.push_back(s.c_str());
 
+		// 現在のインデックス
+		int currentIndex = std::distance(
+			JobNames.begin(),
+			std::find(JobNames.begin(), JobNames.end(), currentJob)
+		);
+
+		if (ImGui::Combo("JobSelect", &currentIndex, items.data(), items.size()))
+		{
+			// 選択された string の職業名
+			currentJob = JobNames[currentIndex];
+
+			// Strategy 差し替え
+			SetHumanJob(CreateJobByName(currentJob));
+		}
+	}
+
+	/***** 職業表示 *****/
 
 	// IMGUIウィンドウの終了
-	if (isEnd) ImGui::End();
+	if (isEnd)
+	{
+		// 子要素の終了
+		ImGui::EndChild();
+		// 表示項目のカウントを増やす
+		nItemCount++;
+		ImGui::End();
+	}
+
+
 
 	// 表示した項目数を返す
 	return nItemCount;

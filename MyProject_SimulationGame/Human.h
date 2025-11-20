@@ -6,6 +6,8 @@
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
+#include "JobOperator.h"
+#include <memory>
 
 // @brief 人間オブジェクトクラス
 class CHuman final : public CGameObject
@@ -33,5 +35,18 @@ public:
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	// @return 表示した項目数
 	int Inspecter(bool isEnd = true) override;
+
+private:
+	// @brief 職業ストラテジーの設定
+	// @param job：設定する職業ストラテジーポインタ
+	// @note 所有権を受け取るためにstd::unique_ptrで受け取る
+	void SetHumanJob(std::unique_ptr<IJob_Strategy> job)
+	{
+		m_pJob = std::move(job);
+	}
+
+private:
+	// @brief 職業ストラテジーポインタ
+	std::unique_ptr<IJob_Strategy> m_pJob;
 };
 

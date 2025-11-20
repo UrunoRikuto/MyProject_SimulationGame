@@ -52,6 +52,10 @@ public:
 	// @brief 選択しているゲームオブジェクトの取得
 	// @return 選択しているゲームオブジェクトのポインタ
 	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
+
+	// @brief デバックログの登録
+	// @param log：登録するログ文字列
+	void AddDebugLog(const std::string& log);
 private:
 
 	// @brief 階層表示
@@ -72,9 +76,15 @@ private:
 	// @brief フレームレート表示
 	void DrawFPS();
 
+	// @brief デバックログ表示
+	void DrawDebugLog();
+
 private:
 	// @brief インスタンス
 	static CImguiSystem* m_pInstance;
+
+	// @brief デバッグログ表示用バッファ
+	std::vector<std::string> m_DebugLog;
 
 	// @brief 選択しているゲームオブジェクト
 	CGameObject* m_pGameObject;

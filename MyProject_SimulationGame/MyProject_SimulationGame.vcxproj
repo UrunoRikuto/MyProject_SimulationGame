@@ -136,11 +136,15 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="Collect_Strategy.h" />
     <ClInclude Include="CollisionBase.h" />
     <ClInclude Include="CollisionObb.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="ImguiSystem.h" />
+    <ClInclude Include="JobOperator.h" />
+    <ClInclude Include="Job_Strategy.h" />
+    <ClInclude Include="Neet_Job.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DirectX.h" />
@@ -173,6 +177,7 @@
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
+    <ClInclude Include="WoodCollect_Job.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BillboardRenderer.cpp" />
@@ -184,6 +189,8 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="ImguiSystem.cpp" />
+    <ClCompile Include="JobOperator.cpp" />
+    <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -215,6 +222,7 @@
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="WoodCollect_Job.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl" />

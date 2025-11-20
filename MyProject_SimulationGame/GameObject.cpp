@@ -156,7 +156,7 @@ int CGameObject::Inspecter(bool isEnd)
 	/***** 名前表示 *****/
 
     /***** 位置、サイズ、回転の表示 *****/
-    ImGui::BeginChild(ImGui::GetID((void*)nImGuiItemCount), ImVec2(250, 500), ImGuiWindowFlags_NoTitleBar);
+    ImGui::BeginChild(ImGui::GetID((void*)nImGuiItemCount), ImVec2(250, 250), ImGuiWindowFlags_NoTitleBar);
 
 	// 更新処理が停止している場合は編集可能にする
     if (CImguiSystem::GetInstance()->IsUpdate())
@@ -217,15 +217,17 @@ int CGameObject::Inspecter(bool isEnd)
         }
     }
 
-    // 子要素の終了
-    ImGui::EndChild();
-    // 表示項目のカウントを増やす
-    nImGuiItemCount++;
     /***** 位置、サイズ、回転の表示 *****/
 
     // IMGUIウィンドウの終了
-    if (isEnd) ImGui::End();
-    
+    if (isEnd)
+    {
+        // 子要素の終了
+        ImGui::EndChild();
+        ImGui::End();
+        // 表示項目のカウントを増やす
+        nImGuiItemCount++;
+    }
 	// 子要素の数を返す
     return nImGuiItemCount;
 }

@@ -112,9 +112,19 @@ void CImguiSystem::Draw()
 	DrawCollision();
 	DrawFPS();
 	DrawInspecter();
+	DrawDebugLog();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+/****************************************//*
+	@brief　	| デバックログの登録
+	@param　	| log：登録するログ文字列
+*//****************************************/
+void CImguiSystem::AddDebugLog(const std::string& log)
+{
+	m_DebugLog.push_back(log);
 }
 
 /****************************************//*
@@ -325,4 +335,22 @@ void CImguiSystem::DrawFPS()
 
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| デバッグログ表示
+*//****************************************/
+void CImguiSystem::DrawDebugLog()
+{
+	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 350));
+	ImGui::SetNextWindowSize(ImVec2(400, 150));
+	ImGui::Begin("DebugLog");
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380, 120), ImGuiWindowFlags_NoTitleBar);
+	for (const auto& log : m_DebugLog)
+	{
+		ImGui::Text(log.c_str());
+	}
+	ImGui::EndChild();
+	ImGui::End();
+	m_DebugLog.clear();
 }
