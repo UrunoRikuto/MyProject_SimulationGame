@@ -1,0 +1,77 @@
+/**************************************************//*
+	@file	| CGatherer_Strategy.cpp
+	@brief	| 採集職業クラスのcppファイル
+	@note	| 探して採取する職の処理を実装
+			| CCollect_Strategyを継承
+*//**************************************************/
+#include "Gatherer_Strategy.h"
+#include "Main.h"
+#include "Oparation.h"
+#include "Structmath.h"
+
+/****************************************//*
+	@brief　	|　仕事処理
+*//****************************************/
+void CGatherer_Strategy::DoWork()
+{
+	switch (m_eCurrentState)
+	{
+	case WorkState::SearchAndMove:
+	{
+		// 標的にしているオブジェクトがない場合
+		if (m_pTarget == nullptr)
+		{
+			// オブジェクトを探す処理を実装
+			SearchTarget();
+		}
+		else
+		{
+			// オブジェクトに向かって移動する処理を実装
+			DirectX::XMFLOAT3 f3StonePos = m_pTarget->GetPos();
+			// オーナーの位置を取得
+			DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
+			// オブジェクトとオーナーの位置の距離を計算
+			float fDistance = StructMath::Distance(f3OwnerPos, f3StonePos);
+			// 一定距離以内に到達したら収集状態に移行
+			if (fDistance < 1.0f)
+			{
+				m_eCurrentState = WorkState::Gathering;
+				return;
+			}
+			DirectX::XMFLOAT3 f3Diff = f3StonePos - f3OwnerPos;
+			// オーナーからオブジェクトへのベクトルを計算
+			DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
+			f3Direction = DirectX::XMVector3Normalize(f3Direction);
+			// オーナーの位置をオブジェクトに向かって少しずつ移動させる
+			DirectX::XMFLOAT3 f3Move;
+			DirectX::XMStoreFloat3(&f3Move, f3Direction);
+			float fSpeed = 0.1f; // 移動速度
+			f3OwnerPos += f3Move * fSpeed;
+			// オーナーの位置を更新
+			m_pOwner->SetPos(f3OwnerPos);
+		}
+	}
+	break;
+	case WorkState::Gathering:
+	{
+		// 素材を収集する
+		if (m_pTarget != nullptr)
+		{
+			// 戦闘処理を利用して石を収集する処理を実装
+			// ここでは単純にオブジェクトを破棄することで収集を表現
+			m_pTarget->Destroy();
+			m_pTarget = nullptr;
+		}
+
+		// 収集が完了したら休憩状態に移行
+		m_eCurrentState = WorkState::Resting;
+	}
+	break;
+	case WorkState::Resting:
+	{
+		// 休憩が完了したら再び石を探して移動する状態に戻る
+		m_eCurrentState = WorkState::SearchAndMove;
+	}
+	break;
+	}
+}

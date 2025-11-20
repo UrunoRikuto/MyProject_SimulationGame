@@ -100,6 +100,9 @@
     <Filter Include="コードファイル\System\Job\Collect\Stone">
       <UniqueIdentifier>{8c5b2c4e-a9f8-4608-9957-3ed3214da8a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Gatherer">
+      <UniqueIdentifier>{9ea2c148-e701-4b13-b0f3-4e5d2e81998e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -249,6 +252,7 @@
     <ClInclude Include="StoneCollect_Job.h">
       <Filter>コードファイル\System\Job\Collect\Stone</Filter>
     </ClInclude>
+    <ClInclude Include="Gatherer_Strategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -389,6 +393,7 @@
     <ClCompile Include="StoneCollect_Job.cpp">
       <Filter>コードファイル\System\Job\Collect\Stone</Filter>
     </ClCompile>
+    <ClCompile Include="Gatherer_Strategy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

@@ -136,6 +136,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
     <ClInclude Include="CollisionBase.h" />
     <ClInclude Include="CollisionObb.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="CollisionBase.cpp" />
     <ClCompile Include="CollisionObb.cpp" />
     <ClCompile Include="Component.cpp" />
