@@ -96,7 +96,7 @@ int CHuman::Inspecter(bool isEnd)
 {
 	// 基底クラスのインスペクター表示処理
 	// (位置情報、サイズ情報、回転情報)
-	int nitemCount = CGameObject::Inspecter(false);
+	int nItemCount = CGameObject::Inspecter(false);
 
 
 
@@ -106,5 +106,5 @@ int CHuman::Inspecter(bool isEnd)
 	if (isEnd) ImGui::End();
 
 	// 表示した項目数を返す
-	return nitemCount;
+	return nItemCount;
 }
