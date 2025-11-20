@@ -1,0 +1,85 @@
+/**************************************************//*
+	@file	| Wood.cpp
+	@brief	| 木オブジェクトクラスのcppファイル
+	@note	| CGameObjectを継承
+*//**************************************************/
+#include "Wood.h"
+#include "ModelRenderer.h"
+#include "CollisionObb.h"
+#include "Oparation.h"
+
+/*****************************************//*
+	@brief　	| コンストラクタ
+*//*****************************************/
+CWood::CWood()
+	:CGameObject()
+{
+	// モデルレンダラーコンポーネントの追加
+	AddComponent<CModelRenderer>();
+
+	// OBBコリジョンコンポーネントの追加
+	AddComponent<CCollisionObb>();
+}
+
+/*****************************************//*
+	@brief　	| デストラクタ
+*//*****************************************/
+CWood::~CWood()
+{
+}
+
+/*****************************************//*
+	@brief　	| 初期化処理
+*//*****************************************/
+void CWood::Init()
+{
+	// 基底クラスの初期化処理
+	CGameObject::Init();
+
+	// (仮)
+	float fXPos = GetRandOfRange(-20.0f, 20.0f);
+	float fZPos = GetRandOfRange(-20.0f, 20.0f);
+
+	m_tParam.m_f3Pos = { fXPos, m_tParam.m_f3Size.y / 2.0f, fZPos };
+
+	// モデルレンダラーコンポーネントの設定
+	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
+	pModelRenderer->SetKey("Wood");
+	pModelRenderer->SetRendererParam(m_tParam);
+
+	// 頂点シェーダーの設定
+	VertexShader* pVS = new VertexShader();
+	pVS->Load(SHADER_PATH("VS_Object.cso"));
+	pModelRenderer->SetVertexShader(pVS);
+
+	// ピクセルシェーダーの設定
+	PixelShader* pPS = new PixelShader();
+	pPS->Load(SHADER_PATH("PS_TexColor.cso"));
+	pModelRenderer->SetPixelShader(pPS);
+
+
+	// OBBコリジョンコンポーネントの設定
+	CCollisionObb* pCollisionObb = GetComponent<CCollisionObb>();
+	pCollisionObb->SetTag("Wood");
+	pCollisionObb->SetCenter(m_tParam.m_f3Pos);
+	pCollisionObb->SetSize(m_tParam.m_f3Size);
+	pCollisionObb->SetSizeScale({ 1.0f, 2.0f, 1.0f });
+}
+
+/*****************************************//*
+	@brief　	| 終了処理
+*//*****************************************/
+void CWood::Uninit()
+{
+	// 基底クラスの終了処理
+	CGameObject::Uninit();
+}
+
+/*****************************************//*
+	@brief　	| 描画処理
+*//*****************************************/
+void CWood::Draw()
+{
+	// 基底クラスの描画処理
+	CGameObject::Draw();
+}

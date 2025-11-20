@@ -20,6 +20,9 @@ void CObjectLoad::LoadAll()
 
 	// Humanモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Human.obj"), "Human", 1.0f, Model::Flip::None);
+
+	// Woodモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wood.obj"), "Wood", 1.0f, Model::Flip::None);
 }
 
 

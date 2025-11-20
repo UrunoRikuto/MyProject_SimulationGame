@@ -177,6 +177,7 @@
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
+    <ClInclude Include="Wood.h" />
     <ClInclude Include="WoodCollect_Job.h" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +223,7 @@
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="Wood.cpp" />
     <ClCompile Include="WoodCollect_Job.cpp" />
   </ItemGroup>
   <ItemGroup>

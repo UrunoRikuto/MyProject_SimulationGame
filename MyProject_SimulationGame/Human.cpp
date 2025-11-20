@@ -38,6 +38,8 @@ void CHuman::Init()
 	// 基底クラスの初期化処理
 	CGameObject::Init();
 
+	m_tParam.m_f3Pos = { 0.0f, m_tParam.m_f3Size.y / 2.0f, 0.0f };
+
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("Human");
@@ -130,7 +132,7 @@ int CHuman::Inspecter(bool isEnd)
 			currentJob = JobNames[currentIndex];
 
 			// Strategy 差し替え
-			SetHumanJob(CreateJobByName(currentJob));
+			SetHumanJob(CreateJobByName(currentJob, *this));
 		}
 	}
 

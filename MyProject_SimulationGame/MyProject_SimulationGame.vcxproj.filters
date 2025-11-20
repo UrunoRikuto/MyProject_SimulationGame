@@ -91,6 +91,9 @@
     <Filter Include="コードファイル\System\Job\Operator">
       <UniqueIdentifier>{3e487a6f-784a-4770-bc2d-44fd2ac51eb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\Wood">
+      <UniqueIdentifier>{057adf7b-b29c-4d24-a867-8cdd31401c2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -222,10 +225,17 @@
     <ClInclude Include="Collect_Strategy.h">
       <Filter>コードファイル\System\Job\Collect</Filter>
     </ClInclude>
-    <ClInclude Include="WoodCollect_Job.h" />
-    <ClInclude Include="Neet_Job.h" />
     <ClInclude Include="JobOperator.h">
       <Filter>コードファイル\System\Job\Operator</Filter>
+    </ClInclude>
+    <ClInclude Include="Wood.h">
+      <Filter>コードファイル\GameObject\Wood</Filter>
+    </ClInclude>
+    <ClInclude Include="Neet_Job.h">
+      <Filter>コードファイル\System\Job\Neet</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodCollect_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Wood</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -349,10 +359,17 @@
     <ClCompile Include="Human.cpp">
       <Filter>コードファイル\GameObject\Human</Filter>
     </ClCompile>
-    <ClCompile Include="WoodCollect_Job.cpp" />
-    <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="JobOperator.cpp">
       <Filter>コードファイル\System\Job\Operator</Filter>
+    </ClCompile>
+    <ClCompile Include="Wood.cpp">
+      <Filter>コードファイル\GameObject\Wood</Filter>
+    </ClCompile>
+    <ClCompile Include="Neet_Job.cpp">
+      <Filter>コードファイル\System\Job\Neet</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodCollect_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Wood</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "TestObject.h"
 #include "Human.h"
+#include "Wood.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -36,11 +37,15 @@ void CSceneGame::Init()
 	// カメラの種類をゲーム用カメラに設定
 	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);
 
-	// テスト用ゲームオブジェクトの追加
-	AddGameObject<CTestObject>(Tag::GameObject, "TestObject");
-
 	// 人間オブジェクトの追加
 	AddGameObject<CHuman>(Tag::GameObject, "Human");
+
+	// 木オブジェクトの追加
+	AddGameObject<CWood>(Tag::GameObject, "Wood");
+	AddGameObject<CWood>(Tag::GameObject, "Wood");
+	AddGameObject<CWood>(Tag::GameObject, "Wood");
+	AddGameObject<CWood>(Tag::GameObject, "Wood");
+	AddGameObject<CWood>(Tag::GameObject, "Wood");
 }
 
 /****************************************//*
