@@ -94,6 +94,12 @@
     <Filter Include="コードファイル\GameObject\Wood">
       <UniqueIdentifier>{057adf7b-b29c-4d24-a867-8cdd31401c2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\Stone">
+      <UniqueIdentifier>{d8e39967-5ffe-4ca6-a2ed-0801bf28e902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Stone">
+      <UniqueIdentifier>{8c5b2c4e-a9f8-4608-9957-3ed3214da8a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -237,6 +243,12 @@
     <ClInclude Include="WoodCollect_Job.h">
       <Filter>コードファイル\System\Job\Collect\Wood</Filter>
     </ClInclude>
+    <ClInclude Include="Stone.h">
+      <Filter>コードファイル\GameObject\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="StoneCollect_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Stone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -370,6 +382,12 @@
     </ClCompile>
     <ClCompile Include="WoodCollect_Job.cpp">
       <Filter>コードファイル\System\Job\Collect\Wood</Filter>
+    </ClCompile>
+    <ClCompile Include="Stone.cpp">
+      <Filter>コードファイル\GameObject\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="StoneCollect_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Stone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

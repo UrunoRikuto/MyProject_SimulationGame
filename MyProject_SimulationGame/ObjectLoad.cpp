@@ -18,11 +18,14 @@ void CObjectLoad::LoadAll()
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel", 1.0f, Model::Flip::None);
 
-	// Humanモデルのロード
+	// 人間のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Human.obj"), "Human", 1.0f, Model::Flip::None);
 
-	// Woodモデルのロード
+	// 木のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wood.obj"), "Wood", 1.0f, Model::Flip::None);
+
+	// 石のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Stone.obj"), "Stone", 1.0f, Model::Flip::None);
 }
 
 

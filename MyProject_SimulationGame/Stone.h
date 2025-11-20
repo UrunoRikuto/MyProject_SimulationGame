@@ -1,20 +1,20 @@
 /**************************************************//*
-	@file	| Wood.h
-	@brief	| 木オブジェクトクラスのhファイル
+	@file	| Stone.h
+	@brief	| 石オブジェクトクラスのhファイル
 	@note	| CGameObjectを継承
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
 
-// @brief 木オブジェクトクラス
-class CWood final: public CGameObject
+// @brief 石オブジェクトクラス
+class CStone final : public CGameObject
 {
 public:
 	// @brief コンストラクタ
-	CWood();
+	CStone();
 
 	// @brief デストラクタ
-	virtual ~CWood();
+	virtual ~CStone();
 
 	// @brief 初期化処理
 	virtual void Init() override;

@@ -4,6 +4,7 @@
 	@note	| 職業管理クラスの処理を実装
 *//**************************************************/
 #include "JobOperator.h"
+#include "ImguiSystem.h"
 
 /****************************************//*
 	@brief　	| 職業ストラテジーを名前から生成するファクトリ関数
@@ -23,7 +24,23 @@ std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CGameObj
 	{
 		pJob =  std::make_unique<CWoodCollect_Job>();
 	}
+	else if (name == JobName::StoneCollect)
+	{
+		pJob =  std::make_unique<CStoneCollect_Job>();
+	}
 
-	if (pJob)pJob->SetOwner(owner);
+	// 職業が見つからなかった場合、無職を設定
+	if(pJob == nullptr)
+	{
+		CImguiSystem::GetInstance()->AddDebugLog(("CreateJobByName:Not Find case　[" + name + "]"), false);
+
+		// デフォルトで無職を設定
+		pJob = std::make_unique<CNeet_Job>();
+	}
+
+	// 所有オブジェクトを設定
+	pJob->SetOwner(owner);
+
+	// 生成した職業ストラテジーポインタを返す
 	return pJob;
 }

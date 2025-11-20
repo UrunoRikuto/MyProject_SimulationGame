@@ -15,6 +15,17 @@ class CImguiSystem
 {
 private:
 
+	// @brief デバッグログ構造体
+	struct DebugLogInfo
+	{
+		// @brief ログ文字列
+		std::string m_sLog;
+		// @brief ログ消去フラグ
+		bool m_bClear;
+	};
+
+private:
+
 	// @brief コンストラクタ
 	CImguiSystem();
 
@@ -55,7 +66,8 @@ public:
 
 	// @brief デバックログの登録
 	// @param log：登録するログ文字列
-	void AddDebugLog(const std::string& log);
+	// @param clear：true:描画後に削除 false:常に残り続ける
+	void AddDebugLog(const std::string& log, bool clear = true);
 private:
 
 	// @brief 階層表示
@@ -84,7 +96,7 @@ private:
 	static CImguiSystem* m_pInstance;
 
 	// @brief デバッグログ表示用バッファ
-	std::vector<std::string> m_DebugLog;
+	std::vector<DebugLogInfo> m_DebugLog;
 
 	// @brief 選択しているゲームオブジェクト
 	CGameObject* m_pGameObject;

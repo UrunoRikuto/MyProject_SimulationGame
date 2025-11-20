@@ -1,9 +1,9 @@
 /**************************************************//*
-	@file	| Wood.cpp
-	@brief	| 木オブジェクトクラスのcppファイル
+	@file	| Stone.cpp
+	@brief	| 石オブジェクトクラスのcppファイル
 	@note	| CGameObjectを継承
 *//**************************************************/
-#include "Wood.h"
+#include "Stone.h"
 #include "ModelRenderer.h"
 #include "CollisionObb.h"
 #include "Oparation.h"
@@ -11,7 +11,7 @@
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
-CWood::CWood()
+CStone::CStone()
 	:CGameObject()
 {
 	// モデルレンダラーコンポーネントの追加
@@ -24,14 +24,14 @@ CWood::CWood()
 /*****************************************//*
 	@brief　	| デストラクタ
 *//*****************************************/
-CWood::~CWood()
+CStone::~CStone()
 {
 }
 
 /*****************************************//*
 	@brief　	| 初期化処理
 *//*****************************************/
-void CWood::Init()
+void CStone::Init()
 {
 	// 基底クラスの初期化処理
 	CGameObject::Init();
@@ -44,7 +44,7 @@ void CWood::Init()
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
-	pModelRenderer->SetKey("Wood");
+	pModelRenderer->SetKey("Stone");
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
@@ -60,8 +60,7 @@ void CWood::Init()
 
 	// OBBコリジョンコンポーネントの設定
 	CCollisionObb* pCollisionObb = GetComponent<CCollisionObb>();
-	pCollisionObb->SetTag("Wood");
+	pCollisionObb->SetTag("Stone");
 	pCollisionObb->SetCenter(m_tParam.m_f3Pos);
 	pCollisionObb->SetSize(m_tParam.m_f3Size);
-	pCollisionObb->SetSizeScale({ 1.0f, 2.0f, 1.0f });
 }

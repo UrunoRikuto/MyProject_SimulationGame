@@ -121,10 +121,14 @@ void CImguiSystem::Draw()
 /****************************************//*
 	@brief　	| デバックログの登録
 	@param　	| log：登録するログ文字列
+	@param　	| clear：true:描画後に削除 false:常に残り続ける
 *//****************************************/
-void CImguiSystem::AddDebugLog(const std::string& log)
+void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 {
-	m_DebugLog.push_back(log);
+	DebugLogInfo info;
+	info.m_sLog = log;
+	info.m_bClear = clear;
+	m_DebugLog.push_back(info);
 }
 
 /****************************************//*
@@ -348,9 +352,17 @@ void CImguiSystem::DrawDebugLog()
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380, 120), ImGuiWindowFlags_NoTitleBar);
 	for (const auto& log : m_DebugLog)
 	{
-		ImGui::Text(log.c_str());
+		ImGui::Text(log.m_sLog.c_str());
 	}
 	ImGui::EndChild();
 	ImGui::End();
-	m_DebugLog.clear();
+	// 消去フラグが立っているログを削除する
+	m_DebugLog.erase(
+		std::remove_if(
+			m_DebugLog.begin(),
+			m_DebugLog.end(),
+			[](const DebugLogInfo& log) { return log.m_bClear; }
+		),
+		m_DebugLog.end()
+	);
 }

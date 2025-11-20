@@ -9,6 +9,7 @@
 #include "TestObject.h"
 #include "Human.h"
 #include "Wood.h"
+#include "Stone.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -46,6 +47,13 @@ void CSceneGame::Init()
 	AddGameObject<CWood>(Tag::GameObject, "Wood");
 	AddGameObject<CWood>(Tag::GameObject, "Wood");
 	AddGameObject<CWood>(Tag::GameObject, "Wood");
+
+	// 石オブジェクトの追加
+	AddGameObject<CStone>(Tag::GameObject, "Stone");
+	AddGameObject<CStone>(Tag::GameObject, "Stone");
+	AddGameObject<CStone>(Tag::GameObject, "Stone");
+	AddGameObject<CStone>(Tag::GameObject, "Stone");
+	AddGameObject<CStone>(Tag::GameObject, "Stone");
 }
 
 /****************************************//*

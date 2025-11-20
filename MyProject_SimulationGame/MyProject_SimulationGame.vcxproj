@@ -145,6 +145,8 @@
     <ClInclude Include="JobOperator.h" />
     <ClInclude Include="Job_Strategy.h" />
     <ClInclude Include="Neet_Job.h" />
+    <ClInclude Include="Stone.h" />
+    <ClInclude Include="StoneCollect_Job.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DirectX.h" />
@@ -192,6 +194,8 @@
     <ClCompile Include="ImguiSystem.cpp" />
     <ClCompile Include="JobOperator.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
+    <ClCompile Include="Stone.cpp" />
+    <ClCompile Include="StoneCollect_Job.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="GameObject.cpp" />
