@@ -28,5 +28,10 @@ public:
 
 	// @brief 描画処理
 	void Draw() override;
+
+	// @brief インスペクター表示処理
+	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
+	// @return 表示した項目数
+	int Inspecter(bool isEnd = true) override;
 };
 

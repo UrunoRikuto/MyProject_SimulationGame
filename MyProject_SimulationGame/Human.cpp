@@ -7,6 +7,7 @@
 #include "Human.h"
 #include "ModelRenderer.h"
 #include "CollisionObb.h"
+#include <imgui.h>
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -83,4 +84,27 @@ void CHuman::Draw()
 {
 	// 基底クラスの描画処理
 	CGameObject::Draw();
+}
+
+/****************************************//*
+	@brief　	| インスペクター表示処理
+	@param		| isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
+	@return		| 表示した項目数
+	@note		| ImGuiを使用してオブジェクトのパラメータを表示、編集する
+*//****************************************/
+int CHuman::Inspecter(bool isEnd)
+{
+	// 基底クラスのインスペクター表示処理
+	// (位置情報、サイズ情報、回転情報)
+	int nitemCount = CGameObject::Inspecter(false);
+
+
+
+
+
+	// IMGUIウィンドウの終了
+	if (isEnd) ImGui::End();
+
+	// 表示した項目数を返す
+	return nitemCount;
 }
