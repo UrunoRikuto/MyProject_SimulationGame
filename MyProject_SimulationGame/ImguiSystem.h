@@ -24,6 +24,17 @@ private:
 		bool m_bClear;
 	};
 
+	// @brief デバッグ用フラグ列挙型
+	enum class DebugSystemFlag
+	{
+		Collision,
+		Update,
+		FPS,
+		Log,
+
+		MAX
+	};
+
 private:
 
 	// @brief コンストラクタ
@@ -79,6 +90,9 @@ private:
 	// @brief インスペクター表示
 	void DrawInspecter();
 
+	// @brief デバッグ用チェックボックス表示
+	void DrawDebugSystem();
+
 	// @brief 更新を止めるチェックボックス表示
 	void DrawUpdateTick();
 
@@ -100,6 +114,9 @@ private:
 
 	// @brief 選択しているゲームオブジェクト
 	CGameObject* m_pGameObject;
+
+	// @brief デバッグ用フラグ配列
+	bool m_bDebug[static_cast<int>(DebugSystemFlag::MAX)];
 
 	// @brief 更新処理を管理する
 	// @note true:更新処理を行う false:更新処理を止める

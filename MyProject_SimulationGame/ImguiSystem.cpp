@@ -21,6 +21,7 @@ CImguiSystem::CImguiSystem()
 	: m_pGameObject(nullptr)
 	, m_bUpdate(true)
 	, m_bCollisionDraw(true)
+	, m_bDebug{ false }
 {
 }
 
@@ -108,11 +109,15 @@ void CImguiSystem::Draw()
 
 	DrawHierarchy();
 	DrawCameraParam();
-	DrawUpdateTick();
-	DrawCollision();
-	DrawFPS();
 	DrawInspecter();
-	DrawDebugLog();
+
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Collision)])	DrawCollision();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
+#ifdef _DEBUG
+	DrawDebugSystem();
+#endif
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -136,10 +141,10 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 *//****************************************/
 void CImguiSystem::DrawHierarchy()
 {
-	ImGui::SetNextWindowPos(ImVec2(20, 25));
+	ImGui::SetNextWindowPos(ImVec2(20, 20));
 	ImGui::SetNextWindowSize(ImVec2(280, 300));
 	ImGui::Begin("Hierarchy");
-	if (ImGui::Button("Clear"))
+	if (ImGui::Button("Select Item Clear"))
 	{
 		m_pGameObject = nullptr;
 	}
@@ -211,12 +216,12 @@ void CImguiSystem::DrawCameraParam()
 	if (dynamic_cast<CSceneGame*>(pScene))pCamera->SetCameraKind(CameraKind::CAM_GAME);
 
 	if (!pCamera) return;
-	if (m_bUpdate) return;
+
 	pCamera->SetCameraKind(CameraKind::CAM_DEBUG);
 	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 400));
-	ImGui::SetNextWindowSize(ImVec2(280, 180));
+	ImGui::SetNextWindowSize(ImVec2(280, 250));
 	ImGui::Begin("Camera");
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 160), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 200), ImGuiWindowFlags_NoTitleBar);
 
 	if (ImGui::Button("Reset"))
 	{
@@ -268,8 +273,19 @@ void CImguiSystem::DrawInspecter()
 		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, 20));
 		ImGui::SetNextWindowSize(ImVec2(280, SCREEN_HEIGHT - 140));
 		ImGui::Begin("Inspecter");
+
+		/**** 名前表示 ****/
+		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 30), ImGuiWindowFlags_NoTitleBar);
+
+		// 名前の表示
+		std::string name = "No Selected Object";
+		ImGui::Text(name.c_str());
+		// 子要素の終了
+		ImGui::EndChild();
+		/***** 名前表示 *****/
+
 		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 500), ImGuiWindowFlags_NoTitleBar);
-		ImGui::Text("No Selected Object");
+
 		ImGui::EndChild();
 		ImGui::End();
 	}
@@ -277,11 +293,26 @@ void CImguiSystem::DrawInspecter()
 }
 
 /****************************************//*
+	@brief　	| デバッグ用チェックボックス表示
+*//****************************************/
+void CImguiSystem::DrawDebugSystem()
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 130));
+
+	ImGui::Begin("DebugSystem");
+	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
+	ImGui::Checkbox("Collision",	&m_bDebug[static_cast<int>(DebugSystemFlag::Collision)]);
+	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
+	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
+
+	ImGui::End();
+}
+
+/****************************************//*
 	@brief　	| 更新を止めるチェックボックス表示
 *//****************************************/
 void CImguiSystem::DrawUpdateTick()
 {
-	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 120));
 	ImGui::SetNextWindowSize(ImVec2(280, 100));
 	ImGui::Begin("UpdateTick");
 
@@ -307,7 +338,6 @@ void CImguiSystem::DrawUpdateTick()
 *//****************************************/
 void CImguiSystem::DrawCollision()
 {
-	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, SCREEN_HEIGHT - 120));
 	ImGui::SetNextWindowSize(ImVec2(280, 100));
 	ImGui::Begin("Collision");
 
@@ -329,7 +359,6 @@ void CImguiSystem::DrawCollision()
 *//****************************************/
 void CImguiSystem::DrawFPS()
 {
-	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH / 2 + 170, 20.0f));
 	ImGui::SetNextWindowSize(ImVec2(140, 70));
 	ImGui::Begin("FPS");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(120.0f, 30.0f), ImGuiWindowFlags_NoTitleBar);
@@ -346,7 +375,6 @@ void CImguiSystem::DrawFPS()
 *//****************************************/
 void CImguiSystem::DrawDebugLog()
 {
-	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 350));
 	ImGui::SetNextWindowSize(ImVec2(400, 150));
 	ImGui::Begin("DebugLog");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380, 120), ImGuiWindowFlags_NoTitleBar);

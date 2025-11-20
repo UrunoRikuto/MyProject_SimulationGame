@@ -29,25 +29,32 @@ void CGatherer_Strategy::DoWork()
 		{
 			// オブジェクトに向かって移動する処理を実装
 			DirectX::XMFLOAT3 f3StonePos = m_pTarget->GetPos();
+
 			// オーナーの位置を取得
 			DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
+
 			// オブジェクトとオーナーの位置の距離を計算
 			float fDistance = StructMath::Distance(f3OwnerPos, f3StonePos);
+
 			// 一定距離以内に到達したら収集状態に移行
 			if (fDistance < 1.0f)
 			{
 				m_eCurrentState = WorkState::Gathering;
 				return;
 			}
+
 			DirectX::XMFLOAT3 f3Diff = f3StonePos - f3OwnerPos;
 			// オーナーからオブジェクトへのベクトルを計算
 			DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
 			f3Direction = DirectX::XMVector3Normalize(f3Direction);
+
 			// オーナーの位置をオブジェクトに向かって少しずつ移動させる
 			DirectX::XMFLOAT3 f3Move;
 			DirectX::XMStoreFloat3(&f3Move, f3Direction);
+
 			float fSpeed = 0.1f; // 移動速度
 			f3OwnerPos += f3Move * fSpeed;
+
 			// オーナーの位置を更新
 			m_pOwner->SetPos(f3OwnerPos);
 		}
