@@ -82,9 +82,6 @@
     <Filter Include="コードファイル\System\Job\Collect">
       <UniqueIdentifier>{dcc19a5d-8509-47a1-a7c7-e170c5b067c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Job\Collect\Wood">
-      <UniqueIdentifier>{eb884754-1140-4515-804e-b7b03445c0fb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\System\Job\Neet">
       <UniqueIdentifier>{493bb747-ad3c-405e-a81c-14b087a2b104}</UniqueIdentifier>
     </Filter>
@@ -97,11 +94,14 @@
     <Filter Include="コードファイル\GameObject\Stone">
       <UniqueIdentifier>{d8e39967-5ffe-4ca6-a2ed-0801bf28e902}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Job\Collect\Stone">
-      <UniqueIdentifier>{8c5b2c4e-a9f8-4608-9957-3ed3214da8a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\System\Job\Collect\Gatherer">
       <UniqueIdentifier>{9ea2c148-e701-4b13-b0f3-4e5d2e81998e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Gatherer\Stone">
+      <UniqueIdentifier>{8c5b2c4e-a9f8-4608-9957-3ed3214da8a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Gatherer\Wood">
+      <UniqueIdentifier>{eb884754-1140-4515-804e-b7b03445c0fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -243,16 +243,18 @@
     <ClInclude Include="Neet_Job.h">
       <Filter>コードファイル\System\Job\Neet</Filter>
     </ClInclude>
-    <ClInclude Include="WoodCollect_Job.h">
-      <Filter>コードファイル\System\Job\Collect\Wood</Filter>
+    <ClInclude Include="WoodGatherer_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Wood</Filter>
     </ClInclude>
     <ClInclude Include="Stone.h">
       <Filter>コードファイル\GameObject\Stone</Filter>
     </ClInclude>
-    <ClInclude Include="StoneCollect_Job.h">
-      <Filter>コードファイル\System\Job\Collect\Stone</Filter>
+    <ClInclude Include="StoneGatherer_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Stone</Filter>
     </ClInclude>
-    <ClInclude Include="Gatherer_Strategy.h" />
+    <ClInclude Include="Gatherer_Strategy.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -384,16 +386,18 @@
     <ClCompile Include="Neet_Job.cpp">
       <Filter>コードファイル\System\Job\Neet</Filter>
     </ClCompile>
-    <ClCompile Include="WoodCollect_Job.cpp">
-      <Filter>コードファイル\System\Job\Collect\Wood</Filter>
+    <ClCompile Include="WoodGatherer_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Wood</Filter>
     </ClCompile>
     <ClCompile Include="Stone.cpp">
       <Filter>コードファイル\GameObject\Stone</Filter>
     </ClCompile>
-    <ClCompile Include="StoneCollect_Job.cpp">
-      <Filter>コードファイル\System\Job\Collect\Stone</Filter>
+    <ClCompile Include="StoneGatherer_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Stone</Filter>
     </ClCompile>
-    <ClCompile Include="Gatherer_Strategy.cpp" />
+    <ClCompile Include="Gatherer_Strategy.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

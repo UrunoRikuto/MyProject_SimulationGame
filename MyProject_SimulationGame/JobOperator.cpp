@@ -20,13 +20,13 @@ std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CGameObj
 	{
 		pJob = std::make_unique<CNeet_Job>();
 	}
-	else if (name == JobName::WoodCollect)
+	else if (name == JobName::WoodGatherer)
 	{
-		pJob =  std::make_unique<CWoodCollect_Job>();
+		pJob =  std::make_unique<CWoodGatherer_Job>();
 	}
-	else if (name == JobName::StoneCollect)
+	else if (name == JobName::StoneGatherer)
 	{
-		pJob =  std::make_unique<CStoneCollect_Job>();
+		pJob =  std::make_unique<CStoneGatherer_Job>();
 	}
 
 	// E‹Æ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡A–³E‚ğİ’è

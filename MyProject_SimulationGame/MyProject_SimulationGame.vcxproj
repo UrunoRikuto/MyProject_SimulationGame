@@ -147,7 +147,7 @@
     <ClInclude Include="Job_Strategy.h" />
     <ClInclude Include="Neet_Job.h" />
     <ClInclude Include="Stone.h" />
-    <ClInclude Include="StoneCollect_Job.h" />
+    <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DirectX.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="Wood.h" />
-    <ClInclude Include="WoodCollect_Job.h" />
+    <ClInclude Include="WoodGatherer_Job.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BillboardRenderer.cpp" />
@@ -197,7 +197,7 @@
     <ClCompile Include="JobOperator.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="Stone.cpp" />
-    <ClCompile Include="StoneCollect_Job.cpp" />
+    <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -230,7 +230,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="Wood.cpp" />
-    <ClCompile Include="WoodCollect_Job.cpp" />
+    <ClCompile Include="WoodGatherer_Job.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl" />

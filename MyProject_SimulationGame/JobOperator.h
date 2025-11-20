@@ -14,17 +14,17 @@ namespace JobName
 	// 無職
 	const std::string Neet = "Neet";
 	// 木材収集職業
-	const std::string WoodCollect = "WoodCollect";
+	const std::string WoodGatherer = "WoodGatherer";
 	// 石収集職業
-	const std::string StoneCollect = "StoneCollect";
+	const std::string StoneGatherer = "StoneGatherer";
 
 }
 
 // @brief 登録されている職業名の配列
 const std::vector<std::string> JobNames = {
 	JobName::Neet,
-	JobName::WoodCollect,
-	JobName::StoneCollect
+	JobName::WoodGatherer,
+	JobName::StoneGatherer
 };
 
 //=== @brief 職業クラスのインクルード ===//
@@ -42,9 +42,9 @@ const std::vector<std::string> JobNames = {
 	収集職
 *//*********************/
 //-木材
-#include "WoodCollect_Job.h"
+#include "WoodGatherer_Job.h"
 //-石
-#include "StoneCollect_Job.h"
+#include "StoneGatherer_Job.h"
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前
