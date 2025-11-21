@@ -139,6 +139,8 @@ public:
 	}
 
 	// @brief 近い位置にあるゲームオブジェクトを取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param inPos：基準位置
 	template<typename T = CGameObject>
 	T* GetGameObject(const DirectX::XMFLOAT3 inPos)
 	{
@@ -158,6 +160,68 @@ public:
 				// 見つかった場合は距離を計算
 				if (ret != nullptr)
 				{
+					// オブジェクトの位置を取得
+					DirectX::XMFLOAT3 objPos = ret->GetPos();
+
+					// 距離を計算
+					float distance = sqrtf(
+						powf(inPos.x - objPos.x, 2) +
+						powf(inPos.y - objPos.y, 2) +
+						powf(inPos.z - objPos.z, 2)
+					);
+					// 最小距離よりも小さい場合は更新
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						pNearObject = ret;
+					}
+				}
+			}
+		}
+
+		// 近いオブジェクトのポインタを返す
+		return pNearObject;
+	}
+
+	// @brief 近い位置にあるゲームオブジェクトを取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param inPos：基準位置
+	// @param inNoFindID：除外するオブジェクトIDリスト
+	template<typename T = CGameObject>
+	T* GetGameObject(const DirectX::XMFLOAT3 inPos, std::vector<ObjectID> inNoFindID)
+	{
+		// 最小距離の初期化
+		float minDistance = FLT_MAX;
+		// 近いオブジェクトのポインタ
+		T* pNearObject = nullptr;
+
+		// 自身を紐付けている全てのゲームオブジェクトを探索
+		for (auto list : m_pGameObject_List)
+		{
+			// T*型のゲームオブジェクトが見つかった場合はその値を返す
+			for (auto obj : list)
+			{
+				bool isSkip = false;
+				// T*型にキャストを試みる
+				T* ret = dynamic_cast<T*>(obj);
+				// 見つかった場合は距離を計算
+				if (ret != nullptr)
+				{
+					for(int i = 0; i < inNoFindID.size(); i++)
+					{
+						// 除外するオブジェクトIDと一致する場合はスキップ
+						ObjectID id = ret->GetID();
+						if (id.m_sName == inNoFindID[i].m_sName &&
+							id.m_nSameCount == inNoFindID[i].m_nSameCount)
+						{
+							isSkip = true;
+							break;
+						}
+					}
+
+					// 除外するオブジェクトIDと一致した場合はスキップ
+					if (isSkip)continue;
+
 					// オブジェクトの位置を取得
 					DirectX::XMFLOAT3 objPos = ret->GetPos();
 

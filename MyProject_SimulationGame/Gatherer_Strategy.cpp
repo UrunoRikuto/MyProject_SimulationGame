@@ -9,6 +9,8 @@
 #include "Oparation.h"
 #include "Structmath.h"
 #include "ImguiSystem.h"
+#include "CollectTarget.h"
+
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -22,8 +24,30 @@ void CGatherer_Strategy::DoWork()
 		// 標的にしているオブジェクトがない場合
 		if (m_pTarget == nullptr)
 		{
-			// オブジェクトを探す処理を実装
-			SearchTarget();
+			std::vector<ObjectID> vNotTargetIDs;
+
+			while (1)
+			{
+				// オブジェクトを探す処理を実装
+				m_pTarget = SearchTarget(vNotTargetIDs);
+
+				// 木オブジェクトが見つからなかった場合はループを抜ける
+				if (m_pTarget == nullptr)return;
+
+				// 標的オブジェクトに設定されているターゲティングIDを取得
+				ObjectID targetingID = m_pTarget->GetTargetingID();
+
+				// もしターゲティングIDが設定されているか確認
+				if (targetingID.m_nSameCount != -1)
+				{
+					// ターゲティングIDが設定されている場合は、そのIDをリストに追加
+					vNotTargetIDs.push_back(m_pTarget->GetID());
+				}
+				// ターゲティングIDが設定されていない場合はループを抜ける
+				else break;
+			}
+			// 自身のIDを標的オブジェクトに設定
+			m_pTarget->SetTargetingID(m_pOwner->GetID());
 		}
 		else
 		{

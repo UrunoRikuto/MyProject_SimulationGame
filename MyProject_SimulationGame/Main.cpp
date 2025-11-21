@@ -203,7 +203,7 @@ void Draw()
 
 	g_pScene->Draw();
 	g_pTransition->Draw();
-	if (g_bDebugMode)CImguiSystem::GetInstance()->Draw();
+	CImguiSystem::GetInstance()->Draw();
 
 	EndDrawDirectX();
 }

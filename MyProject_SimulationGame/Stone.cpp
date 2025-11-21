@@ -12,7 +12,7 @@
 	@brief　	| コンストラクタ
 *//*****************************************/
 CStone::CStone()
-	:CGameObject()
+	:CCollectTarget()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();

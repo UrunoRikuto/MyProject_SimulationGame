@@ -10,10 +10,11 @@
 
 /******************************************//*
 	@brief　	| 標的を探す処理
+	@return		| 採取対象オブジェクトのポインタ
 	@note		| 木オブジェクトを探す処理を実装
 *//******************************************/
-void CWoodGatherer_Job::SearchTarget()
+CCollectTarget* CWoodGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTargetIDs)
 {
 	// 木オブジェクトを探す
-	m_pTarget = GetScene()->GetGameObject<CWood>(m_pOwner->GetPos());
+	return GetScene()->GetGameObject<CWood>(m_pOwner->GetPos(), vNotTargetIDs);
 }

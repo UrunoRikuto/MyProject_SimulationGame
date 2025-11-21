@@ -10,10 +10,11 @@
 
 /******************************************//*
 	@brief　	| 標的を探す処理
+	@return		| 採取対象オブジェクトのポインタ
 	@note		| 石オブジェクトを探す処理を実装
 *//******************************************/
-void CStoneGatherer_Job::SearchTarget()
+CCollectTarget* CStoneGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTargetIDs)
 {
 	// 石オブジェクトを探す
-	m_pTarget = GetScene()->GetGameObject<CStone>(m_pOwner->GetPos());
+	return GetScene()->GetGameObject<CStone>(m_pOwner->GetPos(), vNotTargetIDs);
 }

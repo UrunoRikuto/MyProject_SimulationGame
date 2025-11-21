@@ -23,6 +23,10 @@ CImguiSystem::CImguiSystem()
 	, m_bCollisionDraw(true)
 	, m_bDebug{ false }
 {
+	// ジェネレーター情報の初期化
+	m_pGenerator.push_back({ "Human" , new CHumanGenerator() });
+	m_pGenerator.push_back({ "Wood" , new CWoodGenerator() });
+	m_pGenerator.push_back({ "Stone" , new CStoneGenerator() });
 }
 
 /****************************************//*
@@ -115,6 +119,7 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Collision)])	DrawCollision();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
 #ifdef _DEBUG
 	DrawDebugSystem();
 #endif
@@ -304,6 +309,7 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("Collision",	&m_bDebug[static_cast<int>(DebugSystemFlag::Collision)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
+	ImGui::Checkbox("Generate",		&m_bDebug[static_cast<int>(DebugSystemFlag::Generate)]);
 
 	ImGui::End();
 }
@@ -393,4 +399,25 @@ void CImguiSystem::DrawDebugLog()
 		),
 		m_DebugLog.end()
 	);
+}
+
+/****************************************//*
+	@brief　	| オブジェクト作成ボタン表示
+*//****************************************/
+void CImguiSystem::DrawCreateObjectButton()
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 100));
+	ImGui::Begin("CreateObject");
+
+	for(int i = 0; i < m_pGenerator.size(); i++)
+	{
+		ImGui::BeginChild(ImGui::GetID((void*)i), ImVec2(180.0f, 30.0f), ImGuiWindowFlags_NoTitleBar);
+		if (ImGui::Button(m_pGenerator[i].m_sName.c_str()))
+		{
+			m_pGenerator[i].m_pGenerator->Notify();
+		}
+		ImGui::EndChild();
+	}
+
+	ImGui::End();
 }

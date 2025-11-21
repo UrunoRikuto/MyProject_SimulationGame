@@ -7,6 +7,9 @@
 #pragma once
 #include "GameObject.h"
 #include "imgui.h"
+#include "Generator.h"
+
+
 
 constexpr ImVec2 ce_f2InspecterSize = ImVec2(250, 30);
 
@@ -24,6 +27,16 @@ private:
 		bool m_bClear;
 	};
 
+	// @brief デバッグ用ジェネレーター情報構造体
+	struct DebugGeneratorInfo
+	{
+		// @brief ジェネレーター名
+		std::string m_sName;
+
+		// @brief ジェネレータータイプ
+		IGenerator* m_pGenerator;
+	};
+
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
@@ -31,6 +44,7 @@ private:
 		Update,
 		FPS,
 		Log,
+		Generate,
 
 		MAX
 	};
@@ -105,6 +119,9 @@ private:
 	// @brief デバックログ表示
 	void DrawDebugLog();
 
+	// @brief オブジェクト生成ボタン表示
+	void DrawCreateObjectButton();
+
 private:
 	// @brief インスタンス
 	static CImguiSystem* m_pInstance;
@@ -114,6 +131,9 @@ private:
 
 	// @brief 選択しているゲームオブジェクト
 	CGameObject* m_pGameObject;
+
+	// @brief 生成ポインタ配列
+	std::vector<DebugGeneratorInfo> m_pGenerator;
 
 	// @brief デバッグ用フラグ配列
 	bool m_bDebug[static_cast<int>(DebugSystemFlag::MAX)];

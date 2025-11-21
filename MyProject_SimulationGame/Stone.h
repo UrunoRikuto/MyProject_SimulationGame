@@ -4,10 +4,10 @@
 	@note	| CGameObjectを継承
 *//**************************************************/
 #pragma once
-#include "GameObject.h"
+#include "CollectTarget.h"
 
 // @brief 石オブジェクトクラス
-class CStone final : public CGameObject
+class CStone final : public CCollectTarget
 {
 public:
 	// @brief コンストラクタ

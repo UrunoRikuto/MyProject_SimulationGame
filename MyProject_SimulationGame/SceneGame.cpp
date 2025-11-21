@@ -37,23 +37,6 @@ void CSceneGame::Init()
 
 	// カメラの種類をゲーム用カメラに設定
 	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);
-
-	// 人間オブジェクトの追加
-	AddGameObject<CHuman>(Tag::GameObject, "Human");
-
-	// 木オブジェクトの追加
-	AddGameObject<CWood>(Tag::GameObject, "Wood");
-	AddGameObject<CWood>(Tag::GameObject, "Wood");
-	AddGameObject<CWood>(Tag::GameObject, "Wood");
-	AddGameObject<CWood>(Tag::GameObject, "Wood");
-	AddGameObject<CWood>(Tag::GameObject, "Wood");
-
-	// 石オブジェクトの追加
-	AddGameObject<CStone>(Tag::GameObject, "Stone");
-	AddGameObject<CStone>(Tag::GameObject, "Stone");
-	AddGameObject<CStone>(Tag::GameObject, "Stone");
-	AddGameObject<CStone>(Tag::GameObject, "Stone");
-	AddGameObject<CStone>(Tag::GameObject, "Stone");
 }
 
 /****************************************//*

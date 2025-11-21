@@ -20,7 +20,8 @@ public:
 private:
 
 	// @brief 標的を探す処理
-	void SearchTarget() override;
+	// @return 採取対象オブジェクトのポインタ
+	CCollectTarget* SearchTarget(std::vector<ObjectID> vNotTargetIDs) override;
 
 };
 

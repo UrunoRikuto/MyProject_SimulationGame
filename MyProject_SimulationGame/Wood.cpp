@@ -12,7 +12,7 @@
 	@brief　	| コンストラクタ
 *//*****************************************/
 CWood::CWood()
-	:CGameObject()
+	:CCollectTarget()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();

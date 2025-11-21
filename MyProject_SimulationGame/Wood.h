@@ -4,10 +4,10 @@
 	@note	| CGameObjectを継承
 *//**************************************************/
 #pragma once
-#include "GameObject.h"
+#include "CollectTarget.h"
 
 // @brief 木オブジェクトクラス
-class CWood final: public CGameObject
+class CWood final: public CCollectTarget
 {
 public:
 	// @brief コンストラクタ

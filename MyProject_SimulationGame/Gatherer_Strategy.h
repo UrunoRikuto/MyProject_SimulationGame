@@ -6,6 +6,7 @@
 *//**************************************************/
 #pragma once
 #include "Collect_Strategy.h"
+#include "CollectTarget.h"
 
 // @brief 探して採取する採取職業クラス
 class CGatherer_Strategy : public CCollect_Strategy
@@ -26,20 +27,18 @@ public:
 	// @brief 仕事処理
 	virtual void DoWork() override;
 
-private:
+protected:
 
 	// @brief 標的を探す処理
-	virtual void SearchTarget() = 0;
+	virtual CCollectTarget* SearchTarget(std::vector<ObjectID> vNotTargetIDs) = 0;
 
 private:
 
 	// @brief 現在の仕事状態
 	WorkState m_eCurrentState = WorkState::SearchAndMove;
 
-protected:
-
 	// @brief 標的にしている採取対象オブジェクトのポインタ
-	CGameObject* m_pTarget = nullptr;
+	CCollectTarget* m_pTarget = nullptr;
 
 };
 
