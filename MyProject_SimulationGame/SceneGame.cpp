@@ -6,10 +6,7 @@
 *//**************************************************/
 #include "SceneGame.h"
 #include "Camera.h"
-#include "TestObject.h"
-#include "Human.h"
-#include "Wood.h"
-#include "Stone.h"
+#include "GeneratorManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -37,6 +34,13 @@ void CSceneGame::Init()
 
 	// カメラの種類をゲーム用カメラに設定
 	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);
+
+	// 生成管理システムの通知処理を実行
+	CGeneratorManager::GetInstance()->AddObserver(*(new CWoodGenerator()));
+	CGeneratorManager::GetInstance()->AddObserver(*(new CStoneGenerator()));
+	// CGeneratorManager::GetInstance()->AddObserver(*(new CHumanGenerator()));
+
+	CGeneratorManager::GetInstance()->NotifyObservers();
 }
 
 /****************************************//*

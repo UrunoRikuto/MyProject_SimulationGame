@@ -142,6 +142,7 @@
     <ClInclude Include="CollisionBase.h" />
     <ClInclude Include="CollisionObb.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="GeneratorManager.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="HumanGenerator.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="CollisionBase.cpp" />
     <ClCompile Include="CollisionObb.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="GeneratorManager.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="HumanGenerator.cpp" />
     <ClCompile Include="ImguiSystem.cpp" />

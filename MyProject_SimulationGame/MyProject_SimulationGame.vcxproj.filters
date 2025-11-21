@@ -294,6 +294,9 @@
     <ClInclude Include="CollectTarget.h">
       <Filter>コードファイル\GameObject\CollectTarget</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratorManager.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -445,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="HumanGenerator.cpp">
       <Filter>コードファイル\System\Generator\Human</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratorManager.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
