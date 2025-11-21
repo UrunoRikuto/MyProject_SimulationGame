@@ -14,7 +14,7 @@
 *//*****************************************/
 void CStoneGenerator::Generate()
 {
-	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]");
+	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]", false);
 
 	GetScene()->AddGameObject<CStone>(Tag::GameObject, "Stone");
 }

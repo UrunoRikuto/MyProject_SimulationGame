@@ -14,7 +14,7 @@
 *//*****************************************/
 void CWoodGenerator::Generate()
 {
-	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]");
+	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
 
 	GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood");
 

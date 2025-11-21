@@ -14,7 +14,7 @@
 *//*****************************************/
 void CHumanGenerator::Generate()
 {
-	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Human]");
+	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Human]", false);
 
 	GetScene()->AddGameObject<CHuman>(Tag::GameObject, "Human");
 }

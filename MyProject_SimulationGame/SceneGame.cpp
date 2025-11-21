@@ -46,6 +46,9 @@ void CSceneGame::Update()
 {
 	// 基底クラスの更新処理
 	CScene::Update();
+
+	// カメラの更新処理
+	CCamera::GetInstance()->Update();
 }
 
 /****************************************//*

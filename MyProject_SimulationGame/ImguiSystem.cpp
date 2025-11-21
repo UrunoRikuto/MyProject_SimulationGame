@@ -218,11 +218,8 @@ void CImguiSystem::DrawCameraParam()
 	CCamera* pCamera = CCamera::GetInstance();
 	CScene* pScene = GetScene();
 
-	if (dynamic_cast<CSceneGame*>(pScene))pCamera->SetCameraKind(CameraKind::CAM_GAME);
-
 	if (!pCamera) return;
 
-	pCamera->SetCameraKind(CameraKind::CAM_DEBUG);
 	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 400));
 	ImGui::SetNextWindowSize(ImVec2(280, 250));
 	ImGui::Begin("Camera");
