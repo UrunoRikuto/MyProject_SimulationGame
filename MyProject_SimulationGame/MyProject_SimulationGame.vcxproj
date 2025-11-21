@@ -136,7 +136,10 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="FieldGrid.h" />
     <ClInclude Include="CollectTarget.h" />
+    <ClInclude Include="FieldCell.h" />
+    <ClInclude Include="FieldManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
     <ClInclude Include="CollisionBase.h" />
@@ -196,6 +199,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="FieldGrid.cpp" />
+    <ClCompile Include="FieldCell.cpp" />
+    <ClCompile Include="FieldManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="CollisionBase.cpp" />
     <ClCompile Include="CollisionObb.cpp" />

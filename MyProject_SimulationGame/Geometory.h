@@ -55,6 +55,9 @@ public:
 	// @brief ” •`‰æ
 	static void DrawBox();
 
+	// @brief ” •`‰æ(ƒƒCƒ„[ƒtƒŒ[ƒ€)
+	static void DrawBox(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT4 In_Color);
+
 	// @brief ‰~’Œ•`‰æ
 	static void DrawCylinder();
 

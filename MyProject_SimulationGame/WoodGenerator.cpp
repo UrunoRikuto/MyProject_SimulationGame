@@ -14,8 +14,18 @@
 *//*****************************************/
 void CWoodGenerator::Generate()
 {
+	// 木を配置可能な未使用セルを取得
+	auto cells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells(CFieldCell::CellType::TREE, false);
+
+	// 配置可能なセルがなければ終了
+	if (cells.empty()) return;
+
+	// ランダムにセルを選出
+	int randIndex = rand() % cells.size();
+
+	// 木オブジェクトを生成し、選出したセルに配置
+	GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood")->SetCreatePos(cells[randIndex]);
+
+	// デバッグログの追加
 	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
-
-	GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood");
-
 }

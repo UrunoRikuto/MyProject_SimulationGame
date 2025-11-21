@@ -36,12 +36,6 @@ void CStone::Init()
 	// 基底クラスの初期化処理
 	CGameObject::Init();
 
-	// (仮)
-	float fXPos = GetRandOfRange(-20.0f, 20.0f);
-	float fZPos = GetRandOfRange(-20.0f, 20.0f);
-
-	m_tParam.m_f3Pos = { fXPos, m_tParam.m_f3Size.y / 2.0f, fZPos };
-
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("Stone");

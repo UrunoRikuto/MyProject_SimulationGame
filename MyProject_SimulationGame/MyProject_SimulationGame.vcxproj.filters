@@ -121,6 +121,9 @@
     <Filter Include="コードファイル\GameObject\CollectTarget\Wood">
       <UniqueIdentifier>{057adf7b-b29c-4d24-a867-8cdd31401c2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Field">
+      <UniqueIdentifier>{d4762aec-6cfc-492b-b6fb-c1f73269ba05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -297,6 +300,15 @@
     <ClInclude Include="GeneratorManager.h">
       <Filter>コードファイル\System\Generator</Filter>
     </ClInclude>
+    <ClInclude Include="FieldGrid.h">
+      <Filter>コードファイル\System\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldCell.h">
+      <Filter>コードファイル\System\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldManager.h">
+      <Filter>コードファイル\System\Field</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -451,6 +463,15 @@
     </ClCompile>
     <ClCompile Include="GeneratorManager.cpp">
       <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldGrid.cpp">
+      <Filter>コードファイル\System\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldCell.cpp">
+      <Filter>コードファイル\System\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldManager.cpp">
+      <Filter>コードファイル\System\Field</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

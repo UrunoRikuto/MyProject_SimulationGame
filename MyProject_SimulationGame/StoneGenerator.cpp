@@ -14,7 +14,18 @@
 *//*****************************************/
 void CStoneGenerator::Generate()
 {
-	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]", false);
+	// 岩を配置可能な未使用セルを取得
+	auto cells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells(CFieldCell::CellType::ROCK, false);
 
-	GetScene()->AddGameObject<CStone>(Tag::GameObject, "Stone");
+	// 配置可能なセルがなければ終了
+	if (cells.empty()) return;
+
+	// ランダムにセルを選出
+	int randIndex = rand() % cells.size();
+
+	// 石オブジェクトを生成し、選出したセルに配置
+	GetScene()->AddGameObject<CStone>(Tag::GameObject, "Stone")->SetCreatePos(cells[randIndex]);
+
+	// デバッグログの追加
+	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]", false);
 }

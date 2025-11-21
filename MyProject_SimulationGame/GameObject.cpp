@@ -156,7 +156,7 @@ int CGameObject::Inspecter(bool isEnd)
 	/***** 名前表示 *****/
 
     /***** 位置、サイズ、回転の表示 *****/
-    ImGui::BeginChild(ImGui::GetID((void*)nImGuiItemCount), ImVec2(250, 500), ImGuiWindowFlags_NoTitleBar);
+    ImGui::BeginChild(ImGui::GetID(nImGuiItemCount), ImVec2(250, 500), ImGuiWindowFlags_NoTitleBar);
 
 	// 更新処理が停止している場合は編集可能にする
     if (CImguiSystem::GetInstance()->IsUpdate())

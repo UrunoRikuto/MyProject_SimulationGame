@@ -118,6 +118,68 @@ void Geometory::DrawBox()
 }
 
 /*************************//*
+@brief  | 箱描画(ワイヤーフレーム)
+@param[in]  | In_vCenter：箱の中心座標
+@param[in]  | In_vSize：箱のサイズ
+@param[in]  | In_Color：箱の色
+*//*************************/
+void Geometory::DrawBox(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT4 In_Color)
+{
+	// 頂点データ作成
+	DirectX::XMFLOAT3 halfSize = { In_vSize.x / 2
+		, In_vSize.y / 2
+		, In_vSize.z / 2 };
+
+	// 8頂点分
+	DirectX::XMFLOAT3 vertex[8] = {
+		{In_vCenter.x - halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z - halfSize.z }, // 0
+		{In_vCenter.x - halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z - halfSize.z}, // 1
+		{In_vCenter.x + halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z - halfSize.z}, // 2
+		{In_vCenter.x + halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z - halfSize.z}, // 3
+		{In_vCenter.x - halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z + halfSize.z}, // 4
+		{In_vCenter.x - halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z + halfSize.z}, // 5
+		{In_vCenter.x + halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z + halfSize.z}, // 6
+		{In_vCenter.x + halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z + halfSize.z}, // 7
+	};
+
+	// 前面
+	AddLine(vertex[0], vertex[1], In_Color);
+	AddLine(vertex[1], vertex[2], In_Color);
+	AddLine(vertex[2], vertex[3], In_Color);
+	AddLine(vertex[3], vertex[0], In_Color);
+	// 背面
+	AddLine(vertex[4], vertex[5], In_Color);
+	AddLine(vertex[5], vertex[6], In_Color);
+	AddLine(vertex[6], vertex[7], In_Color);
+	AddLine(vertex[7], vertex[4], In_Color);
+	// 左側面
+	AddLine(vertex[0], vertex[4], In_Color);
+	AddLine(vertex[1], vertex[5], In_Color);
+	// 右側面
+	AddLine(vertex[2], vertex[6], In_Color);
+	AddLine(vertex[3], vertex[7], In_Color);
+	// 上面
+	AddLine(vertex[0], vertex[3], In_Color);
+	AddLine(vertex[4], vertex[7], In_Color);
+	// 下面
+	AddLine(vertex[1], vertex[2], In_Color);
+	AddLine(vertex[5], vertex[6], In_Color);
+	// 描画
+	DrawLines();
+
+
+
+}
+
+/*************************//*
 @brief  | 円柱描画
 *//*************************/
 void Geometory::DrawCylinder()

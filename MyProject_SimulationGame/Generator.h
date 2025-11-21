@@ -7,6 +7,7 @@
 *//**************************************************/
 #pragma once
 #include "Observer.h"
+#include "FieldManager.h"
 
 // @brief ジェネレーターインターフェース
 class IGenerator : public IObserver

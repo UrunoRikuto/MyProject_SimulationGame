@@ -1,0 +1,53 @@
+/**************************************************//*
+	@file	| FieldCell.cpp
+	@brief	| フィールドセルクラスのcppファイル
+	@note	| フィールドを構成するセルの情報を管理
+*//**************************************************/
+#include "FieldCell.h"
+#include "Geometory.h"
+#include "Camera.h"
+
+/****************************************//*
+	@brief　	| コンストラクタ
+	@param		| In_eType	セルタイプ
+*//****************************************/
+CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In_vIndex)
+	: m_eCellType(CellType::EMPTY)
+	, m_bUse(false)
+	, m_vPos(In_vPos)
+	, m_vIndex(In_vIndex)
+{
+}
+
+/****************************************//*
+	@brief　	| デストラクタ
+*//****************************************/
+CFieldCell::~CFieldCell()
+{
+}
+
+/****************************************//*
+	@brief　	| デバック描画
+*//****************************************/
+void CFieldCell::DebugDraw()
+{
+	DirectX::XMFLOAT4 color;
+
+	switch (m_eCellType)
+	{
+	case CFieldCell::CellType::EMPTY:
+		// 緑色
+		color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+		break;
+	case CFieldCell::CellType::TREE:
+		// 茶色
+		color = DirectX::XMFLOAT4(0.55f, 0.27f, 0.07f, 1.0f);
+		break;
+	case CFieldCell::CellType::ROCK:
+		// 灰色
+		color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+		break;
+	}
+
+	Geometory::DrawBox(m_vPos, CELL_SIZE, color);
+}

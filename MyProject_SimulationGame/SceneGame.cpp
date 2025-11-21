@@ -7,6 +7,7 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "GeneratorManager.h"
+#include "FieldManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -40,7 +41,8 @@ void CSceneGame::Init()
 	CGeneratorManager::GetInstance()->AddObserver(*(new CStoneGenerator()));
 	// CGeneratorManager::GetInstance()->AddObserver(*(new CHumanGenerator()));
 
-	CGeneratorManager::GetInstance()->NotifyObservers();
+	// フィールド管理システムの初期化
+	CFieldManager::GetInstance()->AssignFieldCellType();
 }
 
 /****************************************//*

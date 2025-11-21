@@ -355,6 +355,15 @@ void CImguiSystem::DrawCollision()
 	{
 		CollisionVec[i]->Draw();
 	}
+
+	auto fieldgrid = CFieldManager::GetInstance()->GetFieldGrid();
+	for(int i = 0; i < fieldgrid->GetFieldCells().size(); i++)
+	{
+		for(int j = 0; j < fieldgrid->GetFieldCells()[i].size(); j++)
+		{
+			fieldgrid->GetFieldCells()[i][j]->DebugDraw();
+		}
+	}
 }
 
 /****************************************//*

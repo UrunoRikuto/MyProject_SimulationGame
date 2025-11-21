@@ -18,5 +18,6 @@ public:
 
 	// @brief ‰Šú‰»ˆ—
 	virtual void Init() override;
+
 };
 
