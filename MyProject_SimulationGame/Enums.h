@@ -25,3 +25,24 @@ enum class TransitionType
 	Fade,		// フェード
 	MAX,
 };
+
+/*************************//*
+@brief		|頂点シェーダーの種類
+*//*************************/
+enum class VSType
+{
+	None,
+	Object,
+	Sprite,
+	MAX
+};
+/*************************//*
+@brief		|ピクセルシェーダーの種類
+*//*************************/
+enum class PSType
+{
+	None,
+	TexColor,
+	Sprite,
+	MAX
+};

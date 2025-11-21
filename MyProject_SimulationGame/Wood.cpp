@@ -48,13 +48,11 @@ void CWood::Init()
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader();
-	pVS->Load(SHADER_PATH("VS_Object.cso"));
+	VertexShader* pVS = new VertexShader(VSType::Object);
 	pModelRenderer->SetVertexShader(pVS);
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader();
-	pPS->Load(SHADER_PATH("PS_TexColor.cso"));
+	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 
 

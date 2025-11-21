@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "Enums.h"
 
 // @brief シェーダーの基本クラス
 class Shader
@@ -82,7 +83,7 @@ class VertexShader : public Shader
 {
 public:
 	// @brief コンストラクタ
-	VertexShader();
+	VertexShader(VSType In_eType = VSType::None);
 
 	// @brief デストラクタ
 	~VertexShader();
@@ -101,6 +102,9 @@ private:
 	ID3D11VertexShader* m_pVS;
 	// @brief 入力レイアウト
 	ID3D11InputLayout* m_pInputLayout;
+public:
+	// @brief 種類
+	VSType m_eType;
 };
 
 // @brief ピクセルシェーダ
@@ -108,7 +112,7 @@ class PixelShader : public Shader
 {
 public:
 	// @brief コンストラクタ
-	PixelShader();
+	PixelShader(PSType In_eType = PSType::None);
 
 	// @brief デストラクタ
 	~PixelShader();
@@ -124,4 +128,7 @@ protected:
 private:
 	// @brief ピクセルシェーダオブジェクト
 	ID3D11PixelShader* m_pPS;
+public:
+	// @brief 種類
+	PSType m_eType;
 };

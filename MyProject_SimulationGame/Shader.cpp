@@ -180,11 +180,21 @@ HRESULT Shader::Make(void* pData, UINT size)
 /*************************//*
 @brief  | コンストラクタ
 *//*************************/
-VertexShader::VertexShader()
+VertexShader::VertexShader(VSType In_eType)
 	: Shader(Shader::Vertex)
 	, m_pVS(nullptr)
 	, m_pInputLayout(nullptr)
+	, m_eType(In_eType)
 {
+	switch (m_eType)
+	{
+	case VSType::Object:
+		Load(SHADER_PATH("VS_Object.cso"));
+		break;
+	case VSType::Sprite:
+		Load(SHADER_PATH("VS_Sprite.cso"));
+		break;
+	}
 }
 
 /*************************//*
@@ -303,10 +313,20 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 /*************************//*
 @brief  | コンストラクタ
 *//*************************/
-PixelShader::PixelShader()
+PixelShader::PixelShader(PSType In_eType)
 	: Shader(Shader::Pixel)
 	, m_pPS(nullptr)
+	, m_eType(In_eType)
 {
+	switch (m_eType)
+	{
+	case PSType::TexColor:
+		Load(SHADER_PATH("PS_TexColor.cso"));
+		break;
+	case PSType::Sprite:
+		Load(SHADER_PATH("PS_Sprite.cso"));
+		break;
+	}
 }
 
 /*************************//*

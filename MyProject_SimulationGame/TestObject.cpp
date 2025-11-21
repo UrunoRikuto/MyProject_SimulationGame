@@ -39,13 +39,13 @@ void CTestObject::Init()
 	pModel->SetKey("TestModel");
 	// 描画用パラメータの設定
 	pModel->SetRendererParam(m_tParam);
+
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader();
-	pVS->Load(SHADER_PATH("VS_Object.cso"));
+	VertexShader* pVS = new VertexShader(VSType::Object);
 	pModel->SetVertexShader(pVS);
+
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader();
-	pPS->Load(SHADER_PATH("PS_TexColor.cso"));
+	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModel->SetPixelShader(pPS);
 
 	// CollisionOBBコンポーネントの設定

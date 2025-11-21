@@ -111,7 +111,7 @@ public:
 	T* AddComponent()
 	{
         // コンポーネントをインスタンス化し、自身を紐付ける
-		T* pComponent = new T(this);
+		T* pComponent = new(std::nothrow) T(this);
 
         // コンポーネントのリストに追加する
 		m_pComponent_List.push_back(pComponent);

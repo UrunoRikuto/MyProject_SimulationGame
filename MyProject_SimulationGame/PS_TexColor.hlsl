@@ -1,9 +1,7 @@
 struct PS_IN
 {
     float4 pos : SV_POSITION;
-    float3 normal : NORMAL0;
     float2 uv : TEXCOORD0;
-    float4 color : COLOR0;
 };
 
 Texture2D tex : register(t0);

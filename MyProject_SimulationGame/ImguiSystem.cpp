@@ -24,9 +24,9 @@ CImguiSystem::CImguiSystem()
 	, m_bDebug{ false }
 {
 	// ジェネレーター情報の初期化
-	m_pGenerator.push_back({ "Human" , new CHumanGenerator() });
-	m_pGenerator.push_back({ "Wood" , new CWoodGenerator() });
-	m_pGenerator.push_back({ "Stone" , new CStoneGenerator() });
+	m_pGenerator.push_back({ "Human" , new(std::nothrow) CHumanGenerator() });
+	m_pGenerator.push_back({ "Wood"  , new(std::nothrow) CWoodGenerator() });
+	m_pGenerator.push_back({ "Stone" , new(std::nothrow) CStoneGenerator() });
 }
 
 /****************************************//*
