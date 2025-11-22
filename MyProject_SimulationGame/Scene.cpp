@@ -52,9 +52,6 @@ void CScene::Uninit()
 
 	// リストのクリア
     m_tIDVec.clear();
-
-	// 衝突判定用コンポーネントリストのクリア
-     m_pCollisionVec.clear();
 }
 
 /****************************************//*
@@ -70,42 +67,6 @@ void CScene::Update()
         {
 			// アクティブ状態のオブジェクトのみ更新
             obj->Update();
-        }
-    }
-
-    // 衝突判定処理
-    for (int i = 0; i < m_pCollisionVec.size(); i++)
-    {
-        CCollisionBase* pCollisionA = m_pCollisionVec[i];
-        if (!pCollisionA->GetActive()) continue;
-        for (int j = i + 1; j < m_pCollisionVec.size(); j++)
-        {
-            CCollisionBase* pCollisionB = m_pCollisionVec[j];
-            if (!pCollisionB->GetActive()) continue;
-            
-            if (pCollisionA->IsHit(pCollisionB))
-            {
-                CGameObject* pObjA = pCollisionA->GetGameObject();
-                CGameObject* pObjB = pCollisionB->GetGameObject();
-                pObjA->OnColliderHit(pCollisionB, pCollisionA->GetTag());
-                pObjB->OnColliderHit(pCollisionA, pCollisionB->GetTag());
-            }
-        }
-    }
-
-	// 破棄予定のオブジェクトの削除
-    for (auto itr = m_pCollisionVec.begin(); itr != m_pCollisionVec.end();)
-    {
-		// 衝突判定用コンポーネントが紐付けているゲームオブジェクトが破棄予定か確認
-        if ((*itr)->GetGameObject()->IsDestroy())
-        {
-			// 破棄予定の場合はリストから削除
-            itr = m_pCollisionVec.erase(itr);
-        }
-        else
-        {
-			// 次の要素へ進む
-            itr++;
         }
     }
 

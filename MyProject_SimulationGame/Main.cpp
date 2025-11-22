@@ -48,6 +48,8 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	if (FAILED(hr)) { return hr; }
 	g_hWnd = hWnd;
 
+	srand(timeGetTime());
+
 	// Imgui初期化
 	CImguiSystem::GetInstance()->Init();
 
@@ -120,7 +122,6 @@ void Update()
 {
 	// 入力の更新
 	UpdateInput();
-	srand(timeGetTime());
 
 	// シーンの更新
 	if (CImguiSystem::GetInstance()->IsUpdate())

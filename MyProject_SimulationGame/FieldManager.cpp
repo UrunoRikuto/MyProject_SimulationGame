@@ -87,6 +87,7 @@ void CFieldManager::AssignFieldCellType()
 			noiseValue = (noiseValue + 1.0f) / 2.0f;
 
 			// ノイズ値に基づいてセルタイプを決定
+			// 最大値：1.0f、最小値：0.0f
 			if (noiseValue < 0.4f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
@@ -95,7 +96,10 @@ void CFieldManager::AssignFieldCellType()
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
 			}
-			else fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
+			else
+			{
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
+			}
 		}
 	}
 }

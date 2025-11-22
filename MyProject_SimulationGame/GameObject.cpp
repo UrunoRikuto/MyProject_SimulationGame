@@ -80,20 +80,8 @@ void CGameObject::Draw()
         if (!comp) continue;
         // 描画用コンポーネントを使用する場合、汎用パラメータをコンポーネントに渡す
 		if (dynamic_cast<CRendererComponent*>(comp))dynamic_cast<CRendererComponent*>(comp)->SetRendererParam(m_tParam);
-        // 当たり判定描画はSceneで行う
-        if (dynamic_cast<CCollisionBase*>(comp)) continue;
 		comp->Draw();
 	}	
-}
-
-/****************************************//*
-    @brief　	| 他のオブジェクトと衝突した時の処理
-    @param      | other：衝突先のオブジェクト
-    @param      | thisTag：衝突したオブジェクトのコリジョン識別用タグ
-*//****************************************/
-void CGameObject::OnColliderHit(CCollisionBase* other, std::string thisTag)
-{
-
 }
 
 /****************************************//*

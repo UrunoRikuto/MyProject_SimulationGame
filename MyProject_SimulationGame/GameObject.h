@@ -8,7 +8,6 @@
 #include <vector>
 #include <list>
 #include "RendererComponent.h"
-#include "CollisionBase.h"
 
 // @brief オブジェクトタグ
 enum class Tag
@@ -69,11 +68,6 @@ public:
 
 	// @brief 描画処理
 	virtual void Draw();
-
-	// @brief 他のオブジェクトと衝突した時の処理
-	// @param other：衝突先のオブジェクト
-	// @param thisTag：衝突したオブジェクトのコリジョン識別用タグ
-	 virtual void OnColliderHit(CCollisionBase* other, std::string thisTag = "None");
 
 	// @brief オブジェクトが破棄された時の処理
     virtual void OnDestroy();

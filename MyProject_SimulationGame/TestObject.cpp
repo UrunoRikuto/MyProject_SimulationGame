@@ -5,7 +5,6 @@
 *//**************************************************/
 #include "TestObject.h"
 #include "ModelRenderer.h"
-#include "CollisionOBB.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -15,9 +14,6 @@ CTestObject::CTestObject()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
-
-	// CollisionOBBコンポーネントの追加
-	AddComponent<CCollisionObb>();
 }
 
 /*****************************************//*
@@ -47,12 +43,6 @@ void CTestObject::Init()
 	// ピクセルシェーダーの設定
 	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModel->SetPixelShader(pPS);
-
-	// CollisionOBBコンポーネントの設定
-	CCollisionObb* pCollision = GetComponent<CCollisionObb>();
-	// コリジョン情報の設定
-	pCollision->SetCenter(m_tParam.m_f3Pos);
-	pCollision->SetSize(m_tParam.m_f3Size);
 }
 
 /*****************************************//*

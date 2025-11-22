@@ -20,7 +20,6 @@ constexpr float ce_fCharaSize = 30.0f;
 CImguiSystem::CImguiSystem()
 	: m_pGameObject(nullptr)
 	, m_bUpdate(true)
-	, m_bCollisionDraw(true)
 	, m_bDebug{ false }
 {
 	// ジェネレーター情報の初期化
@@ -116,7 +115,6 @@ void CImguiSystem::Draw()
 	DrawInspecter();
 
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Collision)])	DrawCollision();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
@@ -188,12 +186,12 @@ void CImguiSystem::DrawHierarchy()
 		ObjectID id;
 		id.m_sName = name;
 
-		if (ImGui::CollapsingHeader(std::string("[" + name + "]").c_str()))
+		if (ImGui::CollapsingHeader(std::string("[" + name + "]:" + std::to_string(nItrCount)).c_str()))
 		{
 			for (int i = 0; i < nItrCount; i++)
 			{
 				std::string sButtonName = name;
-				if (i != 0) sButtonName += std::to_string(i);
+				sButtonName += std::to_string(i + 1);
 				id.m_nSameCount = i;
 				if (ImGui::Button(sButtonName.c_str()))
 				{
@@ -303,7 +301,6 @@ void CImguiSystem::DrawDebugSystem()
 
 	ImGui::Begin("DebugSystem");
 	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
-	ImGui::Checkbox("Collision",	&m_bDebug[static_cast<int>(DebugSystemFlag::Collision)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
 	ImGui::Checkbox("Generate",		&m_bDebug[static_cast<int>(DebugSystemFlag::Generate)]);
@@ -334,36 +331,6 @@ void CImguiSystem::DrawUpdateTick()
 	}
 
 	ImGui::End();
-}
-
-/****************************************//*
-	@brief　	| 当たり判定を表示するチェックボックス表示
-*//****************************************/
-void CImguiSystem::DrawCollision()
-{
-	ImGui::SetNextWindowSize(ImVec2(280, 100));
-	ImGui::Begin("Collision");
-
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(ce_f2InspecterSize), ImGuiWindowFlags_NoTitleBar);
-	ImGui::Checkbox("DrawCollision", &m_bCollisionDraw);
-	ImGui::EndChild();
-	ImGui::End();
-	if (!m_bCollisionDraw)return;
-
-	auto CollisionVec = GetScene()->GetCollisionVec();
-	for (int i = 0; i < CollisionVec.size(); i++)
-	{
-		CollisionVec[i]->Draw();
-	}
-
-	auto fieldgrid = CFieldManager::GetInstance()->GetFieldGrid();
-	for(int i = 0; i < fieldgrid->GetFieldCells().size(); i++)
-	{
-		for(int j = 0; j < fieldgrid->GetFieldCells()[i].size(); j++)
-		{
-			fieldgrid->GetFieldCells()[i][j]->DebugDraw();
-		}
-	}
 }
 
 /****************************************//*
@@ -417,12 +384,10 @@ void CImguiSystem::DrawCreateObjectButton()
 
 	for(int i = 0; i < m_pGenerator.size(); i++)
 	{
-		ImGui::BeginChild(ImGui::GetID((void*)i), ImVec2(180.0f, 30.0f), ImGuiWindowFlags_NoTitleBar);
 		if (ImGui::Button(m_pGenerator[i].m_sName.c_str()))
 		{
 			m_pGenerator[i].m_pGenerator->Notify();
 		}
-		ImGui::EndChild();
 	}
 
 	ImGui::End();

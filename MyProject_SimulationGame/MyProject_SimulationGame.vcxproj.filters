@@ -52,9 +52,6 @@
     <Filter Include="コードファイル\Component">
       <UniqueIdentifier>{17c5a446-26c1-4280-8a98-dac8104b60a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\Component\Collision">
-      <UniqueIdentifier>{1536ce56-cdec-4e19-b3b2-ff1de18fa395}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\Component\Renderer">
       <UniqueIdentifier>{9834039e-d4dd-4ec0-8ed3-abfeceb9a74c}</UniqueIdentifier>
     </Filter>
@@ -185,12 +182,6 @@
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>コードファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionBase.h">
-      <Filter>コードファイル\Component\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionObb.h">
-      <Filter>コードファイル\Component\Collision</Filter>
     </ClInclude>
     <ClInclude Include="RendererComponent.h">
       <Filter>コードファイル\Component\Renderer</Filter>
@@ -373,12 +364,6 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>コードファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionBase.cpp">
-      <Filter>コードファイル\Component\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionObb.cpp">
-      <Filter>コードファイル\Component\Collision</Filter>
     </ClCompile>
     <ClCompile Include="RendererComponent.cpp">
       <Filter>コードファイル\Component\Renderer</Filter>

@@ -7,7 +7,6 @@
 #include "GameObject.h"
 #include <array>
 #include <list>
-#include "CollisionBase.h"
 
 // @brief シーンベースクラス
 class CScene
@@ -72,16 +71,6 @@ public:
 
 		// ゲームオブジェクトにタグを設定
         gameObject->SetTag(inTag);
-
-		// 衝突判定用コンポーネントリストに追加
-        std::list<CCollisionBase*> pCollisionList = gameObject->GetSameComponents<CCollisionBase>();
-
-		// 衝突判定用コンポーネントをシーンのリストに追加
-        for (auto itr : pCollisionList)
-        {
-			// シーンの衝突判定用コンポーネントリストに追加
-            m_pCollisionVec.push_back(itr);
-        }
 
 		// 追加したゲームオブジェクトを返す
 		return gameObject;
@@ -280,10 +269,6 @@ public:
 	// @return ゲームオブジェクトリストの配列
     std::array<std::list<CGameObject*>, (int)Tag::Max> GetGameObjectList();
 
-	// @brief 衝突判定用コンポーネントリストの取得
-	// @return 衝突判定用コンポーネントリストのベクター
-    std::vector<CCollisionBase*> GetCollisionVec() { return m_pCollisionVec; }
-
 	// @brief フェード中かどうかの設定・取得
 	// @param isFade：フェード中かどうか
     void SetIsFade(bool isFade) { m_bFade = isFade; }
@@ -295,9 +280,6 @@ public:
 protected:
 	// @brief シーン内のゲームオブジェクトリスト
     std::array<std::list<CGameObject*>,(int)Tag::Max> m_pGameObject_List;
-
-	// @brief 衝突判定用のコンポーネントリスト
-    std::vector<CCollisionBase*> m_pCollisionVec;
 
 private:
 	// @brief シーン内の全てのオブジェクトIDリスト

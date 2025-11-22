@@ -5,7 +5,6 @@
 *//**************************************************/
 #include "Wood.h"
 #include "ModelRenderer.h"
-#include "CollisionObb.h"
 #include "Oparation.h"
 
 /*****************************************//*
@@ -17,9 +16,6 @@ CWood::CWood()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
-
-	// OBBコリジョンコンポーネントの追加
-	AddComponent<CCollisionObb>();
 }
 
 /*****************************************//*
@@ -49,12 +45,4 @@ void CWood::Init()
 	// ピクセルシェーダーの設定
 	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
-
-
-	// OBBコリジョンコンポーネントの設定
-	CCollisionObb* pCollisionObb = GetComponent<CCollisionObb>();
-	pCollisionObb->SetTag("Wood");
-	pCollisionObb->SetCenter(m_tParam.m_f3Pos);
-	pCollisionObb->SetSize(m_tParam.m_f3Size);
-	pCollisionObb->SetSizeScale({ 1.0f, 2.0f, 1.0f });
 }
