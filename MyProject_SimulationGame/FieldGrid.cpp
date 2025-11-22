@@ -6,8 +6,8 @@
 #include "FieldGrid.h"
 
 // 定数定義
-constexpr int GridSizeX = 20;	// グリッドのXサイズ
-constexpr int GridSizeY = 20;	// グリッドのYサイズ
+constexpr int GridSizeX = 40;	// グリッドのXサイズ
+constexpr int GridSizeY = 40;	// グリッドのYサイズ
 
 
 /****************************************//*
@@ -24,17 +24,18 @@ CFieldGrid::CFieldGrid(const DirectX::XMFLOAT3 In_vPos)
 
 	// フィールドセル配列のサイズ設定
 	m_pFieldCells.resize(GridSizeX);
-	for (int i = 0; i < GridSizeX; ++i)
+	for (int x = 0; x < GridSizeX; ++x)
 	{
-		m_pFieldCells[i].resize(GridSizeY);
+		m_pFieldCells[x].resize(GridSizeY);
 	}
+
 	// フィールドセルの2次元配列の動的確保
-	for(int i = 0; i < GridSizeX; ++i)
+	for(int x = 0; x < GridSizeX; ++x)
 	{
-		for(int j = 0; j < GridSizeY; ++j)
+		for(int y = 0; y < GridSizeY; ++y)
 		{
-			CFieldCell* NewCell = new CFieldCell(StartPos, { i,j });
-			m_pFieldCells[i][j] = NewCell;
+			CFieldCell* NewCell = new CFieldCell(StartPos, { x,y });
+			m_pFieldCells[x][y] = NewCell;
 
 			// Z方向にセルサイズ分移動
 			StartPos.z += CFieldCell::CELL_SIZE.z;
@@ -51,15 +52,16 @@ CFieldGrid::CFieldGrid(const DirectX::XMFLOAT3 In_vPos)
 *//****************************************/
 CFieldGrid::~CFieldGrid()
 {
-	for(int i = m_pFieldCells.size() - 1; i >= 0; --i)
+	for(int x = m_pFieldCells.size() - 1; x >= 0; --x)
 	{
-		for(int j = m_pFieldCells[i].size() - 1; j >= 0; --j)
+		for(int y = m_pFieldCells[x].size() - 1; y >= 0; --y)
 		{
-			delete m_pFieldCells[i][j];
-			m_pFieldCells[i][j] = nullptr;
+			delete m_pFieldCells[x][y];
+			m_pFieldCells[x][y] = nullptr;
 		}
-		m_pFieldCells[i].clear();
+		m_pFieldCells[x].clear();
 	}
+	m_pFieldCells.clear();
 }
 
 /****************************************//*
@@ -72,16 +74,16 @@ std::vector<CFieldCell*> CFieldGrid::GetFieldCells(CFieldCell::CellType In_Type,
 	// セルタイプに一致するフィールドセルの配列
 	std::vector<CFieldCell*> FieldCells;
 
-	for(int i = 0; i < m_pFieldCells.size(); ++i)
+	for(int x = 0; x < m_pFieldCells.size(); ++x)
 	{
-		for(int j = 0; j < m_pFieldCells[i].size(); ++j)
+		for(int y = 0; y < m_pFieldCells[x].size(); ++y)
 		{
 			// セルタイプが一致した場合
-			if(m_pFieldCells[i][j]->GetCellType() == In_Type)
+			if(m_pFieldCells[x][y]->GetCellType() == In_Type)
 			{
 				// 使用状態が一致した場合
-				if (m_pFieldCells[i][j]->IsUse() == In_Use)
-					FieldCells.push_back(m_pFieldCells[i][j]);
+				if (m_pFieldCells[x][y]->IsUse() == In_Use)
+					FieldCells.push_back(m_pFieldCells[x][y]);
 			}
 		}
 	}

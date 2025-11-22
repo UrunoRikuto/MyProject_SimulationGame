@@ -31,7 +31,7 @@ CFieldCell::~CFieldCell()
 *//****************************************/
 void CFieldCell::DebugDraw()
 {
-	DirectX::XMFLOAT4 color;
+	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	switch (m_eCellType)
 	{
@@ -49,5 +49,5 @@ void CFieldCell::DebugDraw()
 		break;
 	}
 
-	Geometory::DrawBox(m_vPos, CELL_SIZE, color);
+	Geometory::DrawPlane(m_vPos, CELL_SIZE, DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f), color);
 }

@@ -5,6 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #include "FieldManager.h"
+#include "PerlinNoice.h"
 
 //-- 静的メンバ変数の初期化 --//
 CFieldManager* CFieldManager::m_pInstance = nullptr;
@@ -62,18 +63,39 @@ void CFieldManager::ReleaseInstance()
 *//*****************************************/
 void CFieldManager::AssignFieldCellType()
 {
+	float scale = 0.1f; // ノイズのスケール
+
+	// シード値を現在の時間で初期化
+	unsigned int seed = static_cast<unsigned int>(timeGetTime()); 
+
+	// パーリンノイズ生成クラスのインスタンス
+	PerlinNoise perlinNoise(seed);
+
 	// フィールドセルの2次元配列を取得
 	auto fieldCells = m_pFieldGrid->GetFieldCells();
 
+
 	// 各フィールドセルに対してタイプをランダムに割り当てる
-	for (auto& row : fieldCells)
+	for(int x = 0; x < fieldCells.size(); ++x)
 	{
-		// 各行のセルに対して処理
-		for (auto& cell : row)
+		for(int y = 0; y < fieldCells[x].size(); ++y)
 		{
-			// ランダムにセルタイプを選出
-			int randType = rand() % static_cast<int>(CFieldCell::CellType::MAX);
-			cell->SetCellType(static_cast<CFieldCell::CellType>(randType));
+			// パーリンノイズの値を取得
+			float noiseValue = perlinNoise.noise(x * scale, y * scale);
+
+			// 正規化 0.0f ～ 1.0f に変換
+			noiseValue = (noiseValue + 1.0f) / 2.0f;
+
+			// ノイズ値に基づいてセルタイプを決定
+			if (noiseValue < 0.4f)
+			{
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
+			}
+			else if (noiseValue < 0.6f)
+			{
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
+			}
+			else fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
 		}
 	}
 }

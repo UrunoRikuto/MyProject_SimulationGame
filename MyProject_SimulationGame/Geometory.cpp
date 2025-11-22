@@ -180,6 +180,57 @@ void Geometory::DrawBox(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize
 }
 
 /*************************//*
+@brief		| 板描画
+@param[in]  | In_vCenter：板の中心座標
+@param[in]  | In_vSize：板のサイズ
+@param[in]  | In_vDir：板の法線方向
+@param[in]  | In_Color：板の色
+*//*************************/
+void Geometory::DrawPlane(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT3 In_vDir, DirectX::XMFLOAT4 In_Color)
+{
+	DirectX::XMFLOAT3 halfSize = { In_vSize.x / 2
+		, In_vSize.y / 2
+		, In_vSize.z / 2 };
+
+	if(In_vDir.y != 0.0f)
+	{
+		// Y軸方向
+		DirectX::XMFLOAT3 vertex[4] = {
+			{In_vCenter.x - halfSize.x, In_vCenter.y
+			, In_vCenter.z + halfSize.z }, // 0
+			{In_vCenter.x - halfSize.x, In_vCenter.y
+			, In_vCenter.z - halfSize.z}, // 1
+			{In_vCenter.x + halfSize.x, In_vCenter.y
+			, In_vCenter.z - halfSize.z}, // 2
+			{In_vCenter.x + halfSize.x, In_vCenter.y
+			, In_vCenter.z + halfSize.z}, // 3
+		};
+		AddLine(vertex[0], vertex[1], In_Color);
+		AddLine(vertex[1], vertex[2], In_Color);
+		AddLine(vertex[2], vertex[3], In_Color);
+		AddLine(vertex[3], vertex[0], In_Color);
+		DrawLines();
+		return;
+	}
+
+	DirectX::XMFLOAT3 vertex[4] = {
+		{In_vCenter.x - halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z }, // 0
+		{In_vCenter.x - halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z}, // 1
+		{In_vCenter.x + halfSize.x, In_vCenter.y - halfSize.y
+		, In_vCenter.z}, // 2
+		{In_vCenter.x + halfSize.x, In_vCenter.y + halfSize.y
+		, In_vCenter.z}, // 3
+	};
+	AddLine(vertex[0], vertex[1], In_Color);
+	AddLine(vertex[1], vertex[2], In_Color);
+	AddLine(vertex[2], vertex[3], In_Color);
+	AddLine(vertex[3], vertex[0], In_Color);
+	DrawLines();
+}
+
+/*************************//*
 @brief  | 円柱描画
 *//*************************/
 void Geometory::DrawCylinder()

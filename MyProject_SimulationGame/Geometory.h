@@ -56,7 +56,17 @@ public:
 	static void DrawBox();
 
 	// @brief 箱描画(ワイヤーフレーム)
+	// @param[in] In_vCenter 箱の中心座標
+	// @param[in] In_vSize 箱のサイズ
+	// @param[in] In_Color 箱の色
 	static void DrawBox(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT4 In_Color);
+
+	// @brief 板描画
+	// @param[in] In_vCenter 板の中心座標
+	// @param[in] In_vSize 板のサイズ
+	// @param[in] In_vDir 板の法線方向
+	// @param[in] In_Color 板の色
+	static void DrawPlane(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT3 In_vDir, DirectX::XMFLOAT4 In_Color);
 
 	// @brief 円柱描画
 	static void DrawCylinder();
