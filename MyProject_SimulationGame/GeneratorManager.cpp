@@ -5,6 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #include "GeneratorManager.h"
+#include "Main.h"
 
 // 静的メンバ変数の初期化
 CGeneratorManager* CGeneratorManager::m_pInstance = nullptr;

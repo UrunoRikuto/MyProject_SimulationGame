@@ -10,7 +10,6 @@
 #include "Structmath.h"
 #include "ImguiSystem.h"
 #include "CollectTarget.h"
-#include "GeneratorManager.h"
 
 
 /****************************************//*
@@ -93,7 +92,6 @@ void CGatherer_Strategy::DoWork()
 			// 戦闘処理を利用して石を収集する処理を実装
 			// ここでは単純にオブジェクトを破棄することで収集を表現
 			m_pTarget->Destroy();
-			CGeneratorManager::GetInstance()->NotifyObservers();
 			m_pTarget = nullptr;
 		}
 
@@ -111,7 +109,7 @@ void CGatherer_Strategy::DoWork()
 
 	if (m_pTarget)
 	{
-		// デバックログで蝶敵の名前を表示
+		// デバックログで標的の名前を表示
 		std::string sTargetName = m_pTarget->GetID().m_sName;
 		sTargetName = "TargetObject: " + sTargetName + std::to_string(m_pTarget->GetID().m_nSameCount);
 		CImguiSystem::GetInstance()->AddDebugLog(sTargetName, true);

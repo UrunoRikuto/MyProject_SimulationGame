@@ -51,3 +51,12 @@ void CFieldCell::DebugDraw()
 
 	Geometory::DrawPlane(m_vPos, CELL_SIZE, DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f), color);
 }
+
+/****************************************//*
+	@brief　	| セルタイプの設定
+	@param		| In_eType	セルタイプ
+*//****************************************/
+void CFieldCell::SetCellType(const CellType In_eType)
+{
+	m_eCellType = In_eType;
+}

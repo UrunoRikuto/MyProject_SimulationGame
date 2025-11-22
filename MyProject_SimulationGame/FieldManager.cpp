@@ -6,6 +6,8 @@
 *//**************************************************/
 #include "FieldManager.h"
 #include "PerlinNoice.h"
+#include "GeneratorManager.h"
+#include <random>
 
 //-- 静的メンバ変数の初期化 --//
 CFieldManager* CFieldManager::m_pInstance = nullptr;
@@ -65,8 +67,9 @@ void CFieldManager::AssignFieldCellType()
 {
 	float scale = 0.1f; // ノイズのスケール
 
-	// シード値を現在の時間で初期化
-	unsigned int seed = static_cast<unsigned int>(timeGetTime()); 
+	// ランダムデバイスでシード値を生成
+	std::random_device rd;
+	unsigned int seed = rd();
 
 	// パーリンノイズ生成クラスのインスタンス
 	PerlinNoise perlinNoise(seed);
@@ -74,7 +77,7 @@ void CFieldManager::AssignFieldCellType()
 	// フィールドセルの2次元配列を取得
 	auto fieldCells = m_pFieldGrid->GetFieldCells();
 
-
+	int objCount = 0;
 	// 各フィールドセルに対してタイプをランダムに割り当てる
 	for(int x = 0; x < fieldCells.size(); ++x)
 	{
@@ -88,17 +91,29 @@ void CFieldManager::AssignFieldCellType()
 
 			// ノイズ値に基づいてセルタイプを決定
 			// 最大値：1.0f、最小値：0.0f
-			if (noiseValue < 0.4f)
+
+			// 木の出現値(最小値：0.0f|最大値：0.4f)
+			if (noiseValue > 0.0f && noiseValue < 0.4f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
+				objCount++;
+
 			}
-			else if (noiseValue < 0.6f)
+			// 岩の出現値(最小値：0.5f|最大値：0.7f)
+			else if (noiseValue > 0.5f && noiseValue < 0.7f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
+				objCount++;
 			}
 			else
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
+			}
+
+			// オブザーバーへ通知
+			//if (objCount < 500)
+			{
+				CGeneratorManager::GetInstance()->NotifyObservers();
 			}
 		}
 	}

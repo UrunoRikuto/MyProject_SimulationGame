@@ -36,7 +36,7 @@ public:
 	const CellType GetCellType() { return m_eCellType; }
 
 	// @brief セルタイプの設定
-	void SetCellType(const CellType In_eType) { m_eCellType = In_eType; }
+	void SetCellType(const CellType In_eType);
 
 	// @brief セルを使用しているかどうかの取得
 	const bool IsUse() { return m_bUse; }

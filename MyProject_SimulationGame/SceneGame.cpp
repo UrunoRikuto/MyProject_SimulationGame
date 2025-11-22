@@ -61,4 +61,15 @@ void CSceneGame::Draw()
 {
 	// 基底クラスの描画処理
 	CScene::Draw();
+
+#ifdef _DEBUG
+	// デバッグ用のフィールドグリッド描画
+	for(auto cell : CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells())
+	{
+		for (auto fieldCell : cell)
+		{
+			fieldCell->DebugDraw();
+		}
+	}
+#endif
 }

@@ -59,52 +59,31 @@ void CScene::Uninit()
 *//****************************************/
 void CScene::Update()
 {
-	// ゲームオブジェクトの更新
+    std::vector<ObjectID> newIDVec;
+    // 各オブジェクトの Update と同時に破棄判定・削除を行う
     for (auto& list : m_pGameObject_List)
     {
-		// リスト内の全てのゲームオブジェクトを更新
-        for (auto obj : list)
+        for (auto it = list.begin(); it != list.end(); )
         {
-			// アクティブ状態のオブジェクトのみ更新
+            CGameObject* obj = *it;
             obj->Update();
-        }
-    }
 
-	// オブジェクトIDリストから破棄予定のオブジェクトのIDを削除
-    for (auto itr = m_tIDVec.begin(); itr != m_tIDVec.end();)
-    {
-		// もしIDに対応するゲームオブジェクトが破棄予定なら
-        if (GetGameObject(*itr)->IsDestroy())
-        {
-			// リストから削除
-            itr = m_tIDVec.erase(itr);
-        }
-        else
-        {
-			// 次の要素へ進む
-            itr++;
-        }
-    }
-
-	// ゲームオブジェクトリストから破棄予定のオブジェクトを削除
-    for (auto& list : m_pGameObject_List)
-    {
-		// 破棄予定のオブジェクトをリストから削除
-        list.remove_if([](CGameObject* pObj)
+            if (obj->IsDestroy())
             {
-                if (pObj->IsDestroy())
-                {
-                    pObj->OnDestroy();
-                    pObj->Uninit();
-                    delete pObj;
-                    pObj = nullptr;
-
-                    return true;
-                }
-                return false;
-            });
-
+                obj->OnDestroy();
+                obj->Uninit();
+                delete obj;
+                it = list.erase(it); // イテレータ対応で安全に削除
+            }
+            else
+            {
+                newIDVec.push_back(obj->GetID());
+                ++it;
+            }
+        }
     }
+    // 残存オブジェクトの ID で m_tIDVec を再構築
+    m_tIDVec = std::move(newIDVec);
 }
 
 /****************************************//*
