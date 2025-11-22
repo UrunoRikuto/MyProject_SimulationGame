@@ -36,16 +36,16 @@ void CFieldCell::DebugDraw()
 	switch (m_eCellType)
 	{
 	case CFieldCell::CellType::EMPTY:
-		// óŒêF
-		color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+		// çï
+		color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		break;
 	case CFieldCell::CellType::TREE:
-		// íÉêF
-		color = DirectX::XMFLOAT4(0.55f, 0.27f, 0.07f, 1.0f);
+		// óŒ
+		color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 		break;
 	case CFieldCell::CellType::ROCK:
-		// äDêF
-		color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+		// ê¬
+		color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 		break;
 	}
 

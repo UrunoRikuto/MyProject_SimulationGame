@@ -154,6 +154,7 @@
     <ClInclude Include="Job_Strategy.h" />
     <ClInclude Include="Neet_Job.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="PerlinNoice.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="StoneGenerator.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="ImguiSystem.cpp" />
     <ClCompile Include="JobOperator.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
+    <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />

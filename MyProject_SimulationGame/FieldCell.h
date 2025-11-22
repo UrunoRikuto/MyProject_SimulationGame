@@ -20,7 +20,7 @@ public:
 	};
 
 	// @brief セルのサイズ
-	constexpr static DirectX::XMFLOAT3 CELL_SIZE = { 2.0f,2.0f, 2.0f };
+	constexpr static DirectX::XMFLOAT3 CELL_SIZE = { 2.0f, 2.0f, 2.0f };
 
 public:
 	// @brief コンストラクタ
