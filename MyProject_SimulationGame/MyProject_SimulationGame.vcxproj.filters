@@ -467,6 +467,9 @@
     <ClCompile Include="PerlinNoice.cpp">
       <Filter>コードファイル\System\PerlinNoise</Filter>
     </ClCompile>
+    <ClCompile Include="CollectTarget.cpp">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

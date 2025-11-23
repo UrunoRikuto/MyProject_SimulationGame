@@ -198,6 +198,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="CollectTarget.cpp" />
     <ClCompile Include="FieldGrid.cpp" />
     <ClCompile Include="FieldCell.cpp" />
     <ClCompile Include="FieldManager.cpp" />

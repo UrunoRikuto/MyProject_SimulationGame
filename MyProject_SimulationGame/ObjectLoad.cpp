@@ -26,6 +26,13 @@ void CObjectLoad::LoadAll()
 
 	// 石のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Stone.obj"), "Stone", 1.0f, Model::Flip::None);
+
+
+	// HPバーのフレームテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Frame.png"), "HpBar_Frame");
+
+	// HPバーのゲージテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Gauge.png"), "HpBar_Gauge");
 }
 
 

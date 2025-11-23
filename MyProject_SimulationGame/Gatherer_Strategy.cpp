@@ -89,20 +89,41 @@ void CGatherer_Strategy::DoWork()
 		// 素材を収集する
 		if (m_pTarget != nullptr)
 		{
-			// 戦闘処理を利用して石を収集する処理を実装
-			// ここでは単純にオブジェクトを破棄することで収集を表現
-			m_pTarget->Destroy();
-			m_pTarget = nullptr;
+			// 標的オブジェクトの耐久値を労働力分減少させる
+			m_pTarget->DecreaseHp(m_Status.m_fWorkPower);
+			m_Status.m_fStamina -= 10.0f; // スタミナを消費
+
+			// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定
+			if (m_pTarget->IsDead())
+			{
+				m_pTarget->Destroy();
+				m_pTarget = nullptr;
+			}
+
+			// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
+			if (m_Status.m_fStamina <= 0.0f)
+			{
+				m_Status.m_fStamina = 0.0f;
+				m_eCurrentState = WorkState::Resting;
+				return;
+			}
 		}
 
-		// 収集が完了したら休憩状態に移行
-		m_eCurrentState = WorkState::Resting;
+		// 収集が完了したら再び標的オブジェクトを探して移動する状態に戻る
+		m_eCurrentState = WorkState::SearchAndMove;
 	}
 	break;
 	case WorkState::Resting:
 	{
-		// 休憩が完了したら再び石を探して移動する状態に戻る
-		m_eCurrentState = WorkState::SearchAndMove;
+		// 本来は休憩所に移動して休憩する処理を実装するが、今回は簡略化の為その場で休憩する
+		m_Status.m_fStamina += 2.0f; // スタミナを回復
+
+		// 休憩が完了したら再び標的オブジェクトを探して移動する状態に戻る
+		if (m_Status.m_fStamina >= m_Status.m_fMaxStamina)
+		{
+			m_Status.m_fStamina = m_Status.m_fMaxStamina;
+			m_eCurrentState = WorkState::SearchAndMove;
+		}
 	}
 	break;
 	}

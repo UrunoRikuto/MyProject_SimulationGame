@@ -7,6 +7,15 @@
 #include "Neet_Job.h"
 #include "ImguiSystem.h"
 
+/******************************************//* 
+	@brief　	| コンストラクタ
+*//******************************************/
+CNeet_Job::CNeet_Job()
+	: IJob_Strategy()
+{
+	m_Status.m_fWorkPower = 0.0f;
+}
+
 /******************************************//*
 	@brief　	| 仕事処理
 	@note		| 無職なので何もしない

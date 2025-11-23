@@ -122,6 +122,12 @@ int CHuman::Inspecter(bool isEnd)
 			// Strategy 差し替え
 			SetHumanJob(CreateJobByName(currentJob, *this));
 		}
+
+		ImGui::Text("Job Status:");
+		// 職業ステータスの取得
+		IJob_Strategy::JobStatus& status = m_pJob->GetJobStatus();
+		ImGui::Text((" WorkPower: " + std::to_string(status.m_fWorkPower)).c_str());
+		ImGui::Text((" Stamina: " + std::to_string(status.m_fStamina) + " / " + std::to_string(status.m_fMaxStamina)).c_str());
 	}
 
 	/***** 職業表示 *****/

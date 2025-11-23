@@ -12,6 +12,9 @@
 class CNeet_Job : public IJob_Strategy
 {
 public:
+	// @brief コンストラクタ
+	CNeet_Job();
+
 	// @brief 職業ごとの仕事処理のオーバーライド関数
 	void DoWork() override;
 

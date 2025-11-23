@@ -11,8 +11,10 @@
 // @brief 木を探して収集する職業クラス
 class CWoodGatherer_Job final : public CGatherer_Strategy
 {
-
 public:
+	// @brief コンストラクタ
+	CWoodGatherer_Job();
+
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::WoodGatherer; }

@@ -99,7 +99,7 @@ void CFieldManager::AssignFieldCellType()
 				objCount++;
 
 			}
-			// 岩の出現値(最小値：0.5f|最大値：0.7f)
+			// 岩の出現値(最小値：0.7f|最大値：1.0f)
 			else if (noiseValue >= 0.7f && noiseValue <= 1.0f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);

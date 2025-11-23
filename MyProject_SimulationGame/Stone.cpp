@@ -7,6 +7,8 @@
 #include "ModelRenderer.h"
 #include "Oparation.h"
 
+constexpr float STONE_INITIAL_HP = 100.0f; // 石の初期耐久値
+
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
@@ -15,6 +17,9 @@ CStone::CStone()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
+
+	// ビルボードコンポーネントの追加
+
 }
 
 /*****************************************//*
@@ -44,4 +49,8 @@ void CStone::Init()
 	// ピクセルシェーダーの設定
 	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
+
+	// 石の耐久値設定
+	m_Status.m_fHp = STONE_INITIAL_HP;
+	m_Status.m_fMaxHp = STONE_INITIAL_HP;
 }

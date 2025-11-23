@@ -7,6 +7,8 @@
 #include "ModelRenderer.h"
 #include "Oparation.h"
 
+constexpr float WOOD_INITIAL_HP = 50.0f; // 木の初期耐久値
+
 /*****************************************//*
 	@brief　	| コンストラクタ
 	@param　	| In_f3Pos：初期位置
@@ -45,4 +47,8 @@ void CWood::Init()
 	// ピクセルシェーダーの設定
 	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
+
+	// 木の耐久値設定
+	m_Status.m_fHp = WOOD_INITIAL_HP;
+	m_Status.m_fMaxHp = WOOD_INITIAL_HP;
 }

@@ -9,6 +9,15 @@
 #include "Stone.h"
 
 /******************************************//*
+	@brief　	| コンストラクタ
+*//******************************************/
+CStoneGatherer_Job::CStoneGatherer_Job()
+	: CGatherer_Strategy()
+{
+	m_Status.m_fWorkPower = 10.0f;
+}
+
+/******************************************//*
 	@brief　	| 標的を探す処理
 	@return		| 採取対象オブジェクトのポインタ
 	@note		| 石オブジェクトを探す処理を実装

@@ -14,6 +14,26 @@ class CGameObject;
 class IJob_Strategy
 {
 public:
+	// @brief 職業のステータス構造体
+	struct JobStatus
+	{
+		JobStatus()
+			: m_fWorkPower(1.0f)
+			, m_fStamina(100.0f)
+			, m_fMaxStamina(m_fStamina)
+		{
+		}
+
+		// 労働力
+		float m_fWorkPower;
+
+		// スタミナ
+		float m_fStamina;
+		// 最大スタミナ
+		float m_fMaxStamina;
+	};
+
+public:
 	// @brief 仮想デストラクタ
 	virtual ~IJob_Strategy() = default;
 
@@ -29,8 +49,23 @@ public:
 	// @return 所属しているオブジェクトのポインタ
 	void SetOwner(CGameObject& pOwner) { m_pOwner = &pOwner; }
 
+	// @brief 所属しているオブジェクトの取得
+	// @return 所属しているオブジェクトのポインタ
+	CGameObject* GetOwner() const { return m_pOwner; }
+
+	// @brief 職業のステータスを取得
+	// @return 職業のステータス構造体の参照
+	JobStatus& GetJobStatus() { return m_Status; }
+
+	// @brief 職業のステータスを設定
+	// @param status：設定する職業のステータス構造体の参照
+	void SetJobStatus(const JobStatus& status) { m_Status = status; }
+
 protected:
 	// @brief 所属しているオブジェクトのポインタ
 	CGameObject* m_pOwner = nullptr;
+
+	// @brief 職業のステータス
+	JobStatus m_Status;
 };
 

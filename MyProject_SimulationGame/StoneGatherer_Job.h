@@ -12,6 +12,9 @@
 class CStoneGatherer_Job : public CGatherer_Strategy
 {
 public:
+	// @brief コンストラクタ
+	CStoneGatherer_Job();
+
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::StoneGatherer; }
