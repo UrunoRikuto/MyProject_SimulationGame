@@ -70,6 +70,9 @@ void CCollectTarget::SetCreatePos(CFieldCell* cell)
 {
 	// 位置設定
 	m_tParam.m_f3Pos = cell->GetPos();
+	// オブジェクトの高さ分だけY座標を上げる
+	m_tParam.m_f3Pos.y += m_tParam.m_f3Size.y / 2.0f;
+
 	// セルを使用中に設定
 	cell->SetUse(true);
 	// 連携しているフィールドセルのインデックスを保存

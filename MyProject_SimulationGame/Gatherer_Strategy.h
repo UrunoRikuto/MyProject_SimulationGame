@@ -19,6 +19,10 @@ private:
 		SearchAndMove,
 		// Ìæ’†
 		Gathering,
+		// ‘fŞƒAƒCƒeƒ€‚ğ’™‘ ŒÉ‚É‰^”À’†
+		Transporting,
+		// ’™‘ ŒÉ‚É’™‘ ’†
+		Storing,
 		// ‹xŒe’†
 		Resting
 	};

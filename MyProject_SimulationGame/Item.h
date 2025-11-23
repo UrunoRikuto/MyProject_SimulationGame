@@ -4,6 +4,7 @@
 	@note	| アイテムに関する情報を管理するクラス
 *//**************************************************/
 #pragma once
+#include <string>
 
 // @brief アイテムクラス
 class CItem
@@ -14,9 +15,22 @@ public:
 	{
 		Wood,		// 木材
 		Stone,		// 石材
+		Iron,		// 鉄材
 
 		MAX
 	};
+
+	// @brief アイテムタイプを文字列に変換する関数
+	static std::string ITEM_TYPE_TO_STRING(ITEM_TYPE eType)
+	{
+		switch (eType)
+		{
+		case ITEM_TYPE::Wood:	return "Wood";
+		case ITEM_TYPE::Stone:	return "Stone";
+		case ITEM_TYPE::Iron:	return "Iron";
+		default:				return "Unknown";
+		}
+	}
 
 public:
 	// @brief コンストラクタ

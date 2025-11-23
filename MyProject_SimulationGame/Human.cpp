@@ -143,19 +143,8 @@ int CHuman::Inspecter(bool isEnd)
 		}
 		for (const auto& pair : itemCountMap)
 		{
-			std::string itemName;
-			switch (pair.first)
-			{
-			case CItem::ITEM_TYPE::Wood:
-				itemName = "Wood";
-				break;
-			case CItem::ITEM_TYPE::Stone:
-				itemName = "Stone";
-				break;
-			default:
-				itemName = "Unknown";
-				break;
-			}
+			// アイテム名と個数を表示
+			std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
 			ImGui::Text((itemName + ": " + std::to_string(pair.second)).c_str());
 		}
 
@@ -180,6 +169,25 @@ int CHuman::Inspecter(bool isEnd)
 
 	// 表示した項目数を返す
 	return nItemCount;
+}
+
+/****************************************//*
+	@brief　	| アイテムを取りだす
+	@return		| 取り出したアイテムポインタ、所持していなかった場合はnullptr
+*//****************************************/
+CItem* CHuman::TakeOutItem()
+{
+	// 所持アイテムリストが空の場合はnullptrを返す
+	if (m_ItemList.empty())return nullptr;
+
+	// 所持アイテムリストの先頭のアイテムを取り出す
+	CItem* pItem = m_ItemList.front();
+
+	// 所持アイテムリストから削除
+	m_ItemList.pop_front();
+
+	// 取り出したアイテムポインタを返す
+	return pItem;
 }
 
 /****************************************//*

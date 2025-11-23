@@ -8,6 +8,8 @@
 #include "PerlinNoice.h"
 #include "GeneratorManager.h"
 #include <random>
+#include "Main.h"
+#include "StorageHouse.h"
 
 //-- 静的メンバ変数の初期化 --//
 CFieldManager* CFieldManager::m_pInstance = nullptr;
@@ -110,11 +112,12 @@ void CFieldManager::AssignFieldCellType()
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
 			}
 
-			// オブザーバーへ通知
-			//if (objCount < 500)
+			if (x == 24 && y == 24)
 			{
-				CGeneratorManager::GetInstance()->NotifyObservers();
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::Build);
+				GetScene()->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse")->SetPos(fieldCells[x][y]->GetPos());
 			}
+			else CGeneratorManager::GetInstance()->NotifyObservers();
 		}
 	}
 }

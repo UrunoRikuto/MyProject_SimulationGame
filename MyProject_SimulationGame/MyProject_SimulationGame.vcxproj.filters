@@ -127,6 +127,18 @@
     <Filter Include="コードファイル\System\Item">
       <UniqueIdentifier>{ea39f6dd-2095-468c-83d1-732968194c0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Job\Crafter">
+      <UniqueIdentifier>{491806e7-1fdb-4ad2-b61d-6a45a78c0b61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Crafter\Builder">
+      <UniqueIdentifier>{2e1d1b58-e2f5-43f7-b660-39bc386c150a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\BuildObject">
+      <UniqueIdentifier>{2d1b6088-19fe-481a-aaaa-87d8614bd7a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\BuildObject\StorageHouse">
+      <UniqueIdentifier>{ea779c31-9054-451c-8d3b-fd3ca69d6115}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -312,6 +324,18 @@
     <ClInclude Include="Item.h">
       <Filter>コードファイル\System\Item</Filter>
     </ClInclude>
+    <ClInclude Include="Crafter_Strategy.h">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClInclude>
+    <ClInclude Include="Builder_Job.h">
+      <Filter>コードファイル\System\Job\Crafter\Builder</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildObject.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageHouse.h">
+      <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -478,6 +502,15 @@
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>コードファイル\System\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Builder_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter\Builder</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildObject.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="StorageHouse.cpp">
+      <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,7 @@ public:
 		EMPTY,		// 空地
 		TREE,		// 木
 		ROCK,		// 岩
+		Build,		// 建築可能地
 		MAX			// セルタイプの最大数
 	};
 
@@ -50,7 +51,7 @@ public:
 
 	// @brief セルのインデックスの取得
 	// @return セルのインデックス
-	DirectX::XMINT2 GetIndex() { return m_vIndex; }
+	DirectX::XMINT2 GetIndex() { return m_n2Index; }
 
 private:
 
@@ -58,7 +59,7 @@ private:
 	DirectX::XMFLOAT3 m_vPos;
 
 	// @brief 自身のインデックス
-	DirectX::XMINT2 m_vIndex;
+	DirectX::XMINT2 m_n2Index;
 
 	// @brief セルタイプ
 	CellType m_eCellType;

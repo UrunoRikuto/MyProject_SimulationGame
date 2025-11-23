@@ -27,6 +27,9 @@ void CObjectLoad::LoadAll()
 	// 石のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Stone.obj"), "Stone", 1.0f, Model::Flip::None);
 
+	// 貯蔵庫のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("StorageHouse.obj"), "StorageHouse", 1.0f, Model::Flip::None);
+
 
 	// HPバーのフレームテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Frame.png"), "HpBar_Frame");

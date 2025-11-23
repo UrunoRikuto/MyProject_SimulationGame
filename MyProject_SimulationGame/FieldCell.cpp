@@ -15,7 +15,7 @@ CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In
 	: m_eCellType(CellType::EMPTY)
 	, m_bUse(false)
 	, m_vPos(In_vPos)
-	, m_vIndex(In_vIndex)
+	, m_n2Index(In_vIndex)
 {
 }
 
@@ -46,6 +46,10 @@ void CFieldCell::DebugDraw()
 	case CFieldCell::CellType::ROCK:
 		// ê¬
 		color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+		break;
+	case CFieldCell::CellType::Build:
+		// â©
+		color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 		break;
 	}
 

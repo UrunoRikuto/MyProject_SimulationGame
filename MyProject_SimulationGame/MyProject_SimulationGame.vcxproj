@@ -133,9 +133,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BillboardRenderer.h" />
+    <ClInclude Include="Builder_Job.h" />
+    <ClInclude Include="BuildObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="Crafter_Strategy.h" />
     <ClInclude Include="FieldGrid.h" />
     <ClInclude Include="CollectTarget.h" />
     <ClInclude Include="FieldCell.h" />
@@ -157,6 +160,7 @@
     <ClInclude Include="Stone.h" />
     <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="StoneGenerator.h" />
+    <ClInclude Include="StorageHouse.h" />
     <ClInclude Include="SubJect.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
@@ -196,6 +200,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BillboardRenderer.cpp" />
+    <ClCompile Include="Builder_Job.cpp" />
+    <ClCompile Include="BuildObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
@@ -216,6 +222,7 @@
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />
+    <ClCompile Include="StorageHouse.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="GameObject.cpp" />

@@ -20,9 +20,6 @@ CStone::CStone()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
-
-	// ビルボードコンポーネントの追加
-
 }
 
 /*****************************************//*
@@ -59,7 +56,18 @@ void CStone::Init()
 	// ドロップアイテム設定
 	for (int i = 0; i < DROP_ITEM_COUNT; ++i)
 	{
-		// 石アイテムをドロップアイテムリストに追加
-		m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Stone));
+		// 0~100のランダムな数値を取得
+		int randomNum = GetRandOfRange(0, 100);
+
+		if (randomNum < 80)
+		{
+			// 石アイテムをドロップアイテムリストに追加
+			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Stone));
+		}
+		else
+		{
+			// 鉄アイテムをドロップアイテムリストに追加
+			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Iron));
+		}
 	}
 }

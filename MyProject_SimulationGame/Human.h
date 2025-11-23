@@ -10,6 +10,9 @@
 #include "Item.h"
 #include <memory>
 
+// @brief 持てるアイテムの最大数
+constexpr int MaxHoldItem = 10;
+
 // @brief 人間オブジェクトクラス
 class CHuman final : public CGameObject
 {
@@ -36,6 +39,18 @@ public:
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	// @return 表示した項目数
 	int Inspecter(bool isEnd = true) override;
+
+	// @brief アイテムを所持しているかどうか
+	// @return true:所持している false:所持していない
+	bool HasItem() const { return !m_ItemList.empty(); }
+
+	// @brief アイテム所持数の取得
+	// @return 所持しているアイテム数
+	int GetItemCount() const { return m_ItemList.size(); }
+
+	// @brief アイテムを取りだす
+	// @return 取り出したアイテムポインタ、所持していなかった場合はnullptr
+	CItem* TakeOutItem();
 
 	// @brief アイテムを取り出す
 	// @param itemType：取り出すアイテムタイプ
