@@ -139,6 +139,9 @@
     <Filter Include="コードファイル\GameObject\BuildObject\StorageHouse">
       <UniqueIdentifier>{ea779c31-9054-451c-8d3b-fd3ca69d6115}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\FieldGround">
+      <UniqueIdentifier>{c304a0c0-ea87-4e90-b196-bcf98662b225}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -336,6 +339,9 @@
     <ClInclude Include="StorageHouse.h">
       <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
     </ClInclude>
+    <ClInclude Include="FieldGround.h">
+      <Filter>コードファイル\GameObject\FieldGround</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -511,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="StorageHouse.cpp">
       <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldGround.cpp">
+      <Filter>コードファイル\GameObject\FieldGround</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

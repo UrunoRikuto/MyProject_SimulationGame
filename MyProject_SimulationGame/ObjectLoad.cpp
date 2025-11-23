@@ -18,6 +18,9 @@ void CObjectLoad::LoadAll()
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel", 1.0f, Model::Flip::None);
 
+	// 地面のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("FieldGround.obj"), "FieldGround", 1.0f, Model::Flip::None);
+
 	// 人間のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Human.obj"), "Human", 1.0f, Model::Flip::None);
 
@@ -29,7 +32,6 @@ void CObjectLoad::LoadAll()
 
 	// 貯蔵庫のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("StorageHouse.obj"), "StorageHouse", 1.0f, Model::Flip::None);
-
 
 	// HPバーのフレームテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Frame.png"), "HpBar_Frame");

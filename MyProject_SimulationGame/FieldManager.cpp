@@ -162,9 +162,15 @@ void CFieldManager::CreateInitialVillage()
 	CScene* pScene = GetScene();
 
 	// ’™‘ ŒÉ‚Ì¶¬‚Æ”z’u
-	pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse")->SetPos(fieldCells[halfSizeX][halfSizeY]->GetPos());
+	CGameObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
+	DirectX::XMFLOAT3 f3StorageHousePos = fieldCells[halfSizeX][halfSizeY]->GetPos();
+	f3StorageHousePos.y += pStorageHouse->GetSize().y / 2.0f;
+	pStorageHouse->SetPos(f3StorageHousePos);
 	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
 
 	// ‰Šú‘ºl‚Ì¶¬
-	pScene->AddGameObject<CHuman>(Tag::GameObject, "Human")->SetPos(fieldCells[halfSizeX][halfSizeY - 1]->GetPos());
+	CGameObject* pHuman = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
+	DirectX::XMFLOAT3 f3HumanCreatePos = fieldCells[halfSizeX][halfSizeY - 1]->GetPos();
+	f3HumanCreatePos.y += pHuman->GetSize().y / 2.0f;
+	pHuman->SetPos(f3HumanCreatePos);
 }
