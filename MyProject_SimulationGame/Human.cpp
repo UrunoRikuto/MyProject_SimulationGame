@@ -130,6 +130,40 @@ int CHuman::Inspecter(bool isEnd)
 		ImGui::Text((" Stamina: " + std::to_string(status.m_fStamina) + " / " + std::to_string(status.m_fMaxStamina)).c_str());
 	}
 
+	// 折りたたみヘッダーの表示
+	if(ImGui::CollapsingHeader("Items"))
+	{
+		ImGui::BeginChild("ItemList", ImVec2(0, 150), true);
+		// 所持アイテムリストの表示
+		// 名前と個数を表示
+		std::map<CItem::ITEM_TYPE, int> itemCountMap;
+		for (const CItem* pItem : m_ItemList)
+		{
+			itemCountMap[pItem->GetItemType()]++;
+		}
+		for (const auto& pair : itemCountMap)
+		{
+			std::string itemName;
+			switch (pair.first)
+			{
+			case CItem::ITEM_TYPE::Wood:
+				itemName = "Wood";
+				break;
+			case CItem::ITEM_TYPE::Stone:
+				itemName = "Stone";
+				break;
+			default:
+				itemName = "Unknown";
+				break;
+			}
+			ImGui::Text((itemName + ": " + std::to_string(pair.second)).c_str());
+		}
+
+
+		ImGui::EndChild();
+		nItemCount++;
+	}
+
 	/***** 職業表示 *****/
 
 	// IMGUIウィンドウの終了
@@ -146,4 +180,40 @@ int CHuman::Inspecter(bool isEnd)
 
 	// 表示した項目数を返す
 	return nItemCount;
+}
+
+/****************************************//*
+	@brief　	| アイテムを取り出す
+	@param		| itemType：取り出すアイテムタイプ
+	@return		| 取り出したアイテムポインタ、所持していなかった場合はnullptr
+*//****************************************/
+const CItem* CHuman::TakeOutItem(const CItem::ITEM_TYPE itemType)
+{
+	// 所持アイテムリストを探索
+	for (auto it = m_ItemList.begin(); it != m_ItemList.end(); ++it)
+	{
+		// 指定されたアイテムタイプと一致するアイテムを探索
+		if ((*it)->GetItemType() == itemType)
+		{
+			// アイテムを取り出す
+			CItem* pItem = *it;
+			// 所持アイテムリストから削除
+			m_ItemList.erase(it);
+			// 取り出したアイテムポインタを返す
+			return pItem;
+		}
+	}
+
+	// 指定されたアイテムタイプのアイテムを所持していなかった場合はnullptrを返す
+	return nullptr;
+}
+
+/****************************************//*
+	@brief　	| アイテムを所持する
+	@param		| pItem：所持するアイテムポインタ
+*//****************************************/
+void CHuman::HoldItem(CItem* pItem)
+{
+	// 所持アイテムリストに追加
+	m_ItemList.push_back(pItem);
 }

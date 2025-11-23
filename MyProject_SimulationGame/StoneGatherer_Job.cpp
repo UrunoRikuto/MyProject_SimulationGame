@@ -7,6 +7,7 @@
 #include "StoneGatherer_Job.h"
 #include "Main.h"
 #include "Stone.h"
+#include "Human.h"
 
 /******************************************//*
 	@brief　	| コンストラクタ

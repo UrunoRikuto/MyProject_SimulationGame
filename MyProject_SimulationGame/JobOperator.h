@@ -48,4 +48,4 @@ const std::vector<std::string> JobNames = {
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前
-std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CGameObject& owner);
+std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& owner);

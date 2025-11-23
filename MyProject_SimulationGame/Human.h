@@ -7,6 +7,7 @@
 #pragma once
 #include "GameObject.h"
 #include "JobOperator.h"
+#include "Item.h"
 #include <memory>
 
 // @brief 人間オブジェクトクラス
@@ -36,10 +37,18 @@ public:
 	// @return 表示した項目数
 	int Inspecter(bool isEnd = true) override;
 
+	// @brief アイテムを取り出す
+	// @param itemType：取り出すアイテムタイプ
+	// @return 取り出したアイテムポインタ、所持していなかった場合はnullptr
+	const CItem* TakeOutItem(const CItem::ITEM_TYPE itemType);
+
+	// @brief アイテムを所持する
+	// @param pItem：所持するアイテムポインタ
+	void HoldItem(CItem* pItem);
+
 private:
 	// @brief 職業ストラテジーの設定
 	// @param job：設定する職業ストラテジーポインタ
-	// @note 所有権を受け取るためにstd::unique_ptrで受け取る
 	void SetHumanJob(std::unique_ptr<IJob_Strategy> job)
 	{
 		m_pJob = std::move(job);
@@ -48,5 +57,8 @@ private:
 private:
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
+
+	// @brief 所持アイテムリスト
+	std::list<CItem*> m_ItemList;
 };
 

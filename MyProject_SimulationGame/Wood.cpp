@@ -7,7 +7,10 @@
 #include "ModelRenderer.h"
 #include "Oparation.h"
 
-constexpr float WOOD_INITIAL_HP = 50.0f; // 木の初期耐久値
+// 木の初期耐久値
+constexpr float WOOD_INITIAL_HP = 50.0f;
+//  ドロップアイテムの個数
+constexpr int DROP_ITEM_COUNT = 3;
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -51,4 +54,10 @@ void CWood::Init()
 	// 木の耐久値設定
 	m_Status.m_fHp = WOOD_INITIAL_HP;
 	m_Status.m_fMaxHp = WOOD_INITIAL_HP;
+	// ドロップアイテム設定
+	for (int i = 0; i < DROP_ITEM_COUNT; ++i)
+	{
+		// 木材アイテムを追加
+		m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Wood));
+	}
 }

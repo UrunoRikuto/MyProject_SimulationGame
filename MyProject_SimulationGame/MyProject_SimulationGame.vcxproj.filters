@@ -124,6 +124,9 @@
     <Filter Include="コードファイル\System\PerlinNoise">
       <UniqueIdentifier>{2416e3ac-d432-4d58-b4a8-7a641c9bf6e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Item">
+      <UniqueIdentifier>{ea39f6dd-2095-468c-83d1-732968194c0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -306,6 +309,9 @@
     <ClInclude Include="PerlinNoice.h">
       <Filter>コードファイル\System\PerlinNoise</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>コードファイル\System\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -469,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="CollectTarget.cpp">
       <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>コードファイル\System\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

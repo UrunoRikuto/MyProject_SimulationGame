@@ -10,7 +10,7 @@
 #include "Structmath.h"
 #include "ImguiSystem.h"
 #include "CollectTarget.h"
-
+#include "Human.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -96,6 +96,13 @@ void CGatherer_Strategy::DoWork()
 			// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定
 			if (m_pTarget->IsDead())
 			{
+				// ドロップアイテムを取得してインベントリに追加する処理を実装
+				auto droppedItems = m_pTarget->DropItem();
+				for (CItem* item : droppedItems)
+				{
+					m_pOwner->HoldItem(item);
+				}
+
 				m_pTarget->Destroy();
 				m_pTarget = nullptr;
 			}

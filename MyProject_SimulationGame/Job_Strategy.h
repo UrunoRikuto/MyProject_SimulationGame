@@ -8,7 +8,7 @@
 #include <string>
 
 // 前方宣言
-class CGameObject;
+class CHuman;
 
 // @brief 職業クラスの基底インターフェース
 class IJob_Strategy
@@ -44,14 +44,13 @@ public:
 	// @return 職業名の文字列
 	virtual std::string GetJobName() const = 0;
 
+	// @brief 所属しているオブジェクトの取得
+	// @return 所属しているオブジェクトのポインタ
+	void SetOwner(CHuman& pOwner) { m_pOwner = &pOwner; }
 
 	// @brief 所属しているオブジェクトの取得
 	// @return 所属しているオブジェクトのポインタ
-	void SetOwner(CGameObject& pOwner) { m_pOwner = &pOwner; }
-
-	// @brief 所属しているオブジェクトの取得
-	// @return 所属しているオブジェクトのポインタ
-	CGameObject* GetOwner() const { return m_pOwner; }
+	CHuman* GetOwner() const { return m_pOwner; }
 
 	// @brief 職業のステータスを取得
 	// @return 職業のステータス構造体の参照
@@ -63,7 +62,7 @@ public:
 
 protected:
 	// @brief 所属しているオブジェクトのポインタ
-	CGameObject* m_pOwner = nullptr;
+	CHuman* m_pOwner = nullptr;
 
 	// @brief 職業のステータス
 	JobStatus m_Status;

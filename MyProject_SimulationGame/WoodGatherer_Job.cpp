@@ -7,6 +7,7 @@
 #include "WoodGatherer_Job.h"
 #include "Main.h"
 #include "Wood.h"
+#include "Human.h"
 
 /******************************************//*
 	@brief　	| コンストラクタ

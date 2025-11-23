@@ -8,6 +8,7 @@
 #include "FieldCell.h"
 #include "FieldManager.h"
 #include "BillboardRenderer.h"
+#include "Item.h"
 
 // @brief 収集対象オブジェクトクラス
 class CCollectTarget : public CGameObject
@@ -22,7 +23,7 @@ public:
 		float m_fMaxHp;
 
 		// ドロップアイテム
-		// ※将来的に複数アイテム対応する可能性がある為、vectorで保持
+		std::vector<CItem*> m_DropItems;
 	};
 
 public:
@@ -48,10 +49,15 @@ public:
 	void SetTargetingID(const ObjectID& id) { m_TargetingID = id; }
 
 	// @brief 耐久地を減らす
+	// @param damage：減らす耐久値
 	void DecreaseHp(const float damage);
 
 	// @brief 耐久地が0以下かどうかを取得
 	bool IsDead() const { return m_Status.m_fHp <= 0.0f; }
+
+	// @brief アイテムドロップ処理
+	// @return ドロップしたアイテムのベクター
+	std::vector<CItem*> DropItem() { return m_Status.m_DropItems; }
 
 protected:
 	// @brief ターゲット標的に指定してきているゲームオブジェクトのID

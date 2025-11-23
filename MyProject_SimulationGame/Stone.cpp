@@ -7,7 +7,10 @@
 #include "ModelRenderer.h"
 #include "Oparation.h"
 
-constexpr float STONE_INITIAL_HP = 100.0f; // 石の初期耐久値
+// 石の初期耐久値
+constexpr float STONE_INITIAL_HP = 100.0f;
+//  ドロップアイテムの個数
+constexpr int DROP_ITEM_COUNT = 3;
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -53,4 +56,10 @@ void CStone::Init()
 	// 石の耐久値設定
 	m_Status.m_fHp = STONE_INITIAL_HP;
 	m_Status.m_fMaxHp = STONE_INITIAL_HP;
+	// ドロップアイテム設定
+	for (int i = 0; i < DROP_ITEM_COUNT; ++i)
+	{
+		// 石アイテムをドロップアイテムリストに追加
+		m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Stone));
+	}
 }

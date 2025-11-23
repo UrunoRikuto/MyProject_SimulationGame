@@ -5,6 +5,7 @@
 *//**************************************************/
 #include "JobOperator.h"
 #include "ImguiSystem.h"
+#include "Human.h"
 
 /****************************************//*
 	@brief　	| 職業ストラテジーを名前から生成するファクトリ関数
@@ -12,7 +13,7 @@
 	@param		| owner：職業を所有するゲームオブジェクト
 	@return		| 生成した職業ストラテジーポインタ
 *//****************************************/
-std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CGameObject& owner)
+std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& owner)
 {
 	std::unique_ptr<IJob_Strategy> pJob = nullptr;
 
