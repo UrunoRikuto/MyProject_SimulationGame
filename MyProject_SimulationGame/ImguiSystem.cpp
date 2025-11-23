@@ -153,7 +153,8 @@ void CImguiSystem::DrawHierarchy()
 	}
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
 
-	auto Objects = GetScene()->GetIDVec();
+	CScene* pScene = GetScene();
+	auto Objects = pScene->GetIDVec();
 
 	std::list<ObjectID> objectIDList{};
 	for (auto Id : Objects)
@@ -195,7 +196,7 @@ void CImguiSystem::DrawHierarchy()
 				id.m_nSameCount = i;
 				if (ImGui::Button(sButtonName.c_str()))
 				{
-					m_pGameObject = GetScene()->GetGameObject(id);
+					m_pGameObject = pScene->GetGameObject(id);
 				}
 
 			}

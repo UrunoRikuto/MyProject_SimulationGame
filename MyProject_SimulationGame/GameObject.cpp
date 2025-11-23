@@ -7,6 +7,8 @@
 #include "Oparation.h"
 #include "ImguiSystem.h"
 
+#undef max
+
 /****************************************//*
 	@brief　	| コンストラクタ
 *//****************************************/
@@ -312,4 +314,15 @@ void CGameObject::MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos,
     }
 
     *moveObjectPos = initPos + (targetPos - initPos) * (time / duration);
+}
+
+/****************************************//*
+    @brief　	| バウンディング半径の取得
+    @return     | (float)バウンディング半径
+*//****************************************/
+float CGameObject::GetBoundingRadius() const
+{
+    auto s = m_tParam.m_f3Size;
+    float maxDim = std::max({ s.x, s.y, s.z });
+    return maxDim * 0.5f;
 }

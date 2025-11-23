@@ -93,14 +93,14 @@ void CFieldManager::AssignFieldCellType()
 			// 最大値：1.0f、最小値：0.0f
 
 			// 木の出現値(最小値：0.0f|最大値：0.4f)
-			if (noiseValue > 0.0f && noiseValue < 0.4f)
+			if (noiseValue >= 0.0f && noiseValue <= 0.4f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
 				objCount++;
 
 			}
 			// 岩の出現値(最小値：0.5f|最大値：0.7f)
-			else if (noiseValue > 0.5f && noiseValue < 0.7f)
+			else if (noiseValue >= 0.7f && noiseValue <= 1.0f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
 				objCount++;

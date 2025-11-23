@@ -246,6 +246,10 @@ public:
 	// @param ease：イージングの種類(デフォルト0:なし)
     void MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos, DirectX::XMFLOAT3* moveObjectPos, float time, float duration, int ease = 0);
 
+	// @brief オブジェクトの境界半径を取得
+	// @return (float)オブジェクトの境界半径
+    float GetBoundingRadius() const;
+
 public:
 
     // @brief コンポーネントのリスト

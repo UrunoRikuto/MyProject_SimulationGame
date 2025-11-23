@@ -91,17 +91,45 @@ void CScene::Update()
 *//****************************************/
 void CScene::Draw()
 {
-	// カメラのビュー行列、プロジェクション行列をジオメトリに設定
     CCamera* pCamera = CCamera::GetInstance();
     Geometory::SetView(pCamera->GetViewMatrix());
     Geometory::SetProjection(pCamera->GetProjectionMatrix());
 
-	// ゲームオブジェクトの描画
+    // カメラ位置をキャッシュ
+    DirectX::XMFLOAT3 camPos = pCamera->GetPos(); // カメラに GetPosition() を用意している前提
+
+    // カリング距離（チューニング可能）
+    const float globalCullDistance = 100.0f;
+    const float globalCullDistSq = globalCullDistance * globalCullDistance;
+
     for (auto& list : m_pGameObject_List)
     {
-		// リスト内の全てのゲームオブジェクトを描画
         for (auto obj : list)
         {
+            // タグやフラグで無条件描画が必要かチェック
+            if (obj->GetTag() == Tag::UI || obj->GetTag() == Tag::SkyBox)
+            {
+                obj->Draw();
+                continue;
+            }
+
+            // オブジェクト位置と半径取得
+            DirectX::XMFLOAT3 objPos = obj->GetPos();
+            float r = obj->GetBoundingRadius(); // 実装を追加しておくこと
+
+            float dx = objPos.x - camPos.x;
+            float dy = objPos.y - camPos.y;
+            float dz = objPos.z - camPos.z;
+            float distSq = dx*dx + dy*dy + dz*dz;
+
+            // 半径を考慮した閾値（二乗）
+            float thresh = globalCullDistSq + 2.0f * globalCullDistance * r + r*r; // (D + r)^2
+            if (distSq > thresh)
+            {
+                // カリング：描画をスキップ
+                continue;
+            }
+
             obj->Draw();
         }
     }

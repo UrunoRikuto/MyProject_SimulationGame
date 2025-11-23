@@ -6,8 +6,8 @@
 #include "FieldGrid.h"
 
 // 定数定義
-constexpr int GridSizeX = 40;	// グリッドのXサイズ
-constexpr int GridSizeY = 40;	// グリッドのYサイズ
+constexpr int GridSizeX = 50;	// グリッドのXサイズ
+constexpr int GridSizeY = 50;	// グリッドのYサイズ
 
 
 /****************************************//*
