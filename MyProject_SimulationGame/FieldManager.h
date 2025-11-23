@@ -36,6 +36,11 @@ public:
 	CFieldGrid* GetFieldGrid() { return m_pFieldGrid; }
 
 private:
+
+	// @brief 初期村の作成
+	void CreateInitialVillage();
+
+private:
 	// @brief 静的メンバ変数:インスタンスのポインタ
 	static CFieldManager* m_pInstance;
 	

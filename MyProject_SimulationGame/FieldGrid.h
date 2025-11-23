@@ -12,6 +12,10 @@
 class CFieldGrid
 {
 public:
+	static const int GridSizeX = 50;	// グリッドのXサイズ
+	static const int GridSizeY = 50;	// グリッドのYサイズ
+
+public:
 	// @brief コンストラクタ
 	// @param In_vPos グリッドの中心座標
 	// @param In_X グリッドのXサイズ

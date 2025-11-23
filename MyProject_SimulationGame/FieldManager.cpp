@@ -10,6 +10,11 @@
 #include <random>
 #include "Main.h"
 #include "StorageHouse.h"
+#include "Human.h"
+
+// 初期村のサイズ
+const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
+const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
 
 //-- 静的メンバ変数の初期化 --//
 CFieldManager* CFieldManager::m_pInstance = nullptr;
@@ -111,13 +116,55 @@ void CFieldManager::AssignFieldCellType()
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
 			}
-
-			if (x == 24 && y == 24)
-			{
-				fieldCells[x][y]->SetCellType(CFieldCell::CellType::Build);
-				GetScene()->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse")->SetPos(fieldCells[x][y]->GetPos());
-			}
-			else CGeneratorManager::GetInstance()->NotifyObservers();
 		}
 	}
+
+	// 初期村の配置
+	CreateInitialVillage();
+
+	// オブジェクトを生成
+	for(int x = 0; x < fieldCells.size(); ++x)
+	{
+		for(int y = 0; y < fieldCells[x].size(); ++y)
+		{
+			CGeneratorManager::GetInstance()->NotifyObservers();
+		}
+	}
+}
+
+/*****************************************//*
+	@brief　	| 初期村の作成
+	@note		| フィールドの中央付近に初期村を作成
+*//*****************************************/
+void CFieldManager::CreateInitialVillage()
+{
+	// ハーフサイズを取得
+	int halfSizeX = CFieldGrid::GridSizeX / 2;
+	int halfSizeY = CFieldGrid::GridSizeY / 2;
+
+	// フィールドセルの2次元配列を取得
+	auto fieldCells = m_pFieldGrid->GetFieldCells();
+
+	for(int i = -INITIAL_VILLAGE_SIZE_X / 2; i <= INITIAL_VILLAGE_SIZE_X / 2; ++i)
+	{
+		for(int j = -INITIAL_VILLAGE_SIZE_Y / 2; j <= INITIAL_VILLAGE_SIZE_Y / 2; ++j)
+		{
+			// フィールドセルのインデックスを計算
+			int cellX = halfSizeX + i;
+			int cellY = halfSizeY + j;
+
+			// フィールドセルのタイプを建築可能地に設定
+			fieldCells[cellX][cellY]->SetCellType(CFieldCell::CellType::Build);
+		}
+	}
+
+	// シーンの取得
+	CScene* pScene = GetScene();
+
+	// 貯蔵庫の生成と配置
+	pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse")->SetPos(fieldCells[halfSizeX][halfSizeY]->GetPos());
+	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
+
+	// 初期村人の生成
+	pScene->AddGameObject<CHuman>(Tag::GameObject, "Human")->SetPos(fieldCells[halfSizeX][halfSizeY - 1]->GetPos());
 }

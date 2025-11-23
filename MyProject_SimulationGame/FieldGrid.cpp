@@ -5,11 +5,6 @@
 *//**************************************************/
 #include "FieldGrid.h"
 
-// 定数定義
-constexpr int GridSizeX = 50;	// グリッドのXサイズ
-constexpr int GridSizeY = 50;	// グリッドのYサイズ
-
-
 /****************************************//*
 	@brief　	| コンストラクタ
 	@param		| In_XSize	: グリッドのXサイズ
