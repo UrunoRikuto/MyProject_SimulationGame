@@ -74,16 +74,21 @@ void CCameraGame::Update()
 
 		// キーボード入力からVelocityを計算
 		DirectX::XMFLOAT3 f3Velocity{};
-		if (IsMouseWheelUp())f3Velocity += f3Forward;
-		if (IsMouseWheelDown())f3Velocity -= f3Forward;
-		if (IsKeyPress('D'))f3Velocity += f3Right;
-		if (IsKeyPress('A'))f3Velocity -= f3Right;
+		
+		if (IsMouseWheelUp())m_fRadius += 0.1f;
+		if (IsMouseWheelDown())m_fRadius -= 0.1f;
 		if (IsKeyPress(VK_SPACE))f3Velocity += fUp;
 		if (IsKeyPress(VK_SHIFT))f3Velocity -= fUp;
-		if (IsKeyPress('W'))m_fRadY += 0.01f;
-		if (IsKeyPress('S'))m_fRadY -= 0.01f;
-		if (IsKeyPress('E'))m_fRadXZ += 0.01f;
-		if (IsKeyPress('Q'))m_fRadXZ -= 0.01f;
+
+		if (IsKeyPress('W'))f3Velocity += f3Forward;
+		if (IsKeyPress('S'))f3Velocity -= f3Forward;
+		if (IsKeyPress('D'))f3Velocity += f3Right;
+		if (IsKeyPress('A'))f3Velocity -= f3Right;
+
+		if(IsKeyPress(VK_UP))m_fRadY += 0.03f;
+		if(IsKeyPress(VK_DOWN))m_fRadY -= 0.03f;
+		if(IsKeyPress(VK_RIGHT))m_fRadXZ += 0.03f;
+		if(IsKeyPress(VK_LEFT))m_fRadXZ -= 0.03f;
 
 		// 計算したVelocityを注視点に加算
 		m_f3Look += f3Velocity;

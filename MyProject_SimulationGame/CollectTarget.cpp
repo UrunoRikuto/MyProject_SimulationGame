@@ -51,7 +51,7 @@ void CCollectTarget::Draw()
 		m_pHpBillboard[0]->SetRotation({ 0.0f, 0.0f, 0.0f });
 		m_pHpBillboard[0]->Draw();
 		// ‘OŒi
-		m_pHpBillboard[1]->SetPos({ m_tParam.m_f3Pos.x - (1.0f - hpRatio), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
+		m_pHpBillboard[1]->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - hpRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
 		m_pHpBillboard[1]->SetSize({ 2.0f * hpRatio, 0.2f, 1.0f });
 		m_pHpBillboard[1]->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		m_pHpBillboard[1]->SetCullingMode(D3D11_CULL_NONE);
