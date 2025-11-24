@@ -9,6 +9,7 @@
 #include "GeneratorManager.h"
 #include "FieldManager.h"
 #include "FieldGround.h"
+#include "SkyBox.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -46,6 +47,9 @@ void CSceneGame::Init()
 
 	// フィールド地面オブジェクトの生成
 	AddGameObject<CFieldGround>(Tag::Field, "FieldGround");
+
+	// スカイボックスオブジェクトの生成
+	AddGameObject<CSkyBox>(Tag::SkyBox, "SkyBox");
 }
 
 /****************************************//*

@@ -7,7 +7,7 @@
 #include "Gatherer_Strategy.h"
 #include "Main.h"
 #include "Oparation.h"
-#include "Structmath.h"
+#include "StructMath.h"
 #include "ImguiSystem.h"
 #include "CollectTarget.h"
 #include "Human.h"
@@ -168,14 +168,11 @@ void CGatherer_Strategy::DoWork()
 			return;
 		}
 
-		DirectX::XMFLOAT3 f3Diff = f3StorageHousePos - f3OwnerPos;
 		// オーナーからオブジェクトへのベクトルを計算
-		DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
-		f3Direction = DirectX::XMVector3Normalize(f3Direction);
+		DirectX::XMFLOAT3 f3Diff = f3StorageHousePos - f3OwnerPos;
 
-		// オーナーの位置をオブジェクトに向かって少しずつ移動させる
-		DirectX::XMFLOAT3 f3Move;
-		DirectX::XMStoreFloat3(&f3Move, f3Direction);
+		// 正規化
+		DirectX::XMFLOAT3 f3Move = StructMath::Normalize(f3Diff);
 
 		float fSpeed = 0.1f; // 移動速度
 		f3OwnerPos += f3Move * fSpeed;

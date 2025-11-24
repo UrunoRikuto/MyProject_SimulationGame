@@ -18,6 +18,9 @@ void CObjectLoad::LoadAll()
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel", 1.0f, Model::Flip::None);
 
+	// スカイボックスのモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Skybox.fbx"), "SkyBox", 1.0f, Model::Flip::None);
+
 	// 地面のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("FieldGround.obj"), "FieldGround", 1.0f, Model::Flip::None);
 

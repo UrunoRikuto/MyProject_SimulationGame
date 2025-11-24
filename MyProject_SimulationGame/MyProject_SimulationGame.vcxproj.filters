@@ -94,9 +94,6 @@
     <Filter Include="コードファイル\System\Job\Collect\Gatherer\Wood">
       <UniqueIdentifier>{eb884754-1140-4515-804e-b7b03445c0fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Observer">
-      <UniqueIdentifier>{92be303c-d85f-4231-872f-63ab2c08653b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\System\Generator">
       <UniqueIdentifier>{67ec8cb8-bb32-4110-8ddf-a400bc6ddcf9}</UniqueIdentifier>
     </Filter>
@@ -144,6 +141,12 @@
     </Filter>
     <Filter Include="コードファイル\GameObject\BuildObject\RefreshFacility">
       <UniqueIdentifier>{55566f4a-3bcd-4fcc-8095-c14130949a3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Generator\Observer">
+      <UniqueIdentifier>{92be303c-d85f-4231-872f-63ab2c08653b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\SkyBox">
+      <UniqueIdentifier>{1b3f6bc1-0e81-45db-8c83-dfef5a5caf8b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -292,10 +295,10 @@
       <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
-      <Filter>コードファイル\System\Observer</Filter>
+      <Filter>コードファイル\System\Generator\Observer</Filter>
     </ClInclude>
     <ClInclude Include="SubJect.h">
-      <Filter>コードファイル\System\Observer</Filter>
+      <Filter>コードファイル\System\Generator\Observer</Filter>
     </ClInclude>
     <ClInclude Include="Generator.h">
       <Filter>コードファイル\System\Generator</Filter>
@@ -347,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="RefreshFacility.h">
       <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>コードファイル\GameObject\SkyBox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,6 +536,9 @@
     <ClCompile Include="RefreshFacility.cpp">
       <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>コードファイル\GameObject\SkyBox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">
@@ -539,7 +548,7 @@
       <Filter>コードファイル\Utility</Filter>
     </None>
     <None Include="SubJect.inl">
-      <Filter>コードファイル\System\Observer</Filter>
+      <Filter>コードファイル\System\Generator\Observer</Filter>
     </None>
     <None Include="Generator.inl">
       <Filter>コードファイル\System\Generator</Filter>
