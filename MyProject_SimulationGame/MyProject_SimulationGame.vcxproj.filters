@@ -142,6 +142,9 @@
     <Filter Include="コードファイル\GameObject\FieldGround">
       <UniqueIdentifier>{c304a0c0-ea87-4e90-b196-bcf98662b225}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\BuildObject\RefreshFacility">
+      <UniqueIdentifier>{55566f4a-3bcd-4fcc-8095-c14130949a3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -342,6 +345,9 @@
     <ClInclude Include="FieldGround.h">
       <Filter>コードファイル\GameObject\FieldGround</Filter>
     </ClInclude>
+    <ClInclude Include="RefreshFacility.h">
+      <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -520,6 +526,9 @@
     </ClCompile>
     <ClCompile Include="FieldGround.cpp">
       <Filter>コードファイル\GameObject\FieldGround</Filter>
+    </ClCompile>
+    <ClCompile Include="RefreshFacility.cpp">
+      <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

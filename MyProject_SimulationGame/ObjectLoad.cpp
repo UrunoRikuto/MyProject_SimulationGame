@@ -33,6 +33,9 @@ void CObjectLoad::LoadAll()
 	// 貯蔵庫のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("StorageHouse.obj"), "StorageHouse", 1.0f, Model::Flip::None);
 
+	// リフレッシュ施設のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("RefreshFacility.obj"), "RefreshFacility", 1.0f, Model::Flip::None);
+
 	// HPバーのフレームテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Frame.png"), "HpBar_Frame");
 

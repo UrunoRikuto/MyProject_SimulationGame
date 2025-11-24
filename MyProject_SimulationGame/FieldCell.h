@@ -53,6 +53,7 @@ public:
 	// @return セルのインデックス
 	DirectX::XMINT2 GetIndex() { return m_n2Index; }
 
+
 private:
 
 	// @brief セルの中心座標

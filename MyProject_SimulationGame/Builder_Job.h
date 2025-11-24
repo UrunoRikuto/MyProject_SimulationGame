@@ -18,6 +18,8 @@ private:
 	{
 		// ‘Ò‹@’†
 		Waiting,
+		// Œš’z‘ÎÛ’Tõ’†
+		SearchingTarget,
 		// Œš’z’†
 		Building,
 		// ‹xŒe’†
