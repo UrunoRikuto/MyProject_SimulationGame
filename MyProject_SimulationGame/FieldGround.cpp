@@ -6,6 +6,7 @@
 *//**************************************************/
 #include "FieldGround.h"
 #include "ModelRenderer.h"
+#include "FieldManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -34,7 +35,6 @@ void CFieldGround::Init()
 
 	// サイズの設定
 	m_tParam.m_f3Size = DirectX::XMFLOAT3(1000.0f, 1.0f, 1000.0f);
-	m_tParam.m_f3Pos.y -= m_tParam.m_f3Size.y;
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();

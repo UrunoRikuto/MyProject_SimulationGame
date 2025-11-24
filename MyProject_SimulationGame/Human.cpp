@@ -6,6 +6,7 @@
 *//**************************************************/
 #include "Human.h"
 #include "ModelRenderer.h"
+#include "FieldManager.h"
 #include <imgui.h>
 
 /****************************************//*
@@ -17,6 +18,11 @@ CHuman::CHuman()
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
+
+	// 耐久値初期化
+	m_pStaminaGaugeBillboard = new CBillboardRenderer(this);
+	m_pStaminaGaugeBillboard->SetKey("Bar_Gauge");
+
 }
 
 /****************************************//*
@@ -34,7 +40,7 @@ void CHuman::Init()
 	// 基底クラスの初期化処理
 	CGameObject::Init();
 
-	m_tParam.m_f3Pos = { 0.0f, m_tParam.m_f3Size.y / 2.0f, 0.0f };
+	m_tParam.m_f3Pos = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[(CFieldGrid::GridSizeX / 2) - 1][(CFieldGrid::GridSizeY / 2) - 1]->GetPos();
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
@@ -48,7 +54,7 @@ void CHuman::Init()
 	PixelShader* pPS = new PixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 
-	m_tParam.m_eCulling = D3D11_CULL_BACK;
+	m_tParam.m_eCulling = D3D11_CULL_NONE;
 }
 
 /****************************************//*
@@ -80,6 +86,24 @@ void CHuman::Draw()
 {
 	// 基底クラスの描画処理
 	CGameObject::Draw();
+
+	// スタミナゲージの描画
+	float fStaminaRatio = m_pJob->GetJobStatus().m_fStamina / m_pJob->GetJobStatus().m_fMaxStamina;
+
+	// スタミナが満タンでなければ描画
+	if (fStaminaRatio < 1.0f)
+	{
+		// 前景
+		m_pStaminaGaugeBillboard->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - fStaminaRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
+		m_pStaminaGaugeBillboard->SetSize({ 2.0f * fStaminaRatio, 0.2f, 1.0f });
+		m_pStaminaGaugeBillboard->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		m_pStaminaGaugeBillboard->SetCullingMode(D3D11_CULL_FRONT);
+		m_pStaminaGaugeBillboard->SetUVPos({ 0.0f, 0.0f });
+		m_pStaminaGaugeBillboard->SetUVSize({ 1.0f, 1.0f });
+		m_pStaminaGaugeBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
+		m_pStaminaGaugeBillboard->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
+		m_pStaminaGaugeBillboard->Draw();
+	}
 }
 
 /****************************************//*

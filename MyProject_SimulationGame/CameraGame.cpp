@@ -112,12 +112,12 @@ void CCameraGame::Update()
 		// 注視点を選択しているオブジェクトの座標にする
 		m_f3Look = pObject->GetPos();
 
-		if (IsMouseWheelUp())m_fRadius -= 1.0f;
-		if (IsMouseWheelDown())m_fRadius += 1.0f;
-		if (IsKeyPress('W'))m_fRadY += 0.01f;
-		if (IsKeyPress('S'))m_fRadY -= 0.01f;
-		if (IsKeyPress('D'))m_fRadXZ += 0.01f;
-		if (IsKeyPress('A'))m_fRadXZ -= 0.01f;
+		if (IsMouseWheelUp())m_fRadius -= 2.0f;
+		if (IsMouseWheelDown())m_fRadius += 2.0f;
+		if (IsKeyPress('W'))m_fRadY += 0.02f;
+		if (IsKeyPress('S'))m_fRadY -= 0.02f;
+		if (IsKeyPress('D'))m_fRadXZ += 0.02f;
+		if (IsKeyPress('A'))m_fRadXZ -= 0.02f;
 
 		// ズームの下限・上限（必要なら）
 		m_fRadius = std::clamp(m_fRadius, MIN_RADIUS_ZOOM, MAX_RADIUS_ZOOM);

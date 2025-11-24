@@ -164,21 +164,15 @@ void CFieldManager::CreateInitialVillage()
 
 	// 貯蔵庫の生成と配置
 	CGameObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
-	DirectX::XMFLOAT3 f3StorageHousePos = fieldCells[halfSizeX][halfSizeY - 2]->GetPos();
-	f3StorageHousePos.y += pStorageHouse->GetSize().y / 2.0f;
-	pStorageHouse->SetPos(f3StorageHousePos);
+	pStorageHouse->SetPos(fieldCells[halfSizeX][halfSizeY - 2]->GetPos());
 	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
 
 	// 休憩所の生成と配置
 	CGameObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
-	DirectX::XMFLOAT3 f3RefreshFacilityPos = fieldCells[halfSizeX + 2][halfSizeY]->GetPos();
-	f3RefreshFacilityPos.y += pRefreshFacility->GetSize().y / 2.0f;
-	pRefreshFacility->SetPos(f3RefreshFacilityPos);
+	pRefreshFacility->SetPos(fieldCells[halfSizeX + 2][halfSizeY]->GetPos());
 	fieldCells[halfSizeX + 2][halfSizeY]->SetUse(true);
 
 	// 初期村人の生成
 	CGameObject* pHuman = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-	DirectX::XMFLOAT3 f3HumanCreatePos = fieldCells[halfSizeX][halfSizeY]->GetPos();
-	f3HumanCreatePos.y += pHuman->GetSize().y / 2.0f;
-	pHuman->SetPos(f3HumanCreatePos);
+	pHuman->SetPos(fieldCells[halfSizeX][halfSizeY]->GetPos());
 }

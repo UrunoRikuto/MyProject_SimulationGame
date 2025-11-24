@@ -71,6 +71,6 @@ protected:
 
 	// @brief 耐久値を表示するビルボードコンポーネント
 	// @note 0:背景 1:前景
-	CBillboardRenderer* m_pHpBillboard[2];
+	CBillboardRenderer* m_pHpBillboard;
 };
 

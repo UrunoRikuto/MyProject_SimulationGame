@@ -9,6 +9,7 @@
 #include "JobOperator.h"
 #include "Item.h"
 #include <memory>
+#include "BillboardRenderer.h"
 
 // @brief 持てるアイテムの最大数
 constexpr int MaxHoldItem = 10;
@@ -75,5 +76,9 @@ private:
 
 	// @brief 所持アイテムリスト
 	std::list<CItem*> m_ItemList;
+
+	// @brief スタミナゲージビルボード
+	// 0: 背景, 1: ゲージ本体
+	CBillboardRenderer* m_pStaminaGaugeBillboard;
 };
 

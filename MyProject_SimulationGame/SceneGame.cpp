@@ -41,11 +41,11 @@ void CSceneGame::Init()
 	CGeneratorManager::GetInstance()->AddObserver(*(new CWoodGenerator()));
 	CGeneratorManager::GetInstance()->AddObserver(*(new CStoneGenerator()));
 
-	// フィールド地面オブジェクトの生成
-	AddGameObject<CFieldGround>(Tag::Field, "FieldGround");
-
 	// フィールド管理システムの初期化
 	CFieldManager::GetInstance()->AssignFieldCellType();
+
+	// フィールド地面オブジェクトの生成
+	AddGameObject<CFieldGround>(Tag::Field, "FieldGround");
 }
 
 /****************************************//*

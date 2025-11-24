@@ -37,6 +37,8 @@ void CStone::Init()
 	// 基底クラスの初期化処理
 	CGameObject::Init();
 
+	// 
+
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("Stone");

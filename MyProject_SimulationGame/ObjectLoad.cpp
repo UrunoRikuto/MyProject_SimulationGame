@@ -36,11 +36,8 @@ void CObjectLoad::LoadAll()
 	// リフレッシュ施設のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("RefreshFacility.obj"), "RefreshFacility", 1.0f, Model::Flip::None);
 
-	// HPバーのフレームテクスチャのロード
-	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Frame.png"), "HpBar_Frame");
-
 	// HPバーのゲージテクスチャのロード
-	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("HpBar_Gauge.png"), "HpBar_Gauge");
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Bar_Gauge.png"), "Bar_Gauge");
 }
 
 

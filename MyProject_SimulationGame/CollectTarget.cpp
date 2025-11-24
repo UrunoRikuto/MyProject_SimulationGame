@@ -15,10 +15,8 @@ CCollectTarget::CCollectTarget()
 	, m_pHpBillboard{ nullptr }
 {
 	// 耐久値初期化
-	m_pHpBillboard[0] = new CBillboardRenderer(this);
-	m_pHpBillboard[1] = new CBillboardRenderer(this);
-	m_pHpBillboard[0]->SetKey("HpBar_Frame");
-	m_pHpBillboard[1]->SetKey("HpBar_Gauge");
+	m_pHpBillboard = new CBillboardRenderer(this);
+	m_pHpBillboard->SetKey("Bar_Gauge");
 }
 
 /*****************************************//*
@@ -37,28 +35,21 @@ void CCollectTarget::Draw()
 
 	// 耐久値表示
 	float hpRatio = m_Status.m_fHp / m_Status.m_fMaxHp;
+
 	// 耐久値が最大値未満の場合のみ表示
 	if (hpRatio < 1.0f)
 	{
 		// 耐久値ビルボードの描画
-		// 背景
-		m_pHpBillboard[0]->SetPos({ m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
-		m_pHpBillboard[0]->SetSize({ 2.0f, 0.2f, 1.0f });
-		m_pHpBillboard[0]->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		m_pHpBillboard[0]->SetCullingMode(D3D11_CULL_NONE);
-		m_pHpBillboard[0]->SetUVPos({ 0.0f, 0.0f });
-		m_pHpBillboard[0]->SetUVSize({ 1.0f, 1.0f });
-		m_pHpBillboard[0]->SetRotation({ 0.0f, 0.0f, 0.0f });
-		m_pHpBillboard[0]->Draw();
 		// 前景
-		m_pHpBillboard[1]->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - hpRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
-		m_pHpBillboard[1]->SetSize({ 2.0f * hpRatio, 0.2f, 1.0f });
-		m_pHpBillboard[1]->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		m_pHpBillboard[1]->SetCullingMode(D3D11_CULL_NONE);
-		m_pHpBillboard[1]->SetUVPos({ 0.0f, 0.0f });
-		m_pHpBillboard[1]->SetUVSize({ 1.0f, 1.0f });
-		m_pHpBillboard[1]->SetRotation({ 0.0f, 0.0f, 0.0f });
-		m_pHpBillboard[1]->Draw();
+		m_pHpBillboard->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - hpRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
+		m_pHpBillboard->SetSize({ 2.0f * hpRatio, 0.2f, 1.0f });
+		m_pHpBillboard->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		m_pHpBillboard->SetCullingMode(D3D11_CULL_FRONT);
+		m_pHpBillboard->SetUVPos({ 0.0f, 0.0f });
+		m_pHpBillboard->SetUVSize({ 1.0f, 1.0f });
+		m_pHpBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
+		m_pHpBillboard->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+		m_pHpBillboard->Draw();
 	}
 }
 
@@ -70,8 +61,6 @@ void CCollectTarget::SetCreatePos(CFieldCell* cell)
 {
 	// 位置設定
 	m_tParam.m_f3Pos = cell->GetPos();
-	// オブジェクトの高さ分だけY座標を上げる
-	m_tParam.m_f3Pos.y += m_tParam.m_f3Size.y / 2.0f;
 
 	// セルを使用中に設定
 	cell->SetUse(true);
