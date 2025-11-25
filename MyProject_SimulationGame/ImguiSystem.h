@@ -47,6 +47,7 @@ private:
 		CellsDraw,
 		BuildRequest,
 		DebugTemplate,
+		GameTime,
 
 		MAX
 	};
@@ -133,6 +134,9 @@ private:
 
 	// @brief デバックテンプレート生成表示
 	void DrawDebugTemplateCreate();
+
+	// @brief ゲームタイマー表示
+	void DrawGameTime();
 
 private:
 	// @brief インスタンス

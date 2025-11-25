@@ -6,6 +6,7 @@
 #include "SkyBox.h"
 #include "ModelRenderer.h"
 #include "Camera.h"
+#include "GameTimeManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -60,5 +61,5 @@ void CSkyBox::Update()
 	m_tParam.m_f3Pos = cameraPos;
 
 	// スカイボックスを徐々に回転させる
-	m_tParam.m_f3Rotate.y += 0.0005f;
+	m_tParam.m_f3Rotate.y = TORAD(360.0f) * CGameTimeManager::GetInstance()->GetDayProgress();
 }

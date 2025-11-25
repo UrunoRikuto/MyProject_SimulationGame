@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "BuildManager.h"
 #include "Human.h"
+#include "GameTimeManager.h"
 
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
@@ -125,6 +126,7 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)])	DrawBuildRequestList();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::GameTime)])		DrawGameTime();
 #ifdef _DEBUG
 	DrawDebugSystem();
 #endif
@@ -342,6 +344,7 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
 	ImGui::Checkbox("BuildRequest", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)]);
 	ImGui::Checkbox("DebugTemplate", &m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)]);
+	ImGui::Checkbox("GameTime", &m_bDebug[static_cast<int>(DebugSystemFlag::GameTime)]);
 
 	ImGui::End();
 }
@@ -545,5 +548,25 @@ void CImguiSystem::DrawDebugTemplateCreate()
 
 	ImGui::EndChild();
 
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| ゲームタイマー表示
+*//****************************************/
+void CImguiSystem::DrawGameTime()
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 100));
+
+	ImGui::Begin("GameTime");
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(180.0f, 60.0f), ImGuiWindowFlags_NoTitleBar);
+
+	float time = CGameTimeManager::GetInstance()->GetGameTime();
+	ImGui::Text(std::string("GameTime:" + std::to_string(time)).c_str());
+
+	int day = CGameTimeManager::GetInstance()->GetGameDays();
+	ImGui::Text(std::string("GameDays:" + std::to_string(day)).c_str());
+
+	ImGui::EndChild();
 	ImGui::End();
 }

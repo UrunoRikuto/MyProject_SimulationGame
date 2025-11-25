@@ -11,6 +11,7 @@
 #include "FieldGround.h"
 #include "SkyBox.h"
 #include "ImguiSystem.h"
+#include "GameTimeManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -60,6 +61,9 @@ void CSceneGame::Update()
 {
 	// 基底クラスの更新処理
 	CScene::Update();
+
+	// ゲーム内時間の更新
+	CGameTimeManager::GetInstance()->UpdateGameTime();
 }
 
 /****************************************//*

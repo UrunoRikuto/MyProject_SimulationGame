@@ -151,6 +151,9 @@
     <Filter Include="コードファイル\System\Manager">
       <UniqueIdentifier>{774a8e17-2d4d-48b4-98da-0291ff958952}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\GameTime">
+      <UniqueIdentifier>{c108793f-3a05-4eae-9587-b8c039d11b99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -360,6 +363,9 @@
     <ClInclude Include="BuildManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="GameTimeManager.h">
+      <Filter>コードファイル\System\GameTime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -550,6 +556,9 @@
     </ClCompile>
     <ClCompile Include="BuildManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimeManager.cpp">
+      <Filter>コードファイル\System\GameTime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

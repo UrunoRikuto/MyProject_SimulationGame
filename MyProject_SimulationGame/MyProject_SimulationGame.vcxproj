@@ -145,6 +145,7 @@
     <ClInclude Include="FieldCell.h" />
     <ClInclude Include="FieldGround.h" />
     <ClInclude Include="FieldManager.h" />
+    <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
     <ClInclude Include="Component.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="FieldCell.cpp" />
     <ClCompile Include="FieldGround.cpp" />
     <ClCompile Include="FieldManager.cpp" />
+    <ClCompile Include="GameTimeManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GeneratorManager.cpp" />
