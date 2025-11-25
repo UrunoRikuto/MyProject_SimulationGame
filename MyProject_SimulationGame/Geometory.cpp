@@ -188,6 +188,9 @@ void Geometory::DrawBox(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize
 *//*************************/
 void Geometory::DrawPlane(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSize, DirectX::XMFLOAT3 In_vDir, DirectX::XMFLOAT4 In_Color)
 {
+	// ÉJÉäÉìÉOê›íË
+	SetCullingMode(D3D11_CULL_BACK);
+
 	DirectX::XMFLOAT3 halfSize = { In_vSize.x / 2
 		, In_vSize.y / 2
 		, In_vSize.z / 2 };

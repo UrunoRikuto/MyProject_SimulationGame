@@ -24,6 +24,7 @@ CGameObject::CGameObject()
     m_tParam.m_f4Color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_tParam.m_f2UVPos = DirectX::XMFLOAT2(0.0f, 0.0f);
     m_tParam.m_f2UVSize = DirectX::XMFLOAT2(1.0f, 1.0f);
+	m_tParam.m_eCulling = D3D11_CULL_NONE;
     m_f3OldPos = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 

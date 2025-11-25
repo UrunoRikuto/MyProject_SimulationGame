@@ -48,6 +48,7 @@ void CCollectTarget::Draw()
 		m_pHpBillboard->SetUVSize({ 1.0f, 1.0f });
 		m_pHpBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
 		m_pHpBillboard->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+		m_pHpBillboard->SetCullingMode(D3D11_CULL_FRONT);
 		m_pHpBillboard->Draw();
 	}
 }

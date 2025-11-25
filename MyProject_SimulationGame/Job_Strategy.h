@@ -61,6 +61,12 @@ public:
 	void SetJobStatus(const JobStatus& status) { m_Status = status; }
 
 protected:
+
+	// @brief 休憩処理
+	// @return true:休憩完了 false:休憩中
+	bool RestAction();
+
+protected:
 	// @brief 所属しているオブジェクトのポインタ
 	CHuman* m_pOwner = nullptr;
 

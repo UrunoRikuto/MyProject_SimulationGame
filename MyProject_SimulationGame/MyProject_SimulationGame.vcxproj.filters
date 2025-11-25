@@ -539,6 +539,9 @@
     <ClCompile Include="SkyBox.cpp">
       <Filter>コードファイル\GameObject\SkyBox</Filter>
     </ClCompile>
+    <ClCompile Include="Job_Strategy.cpp">
+      <Filter>コードファイル\System\Job</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

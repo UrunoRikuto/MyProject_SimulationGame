@@ -221,6 +221,7 @@
     <ClCompile Include="ImguiSystem.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="JobOperator.cpp" />
+    <ClCompile Include="Job_Strategy.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="RefreshFacility.cpp" />

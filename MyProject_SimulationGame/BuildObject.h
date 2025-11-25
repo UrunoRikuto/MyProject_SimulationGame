@@ -11,6 +11,10 @@
 class CBuildObject : public CGameObject
 {
 public:
+	// 建築物レベルの最大値
+	static constexpr int MAX_BUILD_LEVEL = 5;
+
+public:
 	// @brief コンストラクタ
 	CBuildObject();
 
@@ -19,5 +23,13 @@ public:
 
 	// @brief 初期化処理
 	virtual void Init() override;
+
+	// @brief インスペクター表示処理
+	virtual int Inspecter(bool isEnd = true) override;
+
+protected:
+
+	// @brief 建築物レベル
+	int m_nBuildLevel;
 };
 
