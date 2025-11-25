@@ -17,16 +17,17 @@
 *//*****************************************/
 bool IJob_Strategy::RestAction()
 {
+	// œŠO‚·‚é‹xŒe{İIDƒŠƒXƒg
 	std::vector<ObjectID> vNotRefreshFacilityIDs;
 
-	CRefreshFacility* pRefreshFacility = nullptr;
-	while (1)
+	// ‹xŒe{İ‚ğ‚Ü‚¾g—p‚µ‚Ä‚¢‚È‚¢ê‡
+	while (m_UsingRefreshFacility == nullptr)
 	{
 		// ‹xŒe{İ‚ğ’T‚·ƒ‹[ƒv
-		pRefreshFacility = GetScene()->GetGameObject<CRefreshFacility>(m_pOwner->GetPos(), vNotRefreshFacilityIDs);
+		m_UsingRefreshFacility = GetScene()->GetGameObject<CRefreshFacility>(m_pOwner->GetPos(), vNotRefreshFacilityIDs);
 
 		// ‹xŒe{İ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡
-		if (pRefreshFacility == nullptr)
+		if (m_UsingRefreshFacility == nullptr)
 		{
 			// Œš’zŠÇ—ƒVƒXƒeƒ€‚É‹xŒe{İ‚ÌŒš’zƒŠƒNƒGƒXƒg‚ğ‘—‚é
 			CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
@@ -36,20 +37,24 @@ bool IJob_Strategy::RestAction()
 		}
 
 		// ‹xŒe{İ‚ªg—p‰Â”\‚©‚Ç‚¤‚©Šm”F
-		if (!pRefreshFacility->CanUseRefreshFacility())
+		if (!m_UsingRefreshFacility->CanUseRefreshFacility())
 		{
 			// g—p•s‰Â‚Ìê‡‚ÍAœŠOƒŠƒXƒg‚É’Ç‰Á‚µ‚ÄÄ“x’T‚·
-			vNotRefreshFacilityIDs.push_back(pRefreshFacility->GetID());
+			vNotRefreshFacilityIDs.push_back(m_UsingRefreshFacility->GetID());
+			m_UsingRefreshFacility = nullptr;
 		}
-		else
-		{
-			// g—p‰Â”\‚È‹xŒe{İ‚ªŒ©‚Â‚©‚Á‚½ê‡‚Íƒ‹[ƒv‚ğ”²‚¯‚é
-			break;
-		}
+		else break;
 	}
 
+	if(m_UsingRefreshFacility == nullptr)
+	{
+		// ‹xŒe{İ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Í‹xŒe‚Å‚«‚È‚¢‚Ì‚Åfalse‚ğ•Ô‚·
+		return false;
+	}
+
+
 	// ‹xŒeŠ‚ÌˆÊ’u‚ğæ“¾
-	DirectX::XMFLOAT3 f3RefreshFacilityPos = pRefreshFacility->GetPos();
+	DirectX::XMFLOAT3 f3RefreshFacilityPos = m_UsingRefreshFacility->GetPos();
 
 	// ƒI[ƒi[‚ÌˆÊ’u‚ğæ“¾
 	DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
@@ -57,7 +62,7 @@ bool IJob_Strategy::RestAction()
 	// ƒIƒuƒWƒFƒNƒg‚ÆƒI[ƒi[‚ÌˆÊ’u‚Ì‹——£‚ğŒvZ
 	float fDistance = StructMath::Distance(f3OwnerPos, f3RefreshFacilityPos);
 
-	// ˆê’è‹——£ˆÈ“à‚É’B‚µ‚½‚ç‹xŒe‚·‚é
+	// ‹xŒe{İ‚É‹ß‚Ã‚­ˆ—
 	if (fDistance >= 1.0f)
 	{
 		DirectX::XMFLOAT3 f3Diff = f3RefreshFacilityPos - f3OwnerPos;
@@ -75,10 +80,10 @@ bool IJob_Strategy::RestAction()
 	}
 
 	// ‹xŒe{İ‚ğg—p‚µ‚Ä‚¢‚È‚¢ê‡‚Ìˆ—
-	if (!pRefreshFacility->IsUsingRefreshFacility(*m_pOwner))
+	if (!m_UsingRefreshFacility->IsUsingRefreshFacility(*m_pOwner))
 	{
 		// ‹xŒe{İ‚ªg—p‰Â”\‚©‚Ç‚¤‚©Šm”F
-		if (!pRefreshFacility->CanUseRefreshFacility())
+		if (!m_UsingRefreshFacility->CanUseRefreshFacility())
 		{
 			// Œš’zŠÇ—ƒVƒXƒeƒ€‚É‹xŒe{İ‚ÌŒš’zƒŠƒNƒGƒXƒg‚ğ‘—‚é
 			CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
@@ -88,18 +93,20 @@ bool IJob_Strategy::RestAction()
 		}
 
 		// ‹xŒe{İ‚ğg—p
-		pRefreshFacility->UseRefreshFacility(*m_pOwner);
+		m_UsingRefreshFacility->UseRefreshFacility(*m_pOwner);
 	}
 
 	// ƒXƒ^ƒ~ƒi‚ğ‰ñ•œ
-	m_Status.m_fStamina += pRefreshFacility->GetRefreshStaminaAmount();
+	m_Status.m_fStamina += m_UsingRefreshFacility->GetRefreshStaminaAmount();
 
 	// ‹xŒe‚ªŠ®—¹‚µ‚½‚çtrue‚ğ•Ô‚·
 	if (m_Status.m_fStamina >= m_Status.m_fMaxStamina)
 	{
 		m_Status.m_fStamina = m_Status.m_fMaxStamina;
 		// ‹xŒe{İ‚Ìg—p‚ğ‰ğœ
-		pRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
+		m_UsingRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
+		// ‹xŒe{İID‚ğƒŠƒZƒbƒg
+		m_UsingRefreshFacility = nullptr;
 		return true;
 	}
 

@@ -113,6 +113,12 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 	newRequest.eBuildType = In_eRequestType;
 	newRequest.eRequestState = RequestState::Unprocessed;
 
+	if(newRequest.n2BuildIndex.x == -1 && newRequest.n2BuildIndex.y == -1)
+	{
+		// 建築可能な位置が無い場合は依頼を追加しない
+		return;
+	}
+
 	// 建築依頼リストに追加
 	m_BuildRequestList.push_back(newRequest);
 }
@@ -161,11 +167,16 @@ void CBuildManager::CompleteBuildRequest(BuildRequest* pRequest)
 *//*****************************************/
 DirectX::XMINT2 CBuildManager::DecideRandomBuildPosition()
 {
+	// 建築可能なフィールドセルを取得
 	auto cells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells(CFieldCell::CellType::Build, false);
+
+	// 建築可能なセルが無い場合は無効なインデックスを返す
+	if (cells.empty())return DirectX::XMINT2(-1, -1);
 
 	// ランダムにセルを選択
 	int randomIndex = rand() % cells.size();
 
+	// 選択したセルのインデックスを返す
 	return cells[randomIndex]->GetIndex();
 }
 

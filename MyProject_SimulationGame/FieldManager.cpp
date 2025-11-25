@@ -165,8 +165,8 @@ void CFieldManager::CreateInitialVillage()
 	// 貯蔵庫の生成と配置
 	CBuildObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
 	pStorageHouse->SetPos(fieldCells[halfSizeX][halfSizeY + 2]->GetPos());
-	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
-	fieldCells[halfSizeX][halfSizeY]->SetObject(pStorageHouse);
+	fieldCells[halfSizeX][halfSizeY + 2]->SetUse(true);
+	fieldCells[halfSizeX][halfSizeY + 2]->SetObject(pStorageHouse);
 	pStorageHouse->SetFieldCellIndex(fieldCells[halfSizeX][halfSizeY + 2]->GetIndex());
 
 	// 休憩所の生成と配置

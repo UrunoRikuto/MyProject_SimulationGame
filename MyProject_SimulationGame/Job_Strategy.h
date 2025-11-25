@@ -5,6 +5,7 @@
 			| ストラテジーパターンで作成
 *//**************************************************/
 #pragma once
+#include "RefreshFacility.h"
 #include <string>
 
 // 前方宣言
@@ -75,5 +76,8 @@ protected:
 
 	// @brief 職業のステータス
 	JobStatus m_Status;
+
+	// @brief 休憩に利用している休憩施設のID
+	CRefreshFacility* m_UsingRefreshFacility = nullptr;
 };
 

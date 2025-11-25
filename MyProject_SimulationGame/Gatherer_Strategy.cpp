@@ -67,6 +67,7 @@ void CGatherer_Strategy::DoWork()
 			// 一定距離以内に到達したら収集状態に移行
 			if (fDistance < 1.0f)
 			{
+				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Gathering;
 				return;
 			}
@@ -114,6 +115,7 @@ void CGatherer_Strategy::DoWork()
 			// アイテムが所持できる上限に達した場合は運搬状態に移行
 			if (m_pOwner->GetItemCount() >= MaxHoldItem)
 			{
+				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Transporting;
 				return;
 			}
@@ -122,6 +124,7 @@ void CGatherer_Strategy::DoWork()
 			if (m_Status.m_fStamina <= 0.0f)
 			{
 				m_Status.m_fStamina = 0.0f;
+				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Resting;
 				return;
 			}
@@ -134,7 +137,7 @@ void CGatherer_Strategy::DoWork()
 	case WorkState::Transporting:
 	{
 		// 一番近い貯蔵庫を探す
-		CGameObject* pStorageHouse = GetScene()->GetGameObject("StorageHouse");
+		CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
 
 		// 貯蔵庫が見つからなかった場合は処理を抜ける
 		if (pStorageHouse == nullptr)
@@ -143,11 +146,13 @@ void CGatherer_Strategy::DoWork()
 			if (m_Status.m_fStamina <= 0.0f)
 			{
 				m_Status.m_fStamina = 0.0f;
+				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Resting;
 				return;
 			}
 
 			// 再び標的オブジェクトを探して移動する状態に戻る
+			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::SearchAndMove;
 			return;
 		}
@@ -164,6 +169,7 @@ void CGatherer_Strategy::DoWork()
 		// 一定距離以内に到達したら収集状態に移行
 		if (fDistance < 1.0f)
 		{
+			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Storing;
 			return;
 		}
@@ -188,10 +194,36 @@ void CGatherer_Strategy::DoWork()
 		{
 
 			// 一番近い貯蔵庫を探す
-			CGameObject* pStorageHouse = GetScene()->GetGameObject("StorageHouse");
+			CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
 
-			// 貯蔵庫にアイテムを収納する
-			dynamic_cast<CStorageHouse*>(pStorageHouse)->StoreItem(m_pOwner->TakeOutItem());
+			// 貯蔵庫に向かって移動する
+			DirectX::XMFLOAT3 f3StorageHousePos = pStorageHouse->GetPos();
+
+			// オーナーの位置を取得
+			DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
+
+			// オブジェクトとオーナーの位置の距離を計算
+			float fDistance = StructMath::Distance(f3OwnerPos, f3StorageHousePos);
+
+			// 一定距離以内に到達したら素材アイテムを貯蔵庫に収納する
+			if (fDistance < 1.0f)
+			{
+				// 貯蔵庫にアイテムを収納する
+				dynamic_cast<CStorageHouse*>(pStorageHouse)->StoreItem(m_pOwner->TakeOutItem());
+				return;
+			}
+
+			// オーナーからオブジェクトへのベクトルを計算
+			DirectX::XMFLOAT3 f3Diff = f3StorageHousePos - f3OwnerPos;
+
+			// 正規化
+			DirectX::XMFLOAT3 f3Move = StructMath::Normalize(f3Diff);
+
+			float fSpeed = 0.1f; // 移動速度
+			f3OwnerPos += f3Move * fSpeed;
+
+			// オーナーの位置を更新
+			m_pOwner->SetPos(f3OwnerPos);
 		}
 		else
 		{
@@ -199,21 +231,33 @@ void CGatherer_Strategy::DoWork()
 			if (m_Status.m_fStamina <= 0.0f)
 			{
 				m_Status.m_fStamina = 0.0f;
+				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Resting;
 				return;
 			}
 
 			// 運搬が完了したら再び標的オブジェクトを探して移動する状態に戻る
-			m_eCurrentState = WorkState::SearchAndMove;
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = m_ePrevState;
 		}
 	}
 	break;
 	case WorkState::Resting:
 	{
+		if(m_pOwner->HasItem())
+		{
+			// アイテムを所持している場合は先に貯蔵庫に運搬する
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = WorkState::Transporting;
+
+			return;
+		}
+
 		// 休憩が完了したら再び標的オブジェクトを探して移動する状態に戻る
 		if (RestAction())
 		{
 			m_Status.m_fStamina = m_Status.m_fMaxStamina;
+			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::SearchAndMove;
 		}
 	}
