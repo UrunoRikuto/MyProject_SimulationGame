@@ -16,6 +16,7 @@ CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In
 	, m_bUse(false)
 	, m_vPos(In_vPos)
 	, m_n2Index(In_vIndex)
+	, m_pObject(nullptr)
 {
 }
 

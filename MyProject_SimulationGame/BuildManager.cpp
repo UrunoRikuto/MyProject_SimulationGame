@@ -1,0 +1,186 @@
+/**************************************************//*
+	@file	| BuildManager.cpp
+	@brief	| 建築物関係の管理システムのcppファイル
+	@note	| 建築物関係の管理システムを実装
+			| シングルトンパターンで作成
+*//**************************************************/
+#include "BuildManager.h"
+#include "Main.h"
+#include "StorageHouse.h"
+#include "RefreshFacility.h"
+#include "FieldManager.h"
+
+// 静的メンバ変数の初期化
+CBuildManager* CBuildManager::m_pInstance = nullptr;
+
+/*****************************************//*
+	@brief　	| コンストラクタ
+*//*****************************************/
+CBuildManager::CBuildManager()
+	: m_BuildRequestList()
+{
+}
+
+/*****************************************//*
+	@brief	| デストラクタ
+*//*****************************************/
+CBuildManager::~CBuildManager()
+{
+}
+
+/*****************************************//*
+	@brief	| インスタンスを取得
+	@return	| インスタンスのポインタ
+*//*****************************************/
+CBuildManager* CBuildManager::GetInstance()
+{
+	if (m_pInstance == nullptr)
+	{
+		m_pInstance = new CBuildManager();
+	}
+	return m_pInstance;
+}
+
+/*****************************************//*
+	@brief	| インスタンスを解放
+*//*****************************************/
+void CBuildManager::ReleaseInstance()
+{
+	if (m_pInstance != nullptr)
+	{
+		delete m_pInstance;
+		m_pInstance = nullptr;
+	}
+}
+
+/*****************************************//*
+	@brief	| 建築依頼を追加
+	@param	| In_eRequestType：建築物タイプ
+*//*****************************************/
+void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
+{
+	// 同じ建築物タイプの依頼が既にある場合は追加しない
+	for (const auto& request : m_BuildRequestList)
+	{
+		if (request.eBuildType == In_eRequestType)
+		{
+			return;
+		}
+	}
+
+	// 建築依頼構造体を作成
+	BuildRequest newRequest = BuildRequest();
+
+	// シーンの取得
+	CScene* pScene = GetScene();
+
+	switch (In_eRequestType)
+	{
+	// 休憩所
+	case BuildType::RefreshFacility:
+	{
+		// 今あるリフレッシュ施設を取得
+		auto buildlist = pScene->GetGameObjects<CRefreshFacility>();
+
+		// リフレッシュ施設が無ければ建築依頼を追加
+		if (buildlist.empty())
+		{
+			newRequest.eRequestType = RequestType::Build;
+			newRequest.n2BuildIndex = DecideRandomBuildPosition();
+			break;
+		}
+
+		// リフレッシュ施設がある場合は強化依頼を追加
+		for(auto build : buildlist)
+		{
+			if (!build->IsMaxBuildLevel())
+			{
+				newRequest.eRequestType = RequestType::Upgrade;
+				newRequest.n2BuildIndex = build->GetFieldCellIndex();
+
+				break;
+			}
+		}
+
+		// 全てのリフレッシュ施設が最大レベルの場合は建築依頼を追加
+		if (newRequest.eRequestType != RequestType::Upgrade)
+		{
+			newRequest.eRequestType = RequestType::Build;
+			newRequest.n2BuildIndex = DecideRandomBuildPosition();
+		}
+	}
+	}
+	newRequest.eBuildType = In_eRequestType;
+	newRequest.eRequestState = RequestState::Unprocessed;
+
+	// 建築依頼リストに追加
+	m_BuildRequestList.push_back(newRequest);
+}
+
+/*****************************************//*
+	@brief	| 建築依頼を受ける
+	@return	| 建築依頼構造体のポインタ、無ければnullptr
+*//*****************************************/
+CBuildManager::BuildRequest* CBuildManager::TakeBuildRequest()
+{
+	// 未処理の依頼を探す
+	for (auto& request : m_BuildRequestList)
+	{
+		// 未処理の依頼が見つかった場合は状態を処理中に変更して返す
+		if (request.eRequestState == RequestState::Unprocessed)
+		{
+			// 状態を処理中に変更
+			request.eRequestState = RequestState::InProcess;
+
+			// 依頼構造体のポインタを返す
+			return &request;
+		}
+	}
+	return nullptr;
+}
+
+/*****************************************//*
+	@brief	| 建築依頼を完了状態に設定
+	@param	| pRequest：建築依頼構造体のポインタ
+*//*****************************************/
+void CBuildManager::CompleteBuildRequest(BuildRequest* pRequest)
+{
+	// ポインタが無効な場合は何もしない
+	if (pRequest == nullptr)return;
+
+	// 建築依頼リストから該当の依頼を削除
+	m_BuildRequestList.remove_if([pRequest](const BuildRequest& request)
+	{
+		return &request == pRequest;
+		});
+}
+
+/*****************************************//*
+	@brief	| ランダムに建築位置を決定
+	@return	| 建築位置のフィールドセルインデックス
+*//*****************************************/
+DirectX::XMINT2 CBuildManager::DecideRandomBuildPosition()
+{
+	auto cells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells(CFieldCell::CellType::Build, false);
+
+	// ランダムにセルを選択
+	int randomIndex = rand() % cells.size();
+
+	return cells[randomIndex]->GetIndex();
+}
+
+/*****************************************//*
+	@brief	| 建築素材を取得
+	@param	| eType：建築物タイプ
+	@return	| 建築素材の配列
+*//*****************************************/
+std::vector<CBuildManager::BuildMaterial> BuildMaterials::GetBuildMaterials(CBuildManager::BuildType eType, int nLevel)
+{
+	switch (eType)
+	{
+	case CBuildManager::BuildType::RefreshFacility:
+		return RefreshFacility[nLevel];
+	}
+
+	return {};
+}

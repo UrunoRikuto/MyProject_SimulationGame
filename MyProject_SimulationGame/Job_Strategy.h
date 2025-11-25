@@ -37,6 +37,9 @@ public:
 	// @brief 仮想デストラクタ
 	virtual ~IJob_Strategy() = default;
 
+	// @brief インスペクター表示処理
+	virtual int Inspecter(bool isEnd = true) = 0;
+
 	// @brief 職業ごとの仕事処理の純粋仮想関数
 	virtual void DoWork() = 0;
 

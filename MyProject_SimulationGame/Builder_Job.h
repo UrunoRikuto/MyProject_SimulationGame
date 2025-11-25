@@ -8,6 +8,7 @@
 #include "Crafter_Strategy.h"
 #include "JobOperator.h"
 #include "BillboardRenderer.h"
+#include "BuildManager.h"
 
 // @brief 建築職業クラス
 class CBuilder_Job final: public CCrafter_Strategy
@@ -18,10 +19,14 @@ private:
 	{
 		// 待機中
 		Waiting,
-		// 建築対象探索中
+		// 素材収集中
+		GatheringMaterials,
+		// 対象探索中
 		SearchingTarget,
 		// 建築中
 		Building,
+		// 強化中
+		Upgrading,
 		// 休憩中
 		Resting
 	};
@@ -33,22 +38,27 @@ public:
 	// @brief 仕事処理
 	virtual void DoWork() override;
 
+	// @brief インスペクター表示処理
+	// @param isEnd：インスペクター終了フラグ
+	virtual int Inspecter(bool isEnd = true) override;
+
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::Builder; }
 
-	// @brief 建築対象のフィールドセルインデックスを取得
-	DirectX::XMINT2 GetBuildTargetIndex() const { return m_n2BuildTargetIndex; }
-
 private:
 	// @brief 現在の仕事状態
 	WorkState m_eCurrentState = WorkState::Waiting;
+	WorkState m_ePrevState = WorkState::Waiting;
 
-	// @brief 建築対象のフィールドセルインデックス
-	DirectX::XMINT2 m_n2BuildTargetIndex = DirectX::XMINT2(-1, -1);
+	// @brief 受けている建築依頼のポインタ
+	CBuildManager::BuildRequest* m_pCurrentBuildRequest = nullptr;
 
 	// @brief 建築中のビルボードレンダラー
 	CBillboardRenderer* m_pBuildingBillboard = nullptr;
+
+	// @brief 建築中の建築オブジェクトのポインタ
+	CBuildObject* m_pBuildingObject = nullptr;
 
 };
 

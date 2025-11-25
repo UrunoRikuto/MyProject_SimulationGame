@@ -15,10 +15,13 @@ public:
 	// @brief コンストラクタ
 	CNeet_Job();
 
-	// @brief 職業ごとの仕事処理のオーバーライド関数
+	// @brief 職業ごとの仕事処理
 	void DoWork() override;
 
-	// @brief 職業名を取得するオーバーライド関数
+	// @brief インスペクター表示処理
+	int Inspecter(bool isEnd = true) override;
+
+	// @brief 職業名を取得
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::Neet; }
 };

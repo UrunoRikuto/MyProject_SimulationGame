@@ -57,8 +57,12 @@ int CStorageHouse::Inspecter(bool isEnd)
 {
 	// 基底クラスのインスペクター表示処理
 	int itemCount = CBuildObject::Inspecter(false);
-	if (ImGui::TreeNode("Stored Items"))
+
+	std::string ItemCount = std::to_string(static_cast<int>(m_StoredItems.size()));
+
+	if (ImGui::TreeNode(std::string("Stored Items: " + ItemCount).c_str()))
 	{
+
 		// 収納されているアイテムを種類別にカウント
 		std::map<CItem::ITEM_TYPE,int> itemTypes;
 		for (CItem* pItem : m_StoredItems)

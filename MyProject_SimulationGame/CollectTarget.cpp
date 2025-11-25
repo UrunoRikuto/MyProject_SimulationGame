@@ -64,6 +64,9 @@ void CCollectTarget::SetCreatePos(CFieldCell* cell)
 
 	// セルを使用中に設定
 	cell->SetUse(true);
+	// 配置されているオブジェクトを設定
+	cell->SetObject(this);
+
 	// 連携しているフィールドセルのインデックスを保存
 	m_LinkedCellIndex = cell->GetIndex();
 }

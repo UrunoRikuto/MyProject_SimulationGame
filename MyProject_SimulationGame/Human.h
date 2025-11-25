@@ -49,6 +49,9 @@ public:
 	// @return 所持しているアイテム数
 	int GetItemCount() const { return m_ItemList.size(); }
 
+	// @brief アイテムリストの取得
+	std::vector<CItem*> GetItemList() { return m_ItemList; }
+
 	// @brief アイテムを取りだす
 	// @return 取り出したアイテムポインタ、所持していなかった場合はnullptr
 	CItem* TakeOutItem();
@@ -62,7 +65,9 @@ public:
 	// @param pItem：所持するアイテムポインタ
 	void HoldItem(CItem* pItem);
 
-private:
+	// @brief 職業ストラテジーの取得
+	IJob_Strategy* GetHumanJob() const { return m_pJob.get(); }
+
 	// @brief 職業ストラテジーの設定
 	// @param job：設定する職業ストラテジーポインタ
 	void SetHumanJob(std::unique_ptr<IJob_Strategy> job)
@@ -75,7 +80,7 @@ private:
 	std::unique_ptr<IJob_Strategy> m_pJob;
 
 	// @brief 所持アイテムリスト
-	std::list<CItem*> m_ItemList;
+	std::vector<CItem*> m_ItemList;
 
 	// @brief スタミナゲージビルボード
 	// 0: 背景, 1: ゲージ本体

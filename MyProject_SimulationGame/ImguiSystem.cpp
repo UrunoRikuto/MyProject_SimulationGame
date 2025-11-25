@@ -9,6 +9,8 @@
 #include "imgui_impl_win32.h"
 #include "Main.h"
 #include "Camera.h"
+#include "BuildManager.h"
+#include "Human.h"
 
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
@@ -21,6 +23,8 @@ CImguiSystem::CImguiSystem()
 	: m_pGameObject(nullptr)
 	, m_bUpdate(true)
 	, m_bDebug{ false }
+	, m_bCellsDraw(false)
+	, m_bOnlyHuman(false)
 {
 	// ジェネレーター情報の初期化
 	m_pGenerator.push_back({ "Human" , new(std::nothrow) CHumanGenerator() });
@@ -118,6 +122,9 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)])	DrawBuildRequestList();
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
 #ifdef _DEBUG
 	DrawDebugSystem();
 #endif
@@ -153,57 +160,84 @@ void CImguiSystem::DrawHierarchy()
 	}
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
 
-	CScene* pScene = GetScene();
-	auto Objects = pScene->GetIDVec();
-
-	std::list<ObjectID> objectIDList{};
-	for (auto Id : Objects)
+	ImGui::Checkbox("Human", &m_bOnlyHuman);
+	if (m_bOnlyHuman)
 	{
-		objectIDList.push_back(Id);
-	}
-
-	objectIDList.sort([](ObjectID a, ObjectID b)
+		// 人間オブジェクトのみ表示
+		CScene* pScene = GetScene();
+		auto Objects = pScene->GetGameObjects<CHuman>();
+		for (auto obj : Objects)
 		{
-			return a.m_nSameCount < b.m_nSameCount;
-		});
+			ObjectID id = obj->GetID();
+			std::string name = id.m_sName;
+			name += std::to_string(id.m_nSameCount + 1);
 
-	objectIDList.sort([](ObjectID a, ObjectID b)
-		{
-			return a.m_sName < b.m_sName;
-		});
+			std::string job = obj->GetHumanJob()->GetJobName();
 
-	for (auto itr = objectIDList.begin(); itr != objectIDList.end();)
-	{
-		std::string name = itr->m_sName;
+			name += " [" + job + "]";
 
-		int nItrCount = 0;
-		for (auto idItr : objectIDList)
-		{
-			if (idItr.m_sName == name)
+			if (ImGui::Button(name.c_str()))
 			{
-				nItrCount++;
+				m_pGameObject = obj;
 			}
 		}
-		ObjectID id;
-		id.m_sName = name;
 
-		if (ImGui::CollapsingHeader(std::string("[" + name + "]:" + std::to_string(nItrCount)).c_str()))
+	}
+	else
+	{
+
+		CScene* pScene = GetScene();
+		auto Objects = pScene->GetIDVec();
+
+		std::list<ObjectID> objectIDList{};
+		for (auto Id : Objects)
 		{
-			for (int i = 0; i < nItrCount; i++)
+			objectIDList.push_back(Id);
+		}
+
+		objectIDList.sort([](ObjectID a, ObjectID b)
 			{
-				std::string sButtonName = name;
-				sButtonName += std::to_string(i + 1);
-				id.m_nSameCount = i;
-				if (ImGui::Button(sButtonName.c_str()))
+				return a.m_nSameCount < b.m_nSameCount;
+			});
+
+		objectIDList.sort([](ObjectID a, ObjectID b)
+			{
+				return a.m_sName < b.m_sName;
+			});
+
+		for (auto itr = objectIDList.begin(); itr != objectIDList.end();)
+		{
+			std::string name = itr->m_sName;
+
+			int nItrCount = 0;
+			for (auto idItr : objectIDList)
+			{
+				if (idItr.m_sName == name)
 				{
-					m_pGameObject = pScene->GetGameObject(id);
+					nItrCount++;
+				}
+			}
+			ObjectID id;
+			id.m_sName = name;
+
+			if (ImGui::CollapsingHeader(std::string("[" + name + "]:" + std::to_string(nItrCount)).c_str()))
+			{
+				for (int i = 0; i < nItrCount; i++)
+				{
+					std::string sButtonName = name;
+					sButtonName += std::to_string(i + 1);
+					id.m_nSameCount = i;
+					if (ImGui::Button(sButtonName.c_str()))
+					{
+						m_pGameObject = pScene->GetGameObject(id);
+					}
+
 				}
 
 			}
 
+			std::advance(itr, nItrCount);
 		}
-
-		std::advance(itr, nItrCount);
 	}
 	ImGui::EndChild();
 	ImGui::End();
@@ -305,6 +339,9 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
 	ImGui::Checkbox("Generate",		&m_bDebug[static_cast<int>(DebugSystemFlag::Generate)]);
+	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
+	ImGui::Checkbox("BuildRequest", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)]);
+	ImGui::Checkbox("DebugTemplate", &m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)]);
 
 	ImGui::End();
 }
@@ -390,6 +427,91 @@ void CImguiSystem::DrawCreateObjectButton()
 			m_pGenerator[i].m_pGenerator->Notify();
 		}
 	}
+
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| セルデバッグ表示
+*//****************************************/
+void CImguiSystem::DrawCellsDebug()
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 100));
+	ImGui::Begin("CellsDebug");
+	ImGui::Checkbox("Cells Draw", &m_bCellsDraw);
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| 建築依頼リスト
+*//****************************************/
+void CImguiSystem::DrawBuildRequestList()
+{
+	ImGui::SetNextWindowSize(ImVec2(300, 200));
+	ImGui::Begin("BuildRequestList");
+
+	CBuildManager* pBuildManager = CBuildManager::GetInstance();
+
+	for(auto& request : pBuildManager->GetBuildRequestList())
+	{
+		std::string requestInfo = 
+			"Type:" + std::to_string(static_cast<int>(request.eRequestType))
+			+ " BuildType:" + std::to_string(static_cast<int>(request.eBuildType))
+			+ " State:" + std::to_string(static_cast<int>(request.eRequestState))
+			+ " PosX:" + std::to_string(request.n2BuildIndex.x)
+			+ " PosY:" + std::to_string(request.n2BuildIndex.y);
+		ImGui::Text(requestInfo.c_str());
+	}
+
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| デバッグテンプレート作成
+*//****************************************/
+void CImguiSystem::DrawDebugTemplateCreate()
+{
+	ImGui::SetNextWindowSize(ImVec2(300, 150));
+	ImGui::Begin("DebugTemplateCreate");
+
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(280, 100), ImGuiWindowFlags_NoTitleBar);
+	ImGui::Text("Create Human Template");
+
+	// 生成する数指定
+	// 木材収集職
+	static int nWoodGatherCount = 0;
+	ImGui::InputInt("WoodGatherCount", &nWoodGatherCount);
+	// 石材収集職
+	static int nStoneGatherCount = 0;
+	ImGui::InputInt("StoneGatherCount", &nStoneGatherCount);
+	// 建築職
+	static int nBuilderCount = 0;
+	ImGui::InputInt("BuilderCount", &nBuilderCount);
+
+	// テンプレート作成ボタン
+
+	if (ImGui::Button("Create Human"))
+	{
+		CScene* pScene = GetScene();
+
+		for(int i = 0; i < nWoodGatherCount; i++)
+		{
+			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
+			human->SetHumanJob(CreateJobByName(JobName::WoodGatherer, *human));
+		}
+		for (int i = 0; i < nStoneGatherCount; i++)
+		{
+			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
+			human->SetHumanJob(CreateJobByName(JobName::StoneGatherer, *human));
+		}
+		for (int i = 0; i < nBuilderCount; i++)
+		{
+			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
+			human->SetHumanJob(CreateJobByName(JobName::Builder, *human));
+		}
+	}
+
+	ImGui::EndChild();
 
 	ImGui::End();
 }

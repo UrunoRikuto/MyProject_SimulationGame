@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "ModelRenderer.h"
 
+#undef GetObject
+
 // @brief フィールドセルクラス
 class CFieldCell
 {
@@ -40,6 +42,7 @@ public:
 	void SetCellType(const CellType In_eType);
 
 	// @brief セルを使用しているかどうかの取得
+	// @return true:使用している false:使用していない
 	const bool IsUse() { return m_bUse; }
 
 	// @brief セルを使用しているかどうかの設定
@@ -53,6 +56,11 @@ public:
 	// @return セルのインデックス
 	DirectX::XMINT2 GetIndex() { return m_n2Index; }
 
+	// @brief 配置されているオブジェクトの取得
+	CGameObject* GetObject() { return m_pObject; }
+
+	// @brief 配置されているオブジェクトの設定
+	void SetObject(CGameObject* In_pObject) { m_pObject = In_pObject; }
 
 private:
 
@@ -67,5 +75,8 @@ private:
 
 	// @brief セルを使用しているかどうか
 	bool m_bUse;
+
+	// @brief 配置されているオブジェクトのアドレス
+	CGameObject* m_pObject;
 };
 

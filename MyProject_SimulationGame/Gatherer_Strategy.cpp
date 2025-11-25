@@ -228,3 +228,57 @@ void CGatherer_Strategy::DoWork()
 		CImguiSystem::GetInstance()->AddDebugLog(sTargetName, true);
 	}
 }
+
+/****************************************//*
+	@brief　	|　インスペクター表示処理
+	@param　	|	isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
+	@return		|	表示した項目数
+*//****************************************/
+int CGatherer_Strategy::Inspecter(bool isEnd)
+{
+	int nItemCount = 0;
+
+	// インスペクターの子ウィンドウを開始
+	ImGui::BeginChild("Gatherer Job Inspecter");
+
+	// 職業名の表示
+	ImGui::Text(std::string("JobName:"+ GetJobName()).c_str());
+
+	// ステータスの表示
+	ImGui::Text(std::string("WorkPower:" + std::to_string(m_Status.m_fWorkPower)).c_str());
+	ImGui::Text(std::string("Stamina:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+
+	// 現在の仕事状態の表示
+	std::string sWorkState;
+	switch (m_eCurrentState)
+	{
+	case WorkState::SearchAndMove:
+		sWorkState = "SearchAndMove";
+		break;
+	case WorkState::Gathering:
+		sWorkState = "Gathering";
+		break;
+	case WorkState::Transporting:
+		sWorkState = "Transporting";
+		break;
+	case WorkState::Storing:
+		sWorkState = "Storing";
+		break;
+	case WorkState::Resting:
+		sWorkState = "Resting";
+		break;
+	}
+	ImGui::Text(std::string("CurrentWorkState:" + sWorkState).c_str());
+
+	ImGui::EndChild();
+	nItemCount++;
+
+
+	if (isEnd)
+	{
+		ImGui::EndChild();
+		ImGui::End();
+		nItemCount++;
+	}
+	return nItemCount;
+}

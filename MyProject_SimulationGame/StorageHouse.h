@@ -11,6 +11,7 @@
 // @brief 貯蔵庫クラス
 class CStorageHouse final:  public CBuildObject
 {
+
 public:
 	// @brief コンストラクタ
 	CStorageHouse();
@@ -22,12 +23,16 @@ public:
 	virtual void Init() override;
 
 	// @brief インスペクター表示処理
+	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	virtual int Inspecter(bool isEnd = true) override;
 
 	// @brief アイテムの収納
+	// @param pItem：収納するアイテムポインタ
 	void StoreItem(CItem* pItem);
 
 	// @brief 収納されているアイテムの取り出し
+	// @param eType：取り出すアイテムタイプ
+	// @return 取り出したアイテムポインタ、存在しなかった場合はnullptr
 	CItem* TakeOutItem(CItem::ITEM_TYPE eType);
 
 private:

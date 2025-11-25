@@ -122,8 +122,6 @@ int CHuman::Inspecter(bool isEnd)
 	{
 		// 現在の職業を文字列で取得
 		std::string currentJob = m_pJob->GetJobName();
-		// 表示
-		ImGui::Text(("JobName: " + currentJob).c_str());
 
 		// Combo 用（string → const char* の配列に変換）
 		std::vector<const char*> items;
@@ -144,11 +142,11 @@ int CHuman::Inspecter(bool isEnd)
 			SetHumanJob(CreateJobByName(currentJob, *this));
 		}
 
-		ImGui::Text("Job Status:");
-		// 職業ステータスの取得
-		IJob_Strategy::JobStatus& status = m_pJob->GetJobStatus();
-		ImGui::Text((" WorkPower: " + std::to_string(status.m_fWorkPower)).c_str());
-		ImGui::Text((" Stamina: " + std::to_string(status.m_fStamina) + " / " + std::to_string(status.m_fMaxStamina)).c_str());
+		// 職業ストラテジーのインスペクター表示処理
+		if (m_pJob)
+		{
+			nItemCount += m_pJob->Inspecter(false);
+		}
 	}
 
 	// 折りたたみヘッダーの表示
@@ -168,7 +166,6 @@ int CHuman::Inspecter(bool isEnd)
 			std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
 			ImGui::Text((itemName + ": " + std::to_string(pair.second)).c_str());
 		}
-
 
 		ImGui::EndChild();
 		nItemCount++;
@@ -205,7 +202,7 @@ CItem* CHuman::TakeOutItem()
 	CItem* pItem = m_ItemList.front();
 
 	// 所持アイテムリストから削除
-	m_ItemList.pop_front();
+	m_ItemList.erase(m_ItemList.begin());
 
 	// 取り出したアイテムポインタを返す
 	return pItem;

@@ -10,6 +10,7 @@
 #include "FieldManager.h"
 #include "FieldGround.h"
 #include "SkyBox.h"
+#include "ImguiSystem.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -69,14 +70,15 @@ void CSceneGame::Draw()
 	// 基底クラスの描画処理
 	CScene::Draw();
 
-#ifdef _DEBUG
 	// デバッグ用のフィールドグリッド描画
-	for(auto cell : CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells())
+	if (CImguiSystem::GetInstance()->IsCellsDraw())
 	{
-		for (auto fieldCell : cell)
+		for (auto cell : CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells())
 		{
-			fieldCell->DebugDraw();
+			for (auto fieldCell : cell)
+			{
+				fieldCell->DebugDraw();
+			}
 		}
 	}
-#endif
 }

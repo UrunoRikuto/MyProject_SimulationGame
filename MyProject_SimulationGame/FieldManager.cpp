@@ -163,14 +163,18 @@ void CFieldManager::CreateInitialVillage()
 	CScene* pScene = GetScene();
 
 	// 貯蔵庫の生成と配置
-	CGameObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
+	CBuildObject* pStorageHouse = dynamic_cast<CBuildObject*>(pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse"));
 	pStorageHouse->SetPos(fieldCells[halfSizeX][halfSizeY + 2]->GetPos());
 	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
+	fieldCells[halfSizeX][halfSizeY]->SetObject(pStorageHouse);
+	pStorageHouse->SetFieldCellIndex(fieldCells[halfSizeX][halfSizeY + 2]->GetIndex());
 
 	// 休憩所の生成と配置
-	CGameObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
+	CBuildObject* pRefreshFacility = dynamic_cast<CBuildObject*>(pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility"));
 	pRefreshFacility->SetPos(fieldCells[halfSizeX + 2][halfSizeY]->GetPos());
 	fieldCells[halfSizeX + 2][halfSizeY]->SetUse(true);
+	fieldCells[halfSizeX + 2][halfSizeY]->SetObject(pRefreshFacility);
+	pRefreshFacility->SetFieldCellIndex(fieldCells[halfSizeX + 2][halfSizeY]->GetIndex());
 
 	// 初期村人の生成
 	CGameObject* pHuman = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");

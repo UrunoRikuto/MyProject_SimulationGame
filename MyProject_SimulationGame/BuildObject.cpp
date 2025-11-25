@@ -8,6 +8,8 @@
 CBuildObject::CBuildObject()
 	:CGameObject()
 	, m_nBuildLevel(1)
+	, m_fBuildProgress(0.0f)
+	, m_n2FieldCellIndex({ -1, -1 })
 {
 }
 
@@ -50,4 +52,27 @@ int CBuildObject::Inspecter(bool isEnd)
 	}
 
 	return itemCount;
+}
+
+/*****************************************//*
+	@brief　	| 建築物レベルを進める
+*//*****************************************/
+void CBuildObject::UpgradeBuildLevel()
+{
+	if (!IsMaxBuildLevel())
+	{
+		m_nBuildLevel++;
+	}
+}
+/*****************************************//*
+	@brief　	| 建築完成度を進める
+	@param		| fAmount：進める量
+*//*****************************************/
+void CBuildObject::ProgressBuild(float fAmount)
+{
+	m_fBuildProgress += fAmount;
+	if (m_fBuildProgress > 100.0f)
+	{
+		m_fBuildProgress = 100.0f;
+	}
 }

@@ -31,6 +31,9 @@ public:
 	// @brief 仕事処理
 	virtual void DoWork() override;
 
+	// @brief インスペクター表示処理
+	virtual int Inspecter(bool isEnd = true) override;
+
 protected:
 
 	// @brief 標的を探す処理

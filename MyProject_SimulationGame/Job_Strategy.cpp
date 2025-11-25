@@ -10,6 +10,7 @@
 #include "StructMath.h"
 #include "Oparation.h"
 #include "RefreshFacility.h"
+#include "BuildManager.h"
 
 /*****************************************//*
 	@brief@	| ‹xŒeˆ—
@@ -51,7 +52,14 @@ bool IJob_Strategy::RestAction()
 	if (!pRefreshFacility->IsUsingRefreshFacility(*m_pOwner))
 	{
 		// ‹xŒeŽ{Ý‚ªŽg—p‰Â”\‚©‚Ç‚¤‚©Šm”F
-		if (!pRefreshFacility->CanUseRefreshFacility())return false;
+		if (!pRefreshFacility->CanUseRefreshFacility())
+		{
+			// Œš’zŠÇ—ƒVƒXƒeƒ€‚É‹xŒeŽ{Ý‚ÌŒš’zƒŠƒNƒGƒXƒg‚ð‘—‚é
+			CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
+
+			// ‹xŒeŽ{Ý‚ªŽg—p•s‰Â‚Ìê‡‚Í‹xŒe‚Å‚«‚È‚¢‚Ì‚Åfalse‚ð•Ô‚·
+			return false;
+		}
 
 		// ‹xŒeŽ{Ý‚ðŽg—p
 		pRefreshFacility->UseRefreshFacility(*m_pOwner);
