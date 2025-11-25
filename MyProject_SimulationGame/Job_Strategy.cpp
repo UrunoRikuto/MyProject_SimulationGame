@@ -17,10 +17,36 @@
 *//*****************************************/
 bool IJob_Strategy::RestAction()
 {
-	// ‹xŒe{İ‚ğæ“¾
-	CRefreshFacility* pRefreshFacility = dynamic_cast<CRefreshFacility*>(GetScene()->GetGameObject("RefreshFacility"));
-	// ‹xŒe{İ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Íˆ—‚ğ”²‚¯‚é
-	if (pRefreshFacility == nullptr)return false;
+	std::vector<ObjectID> vNotRefreshFacilityIDs;
+
+	CRefreshFacility* pRefreshFacility = nullptr;
+	while (1)
+	{
+		// ‹xŒe{İ‚ğ’T‚·ƒ‹[ƒv
+		pRefreshFacility = GetScene()->GetGameObject<CRefreshFacility>(m_pOwner->GetPos(), vNotRefreshFacilityIDs);
+
+		// ‹xŒe{İ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡
+		if (pRefreshFacility == nullptr)
+		{
+			// Œš’zŠÇ—ƒVƒXƒeƒ€‚É‹xŒe{İ‚ÌŒš’zƒŠƒNƒGƒXƒg‚ğ‘—‚é
+			CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
+
+			// ‹xŒe{İ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Íˆ—‚ğ”²‚¯‚é
+			return false;
+		}
+
+		// ‹xŒe{İ‚ªg—p‰Â”\‚©‚Ç‚¤‚©Šm”F
+		if (!pRefreshFacility->CanUseRefreshFacility())
+		{
+			// g—p•s‰Â‚Ìê‡‚ÍAœŠOƒŠƒXƒg‚É’Ç‰Á‚µ‚ÄÄ“x’T‚·
+			vNotRefreshFacilityIDs.push_back(pRefreshFacility->GetID());
+		}
+		else
+		{
+			// g—p‰Â”\‚È‹xŒe{İ‚ªŒ©‚Â‚©‚Á‚½ê‡‚Íƒ‹[ƒv‚ğ”²‚¯‚é
+			break;
+		}
+	}
 
 	// ‹xŒeŠ‚ÌˆÊ’u‚ğæ“¾
 	DirectX::XMFLOAT3 f3RefreshFacilityPos = pRefreshFacility->GetPos();

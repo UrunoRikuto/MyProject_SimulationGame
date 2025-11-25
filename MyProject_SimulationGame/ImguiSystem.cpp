@@ -454,13 +454,45 @@ void CImguiSystem::DrawBuildRequestList()
 
 	for(auto& request : pBuildManager->GetBuildRequestList())
 	{
-		std::string requestInfo = 
-			"Type:" + std::to_string(static_cast<int>(request.eRequestType))
-			+ " BuildType:" + std::to_string(static_cast<int>(request.eBuildType))
-			+ " State:" + std::to_string(static_cast<int>(request.eRequestState))
-			+ " PosX:" + std::to_string(request.n2BuildIndex.x)
-			+ " PosY:" + std::to_string(request.n2BuildIndex.y);
-		ImGui::Text(requestInfo.c_str());
+		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280, 80), ImGuiWindowFlags_NoTitleBar);
+		std::string RequestType = "";
+		switch (request.eRequestType)
+		{
+		case CBuildManager::RequestType::Build:
+			RequestType = "Build";
+			break;
+		case CBuildManager::RequestType::Upgrade:
+			RequestType = "Upgrade";
+			break;
+		case CBuildManager::RequestType::Demolition:
+			RequestType = "Demolition";
+			break;
+		}
+
+		std::string BuildType = "";
+		switch (request.eBuildType)
+		{
+		case CBuildManager::BuildType::RefreshFacility:
+			BuildType = "RefreshFacility";
+			break;
+		}
+
+		std::string RequestState = "";
+		switch (request.eRequestState)
+		{
+		case CBuildManager::RequestState::Unprocessed:
+			RequestState = "Unprocessed";
+			break;
+		case CBuildManager::RequestState::InProcess:
+			RequestState = "InProcess";
+			break;
+		}
+
+		ImGui::Text(std::string("Type:" + RequestType).c_str());
+		ImGui::Text(std::string("BuildType:" + BuildType).c_str());
+		ImGui::Text(std::string("State:" + RequestState).c_str());
+		
+		ImGui::EndChild();
 	}
 
 	ImGui::End();

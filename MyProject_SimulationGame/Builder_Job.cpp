@@ -291,7 +291,7 @@ void CBuilder_Job::DoWork()
 			{
 				case CBuildManager::BuildType::RefreshFacility:
 				{
-					m_pBuildingObject = dynamic_cast<CBuildObject*>(GetScene()->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility"));
+					m_pBuildingObject = GetScene()->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
 					break;
 				}
 			}
@@ -313,9 +313,11 @@ void CBuilder_Job::DoWork()
 
 			// 建築オブジェクトの位置を設定
 			DirectX::XMINT2 buildIndex = m_pCurrentBuildRequest->n2BuildIndex;
-			DirectX::XMFLOAT3 buildPos = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[buildIndex.x][buildIndex.y]->GetPos();
-			m_pBuildingObject->SetPos(buildPos);
+			auto cell = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[buildIndex.x][buildIndex.y];
+			m_pBuildingObject->SetPos(cell->GetPos());
 			m_pBuildingObject->SetFieldCellIndex(buildIndex);
+			cell->SetUse(true);
+			cell->SetObject(m_pBuildingObject);
 		}
 
 		// 建築進行度を増加させる

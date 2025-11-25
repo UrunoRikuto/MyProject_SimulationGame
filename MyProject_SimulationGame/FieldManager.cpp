@@ -163,14 +163,14 @@ void CFieldManager::CreateInitialVillage()
 	CScene* pScene = GetScene();
 
 	// 貯蔵庫の生成と配置
-	CBuildObject* pStorageHouse = dynamic_cast<CBuildObject*>(pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse"));
+	CBuildObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
 	pStorageHouse->SetPos(fieldCells[halfSizeX][halfSizeY + 2]->GetPos());
 	fieldCells[halfSizeX][halfSizeY]->SetUse(true);
 	fieldCells[halfSizeX][halfSizeY]->SetObject(pStorageHouse);
 	pStorageHouse->SetFieldCellIndex(fieldCells[halfSizeX][halfSizeY + 2]->GetIndex());
 
 	// 休憩所の生成と配置
-	CBuildObject* pRefreshFacility = dynamic_cast<CBuildObject*>(pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility"));
+	CBuildObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
 	pRefreshFacility->SetPos(fieldCells[halfSizeX + 2][halfSizeY]->GetPos());
 	fieldCells[halfSizeX + 2][halfSizeY]->SetUse(true);
 	fieldCells[halfSizeX + 2][halfSizeY]->SetObject(pRefreshFacility);
