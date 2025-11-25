@@ -99,7 +99,6 @@ void CHuman::Draw()
 		m_pStaminaGaugeBillboard->SetUVSize({ 1.0f, 1.0f });
 		m_pStaminaGaugeBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
 		m_pStaminaGaugeBillboard->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
-		m_pStaminaGaugeBillboard->SetCullingMode(D3D11_CULL_FRONT);
 		m_pStaminaGaugeBillboard->Draw();
 	}
 }

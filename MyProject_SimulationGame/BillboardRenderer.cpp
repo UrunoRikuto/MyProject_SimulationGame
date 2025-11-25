@@ -23,9 +23,10 @@ void CBillboardRenderer::Draw()
 	// キーが設定されていない時は描画しない
 	if (m_sKey.empty()) return;
 
-	// 深度バッファを無効にする 
+	// 深度バッファを有効にして描画
 	RenderTarget* pRTV = GetDefaultRTV();
-	SetRenderTargets(1, &pRTV, nullptr);
+	DepthStencil* pDSV = GetDefaultDSV();
+	SetRenderTargets(1, &pRTV, pDSV);
 
 	// カリングのセット
 	SetCullingMode(m_tParam.m_eCulling);
