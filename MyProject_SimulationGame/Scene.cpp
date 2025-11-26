@@ -115,7 +115,7 @@ void CScene::Draw()
 
             // オブジェクト位置と半径取得
             DirectX::XMFLOAT3 objPos = obj->GetPos();
-            float r = obj->GetBoundingRadius(); // 実装を追加しておくこと
+            float r = obj->GetBoundingRadius();
 
             float dx = objPos.x - camPos.x;
             float dy = objPos.y - camPos.y;

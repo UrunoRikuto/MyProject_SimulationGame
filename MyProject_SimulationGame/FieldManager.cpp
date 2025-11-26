@@ -162,21 +162,39 @@ void CFieldManager::CreateInitialVillage()
 	// シーンの取得
 	CScene* pScene = GetScene();
 
+	// 建築可能なフィールドセルを取得
+	auto cells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells(CFieldCell::CellType::Build, false);
+
+	// ランダムにセルを選択
+	int randomIndex = rand() % cells.size();
+
 	// 貯蔵庫の生成と配置
 	CBuildObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
-	pStorageHouse->SetPos(fieldCells[halfSizeX][halfSizeY + 2]->GetPos());
-	fieldCells[halfSizeX][halfSizeY + 2]->SetUse(true);
-	fieldCells[halfSizeX][halfSizeY + 2]->SetObject(pStorageHouse);
-	pStorageHouse->SetFieldCellIndex(fieldCells[halfSizeX][halfSizeY + 2]->GetIndex());
+	pStorageHouse->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pStorageHouse);
+	pStorageHouse->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+	// 貯蔵庫を配置したセルを建築可能地リストから削除
+	cells.erase(cells.begin() + randomIndex);
+
+	// ランダムにセルを選択
+	randomIndex = rand() % cells.size();
 
 	// 休憩所の生成と配置
 	CBuildObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
-	pRefreshFacility->SetPos(fieldCells[halfSizeX + 2][halfSizeY]->GetPos());
-	fieldCells[halfSizeX + 2][halfSizeY]->SetUse(true);
-	fieldCells[halfSizeX + 2][halfSizeY]->SetObject(pRefreshFacility);
-	pRefreshFacility->SetFieldCellIndex(fieldCells[halfSizeX + 2][halfSizeY]->GetIndex());
+	pRefreshFacility->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pRefreshFacility);
+	pRefreshFacility->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+	// 休憩所を配置したセルを建築可能地リストから削除
+	cells.erase(cells.begin() + randomIndex);
+
+	// ランダムにセルを選択
+	randomIndex = rand() % cells.size();
 
 	// 初期村人の生成
 	CGameObject* pHuman = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-	pHuman->SetPos(fieldCells[halfSizeX][halfSizeY]->GetPos());
+	pHuman->SetPos(cells[randomIndex]->GetPos());
 }

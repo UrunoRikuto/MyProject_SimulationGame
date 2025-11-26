@@ -13,9 +13,12 @@
 #include "Human.h"
 #include "GameTimeManager.h"
 
+#include <algorithm>
+#include <cstdio>
+
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
-constexpr float ce_fCharaSize = 30.0f;
+constexpr float ce_fCharaSize =30.0f;
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -153,26 +156,26 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 *//****************************************/
 void CImguiSystem::DrawHierarchy()
 {
-	ImGui::SetNextWindowPos(ImVec2(20, 20));
-	ImGui::SetNextWindowSize(ImVec2(280, 300));
+	ImGui::SetNextWindowPos(ImVec2(20,20));
+	ImGui::SetNextWindowSize(ImVec2(280,300));
 	ImGui::Begin("Hierarchy");
 	if (ImGui::Button("Select Item Clear"))
 	{
 		m_pGameObject = nullptr;
 	}
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250,260), ImGuiWindowFlags_NoTitleBar);
 
 	ImGui::Checkbox("Human", &m_bOnlyHuman);
+	CScene* pScene = GetScene();
 	if (m_bOnlyHuman)
 	{
-		// 人間オブジェクトのみ表示
-		CScene* pScene = GetScene();
+		// Only humans: iterate directly
 		auto Objects = pScene->GetGameObjects<CHuman>();
 		for (auto obj : Objects)
 		{
 			ObjectID id = obj->GetID();
 			std::string name = id.m_sName;
-			name += std::to_string(id.m_nSameCount + 1);
+			name += std::to_string(id.m_nSameCount +1);
 
 			std::string job = obj->GetHumanJob()->GetJobName();
 
@@ -183,64 +186,50 @@ void CImguiSystem::DrawHierarchy()
 				m_pGameObject = obj;
 			}
 		}
-
 	}
 	else
 	{
-
-		CScene* pScene = GetScene();
-		auto Objects = pScene->GetIDVec();
-
-		std::list<ObjectID> objectIDList{};
-		for (auto Id : Objects)
+		// More efficient grouping: get vector, sort by name then samecount, then walk once
+		auto Objects = pScene->GetIDVec(); // assume returns std::vector<ObjectID>
+		if (!Objects.empty())
 		{
-			objectIDList.push_back(Id);
-		}
-
-		objectIDList.sort([](ObjectID a, ObjectID b)
+			// sort in-place
+			std::sort(Objects.begin(), Objects.end(), [](const ObjectID& a, const ObjectID& b)
 			{
+				if (a.m_sName != b.m_sName) return a.m_sName < b.m_sName;
 				return a.m_nSameCount < b.m_nSameCount;
 			});
 
-		objectIDList.sort([](ObjectID a, ObjectID b)
+			size_t i =0;
+			while (i < Objects.size())
 			{
-				return a.m_sName < b.m_sName;
-			});
+				const std::string& name = Objects[i].m_sName;
+				// count how many have this name (contiguous after sort)
+				size_t j = i +1;
+				while (j < Objects.size() && Objects[j].m_sName == name) ++j;
+				int nItrCount = static_cast<int>(j - i);
 
-		for (auto itr = objectIDList.begin(); itr != objectIDList.end();)
-		{
-			std::string name = itr->m_sName;
-
-			int nItrCount = 0;
-			for (auto idItr : objectIDList)
-			{
-				if (idItr.m_sName == name)
+				// build header once
+				char headerBuf[128];
+				snprintf(headerBuf, sizeof(headerBuf), "[%s]:%d", name.c_str(), nItrCount);
+				if (ImGui::CollapsingHeader(headerBuf))
 				{
-					nItrCount++;
-				}
-			}
-			ObjectID id;
-			id.m_sName = name;
-
-			if (ImGui::CollapsingHeader(std::string("[" + name + "]:" + std::to_string(nItrCount)).c_str()))
-			{
-				for (int i = 0; i < nItrCount; i++)
-				{
-					std::string sButtonName = name;
-					sButtonName += std::to_string(i + 1);
-					id.m_nSameCount = i;
-					if (ImGui::Button(sButtonName.c_str()))
+					for (int k =0; k < nItrCount; ++k)
 					{
-						m_pGameObject = pScene->GetGameObject(id);
+						std::string sButtonName = name;
+						sButtonName += std::to_string(k +1);
+						ObjectID id = Objects[i + k];
+						if (ImGui::Button(sButtonName.c_str()))
+						{
+							m_pGameObject = pScene->GetGameObject(id);
+						}
 					}
-
 				}
-
+				i = j; // advance to next group
 			}
-
-			std::advance(itr, nItrCount);
 		}
 	}
+
 	ImGui::EndChild();
 	ImGui::End();
 }
@@ -255,10 +244,10 @@ void CImguiSystem::DrawCameraParam()
 
 	if (!pCamera) return;
 
-	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT - 400));
-	ImGui::SetNextWindowSize(ImVec2(280, 250));
+	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT -400));
+	ImGui::SetNextWindowSize(ImVec2(280,250));
 	ImGui::Begin("Camera");
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 200), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250,200), ImGuiWindowFlags_NoTitleBar);
 
 	if (ImGui::Button("Reset"))
 	{
@@ -267,25 +256,25 @@ void CImguiSystem::DrawCameraParam()
 
 	if (ImGui::CollapsingHeader(std::string("[Transform]").c_str()))
 	{
-		ImGui::Text(std::string("Position").c_str());
+		ImGui::Text("Position");
 		DirectX::XMFLOAT3 pos = pCamera->GetPos();
-		ImGui::Text(std::string("PosX:" + std::to_string(pos.x)).c_str());
-		ImGui::Text(std::string("PosY:" + std::to_string(pos.y)).c_str());
-		ImGui::Text(std::string("PosZ:" + std::to_string(pos.z)).c_str());
+		ImGui::Text("PosX: %.3f", pos.x);
+		ImGui::Text("PosY: %.3f", pos.y);
+		ImGui::Text("PosZ: %.3f", pos.z);
 		ImGui::Text("\n");
 
-		ImGui::Text(std::string("Look").c_str());
+		ImGui::Text("Look");
 		DirectX::XMFLOAT3 look = pCamera->GetLook();
-		ImGui::Text(std::string("LookX:" + std::to_string(look.x)).c_str());
-		ImGui::Text(std::string("LookY:" + std::to_string(look.y)).c_str());
-		ImGui::Text(std::string("LookZ:" + std::to_string(look.z)).c_str());
+		ImGui::Text("LookX: %.3f", look.x);
+		ImGui::Text("LookY: %.3f", look.y);
+		ImGui::Text("LookZ: %.3f", look.z);
 		ImGui::Text("\n");
 
-		ImGui::Text(std::string("UpVector").c_str());
+		ImGui::Text("UpVector");
 		DirectX::XMFLOAT3 up = pCamera->GetUp();
-		ImGui::Text(std::string("UpX:" + std::to_string(up.x)).c_str());
-		ImGui::Text(std::string("UpY:" + std::to_string(up.y)).c_str());
-		ImGui::Text(std::string("UpZ:" + std::to_string(up.z)).c_str());
+		ImGui::Text("UpX: %.3f", up.x);
+		ImGui::Text("UpY: %.3f", up.y);
+		ImGui::Text("UpZ: %.3f", up.z);
 	}
 
 
@@ -379,12 +368,12 @@ void CImguiSystem::DrawUpdateTick()
 *//****************************************/
 void CImguiSystem::DrawFPS()
 {
-	ImGui::SetNextWindowSize(ImVec2(140, 70));
+	ImGui::SetNextWindowSize(ImVec2(140,70));
 	ImGui::Begin("FPS");
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(120.0f, 30.0f), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(120.0f,30.0f), ImGuiWindowFlags_NoTitleBar);
 
 	int fps = GetFPS();
-	ImGui::Text(std::string("FPS:" + std::to_string(fps)).c_str());
+	ImGui::Text("FPS: %d", fps);
 
 	ImGui::EndChild();
 	ImGui::End();
@@ -395,16 +384,16 @@ void CImguiSystem::DrawFPS()
 *//****************************************/
 void CImguiSystem::DrawDebugLog()
 {
-	ImGui::SetNextWindowSize(ImVec2(400, 150));
+	ImGui::SetNextWindowSize(ImVec2(400,150));
 	ImGui::Begin("DebugLog");
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380, 120), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380,120), ImGuiWindowFlags_NoTitleBar);
 	for (const auto& log : m_DebugLog)
 	{
-		ImGui::Text(log.m_sLog.c_str());
+		ImGui::Text("%s", log.m_sLog.c_str());
 	}
 	ImGui::EndChild();
 	ImGui::End();
-	// 消去フラグが立っているログを削除する
+	// remove cleared logs efficiently
 	m_DebugLog.erase(
 		std::remove_if(
 			m_DebugLog.begin(),
@@ -450,15 +439,15 @@ void CImguiSystem::DrawCellsDebug()
 *//****************************************/
 void CImguiSystem::DrawBuildRequestList()
 {
-	ImGui::SetNextWindowSize(ImVec2(300, 200));
+	ImGui::SetNextWindowSize(ImVec2(300,200));
 	ImGui::Begin("BuildRequestList");
 
 	CBuildManager* pBuildManager = CBuildManager::GetInstance();
 
-	for(auto& request : pBuildManager->GetBuildRequestList())
+	for (auto& request : pBuildManager->GetBuildRequestList())
 	{
-		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280, 80), ImGuiWindowFlags_NoTitleBar);
-		std::string RequestType = "";
+		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280,80), ImGuiWindowFlags_NoTitleBar);
+		const char* RequestType = "";
 		switch (request.eRequestType)
 		{
 		case CBuildManager::RequestType::Build:
@@ -472,7 +461,7 @@ void CImguiSystem::DrawBuildRequestList()
 			break;
 		}
 
-		std::string BuildType = "";
+		const char* BuildType = "";
 		switch (request.eBuildType)
 		{
 		case CBuildManager::BuildType::RefreshFacility:
@@ -480,7 +469,7 @@ void CImguiSystem::DrawBuildRequestList()
 			break;
 		}
 
-		std::string RequestState = "";
+		const char* RequestState = "";
 		switch (request.eRequestState)
 		{
 		case CBuildManager::RequestState::Unprocessed:
@@ -491,10 +480,10 @@ void CImguiSystem::DrawBuildRequestList()
 			break;
 		}
 
-		ImGui::Text(std::string("Type:" + RequestType).c_str());
-		ImGui::Text(std::string("BuildType:" + BuildType).c_str());
-		ImGui::Text(std::string("State:" + RequestState).c_str());
-		
+		ImGui::Text("Type: %s", RequestType);
+		ImGui::Text("BuildType: %s", BuildType);
+		ImGui::Text("State: %s", RequestState);
+
 		ImGui::EndChild();
 	}
 

@@ -12,8 +12,8 @@
 class CFieldGrid
 {
 public:
-	static const int GridSizeX = 50;	// グリッドのXサイズ
-	static const int GridSizeY = 50;	// グリッドのYサイズ
+	static const int GridSizeX = 100;	// グリッドのXサイズ
+	static const int GridSizeY = 100;	// グリッドのYサイズ
 
 public:
 	// @brief コンストラクタ
