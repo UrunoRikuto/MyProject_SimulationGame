@@ -21,7 +21,7 @@ public:
 
 private:
 	// @brief 1日の時間（秒）
-	static constexpr float ONE_DAY_TIME = 20.0f;
+	static constexpr float ONE_DAY_TIME = 120.0f;
 
 private:
 	// @brief コンストラクタ
