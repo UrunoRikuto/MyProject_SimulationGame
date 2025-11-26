@@ -109,3 +109,26 @@ const CGameTimeManager::DAY_TIME CGameTimeManager::GetCurrentDayTime() const
 		return DAY_TIME::NIGHT; // 夜
 	}
 }
+
+/****************************************//*
+	@brief　	| 時間帯別の進行度を取得する関数
+	@return		| 時間帯別の進行度（0.0f〜1.0f）
+*//****************************************/
+const float CGameTimeManager::GetTimeOfDayProgress() const
+{
+	float dayProgress = GetDayProgress();
+	CGameTimeManager::DAY_TIME currentDayTime = GetCurrentDayTime();
+	switch (currentDayTime)
+	{
+	case DAY_TIME::MORNING:
+		return dayProgress / 0.25f; // 0.0f〜0.25f
+	case DAY_TIME::NOON:
+		return (dayProgress - 0.25f) / 0.25f; // 0.25f〜0.5f
+	case DAY_TIME::EVENING:
+		return (dayProgress - 0.5f) / 0.25f; // 0.5f〜0.75f
+	case DAY_TIME::NIGHT:
+		return (dayProgress - 0.75f) / 0.25f; // 0.75f〜1.0f
+	default:
+		return 0.0f;
+	}
+}

@@ -9,6 +9,16 @@
 // @brief スカイボックスクラス
 class CSkyBox : public CGameObject
 {
+private:
+	// 時間別色パラメータ
+	DirectX::XMFLOAT4 SkyBoxColors[4] =
+	{
+		{ 0.5f, 0.7f, 1.0f, 1.0f }, // 朝
+		{ 0.2f, 0.6f, 1.0f, 1.0f }, // 昼
+		{ 0.9f, 0.5f, 0.3f, 1.0f }, // 夕方
+		{ 0.05f, 0.05f, 0.2f, 1.0f }  // 夜
+	};
+
 public:
 	// @brief コンストラクタ
 	CSkyBox();

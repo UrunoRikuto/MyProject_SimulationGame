@@ -21,7 +21,7 @@ public:
 
 private:
 	// @brief 1日の時間（秒）
-	static constexpr float ONE_DAY_TIME = 120.0f;
+	static constexpr float ONE_DAY_TIME = 20.0f;
 
 private:
 	// @brief コンストラクタ
@@ -57,7 +57,12 @@ public:
 	const float GetDayProgress() const;
 
 	// @brief 現在の時間帯を取得する関数
+	// @return 現在の時間帯
 	const DAY_TIME GetCurrentDayTime() const;
+
+	// @brief 時間帯別の進行度を取得する関数
+	// @return 時間帯別の進行度（0.0f〜1.0f）
+	const float GetTimeOfDayProgress() const;
 
 private:
 
