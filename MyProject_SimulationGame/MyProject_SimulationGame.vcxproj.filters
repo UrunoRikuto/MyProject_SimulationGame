@@ -366,6 +366,9 @@
     <ClInclude Include="GameTimeManager.h">
       <Filter>コードファイル\System\GameTime</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -559,6 +562,9 @@
     </ClCompile>
     <ClCompile Include="GameTimeManager.cpp">
       <Filter>コードファイル\System\GameTime</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

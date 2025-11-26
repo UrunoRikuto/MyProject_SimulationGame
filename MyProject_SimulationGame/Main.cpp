@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "ObjectLoad.h"
 #include "ImguiSystem.h"
+#include "ShaderManager.h"
 
 const static int DEBUG_GRID_NUM = 20;			// グリッドの数
 const static float DEBUG_GRID_MARGIN = 1.0f;	// グリッドの間隔
@@ -62,6 +63,9 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	// スプライト初期化
 	Sprite::Init();
 
+	// シェーダーマネージャー初期化
+	CShaderManager::GetInstance()->LoadShaders();
+
 	// 入力初期化
 	InitInput();
 
@@ -97,6 +101,9 @@ void Uninit()
 
 	// 入力の終了処理
 	UninitInput();
+
+	// シェーダーの終了処理
+	CShaderManager::ReleaseInstance();
 
 	// スプライトの終了処理
 	Sprite::Uninit();

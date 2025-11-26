@@ -9,9 +9,20 @@
 // @brief ゲーム内時間管理クラス
 class CGameTimeManager
 {
+public:
+	// @brief 1日の時間帯を表す列挙型
+	enum class DAY_TIME
+	{
+		MORNING,	// 朝
+		NOON,		// 昼
+		EVENING,	// 夕方
+		NIGHT,		// 夜
+	};
+
 private:
 	// @brief 1日の時間（秒）
 	static constexpr float ONE_DAY_TIME = 120.0f;
+
 private:
 	// @brief コンストラクタ
 	CGameTimeManager();
@@ -27,6 +38,9 @@ public:
 	// @brief シングルトンインスタンスを取得する関数
 	static CGameTimeManager* GetInstance();
 
+	// @brief シングルトンインスタンスを解放する関数
+	static void ReleaseInstance();
+
 	// @brief ゲーム内時間を進行させる関数
 	void UpdateGameTime();
 
@@ -41,6 +55,9 @@ public:
 	// @brief 一日の時間進行度を取得する関数
 	// @return 一日の時間進行度（0.0f〜1.0f）
 	const float GetDayProgress() const;
+
+	// @brief 現在の時間帯を取得する関数
+	const DAY_TIME GetCurrentDayTime() const;
 
 private:
 

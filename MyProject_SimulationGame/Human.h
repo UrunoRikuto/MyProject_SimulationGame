@@ -47,7 +47,7 @@ public:
 
 	// @brief アイテム所持数の取得
 	// @return 所持しているアイテム数
-	int GetItemCount() const { return m_ItemList.size(); }
+	int GetItemCount() const { return static_cast<int>(m_ItemList.size()); }
 
 	// @brief アイテムリストの取得
 	std::vector<CItem*> GetItemList() { return m_ItemList; }

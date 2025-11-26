@@ -8,10 +8,11 @@
 #include "Camera.h"
 #include "GeneratorManager.h"
 #include "FieldManager.h"
+#include "GameTimeManager.h"
+#include "BuildManager.h"
 #include "FieldGround.h"
 #include "SkyBox.h"
 #include "ImguiSystem.h"
-#include "GameTimeManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -26,7 +27,10 @@ CSceneGame::CSceneGame()
 *//****************************************/
 CSceneGame::~CSceneGame()
 {
-
+	CGameTimeManager::ReleaseInstance();
+	CFieldManager::ReleaseInstance();
+	CGeneratorManager::ReleaseInstance();
+	CBuildManager::ReleaseInstance();
 }
 
 /****************************************//*

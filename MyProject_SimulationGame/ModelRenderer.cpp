@@ -78,7 +78,7 @@ void CModelRenderer::Draw()
     {
     case PSType::TexColor:
     {
-
+		m_pPS->WriteBuffer(0, &m_tParam.m_f4Color);
     }
     break;
     }

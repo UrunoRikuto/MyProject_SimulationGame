@@ -6,6 +6,7 @@
 #include "Wood.h"
 #include "ModelRenderer.h"
 #include "Oparation.h"
+#include "ShaderManager.h"
 
 // 木の初期耐久値
 constexpr float WOOD_INITIAL_HP = 50.0f;
@@ -44,11 +45,11 @@ void CWood::Init()
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader(VSType::Object);
+	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
 	pModelRenderer->SetVertexShader(pVS);
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader(PSType::TexColor);
+	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 
 	// 木の耐久値設定

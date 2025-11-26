@@ -38,6 +38,18 @@ CGameTimeManager* CGameTimeManager::GetInstance()
 }
 
 /****************************************//*
+	@brief　	| シングルトンインスタンスを解放する関数
+*//****************************************/
+void CGameTimeManager::ReleaseInstance()
+{
+	if (m_Instance != nullptr)
+	{
+		delete m_Instance;
+		m_Instance = nullptr;
+	}
+}
+
+/****************************************//*
 	@brief　	| ゲーム内時間を進行させる関数
 *//****************************************/
 void CGameTimeManager::UpdateGameTime()
@@ -71,4 +83,29 @@ const int CGameTimeManager::GetGameDays() const
 const float CGameTimeManager::GetDayProgress() const
 {
 	return fmodf(m_fGameTime, ONE_DAY_TIME) / ONE_DAY_TIME;
+}
+
+/****************************************//*
+	@brief　	| 現在の時間帯を取得する関数
+	@return		| 現在の時間帯
+*//****************************************/
+const CGameTimeManager::DAY_TIME CGameTimeManager::GetCurrentDayTime() const
+{
+	float dayProgress = GetDayProgress();
+	if (dayProgress < 0.25f)
+	{
+		return DAY_TIME::MORNING; // 朝
+	}
+	else if (dayProgress < 0.5f)
+	{
+		return DAY_TIME::NOON; // 昼
+	}
+	else if (dayProgress < 0.75f)
+	{
+		return DAY_TIME::EVENING; // 夕方
+	}
+	else
+	{
+		return DAY_TIME::NIGHT; // 夜
+	}
 }

@@ -177,6 +177,15 @@ int CGameObject::Inspecter(bool isEnd)
             ImGui::Text("RotateX: %.2f", rotate.x);
             ImGui::Text("RotateY: %.2f", rotate.y);
             ImGui::Text("RotateZ: %.2f", rotate.z);
+			ImGui::Text("\n");
+
+			// 色の表示
+			ImGui::Text(std::string("Color").c_str());
+			DirectX::XMFLOAT4 color = m_tParam.m_f4Color;
+			ImGui::Text("R: %.2f", color.x);
+			ImGui::Text("G: %.2f", color.y);
+			ImGui::Text("B: %.2f", color.z);
+			ImGui::Text("A: %.2f", color.w);
         }
     }
 	// 更新処理が停止していない場合は編集不可にする
@@ -205,6 +214,18 @@ int CGameObject::Inspecter(bool isEnd)
             ImGui::InputFloat3("Rotate", inputRotate, "%.2f");
             ImGui::Text("\n");
             *rotate = DirectX::XMFLOAT3(inputRotate[0], inputRotate[1], inputRotate[2]);
+
+			// 色の表示と変更
+			DirectX::XMFLOAT4* color = &m_tParam.m_f4Color;
+			float inputColor[4] = { color->x,color->y,color->z,color->w };
+			ImGui::Text("Color");
+			const float min = 0.0f;
+			const float max = 1.0f;
+			ImGui::DragScalar("R", ImGuiDataType_Float, &inputColor[0], 0.01f, &min, nullptr, "%.2f");
+			ImGui::DragScalar("G", ImGuiDataType_Float, &inputColor[1], 0.01f, &min, nullptr, "%.2f");
+			ImGui::DragScalar("B", ImGuiDataType_Float, &inputColor[2], 0.01f, &min, nullptr, "%.2f");
+			ImGui::DragScalar("A", ImGuiDataType_Float, &inputColor[3], 0.01f, &min, nullptr, "%.2f");
+			*color = DirectX::XMFLOAT4(inputColor[0], inputColor[1], inputColor[2], inputColor[3]);
         }
     }
 

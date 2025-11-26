@@ -7,6 +7,7 @@
 #include "StorageHouse.h"
 #include "ModelRenderer.h"
 #include "ImguiSystem.h"
+#include "ShaderManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -39,11 +40,11 @@ void CStorageHouse::Init()
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader(VSType::Object);
+	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
 	pModelRenderer->SetVertexShader(pVS);
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader(PSType::TexColor);
+	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 }
 

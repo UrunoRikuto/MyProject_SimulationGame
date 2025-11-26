@@ -8,6 +8,7 @@
 #include "ModelRenderer.h"
 #include "FieldManager.h"
 #include <imgui.h>
+#include "ShaderManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -48,10 +49,11 @@ void CHuman::Init()
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader(VSType::Object);
+	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
 	pModelRenderer->SetVertexShader(pVS);
+
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader(PSType::TexColor);
+	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 }
 
@@ -128,12 +130,12 @@ int CHuman::Inspecter(bool isEnd)
 		for (auto& s : JobNames) items.push_back(s.c_str());
 
 		// 現在のインデックス
-		int currentIndex = std::distance(
+		int currentIndex = static_cast<int>(std::distance(
 			JobNames.begin(),
 			std::find(JobNames.begin(), JobNames.end(), currentJob)
-		);
+		));
 
-		if (ImGui::Combo("JobSelect", &currentIndex, items.data(), items.size()))
+		if (ImGui::Combo("JobSelect", &currentIndex, items.data(), static_cast<int>(items.size())))
 		{
 			// 選択された string の職業名
 			currentJob = JobNames[currentIndex];

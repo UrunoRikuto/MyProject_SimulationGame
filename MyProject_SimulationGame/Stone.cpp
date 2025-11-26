@@ -6,6 +6,7 @@
 #include "Stone.h"
 #include "ModelRenderer.h"
 #include "Oparation.h"
+#include "ShaderManager.h"
 
 // 石の初期耐久値
 constexpr float STONE_INITIAL_HP = 100.0f;
@@ -45,11 +46,11 @@ void CStone::Init()
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = new VertexShader(VSType::Object);
+	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
 	pModelRenderer->SetVertexShader(pVS);
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = new PixelShader(PSType::TexColor);
+	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 
 	// 石の耐久値設定
