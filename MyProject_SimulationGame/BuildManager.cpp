@@ -76,7 +76,7 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 
 	switch (In_eRequestType)
 	{
-	// 休憩所
+		// 休憩所
 	case BuildType::RefreshFacility:
 	{
 		// 今あるリフレッシュ施設を取得
@@ -91,7 +91,7 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 		}
 
 		// リフレッシュ施設がある場合は強化依頼を追加
-		for(auto build : buildlist)
+		for (auto build : buildlist)
 		{
 			if (!build->IsMaxBuildLevel())
 			{
@@ -108,6 +108,36 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 			newRequest.eRequestType = RequestType::Build;
 			newRequest.n2BuildIndex = DecideRandomBuildPosition();
 		}
+		break;
+	}
+	case BuildType::HumanHouse:
+	{
+		// 今ある人間の家を取得
+		auto buildlist = pScene->GetGameObjects<CStorageHouse>();
+		// 人間の家が無ければ建築依頼を追加
+		if (buildlist.empty())
+		{
+			newRequest.eRequestType = RequestType::Build;
+			newRequest.n2BuildIndex = DecideRandomBuildPosition();
+			break;
+		}
+		// 人間の家がある場合は強化依頼を追加
+		for (auto build : buildlist)
+		{
+			if (!build->IsMaxBuildLevel())
+			{
+				newRequest.eRequestType = RequestType::Upgrade;
+				newRequest.n2BuildIndex = build->GetFieldCellIndex();
+				break;
+			}
+		}
+		// 全ての人間の家が最大レベルの場合は建築依頼を追加
+		if (newRequest.eRequestType != RequestType::Upgrade)
+		{
+			newRequest.eRequestType = RequestType::Build;
+			newRequest.n2BuildIndex = DecideRandomBuildPosition();
+		}
+		break;
 	}
 	}
 	newRequest.eBuildType = In_eRequestType;

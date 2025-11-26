@@ -556,6 +556,9 @@ void CImguiSystem::DrawGameTime()
 	int day = CGameTimeManager::GetInstance()->GetGameDays();
 	ImGui::Text(std::string("GameDays:" + std::to_string(day)).c_str());
 
+	std::string currendDayTime = CGameTimeManager::GetInstance()->GetCurrentDayTimeString();
+	ImGui::Text(std::string("DayTime:" + currendDayTime).c_str());
+
 	ImGui::EndChild();
 	ImGui::End();
 }

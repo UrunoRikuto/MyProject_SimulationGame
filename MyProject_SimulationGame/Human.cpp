@@ -9,6 +9,10 @@
 #include "FieldManager.h"
 #include <imgui.h>
 #include "ShaderManager.h"
+#include "GameTimeManager.h"
+#include "StructMath.h"
+#include "Oparation.h"
+#include "HumanHouse.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -16,6 +20,7 @@
 CHuman::CHuman()
 	: CGameObject()
 	, m_pJob(std::make_unique<CNeet_Job>())
+	, m_pLivingHouse(nullptr)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -74,9 +79,27 @@ void CHuman::Update()
 	// 基底クラスの更新処理
 	CGameObject::Update();
 
-	// 仕事処理
-	if(m_pJob)m_pJob->DoWork();
-
+	switch (CGameTimeManager::GetInstance()->GetCurrentDayTime())
+	{
+		// 朝の処理
+		// 昼の処理
+		// 夕方の処理
+	case CGameTimeManager::DAY_TIME::MORNING:
+	case CGameTimeManager::DAY_TIME::NOON:
+	case CGameTimeManager::DAY_TIME::EVENING:
+	{
+		// 仕事処理
+		if (m_pJob)m_pJob->DoWork();
+	}
+	break;
+	// 夜の処理
+	case CGameTimeManager::DAY_TIME::NIGHT:
+	{
+		// 家に帰って休む
+		GoHomeAndRest();
+	}
+	break;
+	}
 }
 
 /****************************************//*
@@ -84,8 +107,12 @@ void CHuman::Update()
 *//****************************************/
 void CHuman::Draw()
 {
-	// 基底クラスの描画処理
-	CGameObject::Draw();
+	// 家で休憩中でなければ描画
+	if (!m_isRestingAtHome)
+	{
+		// 基底クラスの描画処理
+		CGameObject::Draw();
+	}
 
 	// スタミナゲージの描画
 	float fStaminaRatio = m_pJob->GetJobStatus().m_fStamina / m_pJob->GetJobStatus().m_fMaxStamina;
@@ -103,6 +130,9 @@ void CHuman::Draw()
 		m_pStaminaGaugeBillboard->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
 		m_pStaminaGaugeBillboard->Draw();
 	}
+
+	// 家で休憩中フラグをリセット
+	m_isRestingAtHome = false;
 }
 
 /****************************************//*
@@ -244,4 +274,43 @@ void CHuman::HoldItem(CItem* pItem)
 {
 	// 所持アイテムリストに追加
 	m_ItemList.push_back(pItem);
+}
+
+/****************************************//*
+	@brief　	| 家に帰って休む処理
+	@return		| true:家に帰って休憩中 false:休憩していない
+*//****************************************/
+void CHuman::GoHomeAndRest()
+{
+	// 休憩処理
+	if (m_pLivingHouse)
+	{
+		// 家の位置を取得
+		DirectX::XMFLOAT3 f3HousePos = m_pLivingHouse->GetPos();
+
+		// 自分の位置を取得
+		DirectX::XMFLOAT3 f3MyPos = m_tParam.m_f3Pos;
+
+		// 距離を計算
+		float fDistance = StructMath::Distance(f3HousePos, f3MyPos);
+
+		// 家の近くにいる場合
+		if (fDistance < 0.3f)
+		{
+			// 家で休憩中フラグを立てる
+			m_isRestingAtHome = true;
+			// 休憩処理
+			if (m_pJob)m_pJob->ChangeStamina(1.0f);
+		}
+
+		// 家の方向を計算
+		DirectX::XMFLOAT3 f3Direction = f3HousePos - f3MyPos;
+
+		// 正規化
+		f3Direction = StructMath::Normalize(f3Direction);
+
+		f3MyPos += f3Direction * Human_Move_Speed;
+		// 位置更新
+		m_tParam.m_f3Pos = f3MyPos;
+	}
 }

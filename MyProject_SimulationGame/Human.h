@@ -11,8 +11,14 @@
 #include <memory>
 #include "BillboardRenderer.h"
 
+// 前方宣言
+class CHumanHouse;
+
 // @brief 持てるアイテムの最大数
 constexpr int MaxHoldItem = 10;
+
+// @brief 移動速度
+constexpr float Human_Move_Speed = 0.05f;
 
 // @brief 人間オブジェクトクラス
 class CHuman final : public CGameObject
@@ -75,6 +81,16 @@ public:
 		m_pJob = std::move(job);
 	}
 
+	// @brief 住んでいる家の設定
+	void SetLivingHouse(CHumanHouse* pHouse) { m_pLivingHouse = pHouse; }
+
+	// @brief 家に帰って休む処理
+	void GoHomeAndRest();
+
+	// @brief 家で休憩中かどうかの取得
+	// @return true:家で休憩中 false:休憩していない
+	bool IsRestingAtHome() const { return m_isRestingAtHome; }
+
 private:
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
@@ -85,5 +101,11 @@ private:
 	// @brief スタミナゲージビルボード
 	// 0: 背景, 1: ゲージ本体
 	CBillboardRenderer* m_pStaminaGaugeBillboard;
+
+	// @brief 住んでいる家のポインタ
+	CHumanHouse* m_pLivingHouse;
+	// @brief 家で休憩中かどうか
+	bool m_isRestingAtHome = false;
+
 };
 

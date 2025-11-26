@@ -154,6 +154,9 @@
     <Filter Include="コードファイル\System\GameTime">
       <UniqueIdentifier>{c108793f-3a05-4eae-9587-b8c039d11b99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\BuildObject\HumanHouse">
+      <UniqueIdentifier>{41c4f86a-6e47-418e-97a9-ae1c4857b51d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -369,6 +372,9 @@
     <ClInclude Include="ShaderManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="HumanHouse.h">
+      <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -565,6 +571,9 @@
     </ClCompile>
     <ClCompile Include="ShaderManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanHouse.cpp">
+      <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

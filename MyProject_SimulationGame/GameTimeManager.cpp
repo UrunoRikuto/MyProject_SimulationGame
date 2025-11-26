@@ -111,6 +111,28 @@ const CGameTimeManager::DAY_TIME CGameTimeManager::GetCurrentDayTime() const
 }
 
 /****************************************//*
+	@brief　	| 現在の時間帯の文字列を取得する関数
+	@return		| 現在の時間帯の文字列
+*//****************************************/
+const std::string CGameTimeManager::GetCurrentDayTimeString() const
+{
+	DAY_TIME currentDayTime = GetCurrentDayTime();
+	switch (currentDayTime)
+	{
+	case DAY_TIME::MORNING:
+		return "Morning";
+	case DAY_TIME::NOON:
+		return "Noon";
+	case DAY_TIME::EVENING:
+		return "Evening";
+	case DAY_TIME::NIGHT:
+		return "Night";
+	default:
+		return "Unknown";
+	}
+}
+
+/****************************************//*
 	@brief　	| 時間帯別の進行度を取得する関数
 	@return		| 時間帯別の進行度（0.0f〜1.0f）
 *//****************************************/

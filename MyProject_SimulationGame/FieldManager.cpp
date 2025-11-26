@@ -11,7 +11,7 @@
 #include "Main.h"
 #include "StorageHouse.h"
 #include "RefreshFacility.h"
-#include "Human.h"
+#include "HumanHouse.h"
 
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
@@ -194,7 +194,12 @@ void CFieldManager::CreateInitialVillage()
 	// ランダムにセルを選択
 	randomIndex = rand() % cells.size();
 
-	// 初期村人の生成
-	CGameObject* pHuman = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-	pHuman->SetPos(cells[randomIndex]->GetPos());
+	// 人間の家の生成と配置
+	CHumanHouse* pHumanHouse = pScene->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
+	pHumanHouse->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pHumanHouse);
+	pHumanHouse->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+
 }

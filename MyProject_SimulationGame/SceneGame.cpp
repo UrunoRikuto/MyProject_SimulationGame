@@ -47,6 +47,7 @@ void CSceneGame::Init()
 	// 生成管理システムの通知処理を実行
 	CGeneratorManager::GetInstance()->AddObserver(*(new CWoodGenerator()));
 	CGeneratorManager::GetInstance()->AddObserver(*(new CStoneGenerator()));
+	CGeneratorManager::GetInstance()->AddObserver(*(new CHumanGenerator()));
 
 	// フィールド管理システムの初期化
 	CFieldManager::GetInstance()->AssignFieldCellType();

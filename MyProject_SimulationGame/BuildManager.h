@@ -37,6 +37,7 @@ public:
 	enum class BuildType
 	{
 		RefreshFacility,
+		HumanHouse,
 
 		MAX
 	};

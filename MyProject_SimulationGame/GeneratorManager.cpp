@@ -41,3 +41,24 @@ void CGeneratorManager::ReleaseInstance()
 	delete m_pInstance;
 	m_pInstance = nullptr;
 }
+
+/*****************************************
+	@brief　	| オブザーバーの通知処理
+*//*****************************************/
+template<typename T>
+void CGeneratorManager::NotifyObserver()
+{
+	// 登録されている全オブザーバーに対して通知を行う
+	for (IObserver* observer : m_Observers)
+	{
+		// ダウンキャストを試みる
+		T* specificObserver = dynamic_cast<T*>(observer);
+
+		// ダウンキャストに成功した場合のみ通知を行う
+		if (specificObserver)
+		{
+			// 通知処理を呼び出す
+			specificObserver->Notify();
+		}
+	}
+}

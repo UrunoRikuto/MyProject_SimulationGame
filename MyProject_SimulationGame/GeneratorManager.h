@@ -6,6 +6,7 @@
 *//**************************************************/
 #pragma once
 #include "SubJect.h"
+#include "Generator.h"
 
 // @brief 生成管理システムクラス
 class CGeneratorManager final : public ISubJect
@@ -27,6 +28,10 @@ public:
 	// @brief オブザーバーへの通知処理
 	void NotifyObservers() override;
 
+	// @brief オブザーバーの通知処理
+	template<typename T = IGenerator>
+	void NotifyObserver();
+
 	// @brief シングルトンインスタンスの取得
 	static CGeneratorManager* GetInstance();
 
@@ -42,5 +47,3 @@ private:
 #include "WoodGenerator.h"
 #include "StoneGenerator.h"
 #include "HumanGenerator.h"
-
-

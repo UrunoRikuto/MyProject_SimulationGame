@@ -20,6 +20,8 @@
 CBuilder_Job::CBuilder_Job()
 	: CCrafter_Strategy()
 	, m_eCurrentState(WorkState::Waiting)
+	, m_ePrevState(WorkState::Waiting)
+	, m_fCoolTime(0.0f)
 {
 	// 建築職業の労働力を設定
 	m_Status.m_fWorkPower = 15.0f;
@@ -37,6 +39,28 @@ void CBuilder_Job::DoWork()
 	{
 	case WorkState::Waiting:
 	{
+		// クールタイムが残っている場合
+		if (m_fCoolTime > 0.0f)
+		{
+			// 家に帰って休む
+			m_pOwner->GoHomeAndRest();
+
+			// 家で休憩中の場合
+			if (m_pOwner->IsRestingAtHome())
+			{
+				// クールタイムを減少
+				m_fCoolTime -= 1.0f / fFPS;
+
+				// クールタイムが終了した場合
+				if (m_fCoolTime <= 0.0f)
+				{
+					m_fCoolTime = 0.0f;
+				}
+
+				return;
+			}
+		}
+
 		// 建築依頼がない場合は処理を抜ける
 		if (!CBuildManager::GetInstance()->HasBuildRequest())return;
 
@@ -120,8 +144,7 @@ void CBuilder_Job::DoWork()
 			// オーナーの位置をオブジェクトに向かって少しずつ移動させる
 			DirectX::XMFLOAT3 f3Move;
 			DirectX::XMStoreFloat3(&f3Move, f3Direction);
-			float fSpeed = 0.1f; // 移動速度
-			ownerPos += f3Move * fSpeed;
+			ownerPos += f3Move * Human_Move_Speed;
 			// オーナーの位置を更新
 			m_pOwner->SetPos(ownerPos);
 			// 移動中は処理を抜ける
@@ -273,8 +296,7 @@ void CBuilder_Job::DoWork()
 		DirectX::XMFLOAT3 f3Move;
 		DirectX::XMStoreFloat3(&f3Move, f3Direction);
 
-		float fSpeed = 0.1f; // 移動速度
-		ownerPos += f3Move * fSpeed;
+		ownerPos += f3Move * Human_Move_Speed;
 
 		// オーナーの位置を更新
 		m_pOwner->SetPos(ownerPos);
@@ -350,6 +372,9 @@ void CBuilder_Job::DoWork()
 			m_ePrevState = m_eCurrentState;
 			// 待機状態に移行
 			m_eCurrentState = WorkState::Waiting;
+
+			// クールタイムを設定
+			m_fCoolTime = COOL_TIME_DURATION;
 		}
 
 		break;
@@ -400,6 +425,9 @@ void CBuilder_Job::DoWork()
 			m_ePrevState = m_eCurrentState;
 			// 待機状態に移行
 			m_eCurrentState = WorkState::Waiting;
+
+			// クールタイムを設定
+			m_fCoolTime = COOL_TIME_DURATION;
 		}
 
 		break;

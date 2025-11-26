@@ -13,6 +13,22 @@
 #include "BuildManager.h"
 
 /*****************************************//*
+	@brief　	| スタミナの増加処理
+	@param　	| fAmount：増加量
+*//*****************************************/
+void IJob_Strategy::ChangeStamina(float fAmount)
+{
+	// スタミナを増加
+	m_Status.m_fStamina += fAmount;
+
+	// スタミナが最大値を超えた場合は最大値に設定
+	if (m_Status.m_fStamina > m_Status.m_fMaxStamina)
+	{
+		m_Status.m_fStamina = m_Status.m_fMaxStamina;
+	}
+}
+
+/*****************************************//*
 	@brief　	| 休憩処理
 *//*****************************************/
 bool IJob_Strategy::RestAction()
@@ -72,8 +88,7 @@ bool IJob_Strategy::RestAction()
 		// オーナーの位置をオブジェクトに向かって少しずつ移動させる
 		DirectX::XMFLOAT3 f3Move;
 		DirectX::XMStoreFloat3(&f3Move, f3Direction);
-		float fSpeed = 0.1f; // 移動速度
-		f3OwnerPos += f3Move * fSpeed;
+		f3OwnerPos += f3Move * Human_Move_Speed;
 		// オーナーの位置を更新
 		m_pOwner->SetPos(f3OwnerPos);
 		return false;

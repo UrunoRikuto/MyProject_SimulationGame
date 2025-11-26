@@ -5,6 +5,7 @@
 *//**************************************************/
 #pragma once
 #include "Defines.h"
+#include <string>
 
 // @brief ゲーム内時間管理クラス
 class CGameTimeManager
@@ -59,6 +60,8 @@ public:
 	// @brief 現在の時間帯を取得する関数
 	// @return 現在の時間帯
 	const DAY_TIME GetCurrentDayTime() const;
+	// @brief 現在の時間帯の文字列を取得する関数
+	const std::string GetCurrentDayTimeString() const;
 
 	// @brief 時間帯別の進行度を取得する関数
 	// @return 時間帯別の進行度（0.0f〜1.0f）

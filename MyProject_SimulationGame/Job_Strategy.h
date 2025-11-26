@@ -64,6 +64,10 @@ public:
 	// @param status：設定する職業のステータス構造体の参照
 	void SetJobStatus(const JobStatus& status) { m_Status = status; }
 
+	// @brief スタミナの増加処理
+	// @param fAmount：増加量
+	void ChangeStamina(float fAmount);
+
 protected:
 
 	// @brief 休憩処理

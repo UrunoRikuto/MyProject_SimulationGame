@@ -81,8 +81,7 @@ void CGatherer_Strategy::DoWork()
 			DirectX::XMFLOAT3 f3Move;
 			DirectX::XMStoreFloat3(&f3Move, f3Direction);
 
-			float fSpeed = 0.1f; // 移動速度
-			f3OwnerPos += f3Move * fSpeed;
+			f3OwnerPos += f3Move * Human_Move_Speed;
 
 			// オーナーの位置を更新
 			m_pOwner->SetPos(f3OwnerPos);

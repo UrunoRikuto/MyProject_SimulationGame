@@ -31,6 +31,9 @@ private:
 		Resting
 	};
 
+	// @brief クールタイム時間
+	static constexpr float COOL_TIME_DURATION = 20.0f;
+
 public:
 	// @brief コンストラクタ
 	CBuilder_Job();
@@ -59,6 +62,10 @@ private:
 
 	// @brief 建築中の建築オブジェクトのポインタ
 	CBuildObject* m_pBuildingObject = nullptr;
+
+	// @brief クールタイム
+	// @note 次の依頼を受けるまでの待機時間
+	float m_fCoolTime = 0.0f;
 
 };
 
