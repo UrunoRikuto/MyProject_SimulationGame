@@ -75,8 +75,8 @@ void CCameraGame::Update()
 		// キーボード入力からVelocityを計算
 		DirectX::XMFLOAT3 f3Velocity{};
 		
-		if (IsMouseWheelUp())m_fRadius += 0.1f;
-		if (IsMouseWheelDown())m_fRadius -= 0.1f;
+		if (IsMouseWheelUp())m_fRadius -= 2.0f;
+		if (IsMouseWheelDown())m_fRadius += 2.0f;
 		if (IsKeyPress(VK_SPACE))f3Velocity += fUp;
 		if (IsKeyPress(VK_SHIFT))f3Velocity -= fUp;
 

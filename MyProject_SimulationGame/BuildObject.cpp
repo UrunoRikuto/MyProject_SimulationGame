@@ -1,3 +1,9 @@
+/**************************************************//*
+	@file	| BuildObject.cpp
+	@brief	| 建築オブジェクトクラスのcppファイル
+	@note	| 建築オブジェクトの処理を定義
+			| CGameObjectを継承
+*//**************************************************/
 #include "BuildObject.h"
 #include "ModelRenderer.h"
 #include "ImguiSystem.h"
