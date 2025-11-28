@@ -34,6 +34,24 @@ public:
 	// @brief インスペクター表示処理
 	virtual int Inspecter(bool isEnd = true) override;
 
+private:
+
+	// @brief 探索＆移動処理
+	void SearchAndMoveAction();
+
+	// @brief 採取処理
+	void GatheringAction();
+
+	// @brief 運搬処理
+	void TransportingAction();
+
+	// @brief 貯蔵処理
+	void StoringAction();
+
+	// @brief 休憩処理
+	void RestingAction();
+
+
 protected:
 
 	// @brief 標的を探す処理

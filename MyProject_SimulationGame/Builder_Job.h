@@ -50,6 +50,26 @@ public:
 	std::string GetJobName() const override { return JobName::Builder; }
 
 private:
+
+	// @brief ‘Ò‹@ˆ—
+	void WaitingAction();
+
+	// @brief ‘fŞûWˆ—
+	void GatherMaterialsAction();
+
+	// @brief ‘ÎÛ’Tõˆ—
+	void SearchingTargetAction();
+
+	// @brief Œš’zˆ—
+	void BuildingAction();
+
+	// @brief ‹­‰»ˆ—
+	void UpgradingAction();
+
+	// @brief ‹xŒeˆ—
+	void RestingAction();
+
+private:
 	// @brief Œ»İ‚Ìd–ó‘Ô
 	WorkState m_eCurrentState = WorkState::Waiting;
 	WorkState m_ePrevState = WorkState::Waiting;

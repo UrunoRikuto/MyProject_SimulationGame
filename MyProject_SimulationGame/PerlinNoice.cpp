@@ -2,6 +2,8 @@
 	@file	| PerlinNoice.cpp
 	@brief	| パーリンノイズ生成クラスのcppファイル
 	@note	| 2Dパーリンノイズを生成するクラス
+			| 参考サイト
+			|┗ https://postd.cc/understanding-perlin-noise/ (パーリンノイズの理解)
 *//**************************************************/
 #include "PerlinNoice.h"
 #include <numeric>

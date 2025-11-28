@@ -2,12 +2,18 @@
 	@file	| Scene.cpp
 	@brief	| シーンのベースクラスのcppファイル
 	@note	| シーン内のゲームオブジェクト管理、更新、描画等を行う
+			| 描画負荷軽減のための視錐台カリング処理も実装
+            | 参考サイト
+			| ┗ https://zenn.dev/kazukisako/articles/frustum-culling-e77cb9d116c64a91b9e13090261e9399 (視錐台カリングの基礎と実装)
 *//**************************************************/
 #include "GameObject.h"
 #include "Scene.h"
 #include "Camera.h"
 #include "Geometory.h"
 #include <DirectXMath.h>
+
+// @brief カリング距離
+constexpr float CULLING_DISTANCE = 100.0f;
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -171,7 +177,7 @@ void CScene::Draw()
     DirectX::XMFLOAT3 camPos = pCamera->GetPos(); // カメラに GetPosition() を用意している前提
 
     // カリング距離（チューニング可能）
-    const float globalCullDistance = 100.0f;
+    const float globalCullDistance = CULLING_DISTANCE;
     const float globalCullDistSq = globalCullDistance * globalCullDistance;
 
     for (auto& list : m_pGameObject_List)

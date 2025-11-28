@@ -3,6 +3,8 @@
 	@brief	| 職業クラスのhファイル
 	@note	| 職業インターフェースの処理を定義
 			| ストラテジーパターンで作成
+			|参考サイト
+			|┗ https://qiita.com/hankehly/items/1848f2fd8e09812d1aaf (C++によるストラテジーパターンの実装例)
 *//**************************************************/
 #pragma once
 #include "RefreshFacility.h"
