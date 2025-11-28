@@ -124,7 +124,7 @@ int CBuilder_Job::Inspecter(bool isEnd)
 }
 
 /*****************************************//*
-	@brief	| ‘Ò‹@ˆ—
+	@brief	| ‘Ò‹@’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::WaitingAction()
 {
@@ -184,7 +184,7 @@ void CBuilder_Job::WaitingAction()
 }
 
 /*****************************************//*
-	@brief	| ‘fŞûWˆ—
+	@brief	| ‘fŞûW’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::GatherMaterialsAction()
 {
@@ -334,7 +334,7 @@ void CBuilder_Job::GatherMaterialsAction()
 }
 
 /*****************************************//*
-	@brief	| ‘ÎÛ’Tõˆ—
+	@brief	| ‘ÎÛ’Tõ’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::SearchingTargetAction()
 {
@@ -398,7 +398,7 @@ void CBuilder_Job::SearchingTargetAction()
 }
 
 /*****************************************//*
-	@brief	| Œš’zˆ—
+	@brief	| Œš’z’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::BuildingAction()
 {
@@ -476,7 +476,7 @@ void CBuilder_Job::BuildingAction()
 }
 
 /*****************************************//*
-	@brief	| ‹­‰»ˆ—
+	@brief	| ‹­‰»’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::UpgradingAction()
 {
@@ -531,7 +531,7 @@ void CBuilder_Job::UpgradingAction()
 }
 
 /*****************************************//*
-	@brief	| ‹xŒeˆ—
+	@brief	| ‹xŒe’†‚Ìˆ—
 *//*****************************************/
 void CBuilder_Job::RestingAction()
 {

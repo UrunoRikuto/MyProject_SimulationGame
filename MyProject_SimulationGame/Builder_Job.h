@@ -51,22 +51,22 @@ public:
 
 private:
 
-	// @brief ‘Ò‹@ˆ—
+	// @brief ‘Ò‹@’†‚Ìˆ—
 	void WaitingAction();
 
-	// @brief ‘fŞûWˆ—
+	// @brief ‘fŞûW’†‚Ìˆ—
 	void GatherMaterialsAction();
 
-	// @brief ‘ÎÛ’Tõˆ—
+	// @brief ‘ÎÛ’Tõ’†‚Ìˆ—
 	void SearchingTargetAction();
 
-	// @brief Œš’zˆ—
+	// @brief Œš’z’†‚Ìˆ—
 	void BuildingAction();
 
-	// @brief ‹­‰»ˆ—
+	// @brief ‹­‰»’†‚Ìˆ—
 	void UpgradingAction();
 
-	// @brief ‹xŒeˆ—
+	// @brief ‹xŒe’†‚Ìˆ—
 	void RestingAction();
 
 private:

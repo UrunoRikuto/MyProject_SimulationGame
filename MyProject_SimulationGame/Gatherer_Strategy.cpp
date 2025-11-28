@@ -104,7 +104,7 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 }
 
 /****************************************//*
-	@brief　	|　探索＆移動処理
+	@brief　	|　探索＆移動中の処理
 *//****************************************/
 void CGatherer_Strategy::SearchAndMoveAction()
 {
@@ -174,7 +174,7 @@ void CGatherer_Strategy::SearchAndMoveAction()
 }
 
 /****************************************//*
-	@brief　	|　採取処理
+	@brief　	|　採取中の処理
 *//****************************************/
 void CGatherer_Strategy::GatheringAction()
 {
@@ -222,7 +222,7 @@ void CGatherer_Strategy::GatheringAction()
 }
 
 /****************************************//*
-	@brief　	|　運搬処理
+	@brief　	|　運搬中の処理
 *//****************************************/
 void CGatherer_Strategy::TransportingAction()
 {
@@ -278,7 +278,7 @@ void CGatherer_Strategy::TransportingAction()
 }
 
 /****************************************//*
-	@brief　	|　貯蔵処理
+	@brief　	|　貯蔵中の処理
 *//****************************************/
 void CGatherer_Strategy::StoringAction()
 {
@@ -336,7 +336,7 @@ void CGatherer_Strategy::StoringAction()
 }
 
 /****************************************//*
-	@brief　	|　休憩処理
+	@brief　	|　休憩中の処理
 *//****************************************/
 void CGatherer_Strategy::RestingAction()
 {
