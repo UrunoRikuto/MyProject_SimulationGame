@@ -23,14 +23,6 @@ namespace JobName
 
 }
 
-// @brief 登録されている職業名の配列
-const std::vector<std::string> JobNames = {
-	JobName::Neet,
-	JobName::WoodGatherer,
-	JobName::StoneGatherer,
-	JobName::Builder
-};
-
 //=== @brief 職業クラスのインクルード ===//
 /*********************//*
 	インターフェース

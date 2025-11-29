@@ -375,6 +375,9 @@
     <ClInclude Include="HumanHouse.h">
       <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
     </ClInclude>
+    <ClInclude Include="CivLevelManager.h">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -575,6 +578,9 @@
     <ClCompile Include="HumanHouse.cpp">
       <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
     </ClCompile>
+    <ClCompile Include="CivLevelManager.cpp">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">
@@ -603,5 +609,8 @@
     <FxCompile Include="PS_Sprite.hlsl">
       <Filter>シェーダー</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Text\TODOリスト.txt" />
   </ItemGroup>
 </Project>

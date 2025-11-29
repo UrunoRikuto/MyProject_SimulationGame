@@ -12,6 +12,7 @@
 #include "BuildManager.h"
 #include "Human.h"
 #include "GameTimeManager.h"
+#include "CivLevelManager.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -121,6 +122,7 @@ void CImguiSystem::Draw()
 	DrawHierarchy();
 	DrawCameraParam();
 	DrawInspecter();
+	DrawCivLevel();
 
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
@@ -316,6 +318,52 @@ void CImguiSystem::DrawInspecter()
 		ImGui::End();
 	}
 
+}
+
+/****************************************//*
+	@brief　	| 市民レベル表示
+*//****************************************/
+void CImguiSystem::DrawCivLevel()
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 100));
+	ImGui::Begin("CivLevel");
+
+	// インスタンスの取得
+	CCivLevelManager* pCivLevelManager = CCivLevelManager::GetInstance();
+
+	// 更新処理を行う場合
+	if (m_bUpdate)
+	{
+		// 文明レベルの表示
+		// 大きく表示
+		std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
+		ImGui::TextColored(
+			ImVec4(0.0f, 0.5f, 1.0f, 1.0f),
+			std::string("Civ Level: " + sLevel).c_str()
+		);
+
+		// 現在経験値を取得
+		std::string sExp = std::to_string(pCivLevelManager->GetExp());
+
+		// 必要経験値を取得
+		std::string sExpThreshold = std::to_string(pCivLevelManager->GetExpThreshold());
+
+		// 経験値の表示
+		ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
+	}
+	// 更新処理を止めている場合
+	else
+	{
+		// 文明レベルの編集
+		int nCivLevel = pCivLevelManager->GetCivLevel();
+
+		// 入力欄の表示
+		ImGui::InputInt("CivLevel", &nCivLevel);
+
+		// 文明レベルの設定
+		pCivLevelManager->SetCivLevel(nCivLevel);
+	}
+	ImGui::End();
 }
 
 /****************************************//*

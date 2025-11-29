@@ -110,6 +110,9 @@ private:
 	// @brief インスペクター表示
 	void DrawInspecter();
 
+	// @brief 文明レベル表示
+	void DrawCivLevel();
+
 	// --Debug表示関数--
 	// @brief デバッグ用チェックボックス表示
 	void DrawDebugSystem();

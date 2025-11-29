@@ -13,6 +13,7 @@
 #include "Human.h"
 #include "StorageHouse.h"
 #include "RefreshFacility.h"
+#include "CivLevelManager.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -194,6 +195,9 @@ void CGatherer_Strategy::GatheringAction()
 			{
 				m_pOwner->HoldItem(item);
 			}
+
+			//　文明経験値を加算
+			CCivLevelManager::GetInstance()->AddExp(CCivLevelManager::ExpType::Gathering);
 
 			m_pTarget->Destroy();
 			m_pTarget = nullptr;

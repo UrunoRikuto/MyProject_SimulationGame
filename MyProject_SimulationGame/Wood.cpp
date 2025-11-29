@@ -5,6 +5,7 @@
 *//**************************************************/
 #include "Wood.h"
 #include "ModelRenderer.h"
+#include "BillboardRenderer.h"
 #include "Oparation.h"
 #include "ShaderManager.h"
 

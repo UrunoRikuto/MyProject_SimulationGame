@@ -13,6 +13,7 @@
 #include "StructMath.h"
 #include "Oparation.h"
 #include "HumanHouse.h"
+#include "CivLevelManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -154,6 +155,9 @@ int CHuman::Inspecter(bool isEnd)
 	{
 		// 現在の職業を文字列で取得
 		std::string currentJob = m_pJob->GetJobName();
+
+		// 職業名リストの取得
+		const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
 
 		// Combo 用（string → const char* の配列に変換）
 		std::vector<const char*> items;

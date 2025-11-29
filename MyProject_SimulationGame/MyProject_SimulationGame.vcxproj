@@ -148,6 +148,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="CivLevelManager.h" />
     <ClInclude Include="Crafter_Strategy.h" />
     <ClInclude Include="FieldGrid.h" />
     <ClInclude Include="CollectTarget.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="CivLevelManager.cpp" />
     <ClCompile Include="CollectTarget.cpp" />
     <ClCompile Include="FieldGrid.cpp" />
     <ClCompile Include="FieldCell.cpp" />
@@ -317,6 +319,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Text\TODOリスト.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
