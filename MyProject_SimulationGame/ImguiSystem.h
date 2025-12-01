@@ -151,6 +151,10 @@ private: //-- リリースモード --//
 	// @brief 人間の職業設定表示
 	void Release_DrawHumanJobSetting();
 
+	// @brief 倉庫の資源表示
+	void Release_DrawStoragehouse();
+
+
 private:
 	// @brief インスタンス
 	static CImguiSystem* m_pInstance;
@@ -167,10 +171,6 @@ private:
 	// @brief デバッグ用フラグ配列
 	bool m_bDebug[static_cast<int>(DebugSystemFlag::MAX)];
 
-	// @brief デバックゲームモード
-	// @note true:Debugモード false:Releaseモード
-	bool m_bDebugGameMode;
-
 	// @brief 更新処理を管理する
 	// @note true:更新処理を行う false:更新処理を止める
 	bool m_bUpdate;
@@ -180,5 +180,8 @@ private:
 
 	// @brief 人間のみ表示するフラグ
 	bool m_bOnlyHuman;
+
+	// @brief 倉庫の資源表示フラグ
+	bool m_bStoragehouseDisplay;
 };
 

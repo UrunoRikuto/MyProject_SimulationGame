@@ -592,8 +592,18 @@ void CBuilder_Job::RestingAction()
 	if (RestAction())
 	{
 		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-		// ‘O‚Ìó‘Ô‚ğ•Û‘¶
-		m_ePrevState = m_eCurrentState;
-		m_eCurrentState = m_ePrevState;
+
+		if (m_ePrevState != m_eCurrentState)
+		{
+			// ‘O‚Ìó‘Ô‚ğ•Û‘¶
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = m_ePrevState;
+		}
+		else
+		{
+			// ‘O‚Ìó‘Ô‚ğ•Û‘¶
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = WorkState::Waiting;
+		}
 	}
 }

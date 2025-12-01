@@ -59,7 +59,23 @@ void CWood::Init()
 	// ドロップアイテム設定
 	for (int i = 0; i < DROP_ITEM_COUNT; ++i)
 	{
-		// 木材アイテムを追加
-		m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Wood));
+		// 0~100のランダムな数値を取得
+		int randomNum = GetRandOfRange(0, 100);
+
+		if (randomNum < 50)
+		{
+			// 木材アイテムを追加
+			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Wood));
+		}
+		else if (randomNum < 80)
+		{
+			// リンゴアイテムを追加
+			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Apple));
+		}
+		else
+		{
+			// 繊維アイテムを追加
+			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Faiber));
+		}
 	}
 }

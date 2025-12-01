@@ -13,9 +13,16 @@ public:
 	// @brief ƒAƒCƒeƒ€ƒ^ƒCƒv—ñ‹“Œ^
 	enum class ITEM_TYPE
 	{
-		Wood,		// –ØŞ
-		Stone,		// ÎŞ
-		Iron,		// “SŞ
+		// –ØŞ
+		Wood,
+		// ‘@ˆÛ
+		Faiber,
+		// ƒŠƒ“ƒS
+		Apple,
+		// ÎŞ
+		Stone,
+		// “SŞ
+		Iron,
 
 		MAX
 	};
@@ -26,6 +33,8 @@ public:
 		switch (eType)
 		{
 		case ITEM_TYPE::Wood:	return "Wood";
+		case ITEM_TYPE::Faiber:	return "Faiber";
+		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
 		default:				return "Unknown";

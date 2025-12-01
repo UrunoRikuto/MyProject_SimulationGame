@@ -13,6 +13,7 @@
 #include "Human.h"
 #include "GameTimeManager.h"
 #include "CivLevelManager.h"
+#include "StorageHouse.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -35,13 +36,6 @@ CImguiSystem::CImguiSystem()
 	m_pGenerator.push_back({ "Human" , new(std::nothrow) CHumanGenerator() });
 	m_pGenerator.push_back({ "Wood"  , new(std::nothrow) CWoodGenerator() });
 	m_pGenerator.push_back({ "Stone" , new(std::nothrow) CStoneGenerator() });
-
-	// デバックゲームモードの初期化
-#ifdef _DEBUG
-	m_bDebugGameMode = true;
-#else
-	m_bDebugGameMode = false;
-#endif
 }
 
 /****************************************//*
@@ -164,8 +158,8 @@ void CImguiSystem::Draw()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	if (m_bDebugGameMode)
-	{
+#ifdef _DEBUG
+
 		// ヒストリー表示
 		DrawHierarchy();
 		// カメラパラメータ表示
@@ -179,11 +173,8 @@ void CImguiSystem::Draw()
 		// ゲームタイマー表示
 		DrawGameTime();
 
-		// --Debug表示-- //
-#ifdef _DEBUG
 	   // デバッグ用チェックボックス表示
 		DrawDebugSystem();
-#endif
 
 		// 更新を止めるチェックボックス表示
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
@@ -197,18 +188,19 @@ void CImguiSystem::Draw()
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
 		// デバックテンプレート生成表示
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
-	}
-	else
-	{
+
+#else
+
 		// 文明レベル表示
 		Release_DrawCivLevel();
 		// ゲーム内時間表示
 		Release_DrawGameTime();
 		// 人間の職業設定表示
 		Release_DrawHumanJobSetting();
+		// 倉庫の資源表示
+		Release_DrawStoragehouse();
 
-
-	}
+#endif // _DEBUG
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -782,9 +774,6 @@ void CImguiSystem::Release_DrawGameTime()
 
 	std::string dayTimeFormat = std::string("[" + currendDayTime + "]");
 
-	// ラベル表示
-	ImGui::Text("DayTime");
-
 	// 区切り線の表示
 	ImGui::Separator();
 
@@ -801,7 +790,7 @@ void CImguiSystem::Release_DrawGameTime()
 void CImguiSystem::Release_DrawHumanJobSetting()
 {
 	// ウィンドウの位置設定
-	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, SCREEN_HEIGHT - 300.0f));
+	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, 0.0f));
 
 	// サイズ変更ハンドルを非表示に設定
 	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 300), ImVec2(600, 300));
@@ -814,8 +803,9 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 
 	// 人間オブジェクトの取得
 	auto Objects = pScene->GetGameObjects<CHuman>();
+	// vector型に変換
+	std::vector<CHuman*> Humans(Objects.begin(), Objects.end());
 
-	// 人間オブジェクトごとに処理
 	for (auto obj : Objects)
 	{
 		// オブジェクトIDの取得
@@ -824,38 +814,126 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 		std::string name = id.m_sName;
 		// 同名オブジェクトの区別のために番号を付与
 		name += std::to_string(id.m_nSameCount + 1);
-
 		// 職業名の取得
 		std::string job = obj->GetHumanJob()->GetJobName();
-
 		// 職業名を表示名に追加
-		ImGui::Text(name.c_str());
+		name += " [" + job + "]";
 
-		// 現在の職業を文字列で取得
-		std::string currentJob = obj->GetHumanJob()->GetJobName();
-
-		// 職業名リストの取得
-		const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
-
-		// Combo 用（string → const char* の配列に変換）
-		std::vector<const char*> items;
-		for (auto& s : JobNames) items.push_back(s.c_str());
-
-		// 現在のインデックス
-		int currentIndex = static_cast<int>(std::distance(
-			JobNames.begin(),
-			std::find(JobNames.begin(), JobNames.end(), currentJob)
-		));
-
-		// コンボボックスの表示
-		if(ImGui::Combo("", &currentIndex, items.data(), static_cast<int>(items.size())))
+		// 選択ボタンの表示
+		if (ImGui::Button(name.c_str()))
 		{
-			// 選択された職業名を取得
-			std::string selectedJobName = JobNames[currentIndex];
-			// 新しい職業オブジェクトを作成して設定
-			obj->SetHumanJob(CreateJobByName(selectedJobName, *obj));
+			// 選択したオブジェクトを保存
+			m_pGameObject = obj;
 		}
 	}
 
+	if (m_pGameObject == nullptr)
+	{
+		ImGui::Text("No Selected Human");
+		ImGui::End();
+		return;
+	}
+
+	// CHuman型にキャスト
+	CHuman* obj = dynamic_cast<CHuman*>(m_pGameObject);
+
+	// オブジェクトIDの取得
+	ObjectID id = obj->GetID();
+	// 表示名の作成
+	std::string name = id.m_sName;
+	// 同名オブジェクトの区別のために番号を付与
+	name += std::to_string(id.m_nSameCount + 1);
+
+	// 職業名の取得
+	std::string job = obj->GetHumanJob()->GetJobName();
+
+	// 職業名を表示名に追加
+	ImGui::Text(name.c_str());
+
+	ImGui::SameLine();
+	// 選択ボタンの表示
+	if (ImGui::Button("LookSelect"))
+	{
+		// カメラを選択したオブジェクトに注視させる
+		m_pGameObject = obj;
+	}
+
+	// 現在の職業を文字列で取得
+	std::string currentJob = obj->GetHumanJob()->GetJobName();
+
+	// 職業名リストの取得
+	const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
+
+	// Combo 用（string → const char* の配列に変換）
+	std::vector<const char*> items;
+	for (auto& s : JobNames) items.push_back(s.c_str());
+
+	// 現在のインデックス
+	int currentIndex = static_cast<int>(std::distance(
+		JobNames.begin(),
+		std::find(JobNames.begin(), JobNames.end(), currentJob)
+	));
+
+	// コンボボックスの表示
+	if (ImGui::Combo("", &currentIndex, items.data(), static_cast<int>(items.size())))
+	{
+		// 選択された職業名を取得
+		std::string selectedJobName = JobNames[currentIndex];
+		// 新しい職業オブジェクトを作成して設定
+		obj->SetHumanJob(CreateJobByName(selectedJobName, *obj));
+	}
+
+
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| 倉庫の資源表示
+*//****************************************/
+void CImguiSystem::Release_DrawStoragehouse()
+{
+	// ウィンドウの位置設定(左下)
+	ImGui::SetNextWindowPos(ImVec2(0.0f, SCREEN_HEIGHT - 400.0f));
+	// サイズ変更ハンドルを非表示に設定
+	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 400), ImVec2(300, 400));
+
+	// ウィンドウの開始
+	ImGui::Begin("Storagehouse", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	
+	// 区切り線の表示
+	ImGui::Separator();
+	ImGui::Text("StorageHouse");
+	ImGui::Separator();
+	// インスタンスの取得
+	CScene* pScene = GetScene();
+
+	// 倉庫オブジェクトの取得
+	auto Storagehouse = pScene->GetGameObject<CStorageHouse>();
+
+	// 倉庫オブジェクトの資源表示
+		// 資源情報の取得
+	auto& materials = Storagehouse->GetStoredItems();
+	// 収納されているアイテムを種類別にカウント
+	std::map<CItem::ITEM_TYPE, int> itemTypes;
+	for (CItem* pItem : materials)
+	{
+		CItem::ITEM_TYPE type = pItem->GetItemType();
+		itemTypes[type]++;
+	}
+
+	// アイテム種類ごとに表示
+	ImGui::BeginChildFrame(ImGui::GetID((void*)0), ImVec2(280, 300));
+
+	for (const auto& pair : itemTypes)
+	{
+		// アイテム名の取得
+		std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
+		// アイテム名と数量の表示
+		ImGui::Text(std::string(itemName + ": " + std::to_string(pair.second)).c_str());
+	}
+
+	ImGui::EndChildFrame();
+	
+	// ウィンドウの終了
 	ImGui::End();
 }

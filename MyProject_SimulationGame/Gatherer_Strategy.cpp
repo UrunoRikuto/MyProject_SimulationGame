@@ -374,7 +374,16 @@ void CGatherer_Strategy::RestingAction()
 	if (RestAction())
 	{
 		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-		m_ePrevState = m_eCurrentState;
-		m_eCurrentState = WorkState::SearchAndMove;
+
+		if (m_ePrevState != m_eCurrentState)
+		{
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = m_eCurrentState;
+		}
+		else
+		{
+			m_ePrevState = m_eCurrentState;
+			m_eCurrentState = WorkState::SearchAndMove;
+		}
 	}
 }
