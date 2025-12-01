@@ -6,9 +6,9 @@
 *//**************************************************/
 #include "BuildManager.h"
 #include "Main.h"
-#include "StorageHouse.h"
-#include "RefreshFacility.h"
 #include "FieldManager.h"
+#include "RefreshFacility.h"
+#include "HumanHouse.h"
 
 // 静的メンバ変数の初期化
 CBuildManager* CBuildManager::m_pInstance = nullptr;
@@ -70,6 +70,9 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 
 	// 建築依頼構造体を作成
 	BuildRequest newRequest = BuildRequest();
+	
+	// 生成予定場所の設定
+	newRequest.n2BuildIndex = DecideRandomBuildPosition();
 
 	// シーンの取得
 	CScene* pScene = GetScene();
@@ -86,7 +89,6 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 		if (buildlist.empty())
 		{
 			newRequest.eRequestType = RequestType::Build;
-			newRequest.n2BuildIndex = DecideRandomBuildPosition();
 			break;
 		}
 
@@ -97,7 +99,6 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 			{
 				newRequest.eRequestType = RequestType::Upgrade;
 				newRequest.n2BuildIndex = build->GetFieldCellIndex();
-
 				break;
 			}
 		}
@@ -106,21 +107,21 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 		if (newRequest.eRequestType != RequestType::Upgrade)
 		{
 			newRequest.eRequestType = RequestType::Build;
-			newRequest.n2BuildIndex = DecideRandomBuildPosition();
 		}
-		break;
 	}
+	break;
 	case BuildType::HumanHouse:
 	{
 		// 今ある人間の家を取得
-		auto buildlist = pScene->GetGameObjects<CStorageHouse>();
+		auto buildlist = pScene->GetGameObjects<CHumanHouse>();
+
 		// 人間の家が無ければ建築依頼を追加
 		if (buildlist.empty())
 		{
 			newRequest.eRequestType = RequestType::Build;
-			newRequest.n2BuildIndex = DecideRandomBuildPosition();
 			break;
 		}
+
 		// 人間の家がある場合は強化依頼を追加
 		for (auto build : buildlist)
 		{
@@ -131,14 +132,14 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 				break;
 			}
 		}
+
 		// 全ての人間の家が最大レベルの場合は建築依頼を追加
 		if (newRequest.eRequestType != RequestType::Upgrade)
 		{
 			newRequest.eRequestType = RequestType::Build;
-			newRequest.n2BuildIndex = DecideRandomBuildPosition();
 		}
-		break;
 	}
+	break;
 	}
 	newRequest.eBuildType = In_eRequestType;
 	newRequest.eRequestState = RequestState::Unprocessed;

@@ -151,9 +151,6 @@
     <Filter Include="コードファイル\System\Manager">
       <UniqueIdentifier>{774a8e17-2d4d-48b4-98da-0291ff958952}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\GameTime">
-      <UniqueIdentifier>{c108793f-3a05-4eae-9587-b8c039d11b99}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\GameObject\BuildObject\HumanHouse">
       <UniqueIdentifier>{41c4f86a-6e47-418e-97a9-ae1c4857b51d}</UniqueIdentifier>
     </Filter>
@@ -366,9 +363,6 @@
     <ClInclude Include="BuildManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="GameTimeManager.h">
-      <Filter>コードファイル\System\GameTime</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
@@ -376,6 +370,9 @@
       <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
     </ClInclude>
     <ClInclude Include="CivLevelManager.h">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimeManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
   </ItemGroup>
@@ -569,9 +566,6 @@
     <ClCompile Include="BuildManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="GameTimeManager.cpp">
-      <Filter>コードファイル\System\GameTime</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
@@ -579,6 +573,9 @@
       <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
     </ClCompile>
     <ClCompile Include="CivLevelManager.cpp">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimeManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
   </ItemGroup>

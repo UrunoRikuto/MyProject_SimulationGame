@@ -22,8 +22,14 @@ CNeet_Job::CNeet_Job()
 *//******************************************/
 void CNeet_Job::DoWork()
 {
-	// ImGuiデバッグログに出力
-	CImguiSystem::GetInstance()->AddDebugLog("Neet_Job: Doing nothing...");
+}
+
+/******************************************//*
+	@brief　	| 切り替え処理
+	@note		| 無職なので特に何もしない
+*//******************************************/
+void CNeet_Job::OnChangeJob()
+{
 }
 
 /******************************************//*

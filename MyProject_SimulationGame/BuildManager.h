@@ -36,7 +36,9 @@ public:
 	// @brief 建築物タイプの列挙型
 	enum class BuildType
 	{
+		// 休憩所
 		RefreshFacility,
+		// 人間の家
 		HumanHouse,
 
 		MAX
@@ -45,6 +47,7 @@ public:
 	// @brief 建築依頼構造体
 	struct BuildRequest
 	{
+		// @brief コンストラクタ
 		BuildRequest()
 			: eRequestType(RequestType::Build)
 			, eBuildType(BuildType::RefreshFacility)
@@ -128,6 +131,21 @@ namespace BuildMaterials
 		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 }},
 		// Level 5
 		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   50 }},
+	};
+
+	// @brief 人間の家に必要な素材
+	const std::vector<CBuildManager::BuildMaterial> HumanHouse[CBuildObject::MAX_BUILD_LEVEL] =
+	{
+		// Level 1
+		{{ CItem::ITEM_TYPE::Wood,  15 },{ CItem::ITEM_TYPE::Stone,   5 }},
+		// Level 2
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  10 }},
+		// Level 3
+		{{ CItem::ITEM_TYPE::Wood,  45 },{ CItem::ITEM_TYPE::Stone,  15 }},
+		// Level 4
+		{{ CItem::ITEM_TYPE::Wood,  60 },{ CItem::ITEM_TYPE::Stone,  20 }},
+		// Level 5
+		{{ CItem::ITEM_TYPE::Wood,  75 },{ CItem::ITEM_TYPE::Stone,  25 }},
 	};
 
 	// @brief 指定された建築タイプの建築素材リストを取得

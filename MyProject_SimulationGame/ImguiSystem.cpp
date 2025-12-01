@@ -19,7 +19,7 @@
 
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
-constexpr float ce_fCharaSize =30.0f;
+constexpr float ce_fCharaSize = 30.0f;
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -35,6 +35,13 @@ CImguiSystem::CImguiSystem()
 	m_pGenerator.push_back({ "Human" , new(std::nothrow) CHumanGenerator() });
 	m_pGenerator.push_back({ "Wood"  , new(std::nothrow) CWoodGenerator() });
 	m_pGenerator.push_back({ "Stone" , new(std::nothrow) CStoneGenerator() });
+
+	// デバックゲームモードの初期化
+#ifdef _DEBUG
+	m_bDebugGameMode = true;
+#else
+	m_bDebugGameMode = false;
+#endif
 }
 
 /****************************************//*
@@ -87,6 +94,44 @@ void CImguiSystem::Init()
 
 	ImGui_ImplWin32_Init(GetMyWindow());
 	ImGui_ImplDX11_Init(GetDevice(), GetContext());
+
+	// ImGuiスタイルの設定
+	ImGui::StyleColorsDark();
+
+
+#ifdef _DEBUG
+	// フォントサイズの設定
+	io.FontGlobalScale = 1.0f;
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
+	// ウィンドウのタイトルバー色の設定
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	// フレーム背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+#else
+	// フォントサイズの設定
+	io.FontGlobalScale = 2.5f;
+
+	// サイズ調整不可
+	io.ConfigWindowsResizeFromEdges = false;
+	// ウィンドウ移動不可
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
+
+	// 表示する文字以外を非表示にする
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// ウィンドウのタイトルバーを非表示
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// フレーム背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// フレーム境界線色の設定
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+#endif // _DEBUG
+
 }
 
 /****************************************//*
@@ -119,26 +164,59 @@ void CImguiSystem::Draw()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	DrawHierarchy();
-	DrawCameraParam();
-	DrawInspecter();
-	DrawCivLevel();
+	if (m_bDebugGameMode)
+	{
+		// ヒストリー表示
+		DrawHierarchy();
+		// カメラパラメータ表示
+		DrawCameraParam();
+		// インスペクター表示
+		DrawInspecter();
+		// 文明レベル表示
+		DrawCivLevel();
+		// 建築依頼リスト
+		DrawBuildRequestList();
+		// ゲームタイマー表示
+		DrawGameTime();
 
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)])	DrawBuildRequestList();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::GameTime)])		DrawGameTime();
+		// --Debug表示-- //
 #ifdef _DEBUG
-	DrawDebugSystem();
+	   // デバッグ用チェックボックス表示
+		DrawDebugSystem();
 #endif
+
+		// 更新を止めるチェックボックス表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
+		// フレームレート表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
+		// デバックログ表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
+		// オブジェクト生成ボタン表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
+		// セルの描画表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
+		// デバックテンプレート生成表示
+		if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
+	}
+	else
+	{
+		// 文明レベル表示
+		Release_DrawCivLevel();
+		// ゲーム内時間表示
+		Release_DrawGameTime();
+		// 人間の職業設定表示
+		Release_DrawHumanJobSetting();
+
+
+	}
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
+
+/*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
+//	Debugビルド時の例レイアウト関数			//
+/*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
 
 /****************************************//*
 	@brief　	| デバックログの登録
@@ -158,8 +236,8 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 *//****************************************/
 void CImguiSystem::DrawHierarchy()
 {
-	ImGui::SetNextWindowPos(ImVec2(20,20));
-	ImGui::SetNextWindowSize(ImVec2(280,300));
+	ImGui::SetNextWindowPos(ImVec2(20, 20));
+	ImGui::SetNextWindowSize(ImVec2(280, 300));
 	ImGui::Begin("Hierarchy");
 	if (ImGui::Button("Select Item Clear"))
 	{
@@ -379,9 +457,7 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
 	ImGui::Checkbox("Generate",		&m_bDebug[static_cast<int>(DebugSystemFlag::Generate)]);
 	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
-	ImGui::Checkbox("BuildRequest", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequest)]);
 	ImGui::Checkbox("DebugTemplate", &m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)]);
-	ImGui::Checkbox("GameTime", &m_bDebug[static_cast<int>(DebugSystemFlag::GameTime)]);
 
 	ImGui::End();
 }
@@ -608,5 +684,178 @@ void CImguiSystem::DrawGameTime()
 	ImGui::Text(std::string("DayTime:" + currendDayTime).c_str());
 
 	ImGui::EndChild();
+	ImGui::End();
+}
+
+/*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
+//	Releaseビルド時の例レイアウト関数		//
+/*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
+
+/****************************************//*
+	@brief　	| 文明レベル表示
+*//****************************************/
+void CImguiSystem::Release_DrawCivLevel()
+{
+	// ウィンドウの位置設定
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+	// サイズ変更ハンドルを非表示に設定
+	ImGui::SetNextWindowSizeConstraints(ImVec2(250, 100), ImVec2(250, 100));
+	// ウィンドウの開始
+	ImGui::Begin("Civ Level", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	// インスタンスの取得
+	CCivLevelManager* pCivLevelManager = CCivLevelManager::GetInstance();
+	// 文明レベルの表示
+	std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
+	ImGui::TextColored(
+		ImVec4(0.5f, 1.0f, 0.0f, 1.0f),
+		std::string("Civ Level: " + sLevel).c_str()
+	);
+	// 現在経験値を取得
+	std::string sExp = std::to_string(static_cast<int>(pCivLevelManager->GetExp()));
+	// 必要経験値を取得
+	std::string sExpThreshold = std::to_string(static_cast<int>(pCivLevelManager->GetExpThreshold()));
+	// 経験値の表示
+	ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| ゲーム内時間表示
+*//****************************************/
+void CImguiSystem::Release_DrawGameTime()
+{
+	// ウィンドウの位置設定
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 100.0f));
+	// サイズ変更ハンドルを非表示に設定
+	ImGui::SetNextWindowSizeConstraints(ImVec2(230, 300), ImVec2(230, 300));
+
+	// ウィンドウの開始
+	ImGui::Begin("Game Time", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+
+	// インスタンスの取得
+	CGameTimeManager* pGameTimeManager = CGameTimeManager::GetInstance();
+
+	// ゲーム内日数の表示
+	int day = pGameTimeManager->GetGameDays();
+	// ゲーム内時間の表示
+	float time = pGameTimeManager->GetGameTime();
+
+	// ゲーム内時間と日数の表示
+	ImGui::Text("Game Time");
+
+	// 区切り線の表示
+	ImGui::Separator();
+
+	// 現在の日数の表示
+	ImGui::Text(std::string("Day:" + std::to_string(day)).c_str());
+
+	// 現在の時間の表示
+	// 少数点以下2桁まで表示
+	// 整数部分と小数部分に分けて表示
+	int intTime = static_cast<int>(time);
+	int fracTime = static_cast<int>((time - intTime) * 100);
+	ImGui::Text(std::string("Time:" + std::to_string(intTime) + "." + (fracTime < 10 ? "0" : "") + std::to_string(fracTime)).c_str());
+
+	// 現在の時間帯の取得
+	CGameTimeManager::DAY_TIME dayTime = pGameTimeManager->GetCurrentDayTime();
+
+	// 時間帯によって色を変更して表示
+	ImVec4 color;
+	switch (dayTime)
+	{
+	case CGameTimeManager::DAY_TIME::MORNING:
+		color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // 黄色
+		break;
+	case CGameTimeManager::DAY_TIME::NOON:
+		color = ImVec4(1.0f, 0.65f, 0.0f, 1.0f); // オレンジ
+		break;
+	case CGameTimeManager::DAY_TIME::EVENING:
+		color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 赤
+		break;
+	case CGameTimeManager::DAY_TIME::NIGHT:
+		color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // 青
+		break;
+	}
+
+	// 現在の時間帯を文字列で取得
+	std::string currendDayTime = pGameTimeManager->GetCurrentDayTimeString();
+
+	std::string dayTimeFormat = std::string("[" + currendDayTime + "]");
+
+	// ラベル表示
+	ImGui::Text("DayTime");
+
+	// 区切り線の表示
+	ImGui::Separator();
+
+	// 色付きで表示
+	ImGui::TextColored(color, dayTimeFormat.c_str());
+
+	// ウィンドウの終了
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| 人間の職業設定表示
+*//****************************************/
+void CImguiSystem::Release_DrawHumanJobSetting()
+{
+	// ウィンドウの位置設定
+	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, SCREEN_HEIGHT - 300.0f));
+
+	// サイズ変更ハンドルを非表示に設定
+	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 300), ImVec2(600, 300));
+
+	// ウィンドウの開始
+	ImGui::Begin("Human Job Setting", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+
+	// 現在のシーンを取得
+	CScene* pScene = GetScene();
+
+	// 人間オブジェクトの取得
+	auto Objects = pScene->GetGameObjects<CHuman>();
+
+	// 人間オブジェクトごとに処理
+	for (auto obj : Objects)
+	{
+		// オブジェクトIDの取得
+		ObjectID id = obj->GetID();
+		// 表示名の作成
+		std::string name = id.m_sName;
+		// 同名オブジェクトの区別のために番号を付与
+		name += std::to_string(id.m_nSameCount + 1);
+
+		// 職業名の取得
+		std::string job = obj->GetHumanJob()->GetJobName();
+
+		// 職業名を表示名に追加
+		ImGui::Text(name.c_str());
+
+		// 現在の職業を文字列で取得
+		std::string currentJob = obj->GetHumanJob()->GetJobName();
+
+		// 職業名リストの取得
+		const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
+
+		// Combo 用（string → const char* の配列に変換）
+		std::vector<const char*> items;
+		for (auto& s : JobNames) items.push_back(s.c_str());
+
+		// 現在のインデックス
+		int currentIndex = static_cast<int>(std::distance(
+			JobNames.begin(),
+			std::find(JobNames.begin(), JobNames.end(), currentJob)
+		));
+
+		// コンボボックスの表示
+		if(ImGui::Combo("", &currentIndex, items.data(), static_cast<int>(items.size())))
+		{
+			// 選択された職業名を取得
+			std::string selectedJobName = JobNames[currentIndex];
+			// 新しい職業オブジェクトを作成して設定
+			obj->SetHumanJob(CreateJobByName(selectedJobName, *obj));
+		}
+	}
+
 	ImGui::End();
 }

@@ -71,6 +71,38 @@ void CBuilder_Job::DoWork()
 }
 
 /*****************************************//*
+	@brief	| 職業切り替え時の処理
+*//*****************************************/
+void CBuilder_Job::OnChangeJob()
+{
+	// 建築中のビルボードレンダラーが存在する場合
+	if (m_pBuildingBillboard != nullptr)
+	{
+		// ビルボードレンダラーを破棄
+		delete m_pBuildingBillboard;
+		m_pBuildingBillboard = nullptr;
+	}
+	// 建築中の建築オブジェクトが存在する場合
+	if (m_pBuildingObject != nullptr)
+	{
+		// 建築オブジェクトの建築進行度をリセット
+		m_pBuildingObject = nullptr;
+	}
+	// 受けている建築依頼をリセット
+	if (m_pCurrentBuildRequest != nullptr)
+	{
+		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
+		m_pCurrentBuildRequest = nullptr;
+
+	}
+	// 仕事状態を待機中にリセット
+	m_eCurrentState = WorkState::Waiting;
+	m_ePrevState = WorkState::Waiting;
+	// クールタイムをリセット
+	m_fCoolTime = 0.0f;
+}
+
+/*****************************************//*
 	@brief	| インスペクター表示処理
 	@param	| isEnd：インスペクター終了フラグ
 	@return	| 表示した項目数
@@ -157,7 +189,9 @@ void CBuilder_Job::WaitingAction()
 	// 建築依頼を受け取る
 	m_pCurrentBuildRequest = CBuildManager::GetInstance()->TakeBuildRequest();
 
-	// 建築依頼対象のセルにある建築物が既に存在する場合は建築物の建築完成度を初期化する
+	// 建築依頼がない場合は処理を抜ける
+	if (m_pCurrentBuildRequest == nullptr)return;
+
 	// インデックスを取得
 	DirectX::XMINT2 buildIndex = m_pCurrentBuildRequest->n2BuildIndex;
 
@@ -189,6 +223,21 @@ void CBuilder_Job::WaitingAction()
 *//*****************************************/
 void CBuilder_Job::GatherMaterialsAction()
 {
+	if(m_pBuildingObject == nullptr)
+	{
+		// 前の状態を保存
+		m_ePrevState = m_eCurrentState;
+		// 建築対象探索状態に移行
+		m_eCurrentState = WorkState::Waiting;
+
+		// 依頼をキャンセル
+		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
+		m_pCurrentBuildRequest = nullptr;
+
+		return;
+	}
+
+
 	// 建築物の依頼レベル
 	int nRequiredLevel = 1;
 

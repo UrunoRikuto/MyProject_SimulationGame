@@ -18,6 +18,9 @@ public:
 	// @brief 職業ごとの仕事処理
 	void DoWork() override;
 
+	// @brief 職業ごとの切り替え処理
+	void OnChangeJob() override;
+
 	// @brief インスペクター表示処理
 	int Inspecter(bool isEnd = true) override;
 

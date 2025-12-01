@@ -45,9 +45,7 @@ private:
 		Log,
 		Generate,
 		CellsDraw,
-		BuildRequest,
 		DebugTemplate,
-		GameTime,
 
 		MAX
 	};
@@ -99,7 +97,8 @@ public:
 	// @param log：登録するログ文字列
 	// @param clear：true:描画後に削除 false:常に残り続ける
 	void AddDebugLog(const std::string& log, bool clear = true);
-private:
+
+private: //-- デバックモード --//
 
 	// @brief 階層表示
 	void DrawHierarchy();
@@ -112,6 +111,12 @@ private:
 
 	// @brief 文明レベル表示
 	void DrawCivLevel();
+
+	// @brief 建築依頼リスト
+	void DrawBuildRequestList();
+
+	// @brief ゲームタイマー表示
+	void DrawGameTime();
 
 	// --Debug表示関数--
 	// @brief デバッグ用チェックボックス表示
@@ -132,14 +137,19 @@ private:
 	// @brief セルの描画表示
 	void DrawCellsDebug();
 
-	// @brief 建築依頼リスト
-	void DrawBuildRequestList();
-
 	// @brief デバックテンプレート生成表示
 	void DrawDebugTemplateCreate();
 
-	// @brief ゲームタイマー表示
-	void DrawGameTime();
+private: //-- リリースモード --//
+
+	// @brief 文明レベル表示
+	void Release_DrawCivLevel();
+
+	// @brief ゲーム内時間表示
+	void Release_DrawGameTime();
+
+	// @brief 人間の職業設定表示
+	void Release_DrawHumanJobSetting();
 
 private:
 	// @brief インスタンス
@@ -156,6 +166,10 @@ private:
 
 	// @brief デバッグ用フラグ配列
 	bool m_bDebug[static_cast<int>(DebugSystemFlag::MAX)];
+
+	// @brief デバックゲームモード
+	// @note true:Debugモード false:Releaseモード
+	bool m_bDebugGameMode;
 
 	// @brief 更新処理を管理する
 	// @note true:更新処理を行う false:更新処理を止める

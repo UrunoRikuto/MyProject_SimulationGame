@@ -281,6 +281,22 @@ void CHuman::HoldItem(CItem* pItem)
 }
 
 /****************************************//*
+	@brief　	| 職業ストラテジーの設定
+	@param		| job：設定する職業ストラテジーポインタ
+*//****************************************/
+void CHuman::SetHumanJob(std::unique_ptr<IJob_Strategy> job)
+{
+	// 職業切り替え時の処理
+	m_pJob->OnChangeJob();
+
+	// スタミナ値を引き継ぐ
+	job->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fStamina;
+
+	// 所属オブジェクトを設定
+	m_pJob = std::move(job);
+}
+
+/****************************************//*
 	@brief　	| 家に帰って休む処理
 	@return		| true:家に帰って休憩中 false:休憩していない
 *//****************************************/
@@ -305,6 +321,8 @@ void CHuman::GoHomeAndRest()
 			m_isRestingAtHome = true;
 			// 休憩処理
 			if (m_pJob)m_pJob->ChangeStamina(1.0f);
+
+			return;
 		}
 
 		// 家の方向を計算

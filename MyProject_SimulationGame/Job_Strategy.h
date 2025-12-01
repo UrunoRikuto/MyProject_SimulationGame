@@ -46,6 +46,9 @@ public:
 	// @brief 職業ごとの仕事処理の純粋仮想関数
 	virtual void DoWork() = 0;
 
+	// @brief 職業ごとの切り替え処理の純粋仮想関数
+	virtual void OnChangeJob() = 0;
+
 	// @brief 職業名を取得する純粋仮想関数
 	// @return 職業名の文字列
 	virtual std::string GetJobName() const = 0;

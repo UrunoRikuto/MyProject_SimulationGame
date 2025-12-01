@@ -51,6 +51,23 @@ void CGatherer_Strategy::DoWork()
 }
 
 /****************************************//*
+	@brief　	|　職業切り替え時の処理
+*//****************************************/
+void CGatherer_Strategy::OnChangeJob()
+{
+	// 標的オブジェクトのターゲティングIDを解除
+	if (m_pTarget != nullptr)
+	{
+		m_pTarget->SetTargetingID(ObjectID{ "", -1 });
+		m_pTarget = nullptr;
+	}
+
+	// 仕事状態を初期化
+	m_eCurrentState = WorkState::SearchAndMove;
+	m_ePrevState = WorkState::SearchAndMove;
+}
+
+/****************************************//*
 	@brief　	|　インスペクター表示処理
 	@param　	|	isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	@return		|	表示した項目数

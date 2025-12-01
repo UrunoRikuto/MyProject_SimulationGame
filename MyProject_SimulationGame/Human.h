@@ -76,10 +76,7 @@ public:
 
 	// @brief 職業ストラテジーの設定
 	// @param job：設定する職業ストラテジーポインタ
-	void SetHumanJob(std::unique_ptr<IJob_Strategy> job)
-	{
-		m_pJob = std::move(job);
-	}
+	void SetHumanJob(std::unique_ptr<IJob_Strategy> job);
 
 	// @brief 住んでいる家の設定
 	void SetLivingHouse(CHumanHouse* pHouse) { m_pLivingHouse = pHouse; }

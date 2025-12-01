@@ -2,12 +2,15 @@
 	@file	| CivLevelManager.cpp
 	@brief	| 文明レベル管理クラスのcppファイル
 	@note	| 文明レベル管理クラスの処理を定義
+			| 文明レベル = 人間の数
 			| シングルトンパターンで作成
 *//**************************************************/
 #include "CivLevelManager.h"
 #include <new>
 #include "JobOperator.h"
 #include "ImguiSystem.h"
+#include "BuildManager.h"
+#include "GeneratorManager.h"
 
 //-------- 静的メンバ変数の初期化 ------//
 CCivLevelManager* CCivLevelManager::m_pInstance = nullptr;
@@ -79,6 +82,12 @@ void CCivLevelManager::AddExp(ExpType In_eType)
 
 		// 文明レベルを1上げる
 		m_nCivLevel++;
+
+		// ジェネレーターマネージャーに通知してオブジェクトを生成させる
+		CGeneratorManager::GetInstance()->NotifyObservers();
+
+		// ビルドマネージャーに通知して建築依頼の更新を促す
+		CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::HumanHouse);
 	}
 }
 
@@ -94,17 +103,16 @@ std::vector<std::string> CCivLevelManager::GetUnlockJobNames()
 	pUnlockJobNames.push_back(JobName::Neet);			// 無職
 	pUnlockJobNames.push_back(JobName::WoodGatherer);	// 木材収集職業
 	pUnlockJobNames.push_back(JobName::StoneGatherer);	// 石収集職業
+	pUnlockJobNames.push_back(JobName::Builder);		// 建築職業
 
 	// レベルに応じて解放される職業を追加
 	if (m_nCivLevel >= 5)
 	{
 		// ここにレベル5で解放される職業を追加
-		pUnlockJobNames.push_back(JobName::Builder);		// 建築職業
 	}
 	if(m_nCivLevel >= 10)
 	{
 		// ここにレベル10で解放される職業を追加
-
 	}
 
 	return pUnlockJobNames;

@@ -41,6 +41,9 @@ public:
 	// @brief 仕事処理
 	virtual void DoWork() override;
 
+	// @brief 切り替え処理
+	virtual void OnChangeJob() override;
+
 	// @brief インスペクター表示処理
 	// @param isEnd：インスペクター終了フラグ
 	virtual int Inspecter(bool isEnd = true) override;
