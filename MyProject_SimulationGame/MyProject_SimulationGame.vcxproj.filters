@@ -586,12 +586,6 @@
     <None Include="StructMath.inl">
       <Filter>コードファイル\Utility</Filter>
     </None>
-    <None Include="SubJect.inl">
-      <Filter>コードファイル\System\Generator\Observer</Filter>
-    </None>
-    <None Include="Generator.inl">
-      <Filter>コードファイル\System\Generator</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PS_TexColor.hlsl">

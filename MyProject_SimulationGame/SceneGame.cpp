@@ -67,6 +67,9 @@ void CSceneGame::Update()
 	// 基底クラスの更新処理
 	CScene::Update();
 
+	// 生成管理システムの更新処理
+	CGeneratorManager::GetInstance()->Update();
+
 	// ゲーム内時間の更新
 	CGameTimeManager::GetInstance()->UpdateGameTime();
 }

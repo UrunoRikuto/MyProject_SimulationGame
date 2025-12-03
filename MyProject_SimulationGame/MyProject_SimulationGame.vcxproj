@@ -286,9 +286,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl" />
-    <None Include="Generator.inl" />
     <None Include="StructMath.inl" />
-    <None Include="SubJect.inl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PS_Sprite.hlsl">

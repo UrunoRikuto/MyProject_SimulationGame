@@ -93,6 +93,10 @@ public:
 	// @return 選択しているゲームオブジェクトのポインタ
 	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
 
+	// @brief 選択しているゲームオブジェクトの解除
+	// @note 選択しているゲームオブジェクトが破棄された場合に呼び出す
+	void ClearSelectedGameObject() { m_pGameObject = nullptr; }
+
 	// @brief デバックログの登録
 	// @param log：登録するログ文字列
 	// @param clear：true:描画後に削除 false:常に残り続ける
@@ -114,6 +118,9 @@ private: //-- デバックモード --//
 
 	// @brief 建築依頼リスト
 	void DrawBuildRequestList();
+
+	// @brief 生成依頼リスト
+	void DrawGenerateRequestList();
 
 	// @brief ゲームタイマー表示
 	void DrawGameTime();

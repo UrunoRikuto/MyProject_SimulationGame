@@ -13,6 +13,26 @@
 #include "BuildManager.h"
 
 /*****************************************//*
+	@brief　	| デストラクタ
+*//*****************************************/
+IJob_Strategy::~IJob_Strategy()
+{
+	// 休憩施設を使用している場合
+	if (m_UsingRefreshFacility != nullptr)
+	{
+		// 休憩施設の使用を解除
+		m_UsingRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
+	}
+
+	// 所属しているオブジェクトが存在する場合
+	if (m_pOwner != nullptr)
+	{
+		// 所属しているオブジェクトの職業をリセット
+		m_pOwner->SetHumanJob(nullptr);
+	}
+}
+
+/*****************************************//*
 	@brief　	| スタミナの増加処理
 	@param　	| fAmount：増加量
 *//*****************************************/

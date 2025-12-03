@@ -14,6 +14,8 @@
 #include "Oparation.h"
 #include "HumanHouse.h"
 #include "CivLevelManager.h"
+#include "GeneratorManager.h"
+#include "Main.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -22,6 +24,8 @@ CHuman::CHuman()
 	: CGameObject()
 	, m_pJob(std::make_unique<CNeet_Job>())
 	, m_pLivingHouse(nullptr)
+	, m_isRestingAtHome(false)
+	, m_fHunger(Human_Max_Hunger)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -37,6 +41,18 @@ CHuman::CHuman()
 *//****************************************/
 CHuman::~CHuman()
 {
+	// スタミナゲージビルボードの解放
+	SAFE_DELETE(m_pStaminaGaugeBillboard);
+
+	// 所持アイテムの解放
+	for (CItem* pItem : m_ItemList)
+	{
+		delete pItem;
+	}
+	m_ItemList.clear();
+
+	// 職業ストラテジーの解放
+	m_pJob.reset();
 }
 
 /****************************************//*
@@ -101,6 +117,15 @@ void CHuman::Update()
 	}
 	break;
 	}
+
+	// 空腹度の減少処理
+	m_fHunger -= Human_Natural_Hunger_Decrease;
+	// 空腹度が0を下回ったら死亡処理
+	if (m_fHunger < 0.0f)
+	{
+		// オブジェクト破棄
+		Destroy();
+	}
 }
 
 /****************************************//*
@@ -137,6 +162,29 @@ void CHuman::Draw()
 }
 
 /****************************************//*
+	@brief　	| オブジェクトが破棄された時の処理
+*//****************************************/
+void CHuman::OnDestroy()
+{
+	// 人間の生成依頼を作成
+	CGeneratorManager::GetInstance()->AddGenerateRequest({
+			CGeneratorManager::GenerateType::Human,
+			Human_Regenerate_Wait_Time // 生成までの時間（秒）
+		});
+
+	// 住んでいる家から自分を削除
+	if (m_pLivingHouse)
+	{
+		// 住んでいる家から自分を削除
+		m_pLivingHouse->RemoveResident(this);
+		m_pLivingHouse = nullptr;
+	}
+
+	// 基底クラスのオブジェクト破棄時の処理
+	CGameObject::OnDestroy();
+}
+
+/****************************************//*
 	@brief　	| インスペクター表示処理
 	@param		| isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	@return		| 表示した項目数
@@ -149,6 +197,21 @@ int CHuman::Inspecter(bool isEnd)
 	int nItemCount = CGameObject::Inspecter(false);
 
 	/**** 職業表示 ****/
+
+	ImGui::Separator();
+
+	// 空腹度表示
+	// テキストカラーの設定
+	// 通常時は緑色、空腹度が20以下の場合は赤色に変更
+	ImVec4 HumgerTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+	if(m_fHunger <= 20.0f)
+	{
+		HumgerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	ImGui::TextColored(HumgerTextColor,"Humger: %.2f / %.2f", m_fHunger, Human_Max_Hunger);
+
+	ImGui::Separator();
 
 	// 折りたたみヘッダーの表示
 	if (ImGui::CollapsingHeader("Job"))
@@ -334,5 +397,21 @@ void CHuman::GoHomeAndRest()
 		f3MyPos += f3Direction * Human_Move_Speed;
 		// 位置更新
 		m_tParam.m_f3Pos = f3MyPos;
+	}
+}
+
+/****************************************//*
+	@brief　	| 空腹度の減少
+	@param		| fAmount：減少量
+*//****************************************/
+void CHuman::DecreaseHunger(float fAmount)
+{
+	// 空腹度を減少
+	m_fHunger -= fAmount;
+
+	// 空腹度が0未満にならないように補正
+	if (m_fHunger < 0.0f)
+	{
+		m_fHunger = 0.0f;
 	}
 }

@@ -201,7 +201,10 @@ void CGatherer_Strategy::GatheringAction()
 	{
 		// 標的オブジェクトの耐久値を労働力分減少させる
 		m_pTarget->DecreaseHp(m_Status.m_fWorkPower);
-		m_Status.m_fStamina -= 10.0f; // スタミナを消費
+		// スタミナを消費
+		m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+		// 空腹度を消費
+		m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
 
 		// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定
 		if (m_pTarget->IsDead())

@@ -17,7 +17,7 @@ public:
 	virtual ~IGenerator() = default;
 
 	// @brief 通知処理
-	void Notify() override;
+	void Notify() override { Generate(); }
 
 protected:
 
@@ -25,9 +25,6 @@ protected:
 	virtual void Generate() = 0;
 
 };
-
-// インラインファイルのインクルード
-#include "Generator.inl"
 
 // 派生クラスのヘッダーファイルのインクルード
 #include "HumanGenerator.h"

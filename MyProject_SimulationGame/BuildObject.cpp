@@ -72,11 +72,12 @@ void CBuildObject::UpgradeBuildLevel()
 }
 /*****************************************//*
 	@brief　	| 建築完成度を進める
-	@param		| fAmount：進める量
+	@param		| fAmount：一秒間で進める量
 *//*****************************************/
 void CBuildObject::ProgressBuild(float fAmount)
 {
-	m_fBuildProgress += fAmount;
+	m_fBuildProgress += fAmount / fFPS;
+
 	if (m_fBuildProgress > 100.0f)
 	{
 		m_fBuildProgress = 100.0f;

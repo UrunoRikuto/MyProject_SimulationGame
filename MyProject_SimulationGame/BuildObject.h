@@ -49,6 +49,7 @@ public:
 	bool IsCompleted() const { return m_fBuildProgress >= 100.0f; }
 
 	// @brief 建築完成度を進める
+	// @param fAmount：進める量
 	void ProgressBuild(float fAmount);
 
 	// @brief 建築完成度を初期化

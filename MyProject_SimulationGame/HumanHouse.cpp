@@ -65,3 +65,12 @@ void CHumanHouse::AddResident(CHuman* pHuman)
 {
 	m_Residents.push_back(pHuman);
 }
+
+/*****************************************//*
+	@brief　	| 居住者の削除
+	@param		| pHuman：削除する人間ポインタ
+*//****************************************/
+void CHumanHouse::RemoveResident(CHuman* pHuman)
+{
+	m_Residents.remove(pHuman);
+}

@@ -9,10 +9,11 @@
 #include "imgui_impl_win32.h"
 #include "Main.h"
 #include "Camera.h"
-#include "BuildManager.h"
 #include "Human.h"
+#include "BuildManager.h"
 #include "GameTimeManager.h"
 #include "CivLevelManager.h"
+#include "GeneratorManager.h"
 #include "StorageHouse.h"
 
 #include <algorithm>
@@ -170,6 +171,8 @@ void CImguiSystem::Draw()
 		DrawCivLevel();
 		// 建築依頼リスト
 		DrawBuildRequestList();
+		// 生成依頼リスト
+		DrawGenerateRequestList();
 		// ゲームタイマー表示
 		DrawGameTime();
 
@@ -555,7 +558,6 @@ void CImguiSystem::DrawCellsDebug()
 *//****************************************/
 void CImguiSystem::DrawBuildRequestList()
 {
-	ImGui::SetNextWindowSize(ImVec2(300,200));
 	ImGui::Begin("BuildRequestList");
 
 	CBuildManager* pBuildManager = CBuildManager::GetInstance();
@@ -602,6 +604,44 @@ void CImguiSystem::DrawBuildRequestList()
 
 		ImGui::EndChild();
 	}
+
+	ImGui::End();
+}
+
+/****************************************//*
+	@brief　	| 生成依頼リスト
+*//****************************************/
+void CImguiSystem::DrawGenerateRequestList()
+{
+	ImGui::Begin("GenerateRequestList");
+	
+	// 生成マネージャーのインスタンス取得
+	CGeneratorManager* pGeneratorManager = CGeneratorManager::GetInstance();
+
+	for(auto& request : pGeneratorManager->GetGenerateRequestList())
+	{
+		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280, 80), ImGuiWindowFlags_NoTitleBar);
+
+		std::string strType = "Type:";
+		switch (request.m_GenerateType)
+		{
+		case CGeneratorManager::GenerateType::Wood:
+			strType += "Wood";
+			break;
+		case CGeneratorManager::GenerateType::Stone:
+			strType += "Stone";
+			break;
+		case CGeneratorManager::GenerateType::Human:
+			strType += "Human";
+			break;
+		}
+		ImGui::Text(strType.c_str());
+
+		ImGui::Text("Timer: %.2f", request.m_fGenerateTime);
+
+		ImGui::EndChild();
+	}
+
 
 	ImGui::End();
 }
@@ -742,11 +782,7 @@ void CImguiSystem::Release_DrawGameTime()
 	ImGui::Text(std::string("Day:" + std::to_string(day)).c_str());
 
 	// 現在の時間の表示
-	// 少数点以下2桁まで表示
-	// 整数部分と小数部分に分けて表示
-	int intTime = static_cast<int>(time);
-	int fracTime = static_cast<int>((time - intTime) * 100);
-	ImGui::Text(std::string("Time:" + std::to_string(intTime) + "." + (fracTime < 10 ? "0" : "") + std::to_string(fracTime)).c_str());
+	ImGui::Text("Time: %.2f", time);
 
 	// 現在の時間帯の取得
 	CGameTimeManager::DAY_TIME dayTime = pGameTimeManager->GetCurrentDayTime();

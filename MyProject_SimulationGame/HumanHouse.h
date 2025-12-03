@@ -39,6 +39,9 @@ public:
 	// @brief ‹ZÒ‚Ì’Ç‰Á
 	void AddResident(CHuman* pHuman);
 
+	// @brief ‹ZÒ‚Ìíœ
+	void RemoveResident(CHuman* pHuman);
+
 private:
 
 	// @brief ‹ZÒƒŠƒXƒg

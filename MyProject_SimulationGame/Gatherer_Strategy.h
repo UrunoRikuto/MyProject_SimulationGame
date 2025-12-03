@@ -35,6 +35,8 @@ public:
 	virtual void OnChangeJob() override;
 
 	// @brief インスペクター表示処理
+	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
+	// @return 表示した項目数
 	virtual int Inspecter(bool isEnd = true) override;
 
 private:
@@ -58,6 +60,8 @@ private:
 protected:
 
 	// @brief 標的を探す処理
+	// @param vNotTargetIDs：ターゲティングIDが設定されているオブジェクトのIDリスト
+	// @return 採取対象オブジェクトのポインタ
 	virtual CCollectTarget* SearchTarget(std::vector<ObjectID> vNotTargetIDs) = 0;
 
 private:

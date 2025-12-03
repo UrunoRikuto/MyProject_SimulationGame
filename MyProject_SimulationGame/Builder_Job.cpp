@@ -178,9 +178,10 @@ void CBuilder_Job::WaitingAction()
 			{
 				m_fCoolTime = 0.0f;
 			}
-
-			return;
 		}
+
+		// クールタイム中は処理を抜ける
+		return;
 	}
 
 	// 建築依頼がない場合は処理を抜ける
@@ -491,6 +492,10 @@ void CBuilder_Job::BuildingAction()
 
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
+	// 空腹度を減少させる
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	// スタミナを減少させる
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)
@@ -544,6 +549,7 @@ void CBuilder_Job::UpgradingAction()
 		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
 		// 建築依頼のポインタをリセット
 		m_pCurrentBuildRequest = nullptr;
+
 		return;
 	}
 

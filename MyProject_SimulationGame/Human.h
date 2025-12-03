@@ -20,6 +20,13 @@ constexpr int MaxHoldItem = 10;
 // @brief 移動速度
 constexpr float Human_Move_Speed = 0.05f;
 
+// @brief 空腹最大値
+constexpr float Human_Max_Hunger = 100.0f;
+// @brief 自然空腹減少値
+constexpr float Human_Natural_Hunger_Decrease = 0.1f;//0.01f
+// @brief 仕事による空腹減少値
+constexpr float Human_Work_Hunger_Decrease = 0.5f;
+
 // @brief 人間オブジェクトクラス
 class CHuman final : public CGameObject
 {
@@ -41,6 +48,9 @@ public:
 
 	// @brief 描画処理
 	void Draw() override;
+
+	// @brief オブジェクトが破棄された時の処理
+	void OnDestroy() override;
 
 	// @brief インスペクター表示処理
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
@@ -88,6 +98,18 @@ public:
 	// @return true:家で休憩中 false:休憩していない
 	bool IsRestingAtHome() const { return m_isRestingAtHome; }
 
+	// @brief 空腹度が満タンかどうかの取得
+	// @return true:満タン false:満タンではない
+	bool IsMaxHunger() const { return m_fHunger >= Human_Max_Hunger; }
+
+	// @brief 空腹度が0かどうかの取得
+	// @return true:0 false:0ではない
+	bool IsZeroHunger() const { return m_fHunger <= 0.0f; }
+
+	// @brief 空腹度の減少
+	// @param fAmount：減少量
+	void DecreaseHunger(float fAmount);
+
 private:
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
@@ -98,6 +120,9 @@ private:
 	// @brief スタミナゲージビルボード
 	// 0: 背景, 1: ゲージ本体
 	CBillboardRenderer* m_pStaminaGaugeBillboard;
+
+	// @brief 空腹度
+	float m_fHunger;
 
 	// @brief 住んでいる家のポインタ
 	CHumanHouse* m_pLivingHouse;

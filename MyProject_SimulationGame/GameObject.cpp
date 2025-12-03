@@ -92,7 +92,15 @@ void CGameObject::Draw()
 *//****************************************/
 void CGameObject::OnDestroy()
 {
+	// ImGuiシステムのインスタンスを取得
+    CImguiSystem* pImgui = CImguiSystem::GetInstance();
 
+	// 選択中のオブジェクトが自分自身の場合の処理
+    if (pImgui->GetSelectedGameObject() == this)
+    {
+		// 選択中のオブジェクトを解除する
+		pImgui->ClearSelectedGameObject();
+    }
 }
 
 /****************************************//*
