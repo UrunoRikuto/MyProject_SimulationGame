@@ -177,6 +177,19 @@ CBuildManager::BuildRequest* CBuildManager::TakeBuildRequest()
 }
 
 /*****************************************//*
+	@brief	| 建築依頼を未処理状態に設定
+	@param	| pRequest：建築依頼構造体のポインタ
+*//*****************************************/
+void CBuildManager::ResetBuildRequest(BuildRequest* pRequest)
+{
+	// ポインタが無効な場合は何もしない
+	if (pRequest == nullptr)return;
+
+	// 依頼状態を未処理に設定
+	pRequest->eRequestState = RequestState::Unprocessed;
+}
+
+/*****************************************//*
 	@brief	| 建築依頼を完了状態に設定
 	@param	| pRequest：建築依頼構造体のポインタ
 *//*****************************************/
@@ -222,6 +235,11 @@ std::vector<CBuildManager::BuildMaterial> BuildMaterials::GetBuildMaterials(CBui
 	{
 	case CBuildManager::BuildType::RefreshFacility:
 		return RefreshFacility[nLevel];
+	case CBuildManager::BuildType::HumanHouse:
+		return HumanHouse[nLevel];
+	default:
+		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
+		break;
 	}
 
 	return {};

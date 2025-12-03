@@ -20,3 +20,19 @@ CItem::CItem(ITEM_TYPE In_eType)
 CItem::~CItem()
 {
 }
+
+/****************************************//*
+	@brief　	| アイテムタイプから空腹回復値を取得する関数
+	@param　	| eType：アイテムタイプ
+	@return　	| 空腹回復値
+*//****************************************/
+float CItem::GetHungerRecoveryValue(CItem::ITEM_TYPE eType)
+{
+	switch (eType)
+	{
+	case CItem::ITEM_TYPE::Apple:
+		return 20.0f; // リンゴの空腹回復値
+	default:
+		return 0.0f;  // その他のアイテムは空腹回復値なし
+	}
+}

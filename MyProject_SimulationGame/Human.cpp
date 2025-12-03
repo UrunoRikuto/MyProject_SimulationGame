@@ -7,7 +7,7 @@
 #include "Human.h"
 #include "ModelRenderer.h"
 #include "FieldManager.h"
-#include <imgui.h>
+#include "ImguiSystem.h"
 #include "ShaderManager.h"
 #include "GameTimeManager.h"
 #include "StructMath.h"
@@ -16,7 +16,7 @@
 #include "CivLevelManager.h"
 #include "GeneratorManager.h"
 #include "Main.h"
-#include "Food.h"
+#include "Item.h"
 #include "StorageHouse.h"
 
 /****************************************//*
@@ -494,29 +494,10 @@ void CHuman::GoEatFood()
 	const CItem* pFoodItem = TakeOutItem(CItem::ITEM_CATEGORY::CookedFood);
 
 	// 調理済み食料アイテムがあれば食べる
-	if (pFoodItem)
-	{
-		// 調理済み食料アイテムを食べる(等倍)
-		m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType());
-		// 空腹度が最大値を超えないように補正
-		if (m_fHunger > Human_Max_Hunger)
-		{
-			m_fHunger = Human_Max_Hunger;
-		}
-	}
-	// 調理済み食料アイテムがなければ
-	else 
+	if (pFoodItem == nullptr)
 	{
 		// 所持している未調理食料アイテムを探す
 		pFoodItem = TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
-
-		// 未調理食料アイテムを食べる(0.5倍)
-		if (pFoodItem)m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
-		// 空腹度が最大値を超えないように補正
-		if (m_fHunger > Human_Max_Hunger)
-		{
-			m_fHunger = Human_Max_Hunger;
-		}
 	}
 
 	// 食料が所持アイテムの中から見つからなかった場合は倉庫から探しに行く
@@ -552,36 +533,39 @@ void CHuman::GoEatFood()
 		// 貯蔵庫の近くにいる場合は食料を探す
 		pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::CookedFood);
 		// 調理済み食料アイテムがあれば食べる
+		if (pFoodItem == nullptr)
+		{
+			// 所持している未調理食料アイテムを探す
+			pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
+		}
+
+		// 食料アイテムがあれば
 		if (pFoodItem)
 		{
-			// 調理済み食料アイテムを食べる(等倍)
-			m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType());
+			// 食料アイテムのカテゴリーによって空腹度回復量を変える
+			switch (pFoodItem->GetItemCategory(pFoodItem->GetItemType()))
+			{
+				// 未調理食料アイテム
+			case CItem::ITEM_CATEGORY::UnCookedFood:
+				// 食料アイテムを食べる(0.5倍)
+				m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType()) * Human_UnCookedFood_Hunger_Recovery_Multiplier;
+				break;
+				// 調理済み食料アイテム
+			case CItem::ITEM_CATEGORY::CookedFood:
+				// 食料アイテムを食べる(等倍)
+				m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType());
+				break;
+			}
 			// 空腹度が最大値を超えないように補正
 			if (m_fHunger > Human_Max_Hunger)
 			{
 				m_fHunger = Human_Max_Hunger;
 			}
 		}
-		// 調理済み食料アイテムがなければ
+		// 食料が見つからなかった場合は仕事状態に移行
 		else
 		{
-			// 所持している未調理食料アイテムを探す
-			pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
-			// 未調理食料アイテムを食べる(0.5倍)
-			if (pFoodItem)
-			{
-				m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
-			}
-			else
-			{
-				// 食料が見つからなかった場合は仕事状態に移行
-				m_eState = CHuman::HUMAN_STATE::Working;
-			}
-			// 空腹度が最大値を超えないように補正
-			if (m_fHunger > Human_Max_Hunger)
-			{
-				m_fHunger = Human_Max_Hunger;
-			}
+			m_eState = CHuman::HUMAN_STATE::Working;
 		}
 	}
 	

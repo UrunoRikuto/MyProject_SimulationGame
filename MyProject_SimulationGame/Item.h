@@ -47,6 +47,8 @@ public:
 		UnCookedFood,
 		// 調理済み食料
 		CookedFood,
+		// 道具
+		Tool,
 
 		MAX
 	};
@@ -77,6 +79,11 @@ public:
 
 	// @brief アイテムタイプ取得
 	const ITEM_TYPE GetItemType() const { return m_eItemType; }
+
+	// @brief アイテムタイプから空腹回復値を取得する関数
+	// @param eType：アイテムタイプ
+	// @return 空腹回復値
+	static float GetHungerRecoveryValue(CItem::ITEM_TYPE eType);
 
 private:
 

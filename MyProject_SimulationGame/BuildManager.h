@@ -91,6 +91,10 @@ public:
 	// @return 建築依頼構造体のポインタ、無ければnullptr
 	BuildRequest* TakeBuildRequest();
 
+	// @brief 建築依頼を未処理状態に設定
+	// @param pRequest：建築依頼構造体のポインタ
+	void ResetBuildRequest(BuildRequest* pRequest);
+
 	// @brief 建築依頼を完了状態に設定
 	void CompleteBuildRequest(BuildRequest* pRequest);
 

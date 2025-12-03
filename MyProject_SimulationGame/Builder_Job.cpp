@@ -10,6 +10,7 @@
 #include "StructMath.h"
 #include "Oparation.h"
 #include "StorageHouse.h"
+#include "HumanHouse.h"
 #include "RefreshFacility.h"
 #include "ImguiSystem.h"
 #include "Main.h"
@@ -20,8 +21,8 @@
 *//*****************************************/
 CBuilder_Job::CBuilder_Job()
 	: CCrafter_Strategy()
-	, m_eCurrentState(WorkState::Waiting)
-	, m_ePrevState(WorkState::Waiting)
+	, m_eCurrentState(WorkState::Resting)
+	, m_ePrevState(WorkState::Resting)
 	, m_fCoolTime(0.0f)
 {
 	// 建築職業の労働力を設定
@@ -91,10 +92,10 @@ void CBuilder_Job::OnChangeJob()
 	// 受けている建築依頼をリセット
 	if (m_pCurrentBuildRequest != nullptr)
 	{
-		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
+		CBuildManager::GetInstance()->ResetBuildRequest(m_pCurrentBuildRequest);
 		m_pCurrentBuildRequest = nullptr;
-
 	}
+
 	// 仕事状態を待機中にリセット
 	m_eCurrentState = WorkState::Waiting;
 	m_ePrevState = WorkState::Waiting;
@@ -295,12 +296,8 @@ void CBuilder_Job::GatherMaterialsAction()
 
 	// 素材収集処理
 	std::vector<CBuildManager::BuildMaterial> HasMaterials;
-
-	// 必要素材の数だけ初期化
-	for (const auto& material : requiredMaterials)
-	{
-		HasMaterials.push_back({ material.eItemType, 0 });
-	}
+	// 所持素材リストのサイズを必要素材リストのサイズに合わせる
+	HasMaterials.resize(requiredMaterials.size());
 
 	// 所持しているアイテムリストを取得
 	const auto& ownedItems = m_pOwner->GetItemList();
@@ -309,17 +306,17 @@ void CBuilder_Job::GatherMaterialsAction()
 	if (!ownedItems.empty())
 	{
 		// 所持しているアイテムリストから建築素材のみを抽出
-		for (const auto& material : requiredMaterials)
+		for (int i = 0; i < requiredMaterials.size(); i++)
 		{
 			// 所持素材リストを走査
 			for (const auto& item : ownedItems)
 			{
 				// 素材タイプが一致する場合
-				if (item->GetItemType() == material.eItemType)
+				if (item->GetItemType() == requiredMaterials[i].eItemType)
 				{
 					// 所持素材リストに追加
-					HasMaterials[static_cast<int>(material.eItemType)].eItemType = material.eItemType;
-					HasMaterials[static_cast<int>(material.eItemType)].nRequiredAmount++;
+					HasMaterials[i].eItemType = requiredMaterials[i].eItemType;
+					HasMaterials[i].nRequiredAmount++;
 				}
 			}
 		}
@@ -329,54 +326,41 @@ void CBuilder_Job::GatherMaterialsAction()
 	bool bAllMaterialsGathered = true;
 
 	// 必要素材リストをループ
-	for (const auto& material : requiredMaterials)
+	for (int i = 0;i < requiredMaterials.size(); i++)
 	{
 		// 素材が不足しているかどうかをチェック
-		if (HasMaterials[static_cast<int>(material.eItemType)].nRequiredAmount < material.nRequiredAmount)
+		if (HasMaterials[i].nRequiredAmount < requiredMaterials[i].nRequiredAmount)
 		{
 			// 必要数を求める
-			int nNeeded = material.nRequiredAmount - HasMaterials[static_cast<int>(material.eItemType)].nRequiredAmount;
+			int nNeeded = requiredMaterials[i].nRequiredAmount - HasMaterials[i].nRequiredAmount;
 			if (nNeeded <= 0)continue;
 			// 素材を収集
-			for (int i = 0; i < nNeeded; ++i)
+			for (int n = 0; n < nNeeded; ++n)
 			{
 				// 貯蔵庫から素材を取り出す
-				auto Item = storageHouses->TakeOutItem(material.eItemType);
+				auto Item = storageHouses->TakeOutItem(requiredMaterials[i].eItemType);
 
 				// 取り出せた場合は収集数を増やす
 				if (Item != nullptr)
 				{
 					m_pOwner->HoldItem(Item);
-					HasMaterials[static_cast<int>(material.eItemType)].nRequiredAmount++;
+					HasMaterials[i].nRequiredAmount--;
 				}
 				else
 				{
-					// 取り出せなかった場合はループを抜ける
-					continue;
+					// 素材が足りなかった場合はフラグを折る
+					bAllMaterialsGathered = false;
+					// ループを抜ける
+					break;
 				}
 			}
 
 		}
 	}
 
-	// 全ての素材が集まったかどうかを再度チェック
-	for (const auto& material : requiredMaterials)
-	{
-		if (HasMaterials[static_cast<int>(material.eItemType)].nRequiredAmount < material.nRequiredAmount)
-		{
-			bAllMaterialsGathered = false;
-			break;
-		}
-	}
-
 	// 全ての素材が集まった場合は次の状態に移行
 	if (bAllMaterialsGathered)
 	{
-		while (!m_pOwner->GetItemList().empty())
-		{
-			m_pOwner->TakeOutItem();
-		}
-
 		// 前の状態を保存
 		m_ePrevState = m_eCurrentState;
 		// 目的地探索状態に移行
@@ -464,6 +448,11 @@ void CBuilder_Job::BuildingAction()
 			m_pBuildingObject = GetScene()->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
 			break;
 		}
+		case CBuildManager::BuildType::HumanHouse:
+		{
+			m_pBuildingObject = GetScene()->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
+			break;
+		}
 		}
 
 		if (m_pBuildingObject == nullptr)
@@ -493,9 +482,9 @@ void CBuilder_Job::BuildingAction()
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease / fFPS);
 	// スタミナを減少させる
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease / fFPS;
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)
@@ -516,6 +505,12 @@ void CBuilder_Job::BuildingAction()
 
 		// 建築依頼を完了状態に設定
 		CBuildManager::GetInstance()->CompleteBuildRequest(m_pCurrentBuildRequest);
+
+		// 所持しているアイテムを全て手放す
+		while (!m_pOwner->GetItemList().empty())
+		{
+			m_pOwner->TakeOutItem();
+		}
 
 		// 建築オブジェクトのポインタをリセット
 		m_pBuildingObject = nullptr;
@@ -555,6 +550,10 @@ void CBuilder_Job::UpgradingAction()
 
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
+	// 空腹度を減少させる
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease / fFPS);
+	// スタミナを減少させる
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease / fFPS;
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)
@@ -578,6 +577,12 @@ void CBuilder_Job::UpgradingAction()
 
 		// 建築依頼を完了状態に設定
 		CBuildManager::GetInstance()->CompleteBuildRequest(m_pCurrentBuildRequest);
+
+		// 所持しているアイテムを全て手放す
+		while (!m_pOwner->GetItemList().empty())
+		{
+			m_pOwner->TakeOutItem();
+		}
 
 		// 建築オブジェクトのポインタをリセット
 		m_pBuildingObject = nullptr;

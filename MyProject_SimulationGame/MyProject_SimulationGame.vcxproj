@@ -155,7 +155,6 @@
     <ClInclude Include="FieldCell.h" />
     <ClInclude Include="FieldGround.h" />
     <ClInclude Include="FieldManager.h" />
-    <ClInclude Include="Food.h" />
     <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
