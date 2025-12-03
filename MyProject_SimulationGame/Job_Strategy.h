@@ -84,6 +84,10 @@ public:
 	// @param fAmount：増加量
 	void ChangeStamina(float fAmount);
 
+	// @brief スタミナ値が最大かどうかの取得
+	// @return true:最大 false:最大ではない
+	bool IsMaxStamina() const { return m_Status.m_fStamina >= m_Status.m_fMaxStamina; }
+
 protected:
 
 	// @brief 休憩処理

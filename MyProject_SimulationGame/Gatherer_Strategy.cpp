@@ -355,7 +355,7 @@ void CGatherer_Strategy::StoringAction()
 
 		// 運搬が完了したら再び標的オブジェクトを探して移動する状態に戻る
 		m_ePrevState = m_eCurrentState;
-		m_eCurrentState = m_ePrevState;
+		m_eCurrentState = WorkState::SearchAndMove;
 	}
 }
 
@@ -378,15 +378,7 @@ void CGatherer_Strategy::RestingAction()
 	{
 		m_Status.m_fStamina = m_Status.m_fMaxStamina;
 
-		if (m_ePrevState != m_eCurrentState)
-		{
-			m_ePrevState = m_eCurrentState;
-			m_eCurrentState = m_eCurrentState;
-		}
-		else
-		{
-			m_ePrevState = m_eCurrentState;
-			m_eCurrentState = WorkState::SearchAndMove;
-		}
+		m_ePrevState = m_eCurrentState;
+		m_eCurrentState = WorkState::SearchAndMove;
 	}
 }

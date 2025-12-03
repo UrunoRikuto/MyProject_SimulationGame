@@ -29,6 +29,7 @@ CHuman::CHuman()
 	, m_isRestingAtHome(false)
 	, m_fHunger(Human_Max_Hunger)
 	, m_eState(HUMAN_STATE::Working)
+	, m_isEating(false)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -116,7 +117,40 @@ void CHuman::Update()
 		break;
 	}
 
-	if (m_eState != CHuman::HUMAN_STATE::Eating)
+	// 貯蔵庫の取得
+	CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+	// 食料がある場合の処理
+	if(HasFood() || pStorageHouse->HasFood())
+	{
+		// 空腹度が警告値を下回ったら食事状態に移行
+		if (m_fHunger < Human_Warning_Hunger)
+		{
+			m_eState = CHuman::HUMAN_STATE::Eating;
+			m_isEating = true;
+		}
+		// 食事が完了したら仕事状態に移行
+		if (IsFullHunger())
+		{
+			m_isEating = false;
+		}
+		// 食事が完了していなければ食事状態を維持
+		if (!m_isEating)
+		{
+			// 夜になったら家に帰って休む
+			if (CGameTimeManager::GetInstance()->GetCurrentDayTime() == CGameTimeManager::DAY_TIME::NIGHT)
+			{
+				// 夜になったら家に帰って休む
+				m_eState = CHuman::HUMAN_STATE::Resting;
+			}
+			else
+			{
+				// 昼間は仕事状態に移行
+				m_eState = CHuman::HUMAN_STATE::Working;
+			}
+		}
+	}
+	// 食料がない場合の処理
+	else
 	{
 		// 夜になったら家に帰って休む
 		if (CGameTimeManager::GetInstance()->GetCurrentDayTime() == CGameTimeManager::DAY_TIME::NIGHT)
@@ -130,20 +164,17 @@ void CHuman::Update()
 			m_eState = CHuman::HUMAN_STATE::Working;
 		}
 	}
+
+	// 空腹度の減少処理
+	// 休憩中でなければ等倍で空腹度を減少させる
+	if (m_eState != CHuman::HUMAN_STATE::Resting)
+	{
+		m_fHunger -= Human_Natural_Hunger_Decrease;
+	}
+	// 休憩中であれば半分の速度で空腹度を減少させる
 	else
 	{
-		// 食事が完了したら仕事状態に移行
-		if (IsMaxHunger())
-		{
-			m_eState = CHuman::HUMAN_STATE::Working;
-		}
-	}
-	// 空腹度の減少処理
-	m_fHunger -= Human_Natural_Hunger_Decrease;
-	// 空腹度が警告値を下回ったら食事状態に移行
-	if (m_fHunger < Human_Warning_Hunger)
-	{
-		m_eState = CHuman::HUMAN_STATE::Eating;
+		m_fHunger -= Human_Natural_Hunger_Decrease * 0.5f;
 	}
 	// 空腹度が0を下回ったら死亡処理
 	if (m_fHunger < 0.0f)
@@ -405,7 +436,7 @@ void CHuman::SetHumanJob(std::unique_ptr<IJob_Strategy> job)
 
 	// スタミナ値を引き継ぐ
 	job->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fStamina;
-
+	
 	// 所属オブジェクトを設定
 	m_pJob = std::move(job);
 }
@@ -537,7 +568,15 @@ void CHuman::GoEatFood()
 			// 所持している未調理食料アイテムを探す
 			pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
 			// 未調理食料アイテムを食べる(0.5倍)
-			if (pFoodItem)m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
+			if (pFoodItem)
+			{
+				m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
+			}
+			else
+			{
+				// 食料が見つからなかった場合は仕事状態に移行
+				m_eState = CHuman::HUMAN_STATE::Working;
+			}
 			// 空腹度が最大値を超えないように補正
 			if (m_fHunger > Human_Max_Hunger)
 			{
@@ -546,6 +585,26 @@ void CHuman::GoEatFood()
 		}
 	}
 	
+}
+
+/****************************************//*
+	@brief　	| 食料を所持しているかどうかの判定
+	@return		| true:所持している false:所持していない
+*//****************************************/
+bool CHuman::HasFood() const
+{
+	// 所持している食料アイテムを探す
+	for (const CItem* pItem : m_ItemList)
+	{
+		if (CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::CookedFood ||
+			CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::UnCookedFood)
+		{
+			return true;
+		}
+	}
+
+	// 所持していなかった場合はfalseを返す
+	return false;
 }
 
 /****************************************//*

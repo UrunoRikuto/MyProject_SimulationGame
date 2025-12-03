@@ -46,6 +46,12 @@ void IJob_Strategy::ChangeStamina(float fAmount)
 *//*****************************************/
 bool IJob_Strategy::RestAction()
 {
+	// スタミナが最大の場合は休憩完了
+	if(m_Status.m_fStamina >= m_Status.m_fMaxStamina)
+	{
+		return true;
+	}
+
 	// 除外する休憩施設IDリスト
 	std::vector<ObjectID> vNotRefreshFacilityIDs;
 

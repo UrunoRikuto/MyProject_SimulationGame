@@ -821,26 +821,6 @@ void CImguiSystem::Release_DrawHuman()
 	// vector型に変換
 	std::vector<CHuman*> Humans(Objects.begin(), Objects.end());
 
-	//for (auto obj : Objects)
-	//{
-	//	// オブジェクトIDの取得
-	//	ObjectID id = obj->GetID();
-	//	// 表示名の作成
-	//	std::string name = id.m_sName;
-	//	// 同名オブジェクトの区別のために番号を付与
-	//	name += std::to_string(id.m_nSameCount + 1);
-	//	// 職業名の取得
-	//	std::string job = obj->GetHumanJob()->GetJobName();
-	//	// 職業名を表示名に追加
-	//	name += " [" + job + "]";
-
-	//	// 選択ボタンの表示
-	//	if (ImGui::Button(name.c_str()))
-	//	{
-	//		// 選択したオブジェクトを保存
-	//		m_pGameObject = obj;
-	//	}
-	//}
 	// コンボボックスで選択
 	static int currentHumanIndex = 0;
 	if (ImGui::BeginCombo("", Humans.empty() ? "No Humans" : "HumanSelect"))
@@ -866,7 +846,7 @@ void CImguiSystem::Release_DrawHuman()
 
 	if (m_pGameObject == nullptr)
 	{
-		ImGui::Text("No Selected Human");
+		ImGui::Text("No Selected");
 		ImGui::End();
 		return;
 	}
@@ -962,7 +942,7 @@ void CImguiSystem::Release_DrawStoragehouse()
 	auto Storagehouse = pScene->GetGameObject<CStorageHouse>();
 
 	// 倉庫オブジェクトの資源表示
-		// 資源情報の取得
+	// 資源情報の取得
 	auto& materials = Storagehouse->GetStoredItems();
 	// 収納されているアイテムを種類別にカウント
 	std::map<CItem::ITEM_TYPE, int> itemTypes;

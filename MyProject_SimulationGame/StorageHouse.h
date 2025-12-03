@@ -44,6 +44,8 @@ public:
 	// @return 収納されているアイテムリストの参照
 	const std::list<CItem*>& GetStoredItems() const { return m_StoredItems; }
 
+	// @brief 食料が存在するかどうかを取得
+	bool HasFood() const;
 
 private:
 	// @brief 収納されているアイテムのマップ

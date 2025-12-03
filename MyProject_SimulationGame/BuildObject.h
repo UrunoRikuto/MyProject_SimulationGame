@@ -6,13 +6,17 @@
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
+#include "BillboardRenderer.h"
 
 // @brief 建築オブジェクトクラス
 class CBuildObject : public CGameObject
 {
 public:
-	// 建築物レベルの最大値
+	// @brief 建築物レベルの最大値
 	static constexpr int MAX_BUILD_LEVEL = 5;
+
+	// @brief 建築完成度の最大値
+	static constexpr float BUILD_PROGRESS_MAX = 100.0f;
 
 public:
 	// @brief コンストラクタ
@@ -23,6 +27,9 @@ public:
 
 	// @brief 初期化処理
 	virtual void Init() override;
+
+	// @brief 描画処理
+	virtual void Draw() override;
 
 	// @brief インスペクター表示処理
 	virtual int Inspecter(bool isEnd = true) override;
@@ -46,7 +53,7 @@ public:
 
 	// @brief 完成しているかどうかを取得
 	// @return true:完成している false:未完成
-	bool IsCompleted() const { return m_fBuildProgress >= 100.0f; }
+	bool IsCompleted() const { return m_fBuildProgress >= BUILD_PROGRESS_MAX; }
 
 	// @brief 建築完成度を進める
 	// @param fAmount：進める量
@@ -64,5 +71,8 @@ protected:
 
 	// @brief 自分を配置しているフィールドセルのインデックス
 	DirectX::XMINT2 m_n2FieldCellIndex;
+
+	// @brief 耐久値を表示するビルボードコンポーネント
+	CBillboardRenderer* m_pHpBillboard;
 };
 

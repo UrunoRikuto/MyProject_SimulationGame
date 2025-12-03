@@ -70,7 +70,6 @@ protected:
 	CollectStatus m_Status;
 
 	// @brief 耐久値を表示するビルボードコンポーネント
-	// @note 0:背景 1:前景
 	CBillboardRenderer* m_pHpBillboard;
 };
 

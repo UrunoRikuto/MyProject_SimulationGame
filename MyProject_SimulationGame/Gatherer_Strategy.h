@@ -67,9 +67,9 @@ protected:
 private:
 
 	// @brief 現在の仕事状態
-	WorkState m_eCurrentState = WorkState::SearchAndMove;
+	WorkState m_eCurrentState = WorkState::Resting;
 	// @brief 前の仕事状態
-	WorkState m_ePrevState = WorkState::SearchAndMove;
+	WorkState m_ePrevState = WorkState::Resting;
 
 	// @brief 標的にしている採取対象オブジェクトのポインタ
 	CCollectTarget* m_pTarget = nullptr;

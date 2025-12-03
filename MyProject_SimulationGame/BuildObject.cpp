@@ -17,6 +17,9 @@ CBuildObject::CBuildObject()
 	, m_fBuildProgress(0.0f)
 	, m_n2FieldCellIndex({ -1, -1 })
 {
+	// 耐久値初期化
+	m_pHpBillboard = new CBillboardRenderer(this);
+	m_pHpBillboard->SetKey("Bar_Gauge");
 }
 
 /****************************************//* 
@@ -33,6 +36,32 @@ void CBuildObject::Init()
 {
 	// 親クラスの初期化処理を呼び出す
 	CGameObject::Init();
+}
+
+/*****************************************//*
+	@brief　	| 描画処理
+*//*****************************************/
+void CBuildObject::Draw()
+{
+	// 親クラスの描画処理を呼び出す
+	CGameObject::Draw();
+
+	// 建築進行度の割合を計算
+	float BuildProgressRatio = m_fBuildProgress / BUILD_PROGRESS_MAX;
+	// 建築進行度が100%未満の場合は、建築進行度を表示する
+	if (BuildProgressRatio < 1.0f)
+	{
+		// 建築進行度おビルボードの描画
+		m_pHpBillboard->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - BuildProgressRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
+		m_pHpBillboard->SetSize({ 2.0f * BuildProgressRatio, 0.2f, 1.0f });
+		m_pHpBillboard->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		m_pHpBillboard->SetUVPos({ 0.0f, 0.0f });
+		m_pHpBillboard->SetUVSize({ 1.0f, 1.0f });
+		m_pHpBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
+		m_pHpBillboard->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+		m_pHpBillboard->SetCullingMode(D3D11_CULL_FRONT);
+		m_pHpBillboard->Draw();
+	}
 }
 
 /*****************************************//*
@@ -78,8 +107,8 @@ void CBuildObject::ProgressBuild(float fAmount)
 {
 	m_fBuildProgress += fAmount / fFPS;
 
-	if (m_fBuildProgress > 100.0f)
+	if (m_fBuildProgress > BUILD_PROGRESS_MAX)
 	{
-		m_fBuildProgress = 100.0f;
+		m_fBuildProgress = BUILD_PROGRESS_MAX;
 	}
 }

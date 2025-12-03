@@ -74,8 +74,8 @@ private:
 
 private:
 	// @brief 現在の仕事状態
-	WorkState m_eCurrentState = WorkState::Waiting;
-	WorkState m_ePrevState = WorkState::Waiting;
+	WorkState m_eCurrentState = WorkState::Resting;
+	WorkState m_ePrevState = WorkState::Resting;
 
 	// @brief 受けている建築依頼のポインタ
 	CBuildManager::BuildRequest* m_pCurrentBuildRequest = nullptr;

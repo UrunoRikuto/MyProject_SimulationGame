@@ -154,3 +154,24 @@ CItem* CStorageHouse::TakeOutItem(CItem::ITEM_CATEGORY eCategory)
 
 	return nullptr;
 }
+
+/*****************************************//*
+	@brief　	| 食料が存在するかどうかを取得
+	@return		| true:存在する false:存在しない
+*//*****************************************/
+bool CStorageHouse::HasFood() const
+{
+	// 収納されているアイテムリストを探索
+	for (const CItem* pItem : m_StoredItems)
+	{
+		// 食料カテゴリーのアイテムが存在するかどうかをチェック
+		if (CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::CookedFood ||
+			CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::UnCookedFood)
+		{
+			return true;
+		}
+	}
+
+	// 食料が存在しなかった場合はfalseを返す
+	return false;
+}
