@@ -32,6 +32,10 @@ public:
 	// @brief 更新処理
 	virtual void Update() override;
 
+	// @brief インスペクター表示処理
+	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
+	virtual int Inspecter(bool isEnd = true) override;
+
 	// @brief 最大居住者数の取得
 	// @return 最大居住者数
 	int GetMaxResidents() const;

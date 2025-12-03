@@ -28,6 +28,8 @@ constexpr float ce_fCharaSize = 30.0f;
 *//****************************************/
 CImguiSystem::CImguiSystem()
 	: m_pGameObject(nullptr)
+	, m_pHumanObject(nullptr)
+	, m_pBuildObject(nullptr)
 	, m_bUpdate(true)
 	, m_bDebug{ false }
 	, m_bCellsDraw(false)
@@ -44,6 +46,7 @@ CImguiSystem::CImguiSystem()
 *//****************************************/
 CImguiSystem::~CImguiSystem()
 {
+
 }
 
 /****************************************//*
@@ -161,45 +164,38 @@ void CImguiSystem::Draw()
 
 #ifdef _DEBUG
 
-		// ヒストリー表示
-		DrawHierarchy();
-		// カメラパラメータ表示
-		DrawCameraParam();
-		// インスペクター表示
-		DrawInspecter();
-		// 文明レベル表示
-		DrawCivLevel();
-		// 建築依頼リスト
-		DrawBuildRequestList();
-		// 生成依頼リスト
-		DrawGenerateRequestList();
-		// ゲームタイマー表示
-		DrawGameTime();
+	// デバッグ用チェックボックス表示
+	DrawDebugSystem();
 
-	   // デバッグ用チェックボックス表示
-		DrawDebugSystem();
-
-		// 更新を止めるチェックボックス表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
-		// フレームレート表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
-		// デバックログ表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
-		// セルの描画表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
-		// デバックテンプレート生成表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)])	DrawDebugTemplateCreate();
+	// 階層表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Hierarchy)])		DrawHierarchy();
+	// カメラのパラメータ表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)])	DrawCameraParam();
+	// インスペクター表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)])		DrawInspecter();
+	// 建築依頼リスト
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)])	DrawBuildRequestList();
+	// 生成依頼リスト
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)])	DrawGenerateRequestList();
+	// 更新を止めるチェックボックス表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
+	// フレームレート表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
+	// デバックログ表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
+	// セルの描画表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
 
 #else
 
-		// 文明レベル表示
-		Release_DrawCivLevel();
-		// ゲーム内時間表示
-		Release_DrawGameTime();
-		// 人間の職業設定表示
-		Release_DrawHuman();
-		// 倉庫の資源表示
-		Release_DrawStoragehouse();
+	// 文明レベル表示
+	Release_DrawCivLevel();
+	// ゲーム内時間表示
+	Release_DrawGameTime();
+	// 人間の職業設定表示
+	Release_DrawHuman();
+	// 倉庫の資源表示
+	Release_DrawBuildObject();
 
 #endif // _DEBUG
 
@@ -392,64 +388,21 @@ void CImguiSystem::DrawInspecter()
 }
 
 /****************************************//*
-	@brief　	| 市民レベル表示
-*//****************************************/
-void CImguiSystem::DrawCivLevel()
-{
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
-	ImGui::Begin("CivLevel");
-
-	// インスタンスの取得
-	CCivLevelManager* pCivLevelManager = CCivLevelManager::GetInstance();
-
-	// 更新処理を行う場合
-	if (m_bUpdate)
-	{
-		// 文明レベルの表示
-		// 大きく表示
-		std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
-		ImGui::TextColored(
-			ImVec4(0.0f, 0.5f, 1.0f, 1.0f),
-			std::string("Civ Level: " + sLevel).c_str()
-		);
-
-		// 現在経験値を取得
-		std::string sExp = std::to_string(pCivLevelManager->GetExp());
-
-		// 必要経験値を取得
-		std::string sExpThreshold = std::to_string(pCivLevelManager->GetExpThreshold());
-
-		// 経験値の表示
-		ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
-	}
-	// 更新処理を止めている場合
-	else
-	{
-		// 文明レベルの編集
-		int nCivLevel = pCivLevelManager->GetCivLevel();
-
-		// 入力欄の表示
-		ImGui::InputInt("CivLevel", &nCivLevel);
-
-		// 文明レベルの設定
-		pCivLevelManager->SetCivLevel(nCivLevel);
-	}
-	ImGui::End();
-}
-
-/****************************************//*
 	@brief　	| デバッグ用チェックボックス表示
 *//****************************************/
 void CImguiSystem::DrawDebugSystem()
 {
-	ImGui::SetNextWindowSize(ImVec2(200, 130));
-
 	ImGui::Begin("DebugSystem");
+
+	ImGui::Checkbox("Hierarchy", &m_bDebug[static_cast<int>(DebugSystemFlag::Hierarchy)]);
+	ImGui::Checkbox("CameraParam", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
+	ImGui::Checkbox("Inspecter", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
+	ImGui::Checkbox("BuildRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
+	ImGui::Checkbox("GenerateRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
 	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
 	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
-	ImGui::Checkbox("DebugTemplate", &m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)]);
 
 	ImGui::End();
 }
@@ -624,80 +577,6 @@ void CImguiSystem::DrawGenerateRequestList()
 	ImGui::End();
 }
 
-/****************************************//*
-	@brief　	| デバッグテンプレート作成
-*//****************************************/
-void CImguiSystem::DrawDebugTemplateCreate()
-{
-	ImGui::SetNextWindowSize(ImVec2(300, 150));
-	ImGui::Begin("DebugTemplateCreate");
-
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(280, 100), ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Create Human Template");
-
-	// 生成する数指定
-	// 木材収集職
-	static int nWoodGatherCount = 0;
-	ImGui::InputInt("WoodGatherCount", &nWoodGatherCount);
-	// 石材収集職
-	static int nStoneGatherCount = 0;
-	ImGui::InputInt("StoneGatherCount", &nStoneGatherCount);
-	// 建築職
-	static int nBuilderCount = 0;
-	ImGui::InputInt("BuilderCount", &nBuilderCount);
-
-	// テンプレート作成ボタン
-
-	if (ImGui::Button("Create Human"))
-	{
-		CScene* pScene = GetScene();
-
-		for(int i = 0; i < nWoodGatherCount; i++)
-		{
-			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-			human->SetHumanJob(CreateJobByName(JobName::WoodGatherer, *human));
-		}
-		for (int i = 0; i < nStoneGatherCount; i++)
-		{
-			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-			human->SetHumanJob(CreateJobByName(JobName::StoneGatherer, *human));
-		}
-		for (int i = 0; i < nBuilderCount; i++)
-		{
-			CHuman* human = pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
-			human->SetHumanJob(CreateJobByName(JobName::Builder, *human));
-		}
-	}
-
-	ImGui::EndChild();
-
-	ImGui::End();
-}
-
-/****************************************//*
-	@brief　	| ゲームタイマー表示
-*//****************************************/
-void CImguiSystem::DrawGameTime()
-{
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
-
-	ImGui::Begin("GameTime");
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(180.0f, 60.0f), ImGuiWindowFlags_NoTitleBar);
-
-
-	int day = CGameTimeManager::GetInstance()->GetGameDays();
-	ImGui::Text("GameDays: %d", day);
-
-	float time = CGameTimeManager::GetInstance()->GetGameTime();
-	ImGui::Text("GameTime: %.2f", time);
-
-	std::string currendDayTime = CGameTimeManager::GetInstance()->GetCurrentDayTimeString();
-	ImGui::Text(std::string("DayTime:" + currendDayTime).c_str());
-
-	ImGui::EndChild();
-	ImGui::End();
-}
-
 /*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
 //	Releaseビルド時の例レイアウト関数		//
 /*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
@@ -833,7 +712,7 @@ void CImguiSystem::Release_DrawHuman()
 			if (ImGui::Selectable(name.c_str(), isSelected))
 			{
 				currentHumanIndex = static_cast<int>(n);
-				m_pGameObject = Humans[n];
+				m_pHumanObject = Humans[n];
 			}
 			if (isSelected)
 			{
@@ -843,40 +722,35 @@ void CImguiSystem::Release_DrawHuman()
 		ImGui::EndCombo();
 	}
 
+	// 選択ボタンの表示
+	if (ImGui::Button("SelectClear"))
+	{
+		// カメラを選択したオブジェクトに注視させる
+		m_pHumanObject = nullptr;
+	}
 
-	if (m_pGameObject == nullptr)
+	if (m_pHumanObject == nullptr)
 	{
 		ImGui::Text("No Selected");
 		ImGui::End();
 		return;
 	}
 
-	// CHuman型にキャスト
-	CHuman* obj = dynamic_cast<CHuman*>(m_pGameObject);
-
 	// オブジェクトIDの取得
-	ObjectID id = obj->GetID();
+	ObjectID id = m_pHumanObject->GetID();
 	// 表示名の作成
 	std::string name = id.m_sName;
 	// 同名オブジェクトの区別のために番号を付与
 	name += std::to_string(id.m_nSameCount + 1);
 
 	// 職業名の取得
-	std::string job = obj->GetHumanJob()->GetJobName();
+	std::string job = m_pHumanObject->GetHumanJob()->GetJobName();
 
 	// 職業名を表示名に追加
 	ImGui::Text(name.c_str());
 
-	ImGui::SameLine();
-	// 選択ボタンの表示
-	if (ImGui::Button("SelectClear"))
-	{
-		// カメラを選択したオブジェクトに注視させる
-		m_pGameObject = nullptr;
-	}
-
 	// 現在の職業を文字列で取得
-	std::string currentJob = obj->GetHumanJob()->GetJobName();
+	std::string currentJob = m_pHumanObject->GetHumanJob()->GetJobName();
 
 	// 職業名リストの取得
 	const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
@@ -897,16 +771,16 @@ void CImguiSystem::Release_DrawHuman()
 		// 選択された職業名を取得
 		std::string selectedJobName = JobNames[currentJobIndex];
 		// 新しい職業オブジェクトを作成して設定
-		obj->SetHumanJob(CreateJobByName(selectedJobName, *obj));
+		m_pHumanObject->SetHumanJob(CreateJobByName(selectedJobName, *m_pHumanObject));
 	}
 
 	// スタミナ値の表示
-	IJob_Strategy::JobStatus currentJobStatus = obj->GetHumanJob()->GetJobStatus();
+	IJob_Strategy::JobStatus currentJobStatus = m_pHumanObject->GetHumanJob()->GetJobStatus();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f) , "Stamina: %.1f / %.1f", currentJobStatus.m_fStamina, currentJobStatus.m_fMaxStamina);
 
 
 	// 空腹値の表示
-	float currentHunger = obj->GetHunger();
+	float currentHunger = m_pHumanObject->GetHunger();
 	ImVec4 hungerTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // デフォルトは緑色
 	if (currentHunger < Human_Warning_Hunger)
 	{
@@ -919,51 +793,63 @@ void CImguiSystem::Release_DrawHuman()
 }
 
 /****************************************//*
-	@brief　	| 倉庫の資源表示
+	@brief　	| 建築物の表示
 *//****************************************/
-void CImguiSystem::Release_DrawStoragehouse()
+void CImguiSystem::Release_DrawBuildObject()
 {
 	// ウィンドウの位置設定(左下)
 	ImGui::SetNextWindowPos(ImVec2(0.0f, SCREEN_HEIGHT - 400.0f));
 	// サイズ変更ハンドルを非表示に設定
-	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 400), ImVec2(300, 400));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2(400, 400));
 
 	// ウィンドウの開始
-	ImGui::Begin("Storagehouse", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin("BuildObject", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 	
-	// 区切り線の表示
-	ImGui::Separator();
-	ImGui::Text("StorageHouse");
-	ImGui::Separator();
+	// コンボボックスで選択
+	static int currentBuildObjectIndex = 0;
 	// インスタンスの取得
 	CScene* pScene = GetScene();
+	// 建築物オブジェクトの取得
+	auto buildObjects = pScene->GetGameObjects<CBuildObject>();
+	// vector型に変換
+	std::vector<CBuildObject*> buildObjectVec(buildObjects.begin(), buildObjects.end());
 
-	// 倉庫オブジェクトの取得
-	auto Storagehouse = pScene->GetGameObject<CStorageHouse>();
-
-	// 倉庫オブジェクトの資源表示
-	// 資源情報の取得
-	auto& materials = Storagehouse->GetStoredItems();
-	// 収納されているアイテムを種類別にカウント
-	std::map<CItem::ITEM_TYPE, int> itemTypes;
-	for (CItem* pItem : materials)
+	if (ImGui::BeginCombo("", buildObjects.empty() ? "No BuildObjects" : "BuildSelect"))
 	{
-		CItem::ITEM_TYPE type = pItem->GetItemType();
-		itemTypes[type]++;
+		for (size_t n = 0; n < buildObjects.size(); n++)
+		{
+			const bool isSelected = (currentBuildObjectIndex == n);
+			ObjectID id = buildObjectVec[n]->GetID();
+			std::string name = id.m_sName + std::to_string(id.m_nSameCount + 1);
+			if (ImGui::Selectable(name.c_str(), isSelected))
+			{
+				currentBuildObjectIndex = static_cast<int>(n);
+				m_pBuildObject = buildObjectVec[n];
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
 	}
 
-	// アイテム種類ごとに表示
-	ImGui::BeginChildFrame(ImGui::GetID((void*)0), ImVec2(280, 300));
-
-	for (const auto& pair : itemTypes)
+	// 区切り線の表示
+	ImGui::Separator();
+	// 選択中の建築物の名前表示
+	std::string selectedObjectName = "No Select BuildObject";
+	// 選択されている場合
+	if (m_pBuildObject != nullptr)
 	{
-		// アイテム名の取得
-		std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
-		// アイテム名と数量の表示
-		ImGui::Text(std::string(itemName + ": " + std::to_string(pair.second)).c_str());
+		ObjectID id = m_pBuildObject->GetID();
+		selectedObjectName = id.m_sName + std::to_string(id.m_nSameCount + 1);
 	}
 
-	ImGui::EndChildFrame();
+	ImGui::Text(selectedObjectName.c_str());
+
+	ImGui::Separator();
+
+	if(m_pBuildObject)m_pBuildObject->Inspecter(false);
 	
 	// ウィンドウの終了
 	ImGui::End();

@@ -57,12 +57,10 @@ void CStorageHouse::Init()
 int CStorageHouse::Inspecter(bool isEnd)
 {
 	// 基底クラスのインスペクター表示処理
-	int itemCount = CBuildObject::Inspecter(false);
-
-	std::string ItemCount = std::to_string(static_cast<int>(m_StoredItems.size()));
-
-	ImGui::Text(std::string("Stored Items: " + ItemCount).c_str());
-
+	int itemCount = 0;
+#ifdef _DEBUG
+	itemCount = CBuildObject::Inspecter(false);
+#endif
 
 	// 収納されているアイテムを種類別にカウント
 	std::map<CItem::ITEM_TYPE, int> itemTypes;
@@ -72,22 +70,25 @@ int CStorageHouse::Inspecter(bool isEnd)
 		itemTypes[type]++;
 	}
 
-	// アイテムの種類ごとに表示
+	// アイテム種類ごとに表示
+	ImGui::BeginChildFrame(ImGui::GetID((void*)0), ImVec2(280, 300));
+
 	for (const auto& pair : itemTypes)
 	{
-		CItem::ITEM_TYPE type = pair.first;
-		int count = pair.second;
-		ImGui::Text("%s: %d", CItem::ITEM_TYPE_TO_STRING(type).c_str(), count);
+		// アイテム名の取得
+		std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
+		// アイテム名と数量の表示
+		ImGui::Text(std::string(itemName + ": " + std::to_string(pair.second)).c_str());
 	}
 
-	// IMGUIウィンドウの終了
-	if (isEnd)
+	ImGui::EndChildFrame();
+
+	if(isEnd)
 	{
 		// 子要素の終了
 		ImGui::EndChild();
-		// 表示項目のカウントを増やす
-		itemCount++;
 		ImGui::End();
+		itemCount++;
 	}
 
 	// 表示した項目数を返す

@@ -6,6 +6,8 @@
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
+#include "Human.h"
+#include "BuildObject.h"
 #include "imgui.h"
 #include "Generator.h"
 
@@ -40,11 +42,15 @@ private:
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
+		Hierarchy,
+		CameraParam,
+		Inspecter,
+		BuildRequestList,
+		GenerateRequestList,
 		Update,
 		FPS,
 		Log,
 		CellsDraw,
-		DebugTemplate,
 
 		MAX
 	};
@@ -112,19 +118,12 @@ private: //-- デバックモード --//
 	// @brief インスペクター表示
 	void DrawInspecter();
 
-	// @brief 文明レベル表示
-	void DrawCivLevel();
-
 	// @brief 建築依頼リスト
 	void DrawBuildRequestList();
 
 	// @brief 生成依頼リスト
 	void DrawGenerateRequestList();
 
-	// @brief ゲームタイマー表示
-	void DrawGameTime();
-
-	// --Debug表示関数--
 	// @brief デバッグ用チェックボックス表示
 	void DrawDebugSystem();
 
@@ -140,9 +139,6 @@ private: //-- デバックモード --//
 	// @brief セルの描画表示
 	void DrawCellsDebug();
 
-	// @brief デバックテンプレート生成表示
-	void DrawDebugTemplateCreate();
-
 private: //-- リリースモード --//
 
 	// @brief 文明レベル表示
@@ -154,8 +150,8 @@ private: //-- リリースモード --//
 	// @brief 人間の表示
 	void Release_DrawHuman();
 
-	// @brief 倉庫の資源表示
-	void Release_DrawStoragehouse();
+	// @brief 建築物の表示
+	void Release_DrawBuildObject();
 
 private:
 	// @brief インスタンス
@@ -166,6 +162,10 @@ private:
 
 	// @brief 選択しているゲームオブジェクト
 	CGameObject* m_pGameObject;
+	// @brief 人間オブジェクト
+	CHuman* m_pHumanObject;
+	// @brief 建築物オブジェクト
+	CBuildObject* m_pBuildObject;
 
 	// @brief 生成ポインタ配列
 	std::vector<DebugGeneratorInfo> m_pGenerator;

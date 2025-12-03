@@ -56,13 +56,18 @@ void CRefreshFacility::Init()
 *//*****************************************/
 int CRefreshFacility::Inspecter(bool isEnd)
 {
+	int itemCount = 0;
+
+#ifdef _DEBUG
 	// 基底クラスのインスペクター表示処理
-	int itemCount = CBuildObject::Inspecter(false);
+	itemCount += CBuildObject::Inspecter(false);
+#endif
 
 	// 使用中の人間数の表示
 	ImGui::Text("Using Humans: %d / %d", static_cast<int>(m_pUsingHumans.size()), MAX_USING_HUMANS[m_nBuildLevel - 1]);
 
 	itemCount++;
+
 	// IMGUIウィンドウの終了
 	if (isEnd)
 	{
