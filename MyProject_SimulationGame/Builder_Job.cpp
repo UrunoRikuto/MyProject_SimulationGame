@@ -570,7 +570,11 @@ void CBuilder_Job::UpgradingAction()
 	// 建築進行度が最大値に達した場合は待機状態に移行
 	if (m_pBuildingObject->IsCompleted())
 	{
+		// 建築物のレベルをアップグレード
 		m_pBuildingObject->UpgradeBuildLevel();
+
+		// 文明経験値を加算
+		CCivLevelManager::GetInstance()->AddExp(CCivLevelManager::ExpType::Building);
 
 		// 建築依頼を完了状態に設定
 		CBuildManager::GetInstance()->CompleteBuildRequest(m_pCurrentBuildRequest);

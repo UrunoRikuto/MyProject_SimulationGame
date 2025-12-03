@@ -128,6 +128,9 @@ bool CRefreshFacility::IsUsingRefreshFacility(CHuman& pHuman) const
 *//*****************************************/
 void CRefreshFacility::ReleaseRefreshFacility(CHuman& pHuman)
 {
+	// 使用中の人間リストが空の場合は何もしない
+	if (m_pUsingHumans.empty())return;
+
 	// 使用中の人間リストから削除
 	m_pUsingHumans.erase(std::remove(m_pUsingHumans.begin(), m_pUsingHumans.end(), &pHuman), m_pUsingHumans.end());
 }

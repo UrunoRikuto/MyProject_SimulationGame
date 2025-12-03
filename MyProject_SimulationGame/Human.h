@@ -22,14 +22,30 @@ constexpr float Human_Move_Speed = 0.05f;
 
 // @brief 空腹最大値
 constexpr float Human_Max_Hunger = 100.0f;
+// @brief 空腹警告値(この値以下になると食事状態に移行)
+constexpr float Human_Warning_Hunger = 20.0f;
 // @brief 自然空腹減少値
-constexpr float Human_Natural_Hunger_Decrease = 0.1f;//0.01f
+constexpr float Human_Natural_Hunger_Decrease = 0.01f;
 // @brief 仕事による空腹減少値
 constexpr float Human_Work_Hunger_Decrease = 0.5f;
 
 // @brief 人間オブジェクトクラス
 class CHuman final : public CGameObject
 {
+public:
+	// @brief 人間の状態列挙型
+	enum class HUMAN_STATE
+	{
+		// 仕事中
+		Working,
+
+		// 休憩中(夜間で家で休む)
+		Resting,
+
+		// 食事中
+		Eating,
+	};
+
 public:
 	// @brief コンストラクタ
 	CHuman();
@@ -77,6 +93,11 @@ public:
 	// @return 取り出したアイテムポインタ、所持していなかった場合はnullptr
 	const CItem* TakeOutItem(const CItem::ITEM_TYPE itemType);
 
+	// @brief アイテムを取り出す
+	// @param itemCategory：取り出すアイテムカテゴリー
+	// @return 取り出したアイテムポインタ、所持していなかった場合はnullptr
+	const CItem* TakeOutItem(const CItem::ITEM_CATEGORY itemCategory);
+
 	// @brief アイテムを所持する
 	// @param pItem：所持するアイテムポインタ
 	void HoldItem(CItem* pItem);
@@ -98,19 +119,25 @@ public:
 	// @return true:家で休憩中 false:休憩していない
 	bool IsRestingAtHome() const { return m_isRestingAtHome; }
 
+	// @brief 食べ物を食べに行く処理
+	void GoEatFood();
+
 	// @brief 空腹度が満タンかどうかの取得
 	// @return true:満タン false:満タンではない
 	bool IsMaxHunger() const { return m_fHunger >= Human_Max_Hunger; }
 
-	// @brief 空腹度が0かどうかの取得
-	// @return true:0 false:0ではない
-	bool IsZeroHunger() const { return m_fHunger <= 0.0f; }
+	// @brief 空腹度の取得
+	// @return 空腹度
+	float GetHunger() const { return m_fHunger; }
 
 	// @brief 空腹度の減少
 	// @param fAmount：減少量
 	void DecreaseHunger(float fAmount);
 
 private:
+	// @brief 人間の状態
+	HUMAN_STATE m_eState;
+
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
 

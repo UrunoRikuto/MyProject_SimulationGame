@@ -61,26 +61,23 @@ int CStorageHouse::Inspecter(bool isEnd)
 
 	std::string ItemCount = std::to_string(static_cast<int>(m_StoredItems.size()));
 
-	if (ImGui::TreeNode(std::string("Stored Items: " + ItemCount).c_str()))
+	ImGui::Text(std::string("Stored Items: " + ItemCount).c_str());
+
+
+	// 収納されているアイテムを種類別にカウント
+	std::map<CItem::ITEM_TYPE, int> itemTypes;
+	for (CItem* pItem : m_StoredItems)
 	{
+		CItem::ITEM_TYPE type = pItem->GetItemType();
+		itemTypes[type]++;
+	}
 
-		// 収納されているアイテムを種類別にカウント
-		std::map<CItem::ITEM_TYPE,int> itemTypes;
-		for (CItem* pItem : m_StoredItems)
-		{
-			CItem::ITEM_TYPE type = pItem->GetItemType();
-			itemTypes[type]++;
-		}
-
-		// アイテムの種類ごとに表示
-		for (const auto& pair : itemTypes)
-		{
-			CItem::ITEM_TYPE type = pair.first;
-			int count = pair.second;
-			ImGui::Text("%s: %d", CItem::ITEM_TYPE_TO_STRING(type).c_str(), count);
-			itemCount++;
-		}
-		ImGui::TreePop();
+	// アイテムの種類ごとに表示
+	for (const auto& pair : itemTypes)
+	{
+		CItem::ITEM_TYPE type = pair.first;
+		int count = pair.second;
+		ImGui::Text("%s: %d", CItem::ITEM_TYPE_TO_STRING(type).c_str(), count);
 	}
 
 	// IMGUIウィンドウの終了
@@ -130,5 +127,30 @@ CItem* CStorageHouse::TakeOutItem(CItem::ITEM_TYPE eType)
 	}
 
 	// 指定されたタイプのアイテムが存在しなかった場合はnullptrを返す
+	return nullptr;
+}
+
+/*****************************************//*
+	@brief　	| 収納されているアイテムの取り出し
+	@param		| eCategory：取り出すアイテムのカテゴリー
+	@return		| 取り出したアイテムのポインタ、存在しない場合はnullptr
+*//*****************************************/
+CItem* CStorageHouse::TakeOutItem(CItem::ITEM_CATEGORY eCategory)
+{
+	// 収納されているアイテムリストを探索
+	for (auto it = m_StoredItems.begin(); it != m_StoredItems.end(); ++it)
+	{
+		// 指定されたカテゴリーのアイテムを探索
+		if (CItem::GetItemCategory((*it)->GetItemType()) == eCategory)
+		{
+			// アイテムを取り出す
+			CItem* pItem = *it;
+			// 収納されているアイテムリストから削除
+			m_StoredItems.erase(it);
+			// 取り出したアイテムポインタを返す
+			return pItem;
+		}
+	}
+
 	return nullptr;
 }

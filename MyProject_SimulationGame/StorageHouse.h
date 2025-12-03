@@ -35,6 +35,11 @@ public:
 	// @return 取り出したアイテムポインタ、存在しなかった場合はnullptr
 	CItem* TakeOutItem(CItem::ITEM_TYPE eType);
 
+	// @brief 収納されているアイテムの取り出し
+	// @param eCategory：取り出すアイテムカテゴリー
+	// @return 取り出したアイテムポインタ、存在しなかった場合はnullptr
+	CItem* TakeOutItem(CItem::ITEM_CATEGORY eCategory);
+
 	// @brief 収納されているアイテムリストの取得
 	// @return 収納されているアイテムリストの参照
 	const std::list<CItem*>& GetStoredItems() const { return m_StoredItems; }

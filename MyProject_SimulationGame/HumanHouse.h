@@ -29,6 +29,9 @@ public:
 	// @brief ‰Šú‰»ˆ—
 	virtual void Init() override;
 
+	// @brief XVˆ—
+	virtual void Update() override;
+
 	// @brief Å‘å‹ZÒ”‚Ìæ“¾
 	// @return Å‘å‹ZÒ”
 	int GetMaxResidents() const;

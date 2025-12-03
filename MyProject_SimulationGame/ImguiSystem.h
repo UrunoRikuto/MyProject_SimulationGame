@@ -43,7 +43,6 @@ private:
 		Update,
 		FPS,
 		Log,
-		Generate,
 		CellsDraw,
 		DebugTemplate,
 
@@ -138,9 +137,6 @@ private: //-- デバックモード --//
 	// @brief デバックログ表示
 	void DrawDebugLog();
 
-	// @brief オブジェクト生成ボタン表示
-	void DrawCreateObjectButton();
-
 	// @brief セルの描画表示
 	void DrawCellsDebug();
 
@@ -155,12 +151,11 @@ private: //-- リリースモード --//
 	// @brief ゲーム内時間表示
 	void Release_DrawGameTime();
 
-	// @brief 人間の職業設定表示
-	void Release_DrawHumanJobSetting();
+	// @brief 人間の表示
+	void Release_DrawHuman();
 
 	// @brief 倉庫の資源表示
 	void Release_DrawStoragehouse();
-
 
 private:
 	// @brief インスタンス

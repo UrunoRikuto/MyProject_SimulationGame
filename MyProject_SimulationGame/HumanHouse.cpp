@@ -7,7 +7,7 @@
 #include "HumanHouse.h"
 #include "ImguiSystem.h"
 #include "ShaderManager.h"
-
+#include "GeneratorManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -46,6 +46,25 @@ void CHumanHouse::Init()
 	// ピクセルシェーダーの設定
 	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
+}
+
+/*****************************************//*
+	@brief　	| 更新処理
+*//****************************************/
+void CHumanHouse::Update()
+{
+	// 親クラスの更新処理を呼び出す
+	CBuildObject::Update();
+
+	// 居住者数に飽きがある場合
+	if (m_Residents.size() < GetMaxResidents())
+	{
+		// 生成システムに居住者の生成リクエストを送る
+		CGeneratorManager::GetInstance()->AddGenerateRequest({
+				CGeneratorManager::GenerateType::Human,
+				Human_Regenerate_Wait_Time
+		});
+	}
 }
 
 /*****************************************//*

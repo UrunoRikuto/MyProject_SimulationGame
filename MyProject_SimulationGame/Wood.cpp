@@ -67,15 +67,10 @@ void CWood::Init()
 			// 木材アイテムを追加
 			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Wood));
 		}
-		else if (randomNum < 80)
+		else
 		{
 			// リンゴアイテムを追加
 			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Apple));
-		}
-		else
-		{
-			// 繊維アイテムを追加
-			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Faiber));
 		}
 	}
 }

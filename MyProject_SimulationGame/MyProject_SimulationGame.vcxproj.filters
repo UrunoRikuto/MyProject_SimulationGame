@@ -375,6 +375,9 @@
     <ClInclude Include="GameTimeManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Food.h">
+      <Filter>コードファイル\System\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

@@ -61,10 +61,11 @@ void CGameTimeManager::UpdateGameTime()
 /****************************************//*
 	@brief　	| ゲーム内時間を取得する関数
 	@return		| ゲーム内時間
+	@note		| 一日の時間は0.0f〜ONE_DAY_TIMEの範囲でループする
 *//****************************************/
 const float CGameTimeManager::GetGameTime() const
 {
-	return m_fGameTime;
+	return fmodf(m_fGameTime, ONE_DAY_TIME);
 }
 
 /****************************************//*

@@ -15,8 +15,6 @@ public:
 	{
 		// 木材
 		Wood,
-		// 繊維
-		Faiber,
 		// リンゴ
 		Apple,
 		// 石材
@@ -33,11 +31,39 @@ public:
 		switch (eType)
 		{
 		case ITEM_TYPE::Wood:	return "Wood";
-		case ITEM_TYPE::Faiber:	return "Faiber";
 		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
 		default:				return "Unknown";
+		}
+	}
+
+	// @brief アイテムカテゴリー列挙型
+	enum class ITEM_CATEGORY
+	{
+		// 資源
+		Material,
+		// 未調理食料
+		UnCookedFood,
+		// 調理済み食料
+		CookedFood,
+
+		MAX
+	};
+
+	// @brief アイテムカテゴリーを取得する関数
+	static ITEM_CATEGORY GetItemCategory(ITEM_TYPE eType)
+	{
+		switch (eType)
+		{
+		case ITEM_TYPE::Wood:
+		case ITEM_TYPE::Stone:
+		case ITEM_TYPE::Iron:
+			return ITEM_CATEGORY::Material;
+		case ITEM_TYPE::Apple:
+			return ITEM_CATEGORY::UnCookedFood;
+		default:
+			return ITEM_CATEGORY::Material; // デフォルトは資源
 		}
 	}
 

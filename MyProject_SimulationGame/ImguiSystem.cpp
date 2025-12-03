@@ -185,8 +185,6 @@ void CImguiSystem::Draw()
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 		// デバックログ表示
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
-		// オブジェクト生成ボタン表示
-		if (m_bDebug[static_cast<int>(DebugSystemFlag::Generate)])	DrawCreateObjectButton();
 		// セルの描画表示
 		if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
 		// デバックテンプレート生成表示
@@ -199,7 +197,7 @@ void CImguiSystem::Draw()
 		// ゲーム内時間表示
 		Release_DrawGameTime();
 		// 人間の職業設定表示
-		Release_DrawHumanJobSetting();
+		Release_DrawHuman();
 		// 倉庫の資源表示
 		Release_DrawStoragehouse();
 
@@ -450,7 +448,6 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
-	ImGui::Checkbox("Generate",		&m_bDebug[static_cast<int>(DebugSystemFlag::Generate)]);
 	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
 	ImGui::Checkbox("DebugTemplate", &m_bDebug[static_cast<int>(DebugSystemFlag::DebugTemplate)]);
 
@@ -521,25 +518,6 @@ void CImguiSystem::DrawDebugLog()
 		),
 		m_DebugLog.end()
 	);
-}
-
-/****************************************//*
-	@brief　	| オブジェクト作成ボタン表示
-*//****************************************/
-void CImguiSystem::DrawCreateObjectButton()
-{
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
-	ImGui::Begin("CreateObject");
-
-	for(int i = 0; i < m_pGenerator.size(); i++)
-	{
-		if (ImGui::Button(m_pGenerator[i].m_sName.c_str()))
-		{
-			m_pGenerator[i].m_pGenerator->Notify();
-		}
-	}
-
-	ImGui::End();
 }
 
 /****************************************//*
@@ -706,11 +684,12 @@ void CImguiSystem::DrawGameTime()
 	ImGui::Begin("GameTime");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(180.0f, 60.0f), ImGuiWindowFlags_NoTitleBar);
 
-	float time = CGameTimeManager::GetInstance()->GetGameTime();
-	ImGui::Text(std::string("GameTime:" + std::to_string(time)).c_str());
 
 	int day = CGameTimeManager::GetInstance()->GetGameDays();
-	ImGui::Text(std::string("GameDays:" + std::to_string(day)).c_str());
+	ImGui::Text("GameDays: %d", day);
+
+	float time = CGameTimeManager::GetInstance()->GetGameTime();
+	ImGui::Text("GameTime: %.2f", time);
 
 	std::string currendDayTime = CGameTimeManager::GetInstance()->GetCurrentDayTimeString();
 	ImGui::Text(std::string("DayTime:" + currendDayTime).c_str());
@@ -823,7 +802,7 @@ void CImguiSystem::Release_DrawGameTime()
 /****************************************//*
 	@brief　	| 人間の職業設定表示
 *//****************************************/
-void CImguiSystem::Release_DrawHumanJobSetting()
+void CImguiSystem::Release_DrawHuman()
 {
 	// ウィンドウの位置設定
 	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, 0.0f));
@@ -832,7 +811,7 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 300), ImVec2(600, 300));
 
 	// ウィンドウの開始
-	ImGui::Begin("Human Job Setting", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin("Human Info", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
 	// 現在のシーンを取得
 	CScene* pScene = GetScene();
@@ -842,26 +821,48 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 	// vector型に変換
 	std::vector<CHuman*> Humans(Objects.begin(), Objects.end());
 
-	for (auto obj : Objects)
-	{
-		// オブジェクトIDの取得
-		ObjectID id = obj->GetID();
-		// 表示名の作成
-		std::string name = id.m_sName;
-		// 同名オブジェクトの区別のために番号を付与
-		name += std::to_string(id.m_nSameCount + 1);
-		// 職業名の取得
-		std::string job = obj->GetHumanJob()->GetJobName();
-		// 職業名を表示名に追加
-		name += " [" + job + "]";
+	//for (auto obj : Objects)
+	//{
+	//	// オブジェクトIDの取得
+	//	ObjectID id = obj->GetID();
+	//	// 表示名の作成
+	//	std::string name = id.m_sName;
+	//	// 同名オブジェクトの区別のために番号を付与
+	//	name += std::to_string(id.m_nSameCount + 1);
+	//	// 職業名の取得
+	//	std::string job = obj->GetHumanJob()->GetJobName();
+	//	// 職業名を表示名に追加
+	//	name += " [" + job + "]";
 
-		// 選択ボタンの表示
-		if (ImGui::Button(name.c_str()))
+	//	// 選択ボタンの表示
+	//	if (ImGui::Button(name.c_str()))
+	//	{
+	//		// 選択したオブジェクトを保存
+	//		m_pGameObject = obj;
+	//	}
+	//}
+	// コンボボックスで選択
+	static int currentHumanIndex = 0;
+	if (ImGui::BeginCombo("", Humans.empty() ? "No Humans" : "HumanSelect"))
+	{
+		for (size_t n = 0; n < Humans.size(); n++)
 		{
-			// 選択したオブジェクトを保存
-			m_pGameObject = obj;
+			const bool isSelected = (currentHumanIndex == n);
+			ObjectID id = Humans[n]->GetID();
+			std::string name = id.m_sName + std::to_string(id.m_nSameCount + 1);
+			if (ImGui::Selectable(name.c_str(), isSelected))
+			{
+				currentHumanIndex = static_cast<int>(n);
+				m_pGameObject = Humans[n];
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
 		}
+		ImGui::EndCombo();
 	}
+
 
 	if (m_pGameObject == nullptr)
 	{
@@ -888,10 +889,10 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 
 	ImGui::SameLine();
 	// 選択ボタンの表示
-	if (ImGui::Button("LookSelect"))
+	if (ImGui::Button("SelectClear"))
 	{
 		// カメラを選択したオブジェクトに注視させる
-		m_pGameObject = obj;
+		m_pGameObject = nullptr;
 	}
 
 	// 現在の職業を文字列で取得
@@ -905,20 +906,34 @@ void CImguiSystem::Release_DrawHumanJobSetting()
 	for (auto& s : JobNames) items.push_back(s.c_str());
 
 	// 現在のインデックス
-	int currentIndex = static_cast<int>(std::distance(
+	int currentJobIndex = static_cast<int>(std::distance(
 		JobNames.begin(),
 		std::find(JobNames.begin(), JobNames.end(), currentJob)
 	));
 
 	// コンボボックスの表示
-	if (ImGui::Combo("", &currentIndex, items.data(), static_cast<int>(items.size())))
+	if (ImGui::Combo(" ", &currentJobIndex, items.data(), static_cast<int>(items.size())))
 	{
 		// 選択された職業名を取得
-		std::string selectedJobName = JobNames[currentIndex];
+		std::string selectedJobName = JobNames[currentJobIndex];
 		// 新しい職業オブジェクトを作成して設定
 		obj->SetHumanJob(CreateJobByName(selectedJobName, *obj));
 	}
 
+	// スタミナ値の表示
+	IJob_Strategy::JobStatus currentJobStatus = obj->GetHumanJob()->GetJobStatus();
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f) , "Stamina: %.1f / %.1f", currentJobStatus.m_fStamina, currentJobStatus.m_fMaxStamina);
+
+
+	// 空腹値の表示
+	float currentHunger = obj->GetHunger();
+	ImVec4 hungerTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // デフォルトは緑色
+	if (currentHunger < Human_Warning_Hunger)
+	{
+		hungerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 警告閾値未満は黄色
+	}
+
+	ImGui::TextColored(hungerTextColor,"Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
 
 	ImGui::End();
 }

@@ -16,6 +16,8 @@
 #include "CivLevelManager.h"
 #include "GeneratorManager.h"
 #include "Main.h"
+#include "Food.h"
+#include "StorageHouse.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -26,6 +28,7 @@ CHuman::CHuman()
 	, m_pLivingHouse(nullptr)
 	, m_isRestingAtHome(false)
 	, m_fHunger(Human_Max_Hunger)
+	, m_eState(HUMAN_STATE::Working)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -96,30 +99,52 @@ void CHuman::Update()
 	// 基底クラスの更新処理
 	CGameObject::Update();
 
-	switch (CGameTimeManager::GetInstance()->GetCurrentDayTime())
+	// 人間の状態による処理分岐
+	switch (m_eState)
 	{
-		// 朝の処理
-		// 昼の処理
-		// 夕方の処理
-	case CGameTimeManager::DAY_TIME::MORNING:
-	case CGameTimeManager::DAY_TIME::NOON:
-	case CGameTimeManager::DAY_TIME::EVENING:
-	{
+	case CHuman::HUMAN_STATE::Working:
 		// 仕事処理
 		if (m_pJob)m_pJob->DoWork();
-	}
-	break;
-	// 夜の処理
-	case CGameTimeManager::DAY_TIME::NIGHT:
-	{
+		break;
+	case CHuman::HUMAN_STATE::Resting:
 		// 家に帰って休む
 		GoHomeAndRest();
-	}
-	break;
+		break;
+	case CHuman::HUMAN_STATE::Eating:
+		// 食べ物を食べに行く
+		GoEatFood();
+		break;
 	}
 
+	if (m_eState != CHuman::HUMAN_STATE::Eating)
+	{
+		// 夜になったら家に帰って休む
+		if (CGameTimeManager::GetInstance()->GetCurrentDayTime() == CGameTimeManager::DAY_TIME::NIGHT)
+		{
+			// 夜になったら家に帰って休む
+			m_eState = CHuman::HUMAN_STATE::Resting;
+		}
+		else
+		{
+			// 昼間は仕事状態に移行
+			m_eState = CHuman::HUMAN_STATE::Working;
+		}
+	}
+	else
+	{
+		// 食事が完了したら仕事状態に移行
+		if (IsMaxHunger())
+		{
+			m_eState = CHuman::HUMAN_STATE::Working;
+		}
+	}
 	// 空腹度の減少処理
 	m_fHunger -= Human_Natural_Hunger_Decrease;
+	// 空腹度が警告値を下回ったら食事状態に移行
+	if (m_fHunger < Human_Warning_Hunger)
+	{
+		m_eState = CHuman::HUMAN_STATE::Eating;
+	}
 	// 空腹度が0を下回ったら死亡処理
 	if (m_fHunger < 0.0f)
 	{
@@ -334,6 +359,32 @@ const CItem* CHuman::TakeOutItem(const CItem::ITEM_TYPE itemType)
 }
 
 /****************************************//*
+	@brief　	| アイテムを取り出す
+	@param		| itemCategory：取り出すアイテムカテゴリー
+	@return		| 取り出したアイテムポインタ、所持していなかった場合はnullptr
+*//****************************************/
+const CItem* CHuman::TakeOutItem(const CItem::ITEM_CATEGORY itemCategory)
+{
+	// 所持アイテムリストを探索
+	for (auto it = m_ItemList.begin(); it != m_ItemList.end(); ++it)
+	{
+		// 指定されたアイテムカテゴリーと一致するアイテムを探索
+		if (CItem::GetItemCategory((*it)->GetItemType()) == itemCategory)
+		{
+			// アイテムを取り出す
+			CItem* pItem = *it;
+			// 所持アイテムリストから削除
+			m_ItemList.erase(it);
+			// 取り出したアイテムポインタを返す
+			return pItem;
+		}
+	}
+
+	// 指定されたアイテムカテゴリーのアイテムを所持していなかった場合はnullptrを返す
+	return nullptr;
+}
+
+/****************************************//*
 	@brief　	| アイテムを所持する
 	@param		| pItem：所持するアイテムポインタ
 *//****************************************/
@@ -398,6 +449,103 @@ void CHuman::GoHomeAndRest()
 		// 位置更新
 		m_tParam.m_f3Pos = f3MyPos;
 	}
+}
+
+/****************************************//*
+	@brief　	| 食料を食べに行く処理
+	@note		| 所持している調理済み食料アイテムを優先的に食べる
+				| 所持している未調理食料アイテムを次に食べる
+				| 所持している食料アイテムがなければ倉庫から探しに行く
+*//****************************************/
+void CHuman::GoEatFood()
+{
+	// 所持している調理済み食料アイテムを探す
+	const CItem* pFoodItem = TakeOutItem(CItem::ITEM_CATEGORY::CookedFood);
+
+	// 調理済み食料アイテムがあれば食べる
+	if (pFoodItem)
+	{
+		// 調理済み食料アイテムを食べる(等倍)
+		m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType());
+		// 空腹度が最大値を超えないように補正
+		if (m_fHunger > Human_Max_Hunger)
+		{
+			m_fHunger = Human_Max_Hunger;
+		}
+	}
+	// 調理済み食料アイテムがなければ
+	else 
+	{
+		// 所持している未調理食料アイテムを探す
+		pFoodItem = TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
+
+		// 未調理食料アイテムを食べる(0.5倍)
+		if (pFoodItem)m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
+		// 空腹度が最大値を超えないように補正
+		if (m_fHunger > Human_Max_Hunger)
+		{
+			m_fHunger = Human_Max_Hunger;
+		}
+	}
+
+	// 食料が所持アイテムの中から見つからなかった場合は倉庫から探しに行く
+	if(pFoodItem == nullptr)
+	{
+		// 一番近い貯蔵庫を探す
+		CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+
+		// 見つからなかった場合は処理終了
+		if (pStorageHouse == nullptr)return;
+
+		// 貯蔵庫の位置を取得
+		DirectX::XMFLOAT3 f3StoragePos = pStorageHouse->GetPos();
+		// 自分の位置を取得
+		DirectX::XMFLOAT3 f3MyPos = m_tParam.m_f3Pos;
+
+		// 距離を計算
+		float fDistance = StructMath::Distance(f3StoragePos, f3MyPos);
+
+		// 貯蔵庫が一定範囲外にある場合は移動する
+		if (fDistance > 1.0f)
+		{
+			// 貯蔵庫の方向を計算
+			DirectX::XMFLOAT3 f3Direction = f3StoragePos - f3MyPos;
+			// 正規化
+			f3Direction = StructMath::Normalize(f3Direction);
+			f3MyPos += f3Direction * Human_Move_Speed;
+			// 位置更新
+			m_tParam.m_f3Pos = f3MyPos;
+			return;
+		}
+
+		// 貯蔵庫の近くにいる場合は食料を探す
+		pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::CookedFood);
+		// 調理済み食料アイテムがあれば食べる
+		if (pFoodItem)
+		{
+			// 調理済み食料アイテムを食べる(等倍)
+			m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType());
+			// 空腹度が最大値を超えないように補正
+			if (m_fHunger > Human_Max_Hunger)
+			{
+				m_fHunger = Human_Max_Hunger;
+			}
+		}
+		// 調理済み食料アイテムがなければ
+		else
+		{
+			// 所持している未調理食料アイテムを探す
+			pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
+			// 未調理食料アイテムを食べる(0.5倍)
+			if (pFoodItem)m_fHunger += GetHungerRecoveryValue(pFoodItem->GetItemType()) * 0.5f;
+			// 空腹度が最大値を超えないように補正
+			if (m_fHunger > Human_Max_Hunger)
+			{
+				m_fHunger = Human_Max_Hunger;
+			}
+		}
+	}
+	
 }
 
 /****************************************//*
