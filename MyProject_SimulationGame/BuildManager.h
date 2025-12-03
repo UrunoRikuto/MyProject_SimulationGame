@@ -125,31 +125,31 @@ namespace BuildMaterials
 	// @brief ãxåeèäÇ…ïKóvÇ»ëfçﬁ
 	const std::vector<CBuildManager::BuildMaterial> RefreshFacility[CBuildObject::MAX_BUILD_LEVEL] =
 	{
-		// Level 1
-		{{ CItem::ITEM_TYPE::Wood,  10 },{ CItem::ITEM_TYPE::Stone,   10 }},
-		// Level 2
-		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 }},
-		// Level 3
+		// Level 1(èâä˙åöíz)
 		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 }},
+		// Level 2
+		{{ CItem::ITEM_TYPE::Wood,  10 },{ CItem::ITEM_TYPE::Stone,   10 }},
+		// Level 3
+		{{ CItem::ITEM_TYPE::Wood,  15 },{ CItem::ITEM_TYPE::Stone,   15 }},
 		// Level 4
-		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 }},
+		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 }},
 		// Level 5
-		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   50 }},
+		{{ CItem::ITEM_TYPE::Wood,  25 },{ CItem::ITEM_TYPE::Stone,   25 }},
 	};
 
 	// @brief êlä‘ÇÃâ∆Ç…ïKóvÇ»ëfçﬁ
 	const std::vector<CBuildManager::BuildMaterial> HumanHouse[CBuildObject::MAX_BUILD_LEVEL] =
 	{
-		// Level 1
-		{{ CItem::ITEM_TYPE::Wood,  15 },{ CItem::ITEM_TYPE::Stone,   5 }},
+		// Level 1(èâä˙åöíz)
+		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   20 }},
 		// Level 2
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  10 }},
+		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,  10 }},
 		// Level 3
-		{{ CItem::ITEM_TYPE::Wood,  45 },{ CItem::ITEM_TYPE::Stone,  15 }},
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  10 }},
 		// Level 4
-		{{ CItem::ITEM_TYPE::Wood,  60 },{ CItem::ITEM_TYPE::Stone,  20 }},
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  20 }},
 		// Level 5
-		{{ CItem::ITEM_TYPE::Wood,  75 },{ CItem::ITEM_TYPE::Stone,  25 }},
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  30 }},
 	};
 
 	// @brief éwíËÇ≥ÇÍÇΩåöízÉ^ÉCÉvÇÃåöízëfçﬁÉäÉXÉgÇéÊìæ

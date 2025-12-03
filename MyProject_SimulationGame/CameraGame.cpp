@@ -13,7 +13,7 @@ constexpr float MIN_RADIUS_ZOOM = 5.0f;
 
 CCameraGame::CCameraGame()
 	: m_fRadXZ(0.0f)
-	, m_fRadY(DirectX::XMConvertToRadians(125.0f))
+	, m_fRadY(DirectX::XMConvertToRadians(150.0f))
 	, m_fRadius(50.0f)
 	, m_fChangeOldRadius(m_fRadius)
 	, m_bSetOldRadius(false)

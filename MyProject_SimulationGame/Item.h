@@ -53,19 +53,16 @@ public:
 		MAX
 	};
 
-	// @brief アイテムカテゴリーを取得する関数
-	static ITEM_CATEGORY GetItemCategory(ITEM_TYPE eType)
+	// @brief アイテムカテゴリーを文字列に変換する関数
+	static std::string ITEM_CATEGORY_TO_STRING(ITEM_CATEGORY eCategory)
 	{
-		switch (eType)
+		switch (eCategory)
 		{
-		case ITEM_TYPE::Wood:
-		case ITEM_TYPE::Stone:
-		case ITEM_TYPE::Iron:
-			return ITEM_CATEGORY::Material;
-		case ITEM_TYPE::Apple:
-			return ITEM_CATEGORY::UnCookedFood;
-		default:
-			return ITEM_CATEGORY::Material; // デフォルトは資源
+		case ITEM_CATEGORY::Material:		return "Material";
+		case ITEM_CATEGORY::UnCookedFood:	return "UnCookedFood";
+		case ITEM_CATEGORY::CookedFood:		return "CookedFood";
+		case ITEM_CATEGORY::Tool:			return "Tool";
+		default:							return "Unknown";
 		}
 	}
 
@@ -85,7 +82,14 @@ public:
 	// @return 空腹回復値
 	static float GetHungerRecoveryValue(CItem::ITEM_TYPE eType);
 
+	// @brief アイテムカテゴリーを取得する関数
+	const ITEM_CATEGORY GetItemCategory() const { return m_eItemCategory; }
+			
+
 private:
+
+	// @brief アイテムカテゴリー
+	ITEM_CATEGORY m_eItemCategory;
 
 	// @brief アイテムタイプ
 	ITEM_TYPE m_eItemType;

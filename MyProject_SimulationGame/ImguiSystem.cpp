@@ -687,7 +687,7 @@ void CImguiSystem::Release_DrawHuman()
 	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, 0.0f));
 
 	// サイズ変更ハンドルを非表示に設定
-	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 300), ImVec2(600, 300));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 700), ImVec2(600, 700));
 
 	// ウィンドウの開始
 	ImGui::Begin("Human Info", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
@@ -700,20 +700,33 @@ void CImguiSystem::Release_DrawHuman()
 	// vector型に変換
 	std::vector<CHuman*> Humans(Objects.begin(), Objects.end());
 
-	// コンボボックスで選択
+	// コンボボックスの表示
 	static int currentHumanIndex = 0;
 	if (ImGui::BeginCombo("", Humans.empty() ? "No Humans" : "HumanSelect"))
 	{
+		// 人間オブジェクトの表示
 		for (size_t n = 0; n < Humans.size(); n++)
 		{
+			// 選択中かどうかの判定
 			const bool isSelected = (currentHumanIndex == n);
+			// オブジェクトIDの取得
 			ObjectID id = Humans[n]->GetID();
+			// 表示名の作成
 			std::string name = id.m_sName + std::to_string(id.m_nSameCount + 1);
+			// 職業名の取得
+			std::string job = Humans[n]->GetHumanJob()->GetJobName();
+			// 職業名を表示名に追加
+			name += " [" + job + "]";
+
+			// 選択肢の表示
 			if (ImGui::Selectable(name.c_str(), isSelected))
 			{
+				// 選択された場合、インデックスと選択中のオブジェクトを更新
 				currentHumanIndex = static_cast<int>(n);
+				// 選択中の人間オブジェクトを更新
 				m_pHumanObject = Humans[n];
 			}
+			// 選択中の項目にフォーカスを設定
 			if (isSelected)
 			{
 				ImGui::SetItemDefaultFocus();
@@ -722,11 +735,22 @@ void CImguiSystem::Release_DrawHuman()
 		ImGui::EndCombo();
 	}
 
+	std::string SelectButtonLabel = "CameraMode:";
+	SelectButtonLabel += (m_pGameObject) ? "FocusObject" : "Free";
+
 	// 選択ボタンの表示
-	if (ImGui::Button("SelectClear"))
+	if (ImGui::Button(SelectButtonLabel.c_str()))
 	{
-		// カメラを選択したオブジェクトに注視させる
-		m_pHumanObject = nullptr;
+		if (m_pGameObject)
+		{
+			// カメラを選択したオブジェクトに注視させる
+			m_pGameObject = nullptr;
+		}
+		else
+		{
+			// カメラを選択したオブジェクトに注視させる
+			m_pGameObject = m_pHumanObject;
+		}
 	}
 
 	if (m_pHumanObject == nullptr)
@@ -739,7 +763,7 @@ void CImguiSystem::Release_DrawHuman()
 	// オブジェクトIDの取得
 	ObjectID id = m_pHumanObject->GetID();
 	// 表示名の作成
-	std::string name = id.m_sName;
+	std::string name = std::string("Name:" + id.m_sName).c_str();
 	// 同名オブジェクトの区別のために番号を付与
 	name += std::to_string(id.m_nSameCount + 1);
 
@@ -765,6 +789,9 @@ void CImguiSystem::Release_DrawHuman()
 		std::find(JobNames.begin(), JobNames.end(), currentJob)
 	));
 
+	ImGui::Text("Job:");
+	ImGui::SameLine();
+
 	// コンボボックスの表示
 	if (ImGui::Combo(" ", &currentJobIndex, items.data(), static_cast<int>(items.size())))
 	{
@@ -773,6 +800,10 @@ void CImguiSystem::Release_DrawHuman()
 		// 新しい職業オブジェクトを作成して設定
 		m_pHumanObject->SetHumanJob(CreateJobByName(selectedJobName, *m_pHumanObject));
 	}
+
+	// 区切り線の表示
+	ImGui::Separator();
+	ImGui::Text("[Status]");
 
 	// スタミナ値の表示
 	IJob_Strategy::JobStatus currentJobStatus = m_pHumanObject->GetHumanJob()->GetJobStatus();
@@ -789,6 +820,27 @@ void CImguiSystem::Release_DrawHuman()
 
 	ImGui::TextColored(hungerTextColor,"Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
 
+	// アイテムリストの表示
+	ImGui::Separator();
+	ImGui::Text("[Item List]");
+	const auto& itemList = m_pHumanObject->GetItemList();
+
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(580, 300), ImGuiWindowFlags_NoTitleBar);
+
+	// アイテムタイプ別にカウントして表示
+	std::unordered_map<std::string, int> itemCountMap;
+	for (const auto& item : itemList)
+	{
+		itemCountMap[CItem::ITEM_TYPE_TO_STRING(item->GetItemType())]++;
+	}
+	for (const auto& pair : itemCountMap)
+	{
+		ImGui::Text("%s: %d", pair.first.c_str(), pair.second);
+	}
+
+	ImGui::EndChild();
+
+	// ウィンドウの終了
 	ImGui::End();
 }
 

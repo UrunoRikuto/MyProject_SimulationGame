@@ -400,7 +400,7 @@ const CItem* CHuman::TakeOutItem(const CItem::ITEM_CATEGORY itemCategory)
 	for (auto it = m_ItemList.begin(); it != m_ItemList.end(); ++it)
 	{
 		// 指定されたアイテムカテゴリーと一致するアイテムを探索
-		if (CItem::GetItemCategory((*it)->GetItemType()) == itemCategory)
+		if ((*it)->GetItemCategory() == itemCategory)
 		{
 			// アイテムを取り出す
 			CItem* pItem = *it;
@@ -543,7 +543,7 @@ void CHuman::GoEatFood()
 		if (pFoodItem)
 		{
 			// 食料アイテムのカテゴリーによって空腹度回復量を変える
-			switch (pFoodItem->GetItemCategory(pFoodItem->GetItemType()))
+			switch (pFoodItem->GetItemCategory())
 			{
 				// 未調理食料アイテム
 			case CItem::ITEM_CATEGORY::UnCookedFood:
@@ -580,8 +580,8 @@ bool CHuman::HasFood() const
 	// 所持している食料アイテムを探す
 	for (const CItem* pItem : m_ItemList)
 	{
-		if (CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::CookedFood ||
-			CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::UnCookedFood)
+		if (pItem->GetItemCategory() == CItem::ITEM_CATEGORY::CookedFood ||
+			pItem->GetItemCategory() == CItem::ITEM_CATEGORY::UnCookedFood)
 		{
 			return true;
 		}

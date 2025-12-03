@@ -142,7 +142,7 @@ CItem* CStorageHouse::TakeOutItem(CItem::ITEM_CATEGORY eCategory)
 	for (auto it = m_StoredItems.begin(); it != m_StoredItems.end(); ++it)
 	{
 		// 指定されたカテゴリーのアイテムを探索
-		if (CItem::GetItemCategory((*it)->GetItemType()) == eCategory)
+		if ((*it)->GetItemCategory() == eCategory)
 		{
 			// アイテムを取り出す
 			CItem* pItem = *it;
@@ -166,8 +166,8 @@ bool CStorageHouse::HasFood() const
 	for (const CItem* pItem : m_StoredItems)
 	{
 		// 食料カテゴリーのアイテムが存在するかどうかをチェック
-		if (CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::CookedFood ||
-			CItem::GetItemCategory(pItem->GetItemType()) == CItem::ITEM_CATEGORY::UnCookedFood)
+		if (pItem->GetItemCategory() == CItem::ITEM_CATEGORY::CookedFood ||
+			pItem->GetItemCategory() == CItem::ITEM_CATEGORY::UnCookedFood)
 		{
 			return true;
 		}
