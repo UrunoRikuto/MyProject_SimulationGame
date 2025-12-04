@@ -197,6 +197,8 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
 	// フレームレート表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
+	// 全オブジェクト数表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)])	DrawAllObjectNum();
 	// デバックログ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
 
@@ -333,6 +335,7 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("GenerateRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
 	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
+	ImGui::Checkbox("AllObjectNum", &m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
 
 	ImGui::End();
@@ -382,6 +385,30 @@ void CImguiSystem::DrawFPS()
 	ImGui::Text("FPS: %d", fps);
 
 	ImGui::EndChild();
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| 全オブジェクト数表示
+*//****************************************/
+void CImguiSystem::DrawAllObjectNum()
+{
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
+	ImGui::Begin("AllObjectNum");
+
+	// シーンのインスタンス取得
+	CScene* pScene = GetScene();
+
+	if (pScene == nullptr)return;
+
+	// 全オブジェクト数の取得
+	int nObjectNum = pScene->GetIDVec().size();
+
+	ImGui::Text("All Object Num: %d", nObjectNum);
+
 	ImGui::End();
 	ImGui::PopFont();
 }

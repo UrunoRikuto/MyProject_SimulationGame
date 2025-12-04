@@ -48,6 +48,7 @@ private:
 		GenerateRequestList,
 		Update,
 		FPS,
+		AllObjectNum,
 		Log,
 
 		MAX
@@ -124,6 +125,9 @@ private: //-- デバックモード --//
 
 	// @brief フレームレート表示
 	void DrawFPS();
+
+	// @brief 全オブジェクト数表示
+	void DrawAllObjectNum();
 
 	// @brief デバックログ表示
 	void DrawDebugLog();
