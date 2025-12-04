@@ -122,6 +122,31 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 }
 
 /****************************************//*
+	@brief　	|　職業ステータスのImGui描画処理
+*//****************************************/
+void CGatherer_Strategy::DrawJobStatusImGui()
+{
+	ImGui::BeginChild("Gatherer Job Status", ImVec2(300, 200), true);
+
+	ImGui::Separator();
+	ImGui::Text("[JobStatus]");
+
+	ImGui::Text("Target Object ID: ");
+	// 標的にしているオブジェクトの表示
+	if (m_pTarget != nullptr)
+	{
+		ImGui::Text(std::string(m_pTarget->GetID().m_sName + "_" + std::to_string(m_pTarget->GetID().m_nSameCount)).c_str());
+	}
+	else
+	{
+		ImGui::Text("NoTarget");
+	}
+
+	ImGui::EndChild();
+
+}
+
+/****************************************//*
 	@brief　	|　探索＆移動中の処理
 *//****************************************/
 void CGatherer_Strategy::SearchAndMoveAction()

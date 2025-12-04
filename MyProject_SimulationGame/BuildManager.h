@@ -32,6 +32,17 @@ public:
 		// 解体
 		Demolition,
 	};
+	// @brief 依頼タイプを文字列に変換する関数
+	static constexpr const char* REQUEST_TYPE_TO_STRING(RequestType eType)
+	{
+		switch (eType)
+		{
+		case RequestType::Build:		return "Build";
+		case RequestType::Upgrade:		return "Upgrade";
+		case RequestType::Demolition:	return "Demolition";
+		default:						return "Unknown";
+		}
+	}
 
 	// @brief 建築物タイプの列挙型
 	enum class BuildType
@@ -43,6 +54,16 @@ public:
 
 		MAX
 	};
+	// @brief 建築物タイプを文字列に変換する関数
+	static constexpr const char* BUILD_TYPE_TO_STRING(BuildType eType)
+	{
+		switch (eType)
+		{
+		case BuildType::RefreshFacility:	return "RefreshFacility";
+		case BuildType::HumanHouse:		return "HumanHouse";
+		default:						return "Unknown";
+		}
+	}
 
 	// @brief 建築依頼構造体
 	struct BuildRequest

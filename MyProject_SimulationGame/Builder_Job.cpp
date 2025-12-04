@@ -158,6 +158,86 @@ int CBuilder_Job::Inspecter(bool isEnd)
 }
 
 /*****************************************//*
+	@brief	| 職業ステータスのImGui描画処理
+*//*****************************************/
+void CBuilder_Job::DrawJobStatusImGui()
+{
+	ImGui::BeginChild("Builder Job Status", ImVec2(300, 200), true);
+
+	ImGui::Separator();
+	ImGui::Text("[JobStatus]");
+
+	// 受けている建築依頼の表示
+	ImGui::Text("Request: ");
+	ImGui::SameLine();
+	if (ImGui::Button("Detail"))
+	{
+		m_isShowRequestDetail = !m_isShowRequestDetail;
+	}
+	if (m_pCurrentBuildRequest != nullptr)
+	{
+		// 依頼タイプの文字列
+		std::string requestTypeStr = CBuildManager::REQUEST_TYPE_TO_STRING(m_pCurrentBuildRequest->eRequestType);
+		// 建築物タイプの文字列
+		std::string buildTypeStr = CBuildManager::BUILD_TYPE_TO_STRING(m_pCurrentBuildRequest->eBuildType);
+
+		ImGui::Text(buildTypeStr.c_str());
+		ImGui::Text(">>%s", requestTypeStr.c_str());
+
+		if (m_isShowRequestDetail)
+		{
+			DrawBuildRequestDetailImGui();
+		}
+	}
+	else
+	{
+		ImGui::Text("NoRequest");
+	}
+
+	// クールタイムの表示
+	if (m_fCoolTime > 0.0f)
+	{
+		ImGui::Text("Cool Time: %.2f", m_fCoolTime);
+	}
+
+	ImGui::EndChild();
+}
+
+/*****************************************//*
+	@brief	| 建築依頼詳細のImGui描画処理
+*//*****************************************/
+void CBuilder_Job::DrawBuildRequestDetailImGui()
+{
+	if (m_pCurrentBuildRequest == nullptr)return;
+
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+
+	ImGui::Begin("Build Request Detail", &m_isShowRequestDetail, ImGuiWindowFlags_AlwaysAutoResize);
+
+	// 依頼タイプの文字列
+	std::string requestTypeStr = CBuildManager::REQUEST_TYPE_TO_STRING(m_pCurrentBuildRequest->eRequestType);
+	ImGui::Text("Request Type: %s", requestTypeStr.c_str());
+
+	// 建築物タイプの文字列
+	std::string buildTypeStr = CBuildManager::BUILD_TYPE_TO_STRING(m_pCurrentBuildRequest->eBuildType);
+	ImGui::Text("Build Type: %s", buildTypeStr.c_str());
+
+	// 必要素材の表示
+	ImGui::Text("Required Materials:");
+	const auto requiredMaterials = BuildMaterials::GetBuildMaterials(m_pCurrentBuildRequest->eBuildType,
+		(m_pCurrentBuildRequest->eRequestType == CBuildManager::RequestType::Build) ? 0 : m_pBuildingObject->GetBuildLevel());
+	for (const auto& material : requiredMaterials)
+	{
+		std::string itemTypeStr = CItem::ITEM_TYPE_TO_STRING(material.eItemType);
+		ImGui::Text("- %s: %d", itemTypeStr.c_str(), material.nRequiredAmount);
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+}
+
+/*****************************************//*
 	@brief	| 待機中の処理
 *//*****************************************/
 void CBuilder_Job::WaitingAction()

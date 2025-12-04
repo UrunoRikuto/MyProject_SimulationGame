@@ -24,6 +24,9 @@ public:
 	// @brief インスペクター表示処理
 	int Inspecter(bool isEnd = true) override;
 
+	// @brief 職業ステータスのImGui描画処理
+	void DrawJobStatusImGui() override;
+
 	// @brief 職業名を取得
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::Neet; }

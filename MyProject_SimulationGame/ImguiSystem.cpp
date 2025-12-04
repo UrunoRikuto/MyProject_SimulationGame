@@ -669,6 +669,7 @@ void CImguiSystem::Release_DrawHuman()
 				currentHumanIndex = static_cast<int>(n);
 				// 選択中の人間オブジェクトを更新
 				m_pHumanObject = Humans[n];
+				m_pGameObject = m_pHumanObject;
 			}
 			// 選択中の項目にフォーカスを設定
 			if (isSelected)
@@ -765,6 +766,9 @@ void CImguiSystem::Release_DrawHuman()
 
 	ImGui::TextColored(hungerTextColor,"Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
 
+	// 職業別のステータス表示
+	m_pHumanObject->GetHumanJob()->DrawJobStatusImGui();
+
 	// アイテムリストの表示
 	ImGui::Separator();
 	ImGui::Text("[Item List]");
@@ -825,6 +829,10 @@ void CImguiSystem::Release_DrawBuildObject()
 			{
 				currentBuildObjectIndex = static_cast<int>(n);
 				m_pBuildObject = buildObjectVec[n];
+#ifdef _DEBUG
+				// 選択した建築物にカメラを注視させる
+				m_pGameObject = m_pBuildObject;
+#endif // _DEBUG
 			}
 			if (isSelected)
 			{

@@ -48,11 +48,17 @@ public:
 	// @param isEnd：インスペクター終了フラグ
 	virtual int Inspecter(bool isEnd = true) override;
 
+	// @brief 職業ステータスのImGui描画処理
+	virtual void DrawJobStatusImGui() override;
+
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
 	std::string GetJobName() const override { return JobName::Builder; }
 
 private:
+	// @brief 依頼の詳細のImGui表示
+	void DrawBuildRequestDetailImGui();
+
 
 	// @brief 待機中の処理
 	void WaitingAction();
@@ -89,6 +95,9 @@ private:
 	// @brief クールタイム
 	// @note 次の依頼を受けるまでの待機時間
 	float m_fCoolTime = 0.0f;
+
+	// @brief 依頼の詳細表示フラグ
+	bool m_isShowRequestDetail = false;
 
 };
 

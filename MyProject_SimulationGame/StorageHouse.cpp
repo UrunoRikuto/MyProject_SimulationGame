@@ -67,7 +67,7 @@ int CStorageHouse::Inspecter()
 	}
 
 	// アイテム種類ごとに表示
-	ImGui::BeginChildFrame(ImGui::GetID((void*)0), ImVec2(280, 300));
+	ImGui::BeginChildFrame(ImGui::GetID((void*)0), ImVec2(280, 200));
 
 	for (const auto& pair : itemTypes)
 	{

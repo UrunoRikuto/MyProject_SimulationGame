@@ -53,6 +53,10 @@ public:
 	// @return 表示した項目数
 	virtual int Inspecter(bool isEnd = true) = 0;
 
+	// @brief 職業ステータスのImGui描画処理
+	// @note 職業ごとのステータス表示処理を実装する場合はオーバーライドする
+	virtual void DrawJobStatusImGui() = 0;
+
 	// @brief 職業ごとの仕事処理の純粋仮想関数
 	virtual void DoWork() = 0;
 

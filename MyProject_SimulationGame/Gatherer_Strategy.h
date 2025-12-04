@@ -39,6 +39,9 @@ public:
 	// @return 表示した項目数
 	virtual int Inspecter(bool isEnd = true) override;
 
+	// @brief 職業ステータスのImGui描画処理
+	virtual void DrawJobStatusImGui() override;
+
 private:
 
 	// @brief 探索＆移動処理
