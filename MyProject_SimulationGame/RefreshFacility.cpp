@@ -50,32 +50,19 @@ void CRefreshFacility::Init()
 
 /*****************************************//*
 	@brief　	| インスペクター表示処理
-	@param		| isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	@return		| 表示した項目数
 	@note　　　	| ImGuiを使用してオブジェクトのパラメータを表示、編集する
 *//*****************************************/
-int CRefreshFacility::Inspecter(bool isEnd)
+int CRefreshFacility::Inspecter()
 {
 	int itemCount = 0;
 
-#ifdef _DEBUG
 	// 基底クラスのインスペクター表示処理
-	itemCount += CBuildObject::Inspecter(false);
-#endif
+	itemCount += CBuildObject::Inspecter();
 
 	// 使用中の人間数の表示
 	ImGui::Text("Using Humans: %d / %d", static_cast<int>(m_pUsingHumans.size()), MAX_USING_HUMANS[m_nBuildLevel - 1]);
 
-	itemCount++;
-
-	// IMGUIウィンドウの終了
-	if (isEnd)
-	{
-		// 子要素の終了
-		ImGui::EndChild();
-		ImGui::End();
-		itemCount++;
-	}
 	return itemCount;
 }
 

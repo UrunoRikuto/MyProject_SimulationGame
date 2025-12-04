@@ -79,20 +79,6 @@ void CSceneGame::Update()
 *//****************************************/
 void CSceneGame::Draw()
 {
-	// デバッグ用のフィールドグリッド描画
-	if (CImguiSystem::GetInstance()->IsCellsDraw())
-	{
-		for (auto cell : CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells())
-		{
-			for (auto fieldCell : cell)
-			{
-				fieldCell->DebugDraw();
-			}
-		}
-	}
-	else
-	{
-		// 基底クラスの描画処理
-		CScene::Draw();
-	}
+	// 基底クラスの描画処理
+	CScene::Draw();
 }

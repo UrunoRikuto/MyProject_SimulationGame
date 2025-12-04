@@ -24,7 +24,7 @@ public:
 
 	// @brief インスペクター表示処理
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
-	virtual int Inspecter(bool isEnd = true) override;
+	virtual int Inspecter()override;
 
 	// @brief アイテムの収納
 	// @param pItem：収納するアイテムポインタ

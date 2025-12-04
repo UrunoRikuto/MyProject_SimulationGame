@@ -69,24 +69,15 @@ void CHumanHouse::Update()
 
 /*****************************************//*
 	@brief　	| インスペクター表示処理
-	@param		| isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	@return		| 表示した項目数
 	@note　　　	| ImGuiを使用してオブジェクトのパラメータを表示、編集する
 *//*****************************************/
-int CHumanHouse::Inspecter(bool isEnd)
+int CHumanHouse::Inspecter()
 {
-	int itemCount = 0;
-#ifdef _DEBUG
-	// 親クラスのインスペクター表示処理を呼び出す
-	itemCount += CBuildObject::Inspecter(false);
-#endif
+	int itemCount = CBuildObject::Inspecter();
+
 	// 居住者数の表示
 	ImGui::Text("Residents: %d / %d", static_cast<int>(m_Residents.size()), GetMaxResidents());
-
-	if (isEnd)
-	{
-		ImGui::End();
-	}
 
 	return itemCount;
 }

@@ -15,6 +15,7 @@
 #include "CivLevelManager.h"
 #include "GeneratorManager.h"
 #include "StorageHouse.h"
+#include "Defines.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -96,40 +97,24 @@ void CImguiSystem::Init()
 	// ImGuiスタイルの設定
 	ImGui::StyleColorsDark();
 
+	// フォントの設定
+	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 40.0f);
+	m_pDebugFont   = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 15.0f);
 
 #ifdef _DEBUG
-	// フォントサイズの設定
-	io.FontGlobalScale = 1.0f;
-	// ウィンドウ背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
-	// ウィンドウのタイトルバー色の設定
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-	// フレーム背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	// サイズ調整不可
+	io.ConfigWindowsResizeFromEdges = true;
+	// ウィンドウ移動不可
+	io.ConfigWindowsMoveFromTitleBarOnly = false;
 #else
-	// フォントサイズの設定
-	io.FontGlobalScale = 2.5f;
-
 	// サイズ調整不可
 	io.ConfigWindowsResizeFromEdges = false;
 	// ウィンドウ移動不可
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
+#endif // _DEBUG
 
 	// 表示する文字以外を非表示にする
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
-	// ウィンドウ背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-	// ウィンドウのタイトルバーを非表示
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-	// フレーム背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-	// フレーム境界線色の設定
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-#endif // _DEBUG
-
 }
 
 /****************************************//*
@@ -156,19 +141,50 @@ void CImguiSystem::Update()
 *//****************************************/
 void CImguiSystem::Draw()
 {
-	ImGuiIO& io = ImGui::GetIO();
-
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// ウィンドウのタイトルバーを非表示
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// フレーム背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// フレーム境界線色の設定
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	// 文明レベル表示
+	Release_DrawCivLevel();
+	// ゲーム内時間表示
+	Release_DrawGameTime();
+	// 人間の職業設定表示
+	Release_DrawHuman();
+	// 倉庫の資源表示
+	Release_DrawBuildObject();
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
 
 #ifdef _DEBUG
+
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+	// ウィンドウのタイトルバーを表示
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	// フレーム背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+	// フレーム境界線色の設定
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
 
 	// デバッグ用チェックボックス表示
 	DrawDebugSystem();
 
-	// 階層表示
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Hierarchy)])		DrawHierarchy();
 	// カメラのパラメータ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)])	DrawCameraParam();
 	// インスペクター表示
@@ -183,19 +199,12 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 	// デバックログ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
-	// セルの描画表示
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)])	DrawCellsDebug();
 
-#else
-
-	// 文明レベル表示
-	Release_DrawCivLevel();
-	// ゲーム内時間表示
-	Release_DrawGameTime();
-	// 人間の職業設定表示
-	Release_DrawHuman();
-	// 倉庫の資源表示
-	Release_DrawBuildObject();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
 
 #endif // _DEBUG
 
@@ -221,89 +230,6 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 }
 
 /****************************************//*
-	@brief　	| 階層表示
-*//****************************************/
-void CImguiSystem::DrawHierarchy()
-{
-	ImGui::SetNextWindowPos(ImVec2(20, 20));
-	ImGui::SetNextWindowSize(ImVec2(280, 300));
-	ImGui::Begin("Hierarchy");
-	if (ImGui::Button("Select Item Clear"))
-	{
-		m_pGameObject = nullptr;
-	}
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250,260), ImGuiWindowFlags_NoTitleBar);
-
-	ImGui::Checkbox("Human", &m_bOnlyHuman);
-	CScene* pScene = GetScene();
-	if (m_bOnlyHuman)
-	{
-		// Only humans: iterate directly
-		auto Objects = pScene->GetGameObjects<CHuman>();
-		for (auto obj : Objects)
-		{
-			ObjectID id = obj->GetID();
-			std::string name = id.m_sName;
-			name += std::to_string(id.m_nSameCount +1);
-
-			std::string job = obj->GetHumanJob()->GetJobName();
-
-			name += " [" + job + "]";
-
-			if (ImGui::Button(name.c_str()))
-			{
-				m_pGameObject = obj;
-			}
-		}
-	}
-	else
-	{
-		// More efficient grouping: get vector, sort by name then samecount, then walk once
-		auto Objects = pScene->GetIDVec(); // assume returns std::vector<ObjectID>
-		if (!Objects.empty())
-		{
-			// sort in-place
-			std::sort(Objects.begin(), Objects.end(), [](const ObjectID& a, const ObjectID& b)
-			{
-				if (a.m_sName != b.m_sName) return a.m_sName < b.m_sName;
-				return a.m_nSameCount < b.m_nSameCount;
-			});
-
-			size_t i =0;
-			while (i < Objects.size())
-			{
-				const std::string& name = Objects[i].m_sName;
-				// count how many have this name (contiguous after sort)
-				size_t j = i +1;
-				while (j < Objects.size() && Objects[j].m_sName == name) ++j;
-				int nItrCount = static_cast<int>(j - i);
-
-				// build header once
-				char headerBuf[128];
-				snprintf(headerBuf, sizeof(headerBuf), "[%s]:%d", name.c_str(), nItrCount);
-				if (ImGui::CollapsingHeader(headerBuf))
-				{
-					for (int k =0; k < nItrCount; ++k)
-					{
-						std::string sButtonName = name;
-						sButtonName += std::to_string(k +1);
-						ObjectID id = Objects[i + k];
-						if (ImGui::Button(sButtonName.c_str()))
-						{
-							m_pGameObject = pScene->GetGameObject(id);
-						}
-					}
-				}
-				i = j; // advance to next group
-			}
-		}
-	}
-
-	ImGui::EndChild();
-	ImGui::End();
-}
-
-/****************************************//*
 	@brief　	| カメラのパラメータ表示
 *//****************************************/
 void CImguiSystem::DrawCameraParam()
@@ -313,8 +239,9 @@ void CImguiSystem::DrawCameraParam()
 
 	if (!pCamera) return;
 
-	ImGui::SetNextWindowPos(ImVec2(20, SCREEN_HEIGHT -400));
-	ImGui::SetNextWindowSize(ImVec2(280,250));
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("Camera");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250,200), ImGuiWindowFlags_NoTitleBar);
 
@@ -349,6 +276,7 @@ void CImguiSystem::DrawCameraParam()
 
 	ImGui::EndChild();
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -356,6 +284,9 @@ void CImguiSystem::DrawCameraParam()
 *//****************************************/
 void CImguiSystem::DrawInspecter()
 {
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	// 選択しているゲームオブジェクトが存在する場合
 	if (m_pGameObject)
 	{
@@ -365,8 +296,6 @@ void CImguiSystem::DrawInspecter()
 	// 選択しているゲームオブジェクトが存在しない場合
 	else
 	{
-		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, 20));
-		ImGui::SetNextWindowSize(ImVec2(280, SCREEN_HEIGHT - 140));
 		ImGui::Begin("Inspecter");
 
 		/**** 名前表示 ****/
@@ -385,6 +314,7 @@ void CImguiSystem::DrawInspecter()
 		ImGui::End();
 	}
 
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -392,9 +322,11 @@ void CImguiSystem::DrawInspecter()
 *//****************************************/
 void CImguiSystem::DrawDebugSystem()
 {
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("DebugSystem");
 
-	ImGui::Checkbox("Hierarchy", &m_bDebug[static_cast<int>(DebugSystemFlag::Hierarchy)]);
 	ImGui::Checkbox("CameraParam", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
 	ImGui::Checkbox("Inspecter", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
 	ImGui::Checkbox("BuildRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
@@ -402,9 +334,9 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
-	ImGui::Checkbox("CellsDraw", &m_bDebug[static_cast<int>(DebugSystemFlag::CellsDraw)]);
 
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -412,7 +344,9 @@ void CImguiSystem::DrawDebugSystem()
 *//****************************************/
 void CImguiSystem::DrawUpdateTick()
 {
-	ImGui::SetNextWindowSize(ImVec2(280, 100));
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("UpdateTick");
 
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(ce_f2InspecterSize), ImGuiWindowFlags_NoTitleBar);
@@ -430,6 +364,7 @@ void CImguiSystem::DrawUpdateTick()
 	}
 
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -437,7 +372,9 @@ void CImguiSystem::DrawUpdateTick()
 *//****************************************/
 void CImguiSystem::DrawFPS()
 {
-	ImGui::SetNextWindowSize(ImVec2(140,70));
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("FPS");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(120.0f,30.0f), ImGuiWindowFlags_NoTitleBar);
 
@@ -446,6 +383,7 @@ void CImguiSystem::DrawFPS()
 
 	ImGui::EndChild();
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -453,7 +391,9 @@ void CImguiSystem::DrawFPS()
 *//****************************************/
 void CImguiSystem::DrawDebugLog()
 {
-	ImGui::SetNextWindowSize(ImVec2(400,150));
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("DebugLog");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380,120), ImGuiWindowFlags_NoTitleBar);
 	for (const auto& log : m_DebugLog)
@@ -471,17 +411,7 @@ void CImguiSystem::DrawDebugLog()
 		),
 		m_DebugLog.end()
 	);
-}
-
-/****************************************//*
-	@brief　	| セルデバッグ表示
-*//****************************************/
-void CImguiSystem::DrawCellsDebug()
-{
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
-	ImGui::Begin("CellsDebug");
-	ImGui::Checkbox("Cells Draw", &m_bCellsDraw);
-	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -489,6 +419,9 @@ void CImguiSystem::DrawCellsDebug()
 *//****************************************/
 void CImguiSystem::DrawBuildRequestList()
 {
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("BuildRequestList");
 
 	CBuildManager* pBuildManager = CBuildManager::GetInstance();
@@ -537,6 +470,7 @@ void CImguiSystem::DrawBuildRequestList()
 	}
 
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -544,6 +478,9 @@ void CImguiSystem::DrawBuildRequestList()
 *//****************************************/
 void CImguiSystem::DrawGenerateRequestList()
 {
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::Begin("GenerateRequestList");
 	
 	// 生成マネージャーのインスタンス取得
@@ -575,6 +512,7 @@ void CImguiSystem::DrawGenerateRequestList()
 
 
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
@@ -590,6 +528,8 @@ void CImguiSystem::Release_DrawCivLevel()
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
 	// サイズ変更ハンドルを非表示に設定
 	ImGui::SetNextWindowSizeConstraints(ImVec2(250, 100), ImVec2(250, 100));
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
 	// ウィンドウの開始
 	ImGui::Begin("Civ Level", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 	// インスタンスの取得
@@ -607,6 +547,7 @@ void CImguiSystem::Release_DrawCivLevel()
 	// 経験値の表示
 	ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -618,7 +559,8 @@ void CImguiSystem::Release_DrawGameTime()
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 100.0f));
 	// サイズ変更ハンドルを非表示に設定
 	ImGui::SetNextWindowSizeConstraints(ImVec2(230, 300), ImVec2(230, 300));
-
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
 	// ウィンドウの開始
 	ImGui::Begin("Game Time", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
@@ -660,7 +602,6 @@ void CImguiSystem::Release_DrawGameTime()
 		break;
 	case CGameTimeManager::DAY_TIME::NIGHT:
 		color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // 青
-		break;
 	}
 
 	// 現在の時間帯を文字列で取得
@@ -676,6 +617,7 @@ void CImguiSystem::Release_DrawGameTime()
 
 	// ウィンドウの終了
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -688,6 +630,8 @@ void CImguiSystem::Release_DrawHuman()
 
 	// サイズ変更ハンドルを非表示に設定
 	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 700), ImVec2(600, 700));
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
 
 	// ウィンドウの開始
 	ImGui::Begin("Human Info", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
@@ -702,13 +646,13 @@ void CImguiSystem::Release_DrawHuman()
 
 	// コンボボックスの表示
 	static int currentHumanIndex = 0;
-	if (ImGui::BeginCombo("", Humans.empty() ? "No Humans" : "HumanSelect"))
+	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect"))
 	{
 		// 人間オブジェクトの表示
 		for (size_t n = 0; n < Humans.size(); n++)
 		{
 			// 選択中かどうかの判定
-			const bool isSelected = (currentHumanIndex == n);
+			const bool isSelected = (currentHumanIndex == (int)n);
 			// オブジェクトIDの取得
 			ObjectID id = Humans[n]->GetID();
 			// 表示名の作成
@@ -757,6 +701,7 @@ void CImguiSystem::Release_DrawHuman()
 	{
 		ImGui::Text("No Selected");
 		ImGui::End();
+		ImGui::PopFont();
 		return;
 	}
 
@@ -842,6 +787,7 @@ void CImguiSystem::Release_DrawHuman()
 
 	// ウィンドウの終了
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -853,6 +799,8 @@ void CImguiSystem::Release_DrawBuildObject()
 	ImGui::SetNextWindowPos(ImVec2(0.0f, SCREEN_HEIGHT - 400.0f));
 	// サイズ変更ハンドルを非表示に設定
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2(400, 400));
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
 
 	// ウィンドウの開始
 	ImGui::Begin("BuildObject", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
@@ -866,11 +814,11 @@ void CImguiSystem::Release_DrawBuildObject()
 	// vector型に変換
 	std::vector<CBuildObject*> buildObjectVec(buildObjects.begin(), buildObjects.end());
 
-	if (ImGui::BeginCombo("", buildObjects.empty() ? "No BuildObjects" : "BuildSelect"))
+	if (ImGui::BeginCombo("##SelectBuild", buildObjects.empty() ? "No BuildObjects" : "BuildSelect"))
 	{
 		for (size_t n = 0; n < buildObjects.size(); n++)
 		{
-			const bool isSelected = (currentBuildObjectIndex == n);
+			const bool isSelected = (currentBuildObjectIndex == (int)n);
 			ObjectID id = buildObjectVec[n]->GetID();
 			std::string name = id.m_sName + std::to_string(id.m_nSameCount + 1);
 			if (ImGui::Selectable(name.c_str(), isSelected))
@@ -885,6 +833,25 @@ void CImguiSystem::Release_DrawBuildObject()
 		}
 		ImGui::EndCombo();
 	}
+
+#ifdef _DEBUG
+	// 選択ボタンの表示
+	std::string SelectButtonLabel = "CameraMode:";
+	SelectButtonLabel += (m_pGameObject) ? "FocusObject" : "Free";
+	if (ImGui::Button(SelectButtonLabel.c_str()))
+	{
+		if (m_pGameObject)
+		{
+			// カメラを選択したオブジェクトに注視させる
+			m_pGameObject = nullptr;
+		}
+		else
+		{
+			// カメラを選択したオブジェクトに注視させる
+			m_pGameObject = m_pBuildObject;
+		}
+	}
+#endif // _DEBUG
 
 	// 区切り線の表示
 	ImGui::Separator();
@@ -901,8 +868,8 @@ void CImguiSystem::Release_DrawBuildObject()
 
 	ImGui::Separator();
 
-	if(m_pBuildObject)m_pBuildObject->Inspecter(false);
-	
-	// ウィンドウの終了
+	if (m_pBuildObject)m_pBuildObject->Inspecter();
+
 	ImGui::End();
+	ImGui::PopFont();
 }

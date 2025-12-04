@@ -34,7 +34,7 @@ public:
 
 	// @brief インスペクター表示処理
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
-	virtual int Inspecter(bool isEnd = true) override;
+	virtual int Inspecter()override;
 
 	// @brief 最大居住者数の取得
 	// @return 最大居住者数

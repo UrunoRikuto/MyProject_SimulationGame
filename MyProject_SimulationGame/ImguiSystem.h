@@ -42,7 +42,6 @@ private:
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
-		Hierarchy,
 		CameraParam,
 		Inspecter,
 		BuildRequestList,
@@ -50,7 +49,6 @@ private:
 		Update,
 		FPS,
 		Log,
-		CellsDraw,
 
 		MAX
 	};
@@ -91,9 +89,6 @@ public:
 	// @return true:更新処理を行う false:更新処理を止める
 	bool IsUpdate() { return m_bUpdate; }
 
-	// @brief セルの描画フラグの取得
-	bool IsCellsDraw() { return m_bCellsDraw; }
-
 	// @brief 選択しているゲームオブジェクトの取得
 	// @return 選択しているゲームオブジェクトのポインタ
 	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
@@ -108,9 +103,6 @@ public:
 	void AddDebugLog(const std::string& log, bool clear = true);
 
 private: //-- デバックモード --//
-
-	// @brief 階層表示
-	void DrawHierarchy();
 
 	// @brief カメラのパラメータ表示
 	void DrawCameraParam();
@@ -136,9 +128,6 @@ private: //-- デバックモード --//
 	// @brief デバックログ表示
 	void DrawDebugLog();
 
-	// @brief セルの描画表示
-	void DrawCellsDebug();
-
 private: //-- リリースモード --//
 
 	// @brief 文明レベル表示
@@ -156,6 +145,11 @@ private: //-- リリースモード --//
 private:
 	// @brief インスタンス
 	static CImguiSystem* m_pInstance;
+
+	// @brief リリース時のフォントサイズ
+	ImFont* m_pReleaseFont;
+	// @brief デバッグ時のフォントサイズ
+	ImFont* m_pDebugFont;
 
 	// @brief デバッグログ表示用バッファ
 	std::vector<DebugLogInfo> m_DebugLog;

@@ -70,21 +70,12 @@ void CBuildObject::Draw()
 	@return		| 表示した項目数
 	@note　　　	| ImGuiを使用してオブジェクトのパラメータを表示、編集する
 *//*****************************************/
-int CBuildObject::Inspecter(bool isEnd)
+int CBuildObject::Inspecter()
 {
-	int itemCount = CGameObject::Inspecter(false);
+	int itemCount = 0;
 
 	// 建築物レベルの表示と編集
 	ImGui::Text(std::string("Build Level:"+ std::to_string(m_nBuildLevel)).c_str());
-
-	// IMGUIウィンドウの終了
-	if (isEnd)
-	{
-		// 子要素の終了
-		ImGui::EndChild();
-		ImGui::End();
-		itemCount++;
-	}
 
 	return itemCount;
 }

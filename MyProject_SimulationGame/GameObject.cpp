@@ -132,8 +132,6 @@ int CGameObject::Inspecter(bool isEnd)
 	int nImGuiItemCount = 0;
 
     // IMGUIウィンドウの初期化
-    ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 300, 20));
-    ImGui::SetNextWindowSize(ImVec2(280, SCREEN_HEIGHT - 140));
     ImGui::Begin("Inspecter");
 
     /**** 名前表示 ****/

@@ -50,17 +50,13 @@ void CStorageHouse::Init()
 
 /*****************************************//*
 	@brief　	| インスペクター表示処理
-	@param		| isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	@return		| 表示した項目数
 	@note　　　	| ImGuiを使用してオブジェクトのパラメータを表示、編集する
 *//*****************************************/
-int CStorageHouse::Inspecter(bool isEnd)
+int CStorageHouse::Inspecter()
 {
 	// 基底クラスのインスペクター表示処理
-	int itemCount = 0;
-#ifdef _DEBUG
-	itemCount = CBuildObject::Inspecter(false);
-#endif
+	int itemCount = CBuildObject::Inspecter();
 
 	// 収納されているアイテムを種類別にカウント
 	std::map<CItem::ITEM_TYPE, int> itemTypes;
@@ -82,14 +78,6 @@ int CStorageHouse::Inspecter(bool isEnd)
 	}
 
 	ImGui::EndChildFrame();
-
-	if(isEnd)
-	{
-		// 子要素の終了
-		ImGui::EndChild();
-		ImGui::End();
-		itemCount++;
-	}
 
 	// 表示した項目数を返す
 	return itemCount;

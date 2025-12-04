@@ -32,7 +32,7 @@ public:
 	virtual void Draw() override;
 
 	// @brief インスペクター表示処理
-	virtual int Inspecter(bool isEnd = true) override;
+	virtual int Inspecter();
 
 	// @brief 建築物レベルが最大かどうかを取得
 	bool IsMaxBuildLevel() const { return m_nBuildLevel >= MAX_BUILD_LEVEL; }

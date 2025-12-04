@@ -43,7 +43,7 @@ public:
 	virtual void Init() override;
 
 	// @brief インスペクター表示処理
-	virtual int Inspecter(bool isEnd = true) override;
+	virtual int Inspecter()override;
 
 	// @brief 休憩施設を使用可能かどうか
 	// @return true:使用可能 false:使用不可
