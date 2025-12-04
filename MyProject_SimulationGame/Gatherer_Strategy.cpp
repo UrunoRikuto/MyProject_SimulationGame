@@ -126,8 +126,6 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 *//****************************************/
 void CGatherer_Strategy::DrawJobStatusImGui()
 {
-	ImGui::BeginChild("Gatherer Job Status", ImVec2(300, 200), true);
-
 	ImGui::Separator();
 	ImGui::Text("[JobStatus]");
 
@@ -141,9 +139,6 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 	{
 		ImGui::Text("NoTarget");
 	}
-
-	ImGui::EndChild();
-
 }
 
 /****************************************//*

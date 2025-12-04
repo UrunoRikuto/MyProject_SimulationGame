@@ -98,7 +98,7 @@ void CImguiSystem::Init()
 	ImGui::StyleColorsDark();
 
 	// フォントの設定
-	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 40.0f);
+	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 30.0f);
 	m_pDebugFont   = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 15.0f);
 
 #ifdef _DEBUG
@@ -626,10 +626,10 @@ void CImguiSystem::Release_DrawGameTime()
 void CImguiSystem::Release_DrawHuman()
 {
 	// ウィンドウの位置設定
-	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 420.0f, 0.0f));
+	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - 400, 0.0f));
 
 	// サイズ変更ハンドルを非表示に設定
-	ImGui::SetNextWindowSizeConstraints(ImVec2(600, 700), ImVec2(600, 700));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(400, 700), ImVec2(400, 700));
 	// フォントの設定
 	ImGui::PushFont(m_pReleaseFont);
 
@@ -644,9 +644,27 @@ void CImguiSystem::Release_DrawHuman()
 	// vector型に変換
 	std::vector<CHuman*> Humans(Objects.begin(), Objects.end());
 
+	if (m_pHumanObject)
+	{
+		// オブジェクトIDの取得
+		ObjectID id = m_pHumanObject->GetID();
+		// 表示名の作成
+		std::string name = std::string("[Name]:" + id.m_sName).c_str();
+		// 同名オブジェクトの区別のために番号を付与
+		name += std::to_string(id.m_nSameCount + 1);
+		// 職業名を表示名に追加
+		ImGui::Text(name.c_str());
+	}
+	else
+	{
+		ImGui::Text("No Selected");
+	}
+
+	ImGui::Text("SelectHuman");
+	ImGui::SameLine();
 	// コンボボックスの表示
 	static int currentHumanIndex = 0;
-	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect"))
+	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect", ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		// 人間オブジェクトの表示
 		for (size_t n = 0; n < Humans.size(); n++)
@@ -680,13 +698,18 @@ void CImguiSystem::Release_DrawHuman()
 		ImGui::EndCombo();
 	}
 
-	std::string SelectButtonLabel = "CameraMode:";
-	SelectButtonLabel += (m_pGameObject) ? "FocusObject" : "Free";
+	// 現在注視しているオブジェクトが人間かどうかの判定
+	CHuman* pFocusHuman = dynamic_cast<CHuman*>(m_pGameObject);
+
+	// 選択ボタンのラベル作成
+	std::string SelectButtonLabel = "Camera:";
+	SelectButtonLabel += (pFocusHuman) ? "Focus" : "NoFocus";
 
 	// 選択ボタンの表示
 	if (ImGui::Button(SelectButtonLabel.c_str()))
 	{
-		if (m_pGameObject)
+		// 現在注視しているオブジェクトが人間であればフリーモードに変更、そうでなければ選択した人間オブジェクトに注視させる
+		if (pFocusHuman)
 		{
 			// カメラを選択したオブジェクトに注視させる
 			m_pGameObject = nullptr;
@@ -700,24 +723,13 @@ void CImguiSystem::Release_DrawHuman()
 
 	if (m_pHumanObject == nullptr)
 	{
-		ImGui::Text("No Selected");
 		ImGui::End();
 		ImGui::PopFont();
 		return;
 	}
 
-	// オブジェクトIDの取得
-	ObjectID id = m_pHumanObject->GetID();
-	// 表示名の作成
-	std::string name = std::string("Name:" + id.m_sName).c_str();
-	// 同名オブジェクトの区別のために番号を付与
-	name += std::to_string(id.m_nSameCount + 1);
-
 	// 職業名の取得
 	std::string job = m_pHumanObject->GetHumanJob()->GetJobName();
-
-	// 職業名を表示名に追加
-	ImGui::Text(name.c_str());
 
 	// 現在の職業を文字列で取得
 	std::string currentJob = m_pHumanObject->GetHumanJob()->GetJobName();
@@ -735,25 +747,13 @@ void CImguiSystem::Release_DrawHuman()
 		std::find(JobNames.begin(), JobNames.end(), currentJob)
 	));
 
-	ImGui::Text("Job:");
-	ImGui::SameLine();
-
-	// コンボボックスの表示
-	if (ImGui::Combo(" ", &currentJobIndex, items.data(), static_cast<int>(items.size())))
-	{
-		// 選択された職業名を取得
-		std::string selectedJobName = JobNames[currentJobIndex];
-		// 新しい職業オブジェクトを作成して設定
-		m_pHumanObject->SetHumanJob(CreateJobByName(selectedJobName, *m_pHumanObject));
-	}
-
 	// 区切り線の表示
 	ImGui::Separator();
 	ImGui::Text("[Status]");
 
 	// スタミナ値の表示
 	IJob_Strategy::JobStatus currentJobStatus = m_pHumanObject->GetHumanJob()->GetJobStatus();
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f) , "Stamina: %.1f / %.1f", currentJobStatus.m_fStamina, currentJobStatus.m_fMaxStamina);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Stamina: %.1f / %.1f", currentJobStatus.m_fStamina, currentJobStatus.m_fMaxStamina);
 
 
 	// 空腹値の表示
@@ -764,7 +764,35 @@ void CImguiSystem::Release_DrawHuman()
 		hungerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 警告閾値未満は黄色
 	}
 
-	ImGui::TextColored(hungerTextColor,"Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
+	ImGui::TextColored(hungerTextColor, "Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
+
+	ImGui::Text("[Job]:%s", items[currentJobIndex]);
+
+	ImGui::Text("SelectJob");
+	ImGui::SameLine();
+	// コンボボックスの表示
+	if(ImGui::BeginCombo("##SelectJob", currentJob.c_str(), ImGuiWindowFlags_AlwaysAutoResize ))
+	{
+		for (size_t n = 0; n < items.size(); n++)
+		{
+			// 選択中かどうかの判定
+			const bool isSelected = (currentJobIndex == (int)n);
+			// 選択肢の表示
+			if (ImGui::Selectable(items[n], isSelected))
+			{
+				// 選択された場合、インデックスを更新
+				currentJobIndex = static_cast<int>(n);
+				// 新しい職業オブジェクトを作成して設定
+				m_pHumanObject->SetHumanJob(CreateJobByName(JobNames[currentJobIndex], *m_pHumanObject));
+			}
+			// 選択中の項目にフォーカスを設定
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
 
 	// 職業別のステータス表示
 	m_pHumanObject->GetHumanJob()->DrawJobStatusImGui();
@@ -843,12 +871,18 @@ void CImguiSystem::Release_DrawBuildObject()
 	}
 
 #ifdef _DEBUG
+
+	// 現在注視しているオブジェクトが建築物かどうかの判定
+	CBuildObject* pFocusBuildObject = dynamic_cast<CBuildObject*>(m_pGameObject);
+
 	// 選択ボタンの表示
-	std::string SelectButtonLabel = "CameraMode:";
-	SelectButtonLabel += (m_pGameObject) ? "FocusObject" : "Free";
+	std::string SelectButtonLabel = "Camera:";
+	SelectButtonLabel += (pFocusBuildObject) ? "Focus" : "NoFocus";
+
+	// 選択ボタンの表示
 	if (ImGui::Button(SelectButtonLabel.c_str()))
 	{
-		if (m_pGameObject)
+		if (pFocusBuildObject)
 		{
 			// カメラを選択したオブジェクトに注視させる
 			m_pGameObject = nullptr;

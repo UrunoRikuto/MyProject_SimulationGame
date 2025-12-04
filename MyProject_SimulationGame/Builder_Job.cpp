@@ -162,8 +162,6 @@ int CBuilder_Job::Inspecter(bool isEnd)
 *//*****************************************/
 void CBuilder_Job::DrawJobStatusImGui()
 {
-	ImGui::BeginChild("Builder Job Status", ImVec2(300, 200), true);
-
 	ImGui::Separator();
 	ImGui::Text("[JobStatus]");
 
@@ -199,8 +197,6 @@ void CBuilder_Job::DrawJobStatusImGui()
 	{
 		ImGui::Text("Cool Time: %.2f", m_fCoolTime);
 	}
-
-	ImGui::EndChild();
 }
 
 /*****************************************//*
@@ -425,6 +421,8 @@ void CBuilder_Job::GatherMaterialsAction()
 				{
 					m_pOwner->HoldItem(Item);
 					HasMaterials[i].nRequiredAmount--;
+					// ˆê‚Â‚¸‚Âæ‚èo‚·
+					return;
 				}
 				else
 				{
