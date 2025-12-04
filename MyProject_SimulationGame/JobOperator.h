@@ -20,6 +20,8 @@ namespace JobName
 
 	// 建築職業
 	const std::string Builder = "Builder";
+	// 鍛治職業
+	const std::string Smith = "Smith";
 
 }
 
@@ -47,6 +49,8 @@ namespace JobName
 *//*********************/
 //-建築
 #include "Builder_Job.h"
+//-鍛治
+#include "Smith_Job.h"
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前

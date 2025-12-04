@@ -37,10 +37,10 @@ CCollectTarget* CStoneGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTarge
 bool CStoneGatherer_Job::HasCollectTool()
 {
 	// 収集ツールを持っていなければfalseを返す
-	if (m_pCollectItem == nullptr)return false;
+	if (m_pOwner->GetToolItem() == nullptr)return false;
 
 	// 収集ツールがつるはしであればtrueを返す
-	if (m_pCollectItem->GetItemType() == CItem::ITEM_TYPE::Pickaxe)return true;
+	if (m_pOwner->GetToolItem()->GetItemType() == CItem::ITEM_TYPE::Pickaxe)return true;
 
 	// それ以外はfalseを返す
 	return false;

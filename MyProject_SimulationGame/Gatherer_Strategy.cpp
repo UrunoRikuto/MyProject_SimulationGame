@@ -132,9 +132,9 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 
 	// 所持している収集ツールの表示
 	ImGui::Text("Collect Tool: ");
-	if (HasCollectTool())
+	if (m_pOwner->GetToolItem() != nullptr)
 	{
-		ImGui::Text(std::string(CItem::ITEM_TYPE_TO_STRING(m_pCollectItem->GetItemType())).c_str());
+		ImGui::Text(std::string(CItem::ITEM_TYPE_TO_STRING(m_pOwner->GetToolItem()->GetItemType())).c_str());
 	}
 	else
 	{
@@ -169,14 +169,14 @@ void CGatherer_Strategy::SearchAndMoveAction()
 		CStorageHouse* pStorageHouse = pScene->GetGameObject<CStorageHouse>();
 
 		// 別の収集ツールを持っている場合
-		if (m_pCollectItem != nullptr)
+		if (m_pOwner->GetToolItem() != nullptr)
 		{
 			if (m_pOwner->MoveToTarget(pStorageHouse, Human_Move_Speed))
 			{
 				// 収集ツールを倉庫に収納
-				pStorageHouse->StoreItem(m_pCollectItem);
+				pStorageHouse->StoreItem(m_pOwner->GetToolItem());
 				// 収集ツールをnullptrに設定
-				m_pCollectItem = nullptr;
+				m_pOwner->SetToolItem(nullptr);
 			}
 			// 収集ツールをnullptrに設定
 			return;
@@ -189,7 +189,7 @@ void CGatherer_Strategy::SearchAndMoveAction()
 			if (m_pOwner->MoveToTarget(pStorageHouse,Human_Move_Speed))
 			{
 				// 収集ツールをオーナーに設定
-				m_pCollectItem = pStorageHouse->TakeOutItem(GetRequiredCollectToolType());
+				m_pOwner->SetToolItem(pStorageHouse->TakeOutItem(GetRequiredCollectToolType()));
 			}
 		}
 		else
@@ -199,11 +199,15 @@ void CGatherer_Strategy::SearchAndMoveAction()
 			// 鍛冶屋が存在する場合の処理
 			if (pBlacksmith != nullptr)
 			{
-				// 既に生産依頼が出ているか確認
-				if (!pBlacksmith->HasRequestTool(GetRequiredCollectToolType()))
+				// 鍛冶屋に生産依頼を追加可能か確認
+				if (pBlacksmith->CanAddRequestTool())
 				{
-					// 鍛冶屋に生産依頼を出す
-					pBlacksmith->AddRequestTool(GetRequiredCollectToolType());
+					// 既に生産依頼が出ているか確認
+					if (!pBlacksmith->HasRequestTool(GetRequiredCollectToolType()))
+					{
+						// 鍛冶屋に生産依頼を出す
+						pBlacksmith->AddRequestTool(GetRequiredCollectToolType());
+					}
 				}
 			}
 		}

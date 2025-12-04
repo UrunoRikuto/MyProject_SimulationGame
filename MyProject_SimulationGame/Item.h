@@ -5,6 +5,7 @@
 *//**************************************************/
 #pragma once
 #include <string>
+#include <vector>
 
 // @brief アイテムクラス
 class CItem
@@ -38,8 +39,8 @@ public:
 		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
-		case ITEM_TYPE::Pickaxe:	return "Pickaxe";
-		case ITEM_TYPE::Axe:		return "Axe";
+		case ITEM_TYPE::Pickaxe:return "Pickaxe";
+		case ITEM_TYPE::Axe:	return "Axe";
 		default:				return "Unknown";
 		}
 	}
@@ -91,6 +92,14 @@ public:
 		}
 	}
 
+	// @brief 道具素材構造体
+	struct ToolMaterial
+	{
+		CItem::ITEM_TYPE eItemType;		// アイテムタイプ
+		int nRequiredAmount;			// 必要数
+	};
+
+
 public:
 	// @brief コンストラクタ
 	// @param In_eType：アイテムタイプ
@@ -121,3 +130,21 @@ private:
 
 };
 
+// @brief 道具素材データ名前空間
+namespace ToolMaterials
+{
+	// @brief 斧の素材リスト
+	const std::vector<CItem::ToolMaterial> Axe = {
+		{ CItem::ITEM_TYPE::Wood,  5 },
+		{ CItem::ITEM_TYPE::Iron,  2 }
+	};
+
+	// @brief つるはしの素材リスト
+	const std::vector<CItem::ToolMaterial> Pickaxe = {
+		{ CItem::ITEM_TYPE::Wood,  5 },
+		{ CItem::ITEM_TYPE::Iron,  3 }
+	};
+
+	// @brief 指定された道具タイプの素材リストを取得
+	std::vector<CItem::ToolMaterial> GetToolMaterials(CItem::ITEM_TYPE eType);
+}

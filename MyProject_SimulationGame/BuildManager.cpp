@@ -9,6 +9,7 @@
 #include "FieldManager.h"
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
+#include "BlackSmith.h"
 
 // 静的メンバ変数の初期化
 CBuildManager* CBuildManager::m_pInstance = nullptr;
@@ -140,6 +141,36 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 		}
 	}
 	break;
+	case BuildType::BlackSmith:
+	{
+		// 今ある鍛冶屋を取得
+		auto buildlist = pScene->GetGameObjects<CBlackSmith>();
+
+		// 鍛冶屋が無ければ建築依頼を追加
+		if (buildlist.empty())
+		{
+			newRequest.eRequestType = RequestType::Build;
+			break;
+		}
+
+		// 鍛冶屋がある場合は強化依頼を追加
+		for (auto build : buildlist)
+		{
+			if (!build->IsMaxBuildLevel())
+			{
+				newRequest.eRequestType = RequestType::Upgrade;
+				newRequest.n2BuildIndex = build->GetFieldCellIndex();
+				break;
+			}
+		}
+
+		// 全ての鍛冶屋が最大レベルの場合は建築依頼を追加
+		if (newRequest.eRequestType != RequestType::Upgrade)
+		{
+			newRequest.eRequestType = RequestType::Build;
+		}
+	}
+	break;
 	}
 	newRequest.eBuildType = In_eRequestType;
 	newRequest.eRequestState = RequestState::Unprocessed;
@@ -237,6 +268,8 @@ std::vector<CBuildManager::BuildMaterial> BuildMaterials::GetBuildMaterials(CBui
 		return RefreshFacility[nLevel];
 	case CBuildManager::BuildType::HumanHouse:
 		return HumanHouse[nLevel];
+	case CBuildManager::BuildType::BlackSmith:
+		return BlackSmith[nLevel];
 	default:
 		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
 		break;

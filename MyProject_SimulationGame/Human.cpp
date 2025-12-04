@@ -30,6 +30,7 @@ CHuman::CHuman()
 	, m_fHunger(Human_Max_Hunger)
 	, m_eState(HUMAN_STATE::Working)
 	, m_isEating(false)
+	, m_pToolItem(nullptr)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();

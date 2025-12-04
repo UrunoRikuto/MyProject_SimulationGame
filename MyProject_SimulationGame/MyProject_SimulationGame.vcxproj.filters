@@ -157,6 +157,9 @@
     <Filter Include="コードファイル\GameObject\BuildObject\BlackSmith">
       <UniqueIdentifier>{6ad3d417-8f39-4342-96ff-bfc4995464fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Job\Crafter\Smith">
+      <UniqueIdentifier>{9bb9b4a4-aaa0-4a5f-89dd-6d8f4a354ea2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -381,6 +384,9 @@
     <ClInclude Include="BlackSmith.h">
       <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
     </ClInclude>
+    <ClInclude Include="Smith_Job.h">
+      <Filter>コードファイル\System\Job\Crafter\Smith</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -586,6 +592,9 @@
     </ClCompile>
     <ClCompile Include="BlackSmith.cpp">
       <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
+    </ClCompile>
+    <ClCompile Include="Smith_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter\Smith</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,10 @@ std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& 
 	{
 		pJob =  std::make_unique<CBuilder_Job>();
 	}
+	else if (name == JobName::Smith)
+	{
+		pJob = std::make_unique<CSmith_Job>();
+	}
 
 	// E‹Æ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡A–³E‚ğİ’è
 	if(pJob == nullptr)

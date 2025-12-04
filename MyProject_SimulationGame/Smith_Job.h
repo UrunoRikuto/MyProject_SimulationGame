@@ -1,16 +1,16 @@
 /**************************************************//*
-	@file	| Builder_Job.h
-	@brief	| 建築職業クラスのhファイル
-	@note	| 建築職業の処理を定義
+	@file	| Smith_Job.h
+	@brief	| 鍛冶職業クラスのhファイル
+	@note	| 鍛冶職業の処理を定義
 			| CCrafter_Strategyを継承
 *//**************************************************/
 #pragma once
 #include "Crafter_Strategy.h"
 #include "JobOperator.h"
-#include "BuildManager.h"
+#include "BlackSmith.h"
 
-// @brief 建築職業クラス
-class CBuilder_Job final: public CCrafter_Strategy
+// @brief 鍛冶職業クラス
+class CSmith_Job final: public CCrafter_Strategy
 {
 private:
 	// @brief 仕事状態
@@ -20,12 +20,10 @@ private:
 		Waiting,
 		// 素材収集中
 		GatheringMaterials,
-		// 対象探索中
-		SearchingTarget,
-		// 建築中
-		Building,
-		// 強化中
-		Upgrading,
+		// 製作中
+		Crafting,
+		// 完成品運搬中
+		TransportingFinishedGoods,
 		// 休憩中
 		Resting
 	};
@@ -34,8 +32,9 @@ private:
 	static constexpr float COOL_TIME_DURATION = 20.0f;
 
 public:
+
 	// @brief コンストラクタ
-	CBuilder_Job();
+	CSmith_Job();
 
 	// @brief 仕事処理
 	virtual void DoWork() override;
@@ -52,29 +51,23 @@ public:
 
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
-	std::string GetJobName() const override { return JobName::Builder; }
+	std::string GetJobName() const override { return JobName::Smith; }
 
 private:
-	// @brief 依頼の詳細のImGui表示
-	void DrawBuildRequestDetailImGui();
 
-
-	// @brief 待機中の処理
+	// @brief 待機処理
 	void WaitingAction();
 
-	// @brief 素材収集中の処理
-	void GatherMaterialsAction();
+	// @brief 素材収集処理
+	void GatheringMaterialsAction();
 
-	// @brief 対象探索中の処理
-	void SearchingTargetAction();
+	// @brief 製作処理
+	void CraftingAction();
 
-	// @brief 建築中の処理
-	void BuildingAction();
+	// @brief 完成品運搬処理
+	void TransportingFinishedGoodsAction();
 
-	// @brief 強化中の処理
-	void UpgradingAction();
-
-	// @brief 休憩中の処理
+	// @brief 休憩処理
 	void RestingAction();
 
 private:
@@ -82,18 +75,11 @@ private:
 	WorkState m_eCurrentState = WorkState::Resting;
 	WorkState m_ePrevState = WorkState::Resting;
 
-	// @brief 受けている建築依頼のポインタ
-	CBuildManager::BuildRequest* m_pCurrentBuildRequest = nullptr;
-
-	// @brief 建築中の建築オブジェクトのポインタ
-	CBuildObject* m_pBuildingObject = nullptr;
+	// @brief 受けた生産依頼の道具タイプのポインタ
+	CBlackSmith::ToolRequest* m_pRequest = nullptr;
 
 	// @brief クールタイム
 	// @note 次の依頼を受けるまでの待機時間
 	float m_fCoolTime = 0.0f;
-
-	// @brief 依頼の詳細表示フラグ
-	bool m_isShowRequestDetail = false;
-
 };
 

@@ -149,12 +149,21 @@ public:
 	// @param fAmount：減少量
 	void DecreaseHunger(float fAmount);
 
+	// @brief ツールアイテムの取得
+	CItem* GetToolItem() const { return m_pToolItem; }
+
+	// @brief ツールアイテムの設定
+	void SetToolItem(CItem* pToolItem) { m_pToolItem = pToolItem; }
+
 private:
 	// @brief 人間の状態
 	HUMAN_STATE m_eState;
 
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
+
+	// @brief ツールアイテム
+	CItem* m_pToolItem;
 
 	// @brief 所持アイテムリスト
 	std::vector<CItem*> m_ItemList;

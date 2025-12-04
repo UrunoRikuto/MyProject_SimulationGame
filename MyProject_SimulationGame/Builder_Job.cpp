@@ -76,13 +76,6 @@ void CBuilder_Job::DoWork()
 *//*****************************************/
 void CBuilder_Job::OnChangeJob()
 {
-	// 建築中のビルボードレンダラーが存在する場合
-	if (m_pBuildingBillboard != nullptr)
-	{
-		// ビルボードレンダラーを破棄
-		delete m_pBuildingBillboard;
-		m_pBuildingBillboard = nullptr;
-	}
 	// 建築中の建築オブジェクトが存在する場合
 	if (m_pBuildingObject != nullptr)
 	{

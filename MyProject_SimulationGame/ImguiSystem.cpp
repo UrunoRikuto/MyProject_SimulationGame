@@ -201,6 +201,8 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)])	DrawAllObjectNum();
 	// デバックログ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Log)])		DrawDebugLog();
+	// 倉庫にアイテムを収納する
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::AddStoragehouseItem)])	DrawStoragehouseItem();
 
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
@@ -337,6 +339,7 @@ void CImguiSystem::DrawDebugSystem()
 	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox("AllObjectNum", &m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)]);
 	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
+	ImGui::Checkbox("AddStoragehouseItem", &m_bDebug[static_cast<int>(DebugSystemFlag::AddStoragehouseItem)]);
 
 	ImGui::End();
 	ImGui::PopFont();
@@ -439,6 +442,40 @@ void CImguiSystem::DrawDebugLog()
 		m_DebugLog.end()
 	);
 	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| 倉庫の資源表示
+*//****************************************/
+void CImguiSystem::DrawStoragehouseItem()
+{
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+	ImGui::Begin("AddStoragehouseItem");
+	CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+
+	if (pStorageHouse)
+	{
+		if (ImGui::Button("Add Wood"))
+		{
+			CItem* pItem = new CItem(CItem::ITEM_TYPE::Wood);
+			pStorageHouse->StoreItem(pItem);
+		}
+		if (ImGui::Button("Add Stone"))
+		{
+			CItem* pItem = new CItem(CItem::ITEM_TYPE::Stone);
+			pStorageHouse->StoreItem(pItem);
+		}
+		if (ImGui::Button("Add Iron"))
+		{
+			CItem* pItem = new CItem(CItem::ITEM_TYPE::Iron);
+			pStorageHouse->StoreItem(pItem);
+		}
+
+	}
+	ImGui::End();
+	ImGui::PopFont();
+
 }
 
 /****************************************//*
@@ -687,11 +724,9 @@ void CImguiSystem::Release_DrawHuman()
 		ImGui::Text("No Selected");
 	}
 
-	ImGui::Text("SelectHuman");
-	ImGui::SameLine();
 	// コンボボックスの表示
 	static int currentHumanIndex = 0;
-	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect", ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect"))
 	{
 		// 人間オブジェクトの表示
 		for (size_t n = 0; n < Humans.size(); n++)
@@ -795,10 +830,8 @@ void CImguiSystem::Release_DrawHuman()
 
 	ImGui::Text("[Job]:%s", items[currentJobIndex]);
 
-	ImGui::Text("SelectJob");
-	ImGui::SameLine();
 	// コンボボックスの表示
-	if(ImGui::BeginCombo("##SelectJob", currentJob.c_str(), ImGuiWindowFlags_AlwaysAutoResize ))
+	if(ImGui::BeginCombo("##SelectJob", currentJob.c_str()))
 	{
 		for (size_t n = 0; n < items.size(); n++)
 		{

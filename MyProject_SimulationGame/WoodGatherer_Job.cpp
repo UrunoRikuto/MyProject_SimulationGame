@@ -37,10 +37,10 @@ CCollectTarget* CWoodGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTarget
 bool CWoodGatherer_Job::HasCollectTool()
 {
 	// 収集ツールを持っていなければfalseを返す
-	if (m_pCollectItem == nullptr)return false;
+	if (m_pOwner->GetToolItem() == nullptr)return false;
 
 	// 収集ツールが斧であればtrueを返す
-	if (m_pCollectItem->GetItemType() == CItem::ITEM_TYPE::Axe)return true;
+	if (m_pOwner->GetToolItem()->GetItemType() == CItem::ITEM_TYPE::Axe)return true;
 
 	// それ以外はfalseを返す
 	return false;

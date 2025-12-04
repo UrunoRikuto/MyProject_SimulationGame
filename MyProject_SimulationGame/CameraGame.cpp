@@ -93,6 +93,9 @@ void CCameraGame::Update()
 		// 計算したVelocityを注視点に加算
 		m_f3Look += f3Velocity;
 
+		// ズームの下限・上限（必要なら）
+		m_fRadius = std::clamp(m_fRadius, MIN_RADIUS_ZOOM, MAX_RADIUS_ZOOM);
+
 		// マウスホイールの回転量をリセット
 		ResetMouseWheelDelta();
 

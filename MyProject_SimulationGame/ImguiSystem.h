@@ -50,6 +50,7 @@ private:
 		FPS,
 		AllObjectNum,
 		Log,
+		AddStoragehouseItem,
 
 		MAX
 	};
@@ -131,6 +132,9 @@ private: //-- デバックモード --//
 
 	// @brief デバックログ表示
 	void DrawDebugLog();
+
+	// @brief 倉庫にアイテムを収納する
+	void DrawStoragehouseItem();
 
 private: //-- リリースモード --//
 

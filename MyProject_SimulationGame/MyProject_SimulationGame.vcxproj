@@ -175,6 +175,7 @@
     <ClInclude Include="RefreshFacility.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Smith_Job.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="StoneGenerator.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="RefreshFacility.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Smith_Job.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />

@@ -51,6 +51,8 @@ public:
 		RefreshFacility,
 		// 人間の家
 		HumanHouse,
+		// 鍛冶屋
+		BlackSmith,
 
 		MAX
 	};
@@ -61,6 +63,7 @@ public:
 		{
 		case BuildType::RefreshFacility:	return "RefreshFacility";
 		case BuildType::HumanHouse:		return "HumanHouse";
+		case BuildType::BlackSmith:		return "BlackSmith";
 		default:						return "Unknown";
 		}
 	}
@@ -171,6 +174,21 @@ namespace BuildMaterials
 		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  20 }},
 		// Level 5
 		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  30 }},
+	};
+
+	// @brief 鍛冶屋に必要な素材
+	const std::vector<CBuildManager::BuildMaterial> BlackSmith[CBuildObject::MAX_BUILD_LEVEL] =
+	{
+		// Level 1(初期建築)
+		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 },{ CItem::ITEM_TYPE::Iron, 10 }},
+		// Level 2
+		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 },{ CItem::ITEM_TYPE::Iron, 10 }},
+		// Level 3
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 },{ CItem::ITEM_TYPE::Iron, 15 }},
+		// Level 4
+		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 },{ CItem::ITEM_TYPE::Iron, 20 }},
+		// Level 5
+		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   50 },{ CItem::ITEM_TYPE::Iron, 25 }},
 	};
 
 	// @brief 指定された建築タイプの建築素材リストを取得
