@@ -14,6 +14,7 @@
 #include "StorageHouse.h"
 #include "RefreshFacility.h"
 #include "CivLevelManager.h"
+#include "BlackSmith.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -129,8 +130,20 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 	ImGui::Separator();
 	ImGui::Text("[JobStatus]");
 
-	ImGui::Text("Target Object ID: ");
+	// 所持している収集ツールの表示
+	ImGui::Text("Collect Tool: ");
+	if (HasCollectTool())
+	{
+		ImGui::Text(std::string(CItem::ITEM_TYPE_TO_STRING(m_pCollectItem->GetItemType())).c_str());
+	}
+	else
+	{
+		ImGui::Text("NoTool");
+	}
+
+
 	// 標的にしているオブジェクトの表示
+	ImGui::Text("Target Object ID: ");
 	if (m_pTarget != nullptr)
 	{
 		ImGui::Text(std::string(m_pTarget->GetID().m_sName + "_" + std::to_string(m_pTarget->GetID().m_nSameCount)).c_str());
@@ -146,6 +159,56 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 *//****************************************/
 void CGatherer_Strategy::SearchAndMoveAction()
 {
+	// 収集ツールを持っていない場合の処理
+	if (!HasCollectTool())
+	{
+		// シーンを取得
+		CScene* pScene = GetScene();
+
+		// 倉庫に指定アイテムが存在するか確認
+		CStorageHouse* pStorageHouse = pScene->GetGameObject<CStorageHouse>();
+
+		// 別の収集ツールを持っている場合
+		if (m_pCollectItem != nullptr)
+		{
+			if (m_pOwner->MoveToTarget(pStorageHouse, Human_Move_Speed))
+			{
+				// 収集ツールを倉庫に収納
+				pStorageHouse->StoreItem(m_pCollectItem);
+				// 収集ツールをnullptrに設定
+				m_pCollectItem = nullptr;
+			}
+			// 収集ツールをnullptrに設定
+			return;
+		}
+
+		// もし倉庫に必要な収集ツールが存在した場合は処理を抜ける
+		if (pStorageHouse->HasItemType(GetRequiredCollectToolType()))
+		{
+			// 貯蔵庫の一定距離以内に到達したら収集ツールを取得する
+			if (m_pOwner->MoveToTarget(pStorageHouse,Human_Move_Speed))
+			{
+				// 収集ツールをオーナーに設定
+				m_pCollectItem = pStorageHouse->TakeOutItem(GetRequiredCollectToolType());
+			}
+		}
+		else
+		{
+			// 鍛冶屋を取得
+			CBlackSmith* pBlacksmith = pScene->GetGameObject<CBlackSmith>();
+			// 鍛冶屋が存在する場合の処理
+			if (pBlacksmith != nullptr)
+			{
+				// 既に生産依頼が出ているか確認
+				if (!pBlacksmith->HasRequestTool(GetRequiredCollectToolType()))
+				{
+					// 鍛冶屋に生産依頼を出す
+					pBlacksmith->AddRequestTool(GetRequiredCollectToolType());
+				}
+			}
+		}
+	}
+
 	// 標的にしているオブジェクトがない場合
 	if (m_pTarget == nullptr)
 	{
@@ -178,36 +241,13 @@ void CGatherer_Strategy::SearchAndMoveAction()
 	}
 	else
 	{
-		// オブジェクトに向かって移動する処理を実装
-		DirectX::XMFLOAT3 f3StonePos = m_pTarget->GetPos();
-
-		// オーナーの位置を取得
-		DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
-
-		// オブジェクトとオーナーの位置の距離を計算
-		float fDistance = StructMath::Distance(f3OwnerPos, f3StonePos);
-
-		// 一定距離以内に到達したら収集状態に移行
-		if (fDistance < 1.0f)
+		// 標的オブジェクトの一定距離以内に到達したら収集状態に移行
+		if (m_pOwner->MoveToTarget(m_pTarget,Human_Move_Speed))
 		{
 			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Gathering;
 			return;
 		}
-
-		DirectX::XMFLOAT3 f3Diff = f3StonePos - f3OwnerPos;
-		// オーナーからオブジェクトへのベクトルを計算
-		DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
-		f3Direction = DirectX::XMVector3Normalize(f3Direction);
-
-		// オーナーの位置をオブジェクトに向かって少しずつ移動させる
-		DirectX::XMFLOAT3 f3Move;
-		DirectX::XMStoreFloat3(&f3Move, f3Direction);
-
-		f3OwnerPos += f3Move * Human_Move_Speed;
-
-		// オーナーの位置を更新
-		m_pOwner->SetPos(f3OwnerPos);
 	}
 }
 
@@ -219,12 +259,25 @@ void CGatherer_Strategy::GatheringAction()
 	// 素材を収集する
 	if (m_pTarget != nullptr)
 	{
-		// 標的オブジェクトの耐久値を労働力分減少させる
-		m_pTarget->DecreaseHp(m_Status.m_fWorkPower);
-		// スタミナを消費
-		m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+		// 収集ツールを持っている場合の処理
+		if (HasCollectTool())
+		{
+			// 標的オブジェクトの耐久値を労働力分減少させる
+			m_pTarget->DecreaseHp(m_Status.m_fWorkPower * 2.0f);
+			// スタミナを消費
+			m_Status.m_fStamina -= Job_Work_Stamina_Decrease / 2.0f;
+		}
+		// 収集ツールを持っていない場合の処理
+		else
+		{
+			// 標的オブジェクトの耐久値を労働力分減少させる
+			m_pTarget->DecreaseHp(m_Status.m_fWorkPower);
+			// スタミナを消費
+			m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+		}
 		// 空腹度を消費
 		m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+
 
 		// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定
 		if (m_pTarget->IsDead())
@@ -291,34 +344,13 @@ void CGatherer_Strategy::TransportingAction()
 		return;
 	}
 
-	// 貯蔵庫に向かって移動する
-	DirectX::XMFLOAT3 f3StorageHousePos = pStorageHouse->GetPos();
-
-	// オーナーの位置を取得
-	DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
-
-	// オブジェクトとオーナーの位置の距離を計算
-	float fDistance = StructMath::Distance(f3OwnerPos, f3StorageHousePos);
-
-	// 一定距離以内に到達したら収集状態に移行
-	if (fDistance < 1.0f)
+	// 貯蔵庫の一定距離以内に到達したら収集状態に移行
+	if (m_pOwner->MoveToTarget(pStorageHouse,Human_Move_Speed))
 	{
 		m_ePrevState = m_eCurrentState;
 		m_eCurrentState = WorkState::Storing;
 		return;
 	}
-
-	// オーナーからオブジェクトへのベクトルを計算
-	DirectX::XMFLOAT3 f3Diff = f3StorageHousePos - f3OwnerPos;
-
-	// 正規化
-	DirectX::XMFLOAT3 f3Move = StructMath::Normalize(f3Diff);
-
-	float fSpeed = 0.1f; // 移動速度
-	f3OwnerPos += f3Move * fSpeed;
-
-	// オーナーの位置を更新
-	m_pOwner->SetPos(f3OwnerPos);
 }
 
 /****************************************//*
@@ -329,38 +361,16 @@ void CGatherer_Strategy::StoringAction()
 	// 所持している素材アイテムを貯蔵庫に運搬する
 	if (m_pOwner->HasItem())
 	{
-
 		// 一番近い貯蔵庫を探す
 		CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
 
-		// 貯蔵庫に向かって移動する
-		DirectX::XMFLOAT3 f3StorageHousePos = pStorageHouse->GetPos();
-
-		// オーナーの位置を取得
-		DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
-
-		// オブジェクトとオーナーの位置の距離を計算
-		float fDistance = StructMath::Distance(f3OwnerPos, f3StorageHousePos);
-
 		// 一定距離以内に到達したら素材アイテムを貯蔵庫に収納する
-		if (fDistance < 1.0f)
+		if (m_pOwner->MoveToTarget(pStorageHouse, Human_Move_Speed))
 		{
 			// 貯蔵庫にアイテムを収納する
 			dynamic_cast<CStorageHouse*>(pStorageHouse)->StoreItem(m_pOwner->TakeOutItem());
 			return;
 		}
-
-		// オーナーからオブジェクトへのベクトルを計算
-		DirectX::XMFLOAT3 f3Diff = f3StorageHousePos - f3OwnerPos;
-
-		// 正規化
-		DirectX::XMFLOAT3 f3Move = StructMath::Normalize(f3Diff);
-
-		float fSpeed = 0.1f; // 移動速度
-		f3OwnerPos += f3Move * fSpeed;
-
-		// オーナーの位置を更新
-		m_pOwner->SetPos(f3OwnerPos);
 	}
 	else
 	{

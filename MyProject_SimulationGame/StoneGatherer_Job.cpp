@@ -28,3 +28,20 @@ CCollectTarget* CStoneGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTarge
 	// 石オブジェクトを探す
 	return GetScene()->GetGameObject<CStone>(m_pOwner->GetPos(), vNotTargetIDs);
 }
+
+/******************************************//*
+	@brief　	| 採取ツールを持っているかどうかを取得
+	@return		| true:持っている false:持っていない
+	@note		| 石を集めるためのツールを持っているかどうかを判定する処理を実装
+*//******************************************/
+bool CStoneGatherer_Job::HasCollectTool()
+{
+	// 収集ツールを持っていなければfalseを返す
+	if (m_pCollectItem == nullptr)return false;
+
+	// 収集ツールがつるはしであればtrueを返す
+	if (m_pCollectItem->GetItemType() == CItem::ITEM_TYPE::Pickaxe)return true;
+
+	// それ以外はfalseを返す
+	return false;
+}

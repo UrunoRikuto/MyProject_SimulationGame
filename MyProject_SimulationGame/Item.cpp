@@ -13,21 +13,8 @@
 CItem::CItem(ITEM_TYPE In_eType)
 	: m_eItemType(In_eType)
 {
-	switch (In_eType)
-	{
-	case ITEM_TYPE::Wood:
-	case ITEM_TYPE::Stone:
-	case ITEM_TYPE::Iron:
-		m_eItemCategory = ITEM_CATEGORY::Material;
-		break;
-	case ITEM_TYPE::Apple:
-		m_eItemCategory = ITEM_CATEGORY::UnCookedFood;
-		break;
-	default:
-		MessageBox(nullptr, "未対応のアイテムタイプです。", "Error", MB_OK | MB_ICONERROR);
-		m_eItemCategory = ITEM_CATEGORY::Material; // デフォルトは資源
-		break;
-	}
+	// アイテムカテゴリーの設定
+	m_eItemCategory = GetItemCategoryFromType(In_eType);
 }
 
 /****************************************//*

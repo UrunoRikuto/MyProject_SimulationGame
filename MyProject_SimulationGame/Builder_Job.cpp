@@ -350,25 +350,9 @@ void CBuilder_Job::GatherMaterialsAction()
 		return;
 	}
 
-	// 貯蔵庫の方に移動する
-	DirectX::XMFLOAT3 storagePos = storageHouses->GetPos();
-	DirectX::XMFLOAT3 ownerPos = m_pOwner->GetPos();
-	float fDistance = StructMath::Distance(ownerPos, storagePos);
-	if (fDistance > 1.0f)
-	{
-		DirectX::XMFLOAT3 f3Diff = storagePos - ownerPos;
-		// オーナーからオブジェクトへのベクトルを計算
-		DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
-		f3Direction = DirectX::XMVector3Normalize(f3Direction);
-		// オーナーの位置をオブジェクトに向かって少しずつ移動させる
-		DirectX::XMFLOAT3 f3Move;
-		DirectX::XMStoreFloat3(&f3Move, f3Direction);
-		ownerPos += f3Move * Human_Move_Speed;
-		// オーナーの位置を更新
-		m_pOwner->SetPos(ownerPos);
-		// 移動中は処理を抜ける
-		return;
-	}
+	// 貯蔵庫へ移動
+	// 目的地へ到達していない場合は処理を抜ける
+	if (!m_pOwner->MoveToTarget(storageHouses, Human_Move_Speed))return;
 
 	// 素材収集処理
 	std::vector<CBuildManager::BuildMaterial> HasMaterials;

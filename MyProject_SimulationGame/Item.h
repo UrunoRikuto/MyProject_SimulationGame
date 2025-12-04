@@ -21,6 +21,10 @@ public:
 		Stone,
 		// 鉄材
 		Iron,
+		// つるはし
+		Pickaxe,
+		// 斧
+		Axe,
 
 		MAX
 	};
@@ -34,6 +38,8 @@ public:
 		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
+		case ITEM_TYPE::Pickaxe:	return "Pickaxe";
+		case ITEM_TYPE::Axe:		return "Axe";
 		default:				return "Unknown";
 		}
 	}
@@ -63,6 +69,25 @@ public:
 		case ITEM_CATEGORY::CookedFood:		return "CookedFood";
 		case ITEM_CATEGORY::Tool:			return "Tool";
 		default:							return "Unknown";
+		}
+	}
+
+	// @brief アイテムタイプからアイテムカテゴリーを取得する関数
+	static ITEM_CATEGORY GetItemCategoryFromType(ITEM_TYPE eType)
+	{
+		switch (eType)
+		{
+		case ITEM_TYPE::Wood:
+		case ITEM_TYPE::Stone:
+		case ITEM_TYPE::Iron:
+			return ITEM_CATEGORY::Material;
+		case ITEM_TYPE::Apple:
+			return ITEM_CATEGORY::UnCookedFood;
+		case ITEM_TYPE::Pickaxe:
+		case ITEM_TYPE::Axe:
+			return ITEM_CATEGORY::Tool;
+		default:
+			return ITEM_CATEGORY::Material;
 		}
 	}
 

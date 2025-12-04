@@ -13,6 +13,8 @@
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
 
+#include "BlackSmith.h"
+
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
@@ -201,5 +203,19 @@ void CFieldManager::CreateInitialVillage()
 	cells[randomIndex]->SetObject(pHumanHouse);
 	pHumanHouse->SetFieldCellIndex(cells[randomIndex]->GetIndex());
 
+	// 人間の家を配置したセルを建築可能地リストから削除
+	cells.erase(cells.begin() + randomIndex);
+	
+	// ランダムにセルを選択
+	randomIndex = rand() % cells.size();
 
+	// 鍛冶屋の生成と配置
+	CBuildObject* pBlackSmith = pScene->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
+	pBlackSmith->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pBlackSmith);
+	pBlackSmith->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+	// 鍛冶屋を配置したセルを建築可能地リストから削除
+	cells.erase(cells.begin() + randomIndex);
 }

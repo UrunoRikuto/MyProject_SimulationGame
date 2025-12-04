@@ -44,6 +44,16 @@ public:
 	// @return 収納されているアイテムリストの参照
 	const std::list<CItem*>& GetStoredItems() const { return m_StoredItems; }
 
+	// @brief 指定したアイテムタイプが存在するかどうかを取得
+	// @param eType：アイテムタイプ
+	// @return true:存在する false:存在しない
+	bool HasItemType(CItem::ITEM_TYPE eType) const;
+
+	// @brief 指定したアイテムカテゴリーが存在するかどうかを取得
+	// @param eCategory：アイテムカテゴリー
+	// @return true:存在する false:存在しない
+	bool HasItemCategory(CItem::ITEM_CATEGORY eCategory) const;
+
 	// @brief 食料が存在するかどうかを取得
 	bool HasFood() const;
 

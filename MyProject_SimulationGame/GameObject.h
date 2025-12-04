@@ -229,26 +229,15 @@ public:
 	// @return (DirectX::XMFLOAT4X4*)オブジェクトのワールド行列参照
     DirectX::XMFLOAT4X4* GetWorld();
 
-	// @brief オブジェクトの移動処理
-	// @param initPos：移動開始位置
-	// @param targetPos：移動目標位置
-	// @param time：経過時間
-	// @param duration：移動にかかる時間
-	// @param ease：イージングの種類(デフォルト0:なし)
-    void MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos,float time, float duration, int ease = 0);
-
-	// @brief オブジェクトの移動処理
-	// @param initPos：移動開始位置
-	// @param targetPos：移動目標位置
-	// @param moveObjectPos：移動させるオブジェクトの位置参照
-	// @param time：経過時間
-	// @param duration：移動にかかる時間
-	// @param ease：イージングの種類(デフォルト0:なし)
-    void MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos, DirectX::XMFLOAT3* moveObjectPos, float time, float duration, int ease = 0);
-
 	// @brief オブジェクトの境界半径を取得
 	// @return (float)オブジェクトの境界半径
     float GetBoundingRadius() const;
+
+    // @brief 目的のオブジェクトまで移動
+	// @param In_pTargetObj : 目的のオブジェクトのポインタ
+	// @param In_fMoveSpeed : 移動速度
+	// @return true:目的地に到達 false:目的地に到達していない
+	bool MoveToTarget(CGameObject* In_pTargetObj,float In_fMoveSpeed);
 
 public:
 

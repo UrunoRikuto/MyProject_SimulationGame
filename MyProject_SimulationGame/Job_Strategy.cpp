@@ -87,61 +87,40 @@ bool IJob_Strategy::RestAction()
 		return false;
 	}
 
-
-	// 休憩所の位置を取得
-	DirectX::XMFLOAT3 f3RefreshFacilityPos = m_UsingRefreshFacility->GetPos();
-
-	// オーナーの位置を取得
-	DirectX::XMFLOAT3 f3OwnerPos = m_pOwner->GetPos();
-
-	// オブジェクトとオーナーの位置の距離を計算
-	float fDistance = StructMath::Distance(f3OwnerPos, f3RefreshFacilityPos);
-
-	// 休憩施設に近づく処理
-	if (fDistance >= 1.0f)
+	// 休憩施設へ移動
+	if (m_pOwner->MoveToTarget(m_UsingRefreshFacility, Human_Move_Speed))
 	{
-		DirectX::XMFLOAT3 f3Diff = f3RefreshFacilityPos - f3OwnerPos;
-		// オーナーからオブジェクトへのベクトルを計算
-		DirectX::XMVECTOR f3Direction = DirectX::XMLoadFloat3(&f3Diff);
-		f3Direction = DirectX::XMVector3Normalize(f3Direction);
-		// オーナーの位置をオブジェクトに向かって少しずつ移動させる
-		DirectX::XMFLOAT3 f3Move;
-		DirectX::XMStoreFloat3(&f3Move, f3Direction);
-		f3OwnerPos += f3Move * Human_Move_Speed;
-		// オーナーの位置を更新
-		m_pOwner->SetPos(f3OwnerPos);
-		return false;
-	}
 
-	// 休憩施設を使用していない場合の処理
-	if (!m_UsingRefreshFacility->IsUsingRefreshFacility(*m_pOwner))
-	{
-		// 休憩施設が使用可能かどうか確認
-		if (!m_UsingRefreshFacility->CanUseRefreshFacility())
+		// 休憩施設を使用していない場合の処理
+		if (!m_UsingRefreshFacility->IsUsingRefreshFacility(*m_pOwner))
 		{
-			// 建築管理システムに休憩施設の建築リクエストを送る
-			CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
+			// 休憩施設が使用可能かどうか確認
+			if (!m_UsingRefreshFacility->CanUseRefreshFacility())
+			{
+				// 建築管理システムに休憩施設の建築リクエストを送る
+				CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::RefreshFacility);
 
-			// 休憩施設が使用不可の場合は休憩できないのでfalseを返す
-			return false;
+				// 休憩施設が使用不可の場合は休憩できないのでfalseを返す
+				return false;
+			}
+
+			// 休憩施設を使用
+			m_UsingRefreshFacility->UseRefreshFacility(*m_pOwner);
 		}
 
-		// 休憩施設を使用
-		m_UsingRefreshFacility->UseRefreshFacility(*m_pOwner);
-	}
+		// スタミナを回復
+		m_Status.m_fStamina += m_UsingRefreshFacility->GetRefreshStaminaAmount();
 
-	// スタミナを回復
-	m_Status.m_fStamina += m_UsingRefreshFacility->GetRefreshStaminaAmount();
-
-	// 休憩が完了したらtrueを返す
-	if (m_Status.m_fStamina >= m_Status.m_fMaxStamina)
-	{
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-		// 休憩施設の使用を解除
-		m_UsingRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
-		// 休憩施設IDをリセット
-		m_UsingRefreshFacility = nullptr;
-		return true;
+		// 休憩が完了したらtrueを返す
+		if (m_Status.m_fStamina >= m_Status.m_fMaxStamina)
+		{
+			m_Status.m_fStamina = m_Status.m_fMaxStamina;
+			// 休憩施設の使用を解除
+			m_UsingRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
+			// 休憩施設IDをリセット
+			m_UsingRefreshFacility = nullptr;
+			return true;
+		}
 	}
 
 	// 休憩中

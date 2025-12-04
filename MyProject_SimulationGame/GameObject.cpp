@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "Oparation.h"
 #include "ImguiSystem.h"
+#include "StructMath.h"
 
 #undef max
 
@@ -308,43 +309,6 @@ DirectX::XMFLOAT4X4* CGameObject::GetWorld()
 }
 
 /****************************************//*
-    @brief　	| オブジェクトを指定位置まで移動させる
-    @param      | initPos：移動開始位置
-    @param      | targetPos：移動目標位置
-    @param      | time：経過時間
-    @param      | duration：移動にかかる時間
-    @param      | ease：イージングの種類
-*//****************************************/
-void CGameObject::MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos, float time, float duration, int ease)
-{
-    if (time >= duration)
-    {
-        time = duration;
-    }
-
-    m_tParam.m_f3Pos = initPos + (targetPos - initPos) * (time / duration);
-}
-
-/****************************************//*
-    @brief　	| オブジェクトを指定位置まで移動させる
-    @param      | initPos：移動開始位置
-    @param      | targetPos：移動目標位置
-    @param      | moveObjectPos：移動させるオブジェクトの位置
-    @param      | time：経過時間
-    @param      | duration：移動にかかる時間
-    @param      | ease：イージングの種類
-*//****************************************/
-void CGameObject::MoveTo(DirectX::XMFLOAT3 initPos, DirectX::XMFLOAT3 targetPos, DirectX::XMFLOAT3* moveObjectPos, float time, float duration, int ease)
-{
-    if (time >= duration)
-    {
-        time = duration;
-    }
-
-    *moveObjectPos = initPos + (targetPos - initPos) * (time / duration);
-}
-
-/****************************************//*
     @brief　	| バウンディング半径の取得
     @return     | (float)バウンディング半径
 *//****************************************/
@@ -353,4 +317,37 @@ float CGameObject::GetBoundingRadius() const
     auto s = m_tParam.m_f3Size;
     float maxDim = std::max({ s.x, s.y, s.z });
     return maxDim * 0.5f;
+}
+
+/****************************************//*
+    @brief　	| ターゲットオブジェクトに向かって移動する
+    @param      | In_pTargetObj：ターゲットオブジェクトのポインタ
+	@param      | In_fMoveSpeed：移動速度
+    @return     | true:ターゲットに到達 false:到達していない
+*//****************************************/
+bool CGameObject::MoveToTarget(CGameObject* In_pTargetObj, float In_fMoveSpeed)
+{
+	// ターゲットオブジェクトの位置を取得
+	DirectX::XMFLOAT3 targetPos = In_pTargetObj->m_tParam.m_f3Pos;
+	// 自身の位置を取得
+	DirectX::XMFLOAT3 myPos = m_tParam.m_f3Pos;
+
+	// ターゲットまでの距離を計算
+	float distance = StructMath::Distance(myPos, targetPos);
+
+	// 一定距離以内に到達した場合
+    if (distance < 1.0f)return true;
+
+	// ターゲットに向かう方向ベクトルを計算
+	DirectX::XMFLOAT3 direction = targetPos - myPos;
+	// 正規化
+	direction = StructMath::Normalize(direction);
+
+	// 移動処理
+	myPos += direction * In_fMoveSpeed;
+
+	// 位置の更新
+	m_tParam.m_f3Pos = myPos;
+
+    return false;
 }

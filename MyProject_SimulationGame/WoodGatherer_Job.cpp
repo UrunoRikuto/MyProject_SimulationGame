@@ -28,3 +28,20 @@ CCollectTarget* CWoodGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTarget
 	// 木オブジェクトを探す
 	return GetScene()->GetGameObject<CWood>(m_pOwner->GetPos(), vNotTargetIDs);
 }
+
+/******************************************//*
+	@brief　	| 採取ツールを持っているかどうかを取得
+	@return		| true:持っている false:持っていない
+	@note		| 木を集めるためのツールを持っているかどうかを判定する処理を実装
+*//******************************************/
+bool CWoodGatherer_Job::HasCollectTool()
+{
+	// 収集ツールを持っていなければfalseを返す
+	if (m_pCollectItem == nullptr)return false;
+
+	// 収集ツールが斧であればtrueを返す
+	if (m_pCollectItem->GetItemType() == CItem::ITEM_TYPE::Axe)return true;
+
+	// それ以外はfalseを返す
+	return false;
+}

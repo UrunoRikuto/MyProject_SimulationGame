@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BillboardRenderer.h" />
+    <ClInclude Include="BlackSmith.h" />
     <ClInclude Include="Builder_Job.h" />
     <ClInclude Include="BuildManager.h" />
     <ClInclude Include="BuildObject.h" />
@@ -217,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BillboardRenderer.cpp" />
+    <ClCompile Include="BlackSmith.cpp" />
     <ClCompile Include="Builder_Job.cpp" />
     <ClCompile Include="BuildManager.cpp" />
     <ClCompile Include="BuildObject.cpp" />

@@ -154,6 +154,9 @@
     <Filter Include="コードファイル\GameObject\BuildObject\HumanHouse">
       <UniqueIdentifier>{41c4f86a-6e47-418e-97a9-ae1c4857b51d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\BuildObject\BlackSmith">
+      <UniqueIdentifier>{6ad3d417-8f39-4342-96ff-bfc4995464fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -375,6 +378,9 @@
     <ClInclude Include="GameTimeManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="BlackSmith.h">
+      <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -577,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="GameTimeManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackSmith.cpp">
+      <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
