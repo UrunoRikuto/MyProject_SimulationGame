@@ -350,9 +350,6 @@ void CSmith_Job::CraftingAction()
 		// 生産品を所持する
 		m_pOwner->SetToolItem(pProducedItem);
 
-		// 受け取った依頼をクリア
-		m_pRequest = nullptr;
-
 		// 仕事状態を完成品運搬中に変更
 		m_ePrevState = m_eCurrentState;
 		m_eCurrentState = WorkState::TransportingFinishedGoods;
@@ -372,6 +369,12 @@ void CSmith_Job::TransportingFinishedGoodsAction()
 
 	// 所持している完成品を貯蔵庫に預ける
 	pNearestStorageHouse->StoreItem(m_pOwner->TakeOutToolItem());
+
+	// 依頼の完了報告
+	CBlackSmith* pNearestBlackSmith = GetScene()->GetGameObject<CBlackSmith>(m_pOwner->GetPos());
+	pNearestBlackSmith->CompleteRequestTool(m_pRequest);
+	// 依頼ポインタをリセット
+	m_pRequest = nullptr;
 
 	// クールタイムを設定
 	m_fCoolTime = COOL_TIME_DURATION;

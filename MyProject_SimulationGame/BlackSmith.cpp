@@ -175,6 +175,27 @@ void CBlackSmith::ResetRequestTool(ToolRequest* pRequest)
 }
 
 /*****************************************//*
+	@brief　	| 生産依頼の完了報告
+	@param		| pRequest：ツール生産依頼構造体のポインタ
+	@return		| true:完了報告成功 false:完了報告失敗
+*//*****************************************/
+bool CBlackSmith::CompleteRequestTool(ToolRequest* pRequest)
+{
+	// 依頼リストから削除できなかった場合、もしくは生産が完了していない場合は削除しない
+	m_vRequestToolList.remove_if([pRequest](const ToolRequest& request) {
+		return (& request == pRequest) && pRequest->fProductionProgress >= 100.0f;
+		});
+	// 正常に削除された場合はtrueを返す
+	if (!HasRequestTool(pRequest->eToolType))
+	{
+		return true;
+	}
+
+	// 見つからなかった場合はfalseを返す
+	return false;
+}
+
+/*****************************************//*
 	@brief　	| 生産依頼を進める
 	@param		| In_Request：進行させるツール生産依頼構造体のポインタ
 	@return		| 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
@@ -189,12 +210,6 @@ CItem* CBlackSmith::ProgressRequestTool(ToolRequest* In_Request)
 	{
 		// 新しいCItemインスタンスを生成して返す
 		CItem* pNewItem = new CItem(In_Request->eToolType);
-
-		// 依頼リストから該当の依頼を削除
-		m_vRequestToolList.remove_if([In_Request](const ToolRequest& request)
-		{
-			return &request == In_Request;
-		});
 
 		return pNewItem;
 	}

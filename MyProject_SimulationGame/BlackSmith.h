@@ -81,6 +81,11 @@ public:
 	// @param pRequest：ツール生産依頼構造体のポインタ
 	void ResetRequestTool(ToolRequest* pRequest);
 
+	// @brief 生産依頼の完了報告
+	// @param pRequest：ツール生産依頼構造体のポインタ
+	// @return true:完了報告成功 false:完了報告失敗
+	bool CompleteRequestTool(ToolRequest* pRequest);
+
 	// @brief 生産依頼を進める
 	// @param In_Request：ツール生産依頼構造体のポインタ
 	// @return 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
