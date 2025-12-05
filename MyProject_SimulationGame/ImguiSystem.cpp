@@ -36,10 +36,6 @@ CImguiSystem::CImguiSystem()
 	, m_bCellsDraw(false)
 	, m_bOnlyHuman(false)
 {
-	// ジェネレーター情報の初期化
-	m_pGenerator.push_back({ "Human" , new(std::nothrow) CHumanGenerator() });
-	m_pGenerator.push_back({ "Wood"  , new(std::nothrow) CWoodGenerator() });
-	m_pGenerator.push_back({ "Stone" , new(std::nothrow) CStoneGenerator() });
 }
 
 /****************************************//*
@@ -598,12 +594,21 @@ void CImguiSystem::Release_DrawCivLevel()
 	ImGui::Begin("Civ Level", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 	// インスタンスの取得
 	CCivLevelManager* pCivLevelManager = CCivLevelManager::GetInstance();
+#ifndef _DEBUG
 	// 文明レベルの表示
 	std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
 	ImGui::TextColored(
 		ImVec4(0.5f, 1.0f, 0.0f, 1.0f),
 		std::string("Civ Level: " + sLevel).c_str()
 	);
+#else
+	// 編集可能な文明レベルの表示
+	int level = pCivLevelManager->GetCivLevel();
+	ImGui::InputInt("Civ Level", &level);
+	pCivLevelManager->SetCivLevel(level);
+
+#endif // !_DEBUG
+
 	// 現在経験値を取得
 	std::string sExp = std::to_string(static_cast<int>(pCivLevelManager->GetExp()));
 	// 必要経験値を取得

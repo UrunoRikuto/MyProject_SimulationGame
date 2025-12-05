@@ -34,16 +34,16 @@ void CObjectLoad::LoadAll()
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Stone.obj"), "Stone");
 
 	// 人間の家のモデルのロード
-	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("HumanHouse.obj"), "HumanHouse");
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("HumanHouse.obj"), "HumanHouse", 1.0f, Model::ZFlip);
 
 	// 貯蔵庫のモデルのロード
-	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("StorageHouse.obj"), "StorageHouse");
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("StorageHouse.obj"), "StorageHouse", 1.0f, Model::ZFlip);
 
 	// リフレッシュ施設のモデルのロード
-	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("RefreshFacility.obj"), "RefreshFacility");
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("RefreshFacility.obj"), "RefreshFacility", 1.0f, Model::ZFlip);
 
 	// 鍛冶屋のモデルのロード
-	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("BlackSmith.obj"), "BlackSmith");
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("BlackSmith.obj"), "BlackSmith", 1.0f, Model::ZFlip);
 
 	// HPバーのゲージテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Bar_Gauge.png"), "Bar_Gauge");

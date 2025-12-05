@@ -294,21 +294,6 @@ void CBuilder_Job::WaitingAction()
 *//*****************************************/
 void CBuilder_Job::GatherMaterialsAction()
 {
-	if(m_pBuildingObject == nullptr)
-	{
-		// ‘O‚Ìó‘Ô‚ð•Û‘¶
-		m_ePrevState = m_eCurrentState;
-		// Œš’z‘ÎÛ’Tõó‘Ô‚ÉˆÚs
-		m_eCurrentState = WorkState::Waiting;
-
-		// ˆË—Š‚ðƒLƒƒƒ“ƒZƒ‹
-		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
-		m_pCurrentBuildRequest = nullptr;
-
-		return;
-	}
-
-
 	// Œš’z•¨‚ÌˆË—ŠƒŒƒxƒ‹
 	int nRequiredLevel = 1;
 

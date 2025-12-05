@@ -15,7 +15,7 @@
 class CHumanHouse;
 
 // @brief 持てるアイテムの最大数
-constexpr int MaxHoldItem = 10;
+constexpr int MaxHoldItem = 50;
 
 // @brief 移動速度
 constexpr float Human_Move_Speed = 0.05f;

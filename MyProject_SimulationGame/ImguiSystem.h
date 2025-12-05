@@ -29,16 +29,6 @@ private:
 		bool m_bClear;
 	};
 
-	// @brief デバッグ用ジェネレーター情報構造体
-	struct DebugGeneratorInfo
-	{
-		// @brief ジェネレーター名
-		std::string m_sName;
-
-		// @brief ジェネレータータイプ
-		IGenerator* m_pGenerator;
-	};
-
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
@@ -168,9 +158,6 @@ private:
 	CHuman* m_pHumanObject;
 	// @brief 建築物オブジェクト
 	CBuildObject* m_pBuildObject;
-
-	// @brief 生成ポインタ配列
-	std::vector<DebugGeneratorInfo> m_pGenerator;
 
 	// @brief デバッグ用フラグ配列
 	bool m_bDebug[static_cast<int>(DebugSystemFlag::MAX)];

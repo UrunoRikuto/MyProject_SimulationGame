@@ -103,17 +103,17 @@ std::vector<std::string> CCivLevelManager::GetUnlockJobNames()
 	pUnlockJobNames.push_back(JobName::Neet);			// –³E
 	pUnlockJobNames.push_back(JobName::WoodGatherer);	// –ØŞûWE‹Æ
 	pUnlockJobNames.push_back(JobName::StoneGatherer);	// ÎûWE‹Æ
-	pUnlockJobNames.push_back(JobName::Builder);		// Œš’zE‹Æ
-	pUnlockJobNames.push_back(JobName::Smith);			// ’b–èE‹Æ
 
 	// ƒŒƒxƒ‹‚É‰‚¶‚Ä‰ğ•ú‚³‚ê‚éE‹Æ‚ğ’Ç‰Á
 	if (m_nCivLevel >= 5)
 	{
 		// ‚±‚±‚ÉƒŒƒxƒ‹5‚Å‰ğ•ú‚³‚ê‚éE‹Æ‚ğ’Ç‰Á
+		pUnlockJobNames.push_back(JobName::Builder);		// Œš’zE‹Æ
 	}
 	if(m_nCivLevel >= 10)
 	{
 		// ‚±‚±‚ÉƒŒƒxƒ‹10‚Å‰ğ•ú‚³‚ê‚éE‹Æ‚ğ’Ç‰Á
+		pUnlockJobNames.push_back(JobName::Smith);			// ’b–èE‹Æ
 	}
 
 	return pUnlockJobNames;
