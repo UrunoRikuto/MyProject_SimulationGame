@@ -31,6 +31,7 @@ CHuman::CHuman()
 	, m_eState(HUMAN_STATE::Working)
 	, m_isEating(false)
 	, m_pToolItem(nullptr)
+	, m_isReturnToolToStorage(false)
 {
 	// モデルレンダラーコンポーネントの追加
 	AddComponent<CModelRenderer>();
@@ -100,6 +101,20 @@ void CHuman::Update()
 {
 	// 基底クラスの更新処理
 	CGameObject::Update();
+
+	// ツールを貯蔵庫に返却する処理
+	if (m_isReturnToolToStorage)
+	{
+		// ツールを貯蔵庫に返却
+		CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+		// 移動処理
+		if (MoveToTarget(pStorageHouse, Human_Move_Speed))
+		{
+			pStorageHouse->StoreItem(TakeOutToolItem());
+			
+			m_isReturnToolToStorage = false;
+		}
+	}
 
 	// 人間の状態による処理分岐
 	switch (m_eState)
@@ -305,6 +320,22 @@ int CHuman::Inspecter(bool isEnd)
 		}
 	}
 
+	ImGui::Separator();
+
+	// 所持しているツールアイテムの表示
+	// 所持している収集ツールの表示
+	ImGui::Text("Collect Tool: ");
+	if (GetToolItem() != nullptr)
+	{
+		ImGui::Text(std::string(CItem::ITEM_TYPE_TO_STRING(m_pToolItem->GetItemType())).c_str());
+	}
+	else
+	{
+		ImGui::Text("NoTool");
+	}
+
+
+
 	// 折りたたみヘッダーの表示
 	if(ImGui::CollapsingHeader("Items"))
 	{
@@ -437,6 +468,9 @@ void CHuman::SetHumanJob(std::unique_ptr<IJob_Strategy> job)
 
 	// スタミナ値を引き継ぐ
 	job->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fStamina;
+
+	// ツールを持っていた場合、貯蔵庫に返却するフラグを立てる
+	if (m_pToolItem != nullptr)m_isReturnToolToStorage = true;
 	
 	// 所属オブジェクトを設定
 	m_pJob = std::move(job);
@@ -606,4 +640,26 @@ void CHuman::DecreaseHunger(float fAmount)
 	{
 		m_fHunger = 0.0f;
 	}
+}
+
+/****************************************//*
+	@brief　	| 道具アイテムを取り出す
+	@return		| 取り出した道具アイテムポインタ、所持していなかった場合はnullptr
+*//****************************************/
+CItem* CHuman::TakeOutToolItem()
+{
+	// ツールアイテムを所持している場合
+	if (m_pToolItem != nullptr)
+	{
+		// ツールアイテムを取り出す
+		CItem* pItem = m_pToolItem;
+		// 所持しているツールアイテムポインタをnullptrに設定
+		m_pToolItem = nullptr;
+
+		// 取り出したツールアイテムポインタを返す
+		return pItem;
+	}
+
+	// ツールアイテムを所持していなかった場合はnullptrを返す
+	return nullptr;
 }

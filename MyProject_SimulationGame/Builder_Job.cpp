@@ -534,6 +534,9 @@ void CBuilder_Job::BuildingAction()
 		cell->SetObject(m_pBuildingObject);
 	}
 
+	// 目的地に到達していない場合は処理を抜ける
+	if(!m_pOwner->MoveToTarget(m_pBuildingObject, Human_Move_Speed))return;
+
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
@@ -602,6 +605,9 @@ void CBuilder_Job::UpgradingAction()
 
 		return;
 	}
+
+	// 目的地に到達していない場合は処理を抜ける
+	if (!m_pOwner->MoveToTarget(m_pBuildingObject, Human_Move_Speed))return;
 
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);

@@ -130,18 +130,6 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 	ImGui::Separator();
 	ImGui::Text("[JobStatus]");
 
-	// 所持している収集ツールの表示
-	ImGui::Text("Collect Tool: ");
-	if (m_pOwner->GetToolItem() != nullptr)
-	{
-		ImGui::Text(std::string(CItem::ITEM_TYPE_TO_STRING(m_pOwner->GetToolItem()->GetItemType())).c_str());
-	}
-	else
-	{
-		ImGui::Text("NoTool");
-	}
-
-
 	// 標的にしているオブジェクトの表示
 	ImGui::Text("Target Object ID: ");
 	if (m_pTarget != nullptr)
@@ -159,38 +147,25 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 *//****************************************/
 void CGatherer_Strategy::SearchAndMoveAction()
 {
-	// 収集ツールを持っていない場合の処理
+	// 対応した収集ツールを持っていない場合の処理
 	if (!HasCollectTool())
 	{
 		// シーンを取得
 		CScene* pScene = GetScene();
 
-		// 倉庫に指定アイテムが存在するか確認
+		// 貯蔵庫を取得
 		CStorageHouse* pStorageHouse = pScene->GetGameObject<CStorageHouse>();
-
-		// 別の収集ツールを持っている場合
-		if (m_pOwner->GetToolItem() != nullptr)
-		{
-			if (m_pOwner->MoveToTarget(pStorageHouse, Human_Move_Speed))
-			{
-				// 収集ツールを倉庫に収納
-				pStorageHouse->StoreItem(m_pOwner->GetToolItem());
-				// 収集ツールをnullptrに設定
-				m_pOwner->SetToolItem(nullptr);
-			}
-			// 収集ツールをnullptrに設定
-			return;
-		}
 
 		// もし倉庫に必要な収集ツールが存在した場合は処理を抜ける
 		if (pStorageHouse->HasItemType(GetRequiredCollectToolType()))
 		{
 			// 貯蔵庫の一定距離以内に到達したら収集ツールを取得する
-			if (m_pOwner->MoveToTarget(pStorageHouse,Human_Move_Speed))
+			if (m_pOwner->MoveToTarget(pStorageHouse, Human_Move_Speed))
 			{
 				// 収集ツールをオーナーに設定
 				m_pOwner->SetToolItem(pStorageHouse->TakeOutItem(GetRequiredCollectToolType()));
 			}
+			else return;
 		}
 		else
 		{
@@ -208,6 +183,12 @@ void CGatherer_Strategy::SearchAndMoveAction()
 						// 鍛冶屋に生産依頼を出す
 						pBlacksmith->AddRequestTool(GetRequiredCollectToolType());
 					}
+				}
+				// 生産依頼が出せない場合
+				else
+				{
+					// 建築マネージャーに鍛冶屋の依頼を出す
+					CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::BlackSmith);
 				}
 			}
 		}

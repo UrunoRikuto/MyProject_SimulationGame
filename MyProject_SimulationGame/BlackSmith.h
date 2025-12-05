@@ -78,6 +78,7 @@ public:
 	ToolRequest* TakeRequestTool();
 
 	// @brief 生産依頼を未処理状態に設定
+	// @param pRequest：ツール生産依頼構造体のポインタ
 	void ResetRequestTool(ToolRequest* pRequest);
 
 	// @brief 生産依頼を進める

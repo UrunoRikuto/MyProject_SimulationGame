@@ -348,7 +348,7 @@ void CSmith_Job::CraftingAction()
 		}
 
 		// 生産品を所持する
-		m_pOwner->HoldItem(pProducedItem);
+		m_pOwner->SetToolItem(pProducedItem);
 
 		// 受け取った依頼をクリア
 		m_pRequest = nullptr;
@@ -371,7 +371,7 @@ void CSmith_Job::TransportingFinishedGoodsAction()
 	if (!m_pOwner->MoveToTarget(pNearestStorageHouse, Human_Move_Speed))return;
 
 	// 所持している完成品を貯蔵庫に預ける
-	pNearestStorageHouse->StoreItem(m_pOwner->TakeOutItem());
+	pNearestStorageHouse->StoreItem(m_pOwner->TakeOutToolItem());
 
 	// クールタイムを設定
 	m_fCoolTime = COOL_TIME_DURATION;

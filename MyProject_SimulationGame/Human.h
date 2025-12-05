@@ -155,6 +155,9 @@ public:
 	// @brief ツールアイテムの設定
 	void SetToolItem(CItem* pToolItem) { m_pToolItem = pToolItem; }
 
+	// @brief ツールアイテムを取り出す
+	CItem* TakeOutToolItem();
+
 private:
 	// @brief 人間の状態
 	HUMAN_STATE m_eState;
@@ -164,6 +167,8 @@ private:
 
 	// @brief ツールアイテム
 	CItem* m_pToolItem;
+	// @brief ツールを貯蔵庫に戻すかどうかのフラグ
+	bool m_isReturnToolToStorage = false;
 
 	// @brief 所持アイテムリスト
 	std::vector<CItem*> m_ItemList;

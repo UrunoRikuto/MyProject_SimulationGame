@@ -828,6 +828,12 @@ void CImguiSystem::Release_DrawHuman()
 
 	ImGui::TextColored(hungerTextColor, "Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
 
+	// 所持しているツールの表示
+	CItem* pTool = m_pHumanObject->GetToolItem();
+	std::string toolName = pTool ? CItem::ITEM_TYPE_TO_STRING(pTool->GetItemType()) : "None";
+	ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "Tool: %s", toolName.c_str());
+
+	// 現在の職業名の表示
 	ImGui::Text("[Job]:%s", items[currentJobIndex]);
 
 	// コンボボックスの表示
