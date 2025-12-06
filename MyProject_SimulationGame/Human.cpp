@@ -23,13 +23,11 @@
 	@brief　	| コンストラクタ
 *//****************************************/
 CHuman::CHuman()
-	: CGameObject()
+	: CEntity()
 	, m_pJob(std::make_unique<CNeet_Job>())
 	, m_pLivingHouse(nullptr)
 	, m_isRestingAtHome(false)
-	, m_fHunger(Human_Max_Hunger)
 	, m_eState(HUMAN_STATE::Working)
-	, m_isEating(false)
 	, m_pToolItem(nullptr)
 	, m_isReturnToolToStorage(false)
 {
@@ -40,6 +38,10 @@ CHuman::CHuman()
 	m_pStaminaGaugeBillboard = new CBillboardRenderer(this);
 	m_pStaminaGaugeBillboard->SetKey("Bar_Gauge");
 
+	// 体力初期化
+	m_fHealth = Max_Health;
+	// 脅威度の初期化
+	m_fThreat = ThreatLevels::Human;
 }
 
 /****************************************//*
@@ -100,7 +102,7 @@ void CHuman::Uninit()
 void CHuman::Update()
 {
 	// 基底クラスの更新処理
-	CGameObject::Update();
+	CEntity::Update();
 
 	// ツールを貯蔵庫に返却する処理
 	if (m_isReturnToolToStorage)
@@ -139,7 +141,7 @@ void CHuman::Update()
 	if(HasFood() || pStorageHouse->HasFood())
 	{
 		// 空腹度が警告値を下回ったら食事状態に移行
-		if (m_fHunger < Human_Warning_Hunger)
+		if (m_fHunger < Warning_Hunger)
 		{
 			m_eState = CHuman::HUMAN_STATE::Eating;
 			m_isEating = true;
@@ -185,12 +187,12 @@ void CHuman::Update()
 	// 休憩中でなければ等倍で空腹度を減少させる
 	if (m_eState != CHuman::HUMAN_STATE::Resting)
 	{
-		m_fHunger -= Human_Natural_Hunger_Decrease;
+		m_fHunger -= Natural_Hunger_Decrease;
 	}
 	// 休憩中であれば半分の速度で空腹度を減少させる
 	else
 	{
-		m_fHunger -= Human_Natural_Hunger_Decrease * 0.5f;
+		m_fHunger -= Natural_Hunger_Decrease * 0.5f;
 	}
 	// 空腹度が0を下回ったら死亡処理
 	if (m_fHunger < 0.0f)
@@ -281,7 +283,7 @@ int CHuman::Inspecter(bool isEnd)
 		HumgerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	ImGui::TextColored(HumgerTextColor,"Humger: %.2f / %.2f", m_fHunger, Human_Max_Hunger);
+	ImGui::TextColored(HumgerTextColor,"Humger: %.2f / %.2f", m_fHunger, Max_Hunger);
 
 	ImGui::Separator();
 
@@ -592,9 +594,9 @@ void CHuman::GoEatFood()
 				break;
 			}
 			// 空腹度が最大値を超えないように補正
-			if (m_fHunger > Human_Max_Hunger)
+			if (m_fHunger > Max_Hunger)
 			{
-				m_fHunger = Human_Max_Hunger;
+				m_fHunger = Max_Hunger;
 			}
 		}
 		// 食料が見つからなかった場合は仕事状態に移行
@@ -624,22 +626,6 @@ bool CHuman::HasFood() const
 
 	// 所持していなかった場合はfalseを返す
 	return false;
-}
-
-/****************************************//*
-	@brief　	| 空腹度の減少
-	@param		| fAmount：減少量
-*//****************************************/
-void CHuman::DecreaseHunger(float fAmount)
-{
-	// 空腹度を減少
-	m_fHunger -= fAmount;
-
-	// 空腹度が0未満にならないように補正
-	if (m_fHunger < 0.0f)
-	{
-		m_fHunger = 0.0f;
-	}
 }
 
 /****************************************//*

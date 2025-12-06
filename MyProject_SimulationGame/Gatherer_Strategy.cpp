@@ -262,7 +262,7 @@ void CGatherer_Strategy::GatheringAction()
 			m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 		}
 		// 空腹度を消費
-		m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+		m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 
 
 		// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定

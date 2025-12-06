@@ -67,9 +67,6 @@
     <Filter Include="コードファイル\Imgui\System">
       <UniqueIdentifier>{aa9d48a8-4962-427d-bf28-199f842fa78b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\GameObject\Human">
-      <UniqueIdentifier>{e336f92f-eb97-4c31-81d7-4d48de688259}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\System">
       <UniqueIdentifier>{295189ba-8034-4c9a-b9ee-455c221ca4ae}</UniqueIdentifier>
     </Filter>
@@ -132,6 +129,12 @@
     </Filter>
     <Filter Include="コードファイル\System\Job\Crafter\Base">
       <UniqueIdentifier>{98c25785-e346-4d12-bacd-8430ee03d5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\Entity">
+      <UniqueIdentifier>{1549e40d-cd7c-45ce-bb2e-6888699e3e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\Entity\Human">
+      <UniqueIdentifier>{e336f92f-eb97-4c31-81d7-4d48de688259}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -250,7 +253,7 @@
       <Filter>コードファイル\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="Human.h">
-      <Filter>コードファイル\GameObject\Human</Filter>
+      <Filter>コードファイル\GameObject\Entity\Human</Filter>
     </ClInclude>
     <ClInclude Include="Job_Strategy.h">
       <Filter>コードファイル\System\Job</Filter>
@@ -378,9 +381,14 @@
     <ClInclude Include="FarmFacility.h">
       <Filter>コードファイル\GameObject\BuildObject</Filter>
     </ClInclude>
-    <ClInclude Include="Farmer_Job.h" />
     <ClInclude Include="GrassGatherer_Job.h">
       <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>コードファイル\GameObject\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Farmer_Job.h">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -496,7 +504,7 @@
       <Filter>コードファイル\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="Human.cpp">
-      <Filter>コードファイル\GameObject\Human</Filter>
+      <Filter>コードファイル\GameObject\Entity\Human</Filter>
     </ClCompile>
     <ClCompile Include="Neet_Job.cpp">
       <Filter>コードファイル\System\Job\Neet</Filter>
@@ -614,6 +622,9 @@
     </ClCompile>
     <ClCompile Include="GrassGatherer_Job.cpp">
       <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>コードファイル\GameObject\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

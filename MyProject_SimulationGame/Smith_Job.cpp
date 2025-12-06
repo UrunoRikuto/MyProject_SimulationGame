@@ -327,7 +327,7 @@ void CSmith_Job::CraftingAction()
 	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
 	// 空腹度を消費
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)

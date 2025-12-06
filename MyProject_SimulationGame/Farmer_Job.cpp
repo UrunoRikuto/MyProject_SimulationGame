@@ -224,7 +224,7 @@ void CFarmer_Job::TendingCropsAction()
 			CItem* pSeedItem = hasSeedItems.front();
 			m_pTargetFarmFacility->AddCrop(pSeedItem->GetItemType());
 			// 空腹値を消費
-			m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+			m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 			// スタミナを消費
 			m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 			// スタミナが0以下になった場合は休憩状態に移行
@@ -311,7 +311,7 @@ void CFarmer_Job::HarvestingAction()
 		// 所持アイテムリストに追加
 		m_pOwner->HoldItem(pCompletedCrop);
 		// 空腹値を消費
-		m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+		m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 		// スタミナを消費
 		m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 

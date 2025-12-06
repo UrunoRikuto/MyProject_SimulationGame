@@ -5,7 +5,7 @@
 			| CGameObjectを継承
 *//**************************************************/
 #pragma once
-#include "GameObject.h"
+#include "Entity.h"
 #include "JobOperator.h"
 #include "Item.h"
 #include <memory>
@@ -14,27 +14,23 @@
 // 前方宣言
 class CHumanHouse;
 
+// @brief 体力の最大値
+constexpr float Max_Health = 100.0f;
+
 // @brief 持てるアイテムの最大数
 constexpr int MaxHoldItem = 50;
 
 // @brief 移動速度
-constexpr float Human_Move_Speed = 0.05f;
+constexpr float Human_Move_Speed = 0.1f;
 
-// @brief 最大空腹値
-constexpr float Human_Max_Hunger = 100.0f;
-// @brief 満腹値(通常状態に移行する値(少し幅持たせるため100未満にする))
-constexpr float Human_Full_Hunger = 95.0f;
-// @brief 空腹警告値(この値以下になると食事状態に移行)
-constexpr float Human_Warning_Hunger = 20.0f;
-// @brief 自然空腹減少値
-constexpr float Human_Natural_Hunger_Decrease = 0.01f;
-// @brief 仕事による空腹減少値(マイフレーム)
-constexpr float Human_Work_Hunger_Decrease = 0.5f;
 // @brief 未調理食料による空腹回復倍率
 constexpr float Human_UnCookedFood_Hunger_Recovery_Multiplier = 0.5f;
 
+// @brief 仕事による空腹減少値(マイフレーム)
+constexpr float Work_Hunger_Decrease = 0.5f;
+
 // @brief 人間オブジェクトクラス
-class CHuman final : public CGameObject
+class CHuman final : public CEntity
 {
 public:
 	// @brief 人間の状態列挙型
@@ -116,38 +112,12 @@ public:
 	// @brief 住んでいる家の設定
 	void SetLivingHouse(CHumanHouse* pHouse) { m_pLivingHouse = pHouse; }
 
-	// @brief 家に帰って休む処理
-	void GoHomeAndRest();
-
 	// @brief 家で休憩中かどうかの取得
 	// @return true:家で休憩中 false:休憩していない
 	bool IsRestingAtHome() const { return m_isRestingAtHome; }
 
-	// @brief 食べ物を食べに行く処理
-	void GoEatFood();
-
 	// @brief 食料があるかどうかの取得
 	bool HasFood() const;
-
-	// @brief 空腹度が満タンかどうかの取得
-	// @return true:満タン false:満タンではない
-	bool IsMaxHunger() const { return m_fHunger >= Human_Max_Hunger; }
-
-	// @brief 空腹度が満腹値以上かどうかの取得
-	// @return true:満腹値以上 false:満腹値未満
-	bool IsFullHunger() const { return m_fHunger >= Human_Full_Hunger; }
-
-	// @brief 空腹度が警告値以下かどうかの取得
-	// @return true:警告値以下 false:警告値以上
-	bool IsWarningHunger() const { return m_fHunger <= Human_Warning_Hunger; }
-
-	// @brief 空腹度の取得
-	// @return 空腹度
-	float GetHunger() const { return m_fHunger; }
-
-	// @brief 空腹度の減少
-	// @param fAmount：減少量
-	void DecreaseHunger(float fAmount);
 
 	// @brief ツールアイテムの取得
 	CItem* GetToolItem() const { return m_pToolItem; }
@@ -157,6 +127,14 @@ public:
 
 	// @brief ツールアイテムを取り出す
 	CItem* TakeOutToolItem();
+
+private:
+
+	// @brief 家に帰って休む処理
+	void GoHomeAndRest();
+
+	// @brief 食べ物を食べに行く処理
+	void GoEatFood();
 
 private:
 	// @brief 人間の状態
@@ -176,11 +154,6 @@ private:
 	// @brief スタミナゲージビルボード
 	// 0: 背景, 1: ゲージ本体
 	CBillboardRenderer* m_pStaminaGaugeBillboard;
-
-	// @brief 空腹度
-	float m_fHunger;
-	// @brier 食事フラグ
-	bool m_isEating;
 
 	// @brief 住んでいる家のポインタ
 	CHumanHouse* m_pLivingHouse;

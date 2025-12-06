@@ -825,12 +825,12 @@ void CImguiSystem::Release_DrawHuman()
 	// 空腹値の表示
 	float currentHunger = m_pHumanObject->GetHunger();
 	ImVec4 hungerTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // デフォルトは緑色
-	if (currentHunger < Human_Warning_Hunger)
+	if (currentHunger < Warning_Hunger)
 	{
 		hungerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 警告閾値未満は黄色
 	}
 
-	ImGui::TextColored(hungerTextColor, "Hunger: %.1f / %.1f", currentHunger, Human_Max_Hunger);
+	ImGui::TextColored(hungerTextColor, "Hunger: %.1f / %.1f", currentHunger, Max_Hunger);
 
 	// 所持しているツールの表示
 	CItem* pTool = m_pHumanObject->GetToolItem();

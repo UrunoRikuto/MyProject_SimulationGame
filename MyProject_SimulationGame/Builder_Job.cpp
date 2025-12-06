@@ -233,20 +233,13 @@ void CBuilder_Job::WaitingAction()
 	// クールタイムが残っている場合
 	if (m_fCoolTime > 0.0f)
 	{
-		// 家に帰って休む
-		m_pOwner->GoHomeAndRest();
+		// クールタイムを減少
+		m_fCoolTime -= 1.0f / fFPS;
 
-		// 家で休憩中の場合
-		if (m_pOwner->IsRestingAtHome())
+		// クールタイムが終了した場合
+		if (m_fCoolTime <= 0.0f)
 		{
-			// クールタイムを減少
-			m_fCoolTime -= 1.0f / fFPS;
-
-			// クールタイムが終了した場合
-			if (m_fCoolTime <= 0.0f)
-			{
-				m_fCoolTime = 0.0f;
-			}
+			m_fCoolTime = 0.0f;
 		}
 
 		// クールタイム中は処理を抜ける
@@ -512,7 +505,7 @@ void CBuilder_Job::BuildingAction()
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少させる
 	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
@@ -584,7 +577,7 @@ void CBuilder_Job::UpgradingAction()
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少させる
 	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 

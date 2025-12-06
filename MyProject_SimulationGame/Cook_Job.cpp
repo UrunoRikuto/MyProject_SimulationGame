@@ -274,7 +274,7 @@ void CCook_Job::CookingAction()
 	std::vector<CItem*> pCookedItems = m_pFoodFactory->ProgressRequest(m_pRequest);
 
 	// 空腹値の減少
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
+	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少
 	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
