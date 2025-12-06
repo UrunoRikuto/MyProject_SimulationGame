@@ -10,6 +10,7 @@
 #include "Main.h"
 #include "BuildManager.h"
 #include "StorageHouse.h"
+#include "Item_Material.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -234,7 +235,7 @@ void CSmith_Job::GatheringMaterialsAction()
 	if (!m_pOwner->MoveToTarget(storageHouses, Human_Move_Speed))return;
 
 	// 素材収集処理
-	std::vector<CBuildManager::BuildMaterial> HasMaterials;
+	std::vector<CItem::Material> HasMaterials;
 	// 所持素材リストのサイズを必要素材リストのサイズに合わせる
 	HasMaterials.resize(requiredMaterials.size());
 

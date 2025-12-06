@@ -9,7 +9,7 @@
 #include "Item.h"
 
 // @brief 鍛冶屋クラス
-class CBlackSmith : public CBuildObject
+class CBlackSmith final: public CBuildObject
 {
 private:
 	// @brief 同時に保持できるツール生産依頼の最大数配列

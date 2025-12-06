@@ -18,8 +18,11 @@ CBuildObject::CBuildObject()
 	, m_n2FieldCellIndex({ -1, -1 })
 {
 	// 耐久値初期化
-	m_pHpBillboard = new CBillboardRenderer(this);
-	m_pHpBillboard->SetKey("Bar_Gauge");
+	m_pBuildProgressBillboard = new CBillboardRenderer(this);
+	m_pBuildProgressBillboard->SetKey("Bar_Gauge");
+
+	// モデルコンポーネントの追加
+	AddComponent<CModelRenderer>();
 }
 
 /****************************************//* 
@@ -52,15 +55,15 @@ void CBuildObject::Draw()
 	if (BuildProgressRatio < 1.0f)
 	{
 		// 建築進行度おビルボードの描画
-		m_pHpBillboard->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - BuildProgressRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
-		m_pHpBillboard->SetSize({ 2.0f * BuildProgressRatio, 0.2f, 1.0f });
-		m_pHpBillboard->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		m_pHpBillboard->SetUVPos({ 0.0f, 0.0f });
-		m_pHpBillboard->SetUVSize({ 1.0f, 1.0f });
-		m_pHpBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
-		m_pHpBillboard->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-		m_pHpBillboard->SetCullingMode(D3D11_CULL_FRONT);
-		m_pHpBillboard->Draw();
+		m_pBuildProgressBillboard->SetPos({ m_tParam.m_f3Pos.x - (m_tParam.m_f3Size.x * (1.0f - BuildProgressRatio)), m_tParam.m_f3Pos.y + 2.0f, m_tParam.m_f3Pos.z });
+		m_pBuildProgressBillboard->SetSize({ 2.0f * BuildProgressRatio, 0.2f, 1.0f });
+		m_pBuildProgressBillboard->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		m_pBuildProgressBillboard->SetUVPos({ 0.0f, 0.0f });
+		m_pBuildProgressBillboard->SetUVSize({ 1.0f, 1.0f });
+		m_pBuildProgressBillboard->SetRotation({ 0.0f, 0.0f, 0.0f });
+		m_pBuildProgressBillboard->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+		m_pBuildProgressBillboard->SetCullingMode(D3D11_CULL_FRONT);
+		m_pBuildProgressBillboard->Draw();
 	}
 }
 

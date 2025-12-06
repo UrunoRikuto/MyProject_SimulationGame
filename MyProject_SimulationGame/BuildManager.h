@@ -86,13 +86,6 @@ public:
 		DirectX::XMINT2 n2BuildIndex;	// 建築位置
 	};
 
-	// @brief 建築素材構造体
-	struct BuildMaterial
-	{
-		CItem::ITEM_TYPE eItemType;		// アイテムタイプ
-		int nRequiredAmount;			// 必要数
-	};
-
 private:
 	// @brief コンストラクタ
 	CBuildManager();
@@ -142,55 +135,3 @@ private:
 	// 建築依頼リスト
 	std::list<BuildRequest> m_BuildRequestList;
 };
-
-// @brief 建築素材データ名前空間
-namespace BuildMaterials
-{
-	// @brief 休憩所に必要な素材
-	const std::vector<CBuildManager::BuildMaterial> RefreshFacility[CBuildObject::MAX_BUILD_LEVEL] =
-	{
-		// Level 1(初期建築)
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 }},
-		// Level 2
-		{{ CItem::ITEM_TYPE::Wood,  10 },{ CItem::ITEM_TYPE::Stone,   10 }},
-		// Level 3
-		{{ CItem::ITEM_TYPE::Wood,  15 },{ CItem::ITEM_TYPE::Stone,   15 }},
-		// Level 4
-		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 }},
-		// Level 5
-		{{ CItem::ITEM_TYPE::Wood,  25 },{ CItem::ITEM_TYPE::Stone,   25 }},
-	};
-
-	// @brief 人間の家に必要な素材
-	const std::vector<CBuildManager::BuildMaterial> HumanHouse[CBuildObject::MAX_BUILD_LEVEL] =
-	{
-		// Level 1(初期建築)
-		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   20 }},
-		// Level 2
-		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,  10 }},
-		// Level 3
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  10 }},
-		// Level 4
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  20 }},
-		// Level 5
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,  30 }},
-	};
-
-	// @brief 鍛冶屋に必要な素材
-	const std::vector<CBuildManager::BuildMaterial> BlackSmith[CBuildObject::MAX_BUILD_LEVEL] =
-	{
-		// Level 1(初期建築)
-		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 },{ CItem::ITEM_TYPE::Iron, 10 }},
-		// Level 2
-		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 },{ CItem::ITEM_TYPE::Iron, 10 }},
-		// Level 3
-		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 },{ CItem::ITEM_TYPE::Iron, 15 }},
-		// Level 4
-		{{ CItem::ITEM_TYPE::Wood,  40 },{ CItem::ITEM_TYPE::Stone,   40 },{ CItem::ITEM_TYPE::Iron, 20 }},
-		// Level 5
-		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   50 },{ CItem::ITEM_TYPE::Iron, 25 }},
-	};
-
-	// @brief 指定された建築タイプの建築素材リストを取得
-	std::vector<CBuildManager::BuildMaterial> GetBuildMaterials(CBuildManager::BuildType eType, int nLevel);
-}

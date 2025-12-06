@@ -1,7 +1,7 @@
 /**************************************************//*
 	@file	| BlackSmith.cpp
 	@brief	| 鍛冶屋クラスのcppファイル
-	@note	| 鍛冶屋オブジェクトの処理を実装
+	@note	| 道具を生産する建築物
 			| CBuildObjectを継承
 *//**************************************************/
 #include "BlackSmith.h"
@@ -15,8 +15,6 @@
 CBlackSmith::CBlackSmith()
 	:CBuildObject()
 {
-	// モデルレンダラーコンポーネントの追加
-	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*
@@ -36,14 +34,16 @@ void CBlackSmith::Init()
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("BlackSmith");
-	pModelRenderer->SetRendererParam(m_tParam);
+
+	// シェーダーマネージャーの取得
+	CShaderManager* pShaderManager = CShaderManager::GetInstance();
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
-	pModelRenderer->SetVertexShader(pVS);
+	pModelRenderer->SetVertexShader(pShaderManager->GetVertexShader(VSType::Object));
+
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
-	pModelRenderer->SetPixelShader(pPS);
+	pModelRenderer->SetPixelShader(pShaderManager->GetPixelShader(PSType::TexColor));
+
 }
 
 /*****************************************//*

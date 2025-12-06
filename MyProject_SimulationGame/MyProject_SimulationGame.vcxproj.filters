@@ -88,32 +88,11 @@
     <Filter Include="コードファイル\System\Job\Collect\Gatherer">
       <UniqueIdentifier>{9ea2c148-e701-4b13-b0f3-4e5d2e81998e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Job\Collect\Gatherer\Stone">
-      <UniqueIdentifier>{8c5b2c4e-a9f8-4608-9957-3ed3214da8a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\System\Job\Collect\Gatherer\Wood">
-      <UniqueIdentifier>{eb884754-1140-4515-804e-b7b03445c0fb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\System\Generator">
       <UniqueIdentifier>{67ec8cb8-bb32-4110-8ddf-a400bc6ddcf9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Generator\Wood">
-      <UniqueIdentifier>{63b4da21-82f0-4b26-963d-375cf618c425}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\System\Generator\Stone">
-      <UniqueIdentifier>{28d8a6a3-0a28-4991-9f8c-e02bc73324e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\System\Generator\Human">
-      <UniqueIdentifier>{7a2916ff-f6e1-4fcf-b827-4eb0cfd7010a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\GameObject\CollectTarget">
       <UniqueIdentifier>{b43c4f57-46cc-4bb2-94ec-35ab5bd07d90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\GameObject\CollectTarget\Stone">
-      <UniqueIdentifier>{d8e39967-5ffe-4ca6-a2ed-0801bf28e902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\GameObject\CollectTarget\Wood">
-      <UniqueIdentifier>{057adf7b-b29c-4d24-a867-8cdd31401c2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="コードファイル\System\Field">
       <UniqueIdentifier>{d4762aec-6cfc-492b-b6fb-c1f73269ba05}</UniqueIdentifier>
@@ -127,20 +106,11 @@
     <Filter Include="コードファイル\System\Job\Crafter">
       <UniqueIdentifier>{491806e7-1fdb-4ad2-b61d-6a45a78c0b61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Job\Crafter\Builder">
-      <UniqueIdentifier>{2e1d1b58-e2f5-43f7-b660-39bc386c150a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\GameObject\BuildObject">
       <UniqueIdentifier>{2d1b6088-19fe-481a-aaaa-87d8614bd7a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\GameObject\BuildObject\StorageHouse">
-      <UniqueIdentifier>{ea779c31-9054-451c-8d3b-fd3ca69d6115}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\GameObject\FieldGround">
       <UniqueIdentifier>{c304a0c0-ea87-4e90-b196-bcf98662b225}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="コードファイル\GameObject\BuildObject\RefreshFacility">
-      <UniqueIdentifier>{55566f4a-3bcd-4fcc-8095-c14130949a3c}</UniqueIdentifier>
     </Filter>
     <Filter Include="コードファイル\System\Generator\Observer">
       <UniqueIdentifier>{92be303c-d85f-4231-872f-63ab2c08653b}</UniqueIdentifier>
@@ -151,14 +121,17 @@
     <Filter Include="コードファイル\System\Manager">
       <UniqueIdentifier>{774a8e17-2d4d-48b4-98da-0291ff958952}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\GameObject\BuildObject\HumanHouse">
-      <UniqueIdentifier>{41c4f86a-6e47-418e-97a9-ae1c4857b51d}</UniqueIdentifier>
+    <Filter Include="コードファイル\GameObject\BuildObject\Base">
+      <UniqueIdentifier>{69ea3848-8d48-414f-a807-36c474bbf69f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\GameObject\BuildObject\BlackSmith">
-      <UniqueIdentifier>{6ad3d417-8f39-4342-96ff-bfc4995464fb}</UniqueIdentifier>
+    <Filter Include="コードファイル\GameObject\CollectTarget\Base">
+      <UniqueIdentifier>{822ef2f7-83f4-4483-9df9-1e4a1b0c0054}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\System\Job\Crafter\Smith">
-      <UniqueIdentifier>{9bb9b4a4-aaa0-4a5f-89dd-6d8f4a354ea2}</UniqueIdentifier>
+    <Filter Include="コードファイル\System\Job\Collect\Gatherer\Base">
+      <UniqueIdentifier>{18682dde-de25-4d06-93fc-58ceae7aaf66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\Job\Crafter\Base">
+      <UniqueIdentifier>{98c25785-e346-4d12-bacd-8430ee03d5a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -288,23 +261,8 @@
     <ClInclude Include="JobOperator.h">
       <Filter>コードファイル\System\Job\Operator</Filter>
     </ClInclude>
-    <ClInclude Include="Wood.h">
-      <Filter>コードファイル\GameObject\CollectTarget\Wood</Filter>
-    </ClInclude>
     <ClInclude Include="Neet_Job.h">
       <Filter>コードファイル\System\Job\Neet</Filter>
-    </ClInclude>
-    <ClInclude Include="WoodGatherer_Job.h">
-      <Filter>コードファイル\System\Job\Collect\Gatherer\Wood</Filter>
-    </ClInclude>
-    <ClInclude Include="Stone.h">
-      <Filter>コードファイル\GameObject\CollectTarget\Stone</Filter>
-    </ClInclude>
-    <ClInclude Include="StoneGatherer_Job.h">
-      <Filter>コードファイル\System\Job\Collect\Gatherer\Stone</Filter>
-    </ClInclude>
-    <ClInclude Include="Gatherer_Strategy.h">
-      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
       <Filter>コードファイル\System\Generator\Observer</Filter>
@@ -314,18 +272,6 @@
     </ClInclude>
     <ClInclude Include="Generator.h">
       <Filter>コードファイル\System\Generator</Filter>
-    </ClInclude>
-    <ClInclude Include="WoodGenerator.h">
-      <Filter>コードファイル\System\Generator\Wood</Filter>
-    </ClInclude>
-    <ClInclude Include="StoneGenerator.h">
-      <Filter>コードファイル\System\Generator\Stone</Filter>
-    </ClInclude>
-    <ClInclude Include="HumanGenerator.h">
-      <Filter>コードファイル\System\Generator\Human</Filter>
-    </ClInclude>
-    <ClInclude Include="CollectTarget.h">
-      <Filter>コードファイル\GameObject\CollectTarget</Filter>
     </ClInclude>
     <ClInclude Include="FieldGrid.h">
       <Filter>コードファイル\System\Field</Filter>
@@ -339,23 +285,8 @@
     <ClInclude Include="Item.h">
       <Filter>コードファイル\System\Item</Filter>
     </ClInclude>
-    <ClInclude Include="Crafter_Strategy.h">
-      <Filter>コードファイル\System\Job\Crafter</Filter>
-    </ClInclude>
-    <ClInclude Include="Builder_Job.h">
-      <Filter>コードファイル\System\Job\Crafter\Builder</Filter>
-    </ClInclude>
-    <ClInclude Include="BuildObject.h">
-      <Filter>コードファイル\GameObject\BuildObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StorageHouse.h">
-      <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
-    </ClInclude>
     <ClInclude Include="FieldGround.h">
       <Filter>コードファイル\GameObject\FieldGround</Filter>
-    </ClInclude>
-    <ClInclude Include="RefreshFacility.h">
-      <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
     </ClInclude>
     <ClInclude Include="SkyBox.h">
       <Filter>コードファイル\GameObject\SkyBox</Filter>
@@ -372,20 +303,68 @@
     <ClInclude Include="ShaderManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="HumanHouse.h">
-      <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
-    </ClInclude>
     <ClInclude Include="CivLevelManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
     <ClInclude Include="GameTimeManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Item_Material.h">
+      <Filter>コードファイル\System\Item</Filter>
+    </ClInclude>
     <ClInclude Include="BlackSmith.h">
-      <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="HumanHouse.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="FoodFactory.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="RefreshFacility.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageHouse.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Stone.h">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="Wood.h">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="HumanGenerator.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodGenerator.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="StoneGenerator.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="StoneGatherer_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodGatherer_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="Builder_Job.h">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
     <ClInclude Include="Smith_Job.h">
-      <Filter>コードファイル\System\Job\Crafter\Smith</Filter>
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildObject.h">
+      <Filter>コードファイル\GameObject\BuildObject\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CollectTarget.h">
+      <Filter>コードファイル\GameObject\CollectTarget\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Gatherer_Strategy.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Crafter_Strategy.h">
+      <Filter>コードファイル\System\Job\Crafter\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -506,32 +485,8 @@
     <ClCompile Include="JobOperator.cpp">
       <Filter>コードファイル\System\Job\Operator</Filter>
     </ClCompile>
-    <ClCompile Include="Wood.cpp">
-      <Filter>コードファイル\GameObject\CollectTarget\Wood</Filter>
-    </ClCompile>
     <ClCompile Include="Neet_Job.cpp">
       <Filter>コードファイル\System\Job\Neet</Filter>
-    </ClCompile>
-    <ClCompile Include="WoodGatherer_Job.cpp">
-      <Filter>コードファイル\System\Job\Collect\Gatherer\Wood</Filter>
-    </ClCompile>
-    <ClCompile Include="Stone.cpp">
-      <Filter>コードファイル\GameObject\CollectTarget\Stone</Filter>
-    </ClCompile>
-    <ClCompile Include="StoneGatherer_Job.cpp">
-      <Filter>コードファイル\System\Job\Collect\Gatherer\Stone</Filter>
-    </ClCompile>
-    <ClCompile Include="Gatherer_Strategy.cpp">
-      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
-    </ClCompile>
-    <ClCompile Include="WoodGenerator.cpp">
-      <Filter>コードファイル\System\Generator\Wood</Filter>
-    </ClCompile>
-    <ClCompile Include="StoneGenerator.cpp">
-      <Filter>コードファイル\System\Generator\Stone</Filter>
-    </ClCompile>
-    <ClCompile Include="HumanGenerator.cpp">
-      <Filter>コードファイル\System\Generator\Human</Filter>
     </ClCompile>
     <ClCompile Include="FieldGrid.cpp">
       <Filter>コードファイル\System\Field</Filter>
@@ -542,26 +497,11 @@
     <ClCompile Include="PerlinNoice.cpp">
       <Filter>コードファイル\System\PerlinNoise</Filter>
     </ClCompile>
-    <ClCompile Include="CollectTarget.cpp">
-      <Filter>コードファイル\GameObject\CollectTarget</Filter>
-    </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>コードファイル\System\Item</Filter>
     </ClCompile>
-    <ClCompile Include="Builder_Job.cpp">
-      <Filter>コードファイル\System\Job\Crafter\Builder</Filter>
-    </ClCompile>
-    <ClCompile Include="BuildObject.cpp">
-      <Filter>コードファイル\GameObject\BuildObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StorageHouse.cpp">
-      <Filter>コードファイル\GameObject\BuildObject\StorageHouse</Filter>
-    </ClCompile>
     <ClCompile Include="FieldGround.cpp">
       <Filter>コードファイル\GameObject\FieldGround</Filter>
-    </ClCompile>
-    <ClCompile Include="RefreshFacility.cpp">
-      <Filter>コードファイル\GameObject\BuildObject\RefreshFacility</Filter>
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
       <Filter>コードファイル\GameObject\SkyBox</Filter>
@@ -581,9 +521,6 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="HumanHouse.cpp">
-      <Filter>コードファイル\GameObject\BuildObject\HumanHouse</Filter>
-    </ClCompile>
     <ClCompile Include="CivLevelManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
@@ -591,10 +528,58 @@
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
     <ClCompile Include="BlackSmith.cpp">
-      <Filter>コードファイル\GameObject\BuildObject\BlackSmith</Filter>
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanHouse.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="FoodFactory.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="RefreshFacility.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="StorageHouse.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Stone.cpp">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Wood.cpp">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanGenerator.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodGenerator.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="StoneGenerator.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="StoneGatherer_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodGatherer_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="Builder_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClCompile>
     <ClCompile Include="Smith_Job.cpp">
-      <Filter>コードファイル\System\Job\Crafter\Smith</Filter>
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClCompile>
+    <ClCompile Include="Item_Material.cpp">
+      <Filter>コードファイル\System\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildObject.cpp">
+      <Filter>コードファイル\GameObject\BuildObject\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="CollectTarget.cpp">
+      <Filter>コードファイル\GameObject\CollectTarget\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Gatherer_Strategy.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

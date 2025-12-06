@@ -13,7 +13,7 @@
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
 
-#include "BlackSmith.h"
+#include "FoodFactory.h"
 
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
@@ -204,6 +204,19 @@ void CFieldManager::CreateInitialVillage()
 	pHumanHouse->SetFieldCellIndex(cells[randomIndex]->GetIndex());
 
 	// 人間の家を配置したセルを建築可能地リストから削除
+	cells.erase(cells.begin() + randomIndex);
+
+	// ランダムにセルを選択
+	randomIndex = rand() % cells.size();
+
+	// 食料工場の生成と配置
+	CBuildObject* pFoodFactory = pScene->AddGameObject<CFoodFactory>(Tag::GameObject, "FoodFactory");
+	pFoodFactory->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pFoodFactory);
+	pFoodFactory->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+	// 食料工場を配置したセルを建築可能地リストから削除
 	cells.erase(cells.begin() + randomIndex);
 	
 }

@@ -254,26 +254,3 @@ DirectX::XMINT2 CBuildManager::DecideRandomBuildPosition()
 	// 選択したセルのインデックスを返す
 	return cells[randomIndex]->GetIndex();
 }
-
-/*****************************************//*
-	@brief	| 建築素材を取得
-	@param	| eType：建築物タイプ
-	@return	| 建築素材の配列
-*//*****************************************/
-std::vector<CBuildManager::BuildMaterial> BuildMaterials::GetBuildMaterials(CBuildManager::BuildType eType, int nLevel)
-{
-	switch (eType)
-	{
-	case CBuildManager::BuildType::RefreshFacility:
-		return RefreshFacility[nLevel];
-	case CBuildManager::BuildType::HumanHouse:
-		return HumanHouse[nLevel];
-	case CBuildManager::BuildType::BlackSmith:
-		return BlackSmith[nLevel];
-	default:
-		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
-		break;
-	}
-
-	return {};
-}

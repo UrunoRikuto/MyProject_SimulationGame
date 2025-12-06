@@ -72,7 +72,7 @@ protected:
 	// @brief 自分を配置しているフィールドセルのインデックス
 	DirectX::XMINT2 m_n2FieldCellIndex;
 
-	// @brief 耐久値を表示するビルボードコンポーネント
-	CBillboardRenderer* m_pHpBillboard;
+	// @brief 建築進行度ビルボードレンダラー
+	CBillboardRenderer* m_pBuildProgressBillboard;
 };
 

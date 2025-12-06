@@ -5,7 +5,6 @@
 *//**************************************************/
 #pragma once
 #include <string>
-#include <vector>
 
 // @brief アイテムクラス
 class CItem
@@ -16,16 +15,22 @@ public:
 	{
 		// 木材
 		Wood,
-		// リンゴ
-		Apple,
 		// 石材
 		Stone,
 		// 鉄材
 		Iron,
+
 		// つるはし
 		Pickaxe,
 		// 斧
 		Axe,
+
+		// リンゴ
+		Apple,
+		// 砂糖
+		Sugar,
+		// アップルパイ
+		ApplePie,
 
 		MAX
 	};
@@ -36,11 +41,13 @@ public:
 		switch (eType)
 		{
 		case ITEM_TYPE::Wood:	return "Wood";
-		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
 		case ITEM_TYPE::Pickaxe:return "Pickaxe";
 		case ITEM_TYPE::Axe:	return "Axe";
+		case ITEM_TYPE::Apple:	return "Apple";
+		case ITEM_TYPE::Sugar:	return "Sugar";
+		case ITEM_TYPE::ApplePie:return "ApplePie";
 		default:				return "Unknown";
 		}
 	}
@@ -81,9 +88,12 @@ public:
 		case ITEM_TYPE::Wood:
 		case ITEM_TYPE::Stone:
 		case ITEM_TYPE::Iron:
+		case ITEM_TYPE::Sugar:
 			return ITEM_CATEGORY::Material;
 		case ITEM_TYPE::Apple:
 			return ITEM_CATEGORY::UnCookedFood;
+		case ITEM_TYPE::ApplePie:
+			return ITEM_CATEGORY::CookedFood;
 		case ITEM_TYPE::Pickaxe:
 		case ITEM_TYPE::Axe:
 			return ITEM_CATEGORY::Tool;
@@ -92,13 +102,13 @@ public:
 		}
 	}
 
-	// @brief 道具素材構造体
-	struct ToolMaterial
+
+	// @brief 素材構造体
+	struct Material
 	{
 		CItem::ITEM_TYPE eItemType;		// アイテムタイプ
 		int nRequiredAmount;			// 必要数
 	};
-
 
 public:
 	// @brief コンストラクタ
@@ -129,22 +139,3 @@ private:
 	ITEM_TYPE m_eItemType;
 
 };
-
-// @brief 道具素材データ名前空間
-namespace ToolMaterials
-{
-	// @brief 斧の素材リスト
-	const std::vector<CItem::ToolMaterial> Axe = {
-		{ CItem::ITEM_TYPE::Wood,  5 },
-		{ CItem::ITEM_TYPE::Iron,  2 }
-	};
-
-	// @brief つるはしの素材リスト
-	const std::vector<CItem::ToolMaterial> Pickaxe = {
-		{ CItem::ITEM_TYPE::Wood,  5 },
-		{ CItem::ITEM_TYPE::Iron,  3 }
-	};
-
-	// @brief 指定された道具タイプの素材リストを取得
-	std::vector<CItem::ToolMaterial> GetToolMaterials(CItem::ITEM_TYPE eType);
-}

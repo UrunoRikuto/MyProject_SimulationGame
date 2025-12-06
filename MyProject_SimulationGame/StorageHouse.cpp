@@ -15,8 +15,6 @@
 CStorageHouse::CStorageHouse()
 	:CBuildObject()
 {
-	// モデルレンダラーコンポーネントの追加
-	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*
@@ -37,15 +35,16 @@ void CStorageHouse::Init()
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("StorageHouse");
-	pModelRenderer->SetRendererParam(m_tParam);
+
+	// シェーダーマネージャーの取得
+	CShaderManager* pShaderManager = CShaderManager::GetInstance();
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
-	pModelRenderer->SetVertexShader(pVS);
+	pModelRenderer->SetVertexShader(pShaderManager->GetVertexShader(VSType::Object));
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
-	pModelRenderer->SetPixelShader(pPS);
+	pModelRenderer->SetPixelShader(pShaderManager->GetPixelShader(PSType::TexColor));
+
 }
 
 /*****************************************//*

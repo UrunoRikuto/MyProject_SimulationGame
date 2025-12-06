@@ -1,7 +1,7 @@
 /**************************************************//*
 	@file	| RefreshFacility.cpp
 	@brief	| 休憩施設クラスのcppファイル
-	@note	| 休憩施設の処理を実装
+	@note	| 人間のスタミナを回復させる施設
 			| CBuildObjectを継承
 *//**************************************************/
 #include "RefreshFacility.h"
@@ -15,8 +15,6 @@
 CRefreshFacility::CRefreshFacility()
 	:CBuildObject()
 {
-	// モデルレンダラーコンポーネントの追加
-	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*
@@ -37,15 +35,16 @@ void CRefreshFacility::Init()
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("RefreshFacility");
-	pModelRenderer->SetRendererParam(m_tParam);
+
+	// シェーダーマネージャーの取得
+	CShaderManager* pShaderManager = CShaderManager::GetInstance();
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
-	pModelRenderer->SetVertexShader(pVS);
+	pModelRenderer->SetVertexShader(pShaderManager->GetVertexShader(VSType::Object));
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
-	pModelRenderer->SetPixelShader(pPS);
+	pModelRenderer->SetPixelShader(pShaderManager->GetPixelShader(PSType::TexColor));
+
 }
 
 /*****************************************//*

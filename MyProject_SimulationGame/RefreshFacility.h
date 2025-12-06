@@ -1,7 +1,7 @@
 /**************************************************//*
 	@file	| RefreshFacility.h
 	@brief	| 休憩施設クラスのhファイル
-	@note	| 休憩施設の処理を定義
+	@note	| 人間のスタミナを回復させる施設
 			| CBuildObjectを継承
 *//**************************************************/
 #pragma once
@@ -12,7 +12,7 @@
 class CHuman;
 
 // @brief 休憩施設クラス
-class CRefreshFacility : public CBuildObject
+class CRefreshFacility final: public CBuildObject
 {
 private:
 	// @brief 休憩施設を使用できる最大人数配列

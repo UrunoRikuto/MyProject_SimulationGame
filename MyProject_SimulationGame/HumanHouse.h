@@ -10,7 +10,7 @@
 #include <list>
 
 // @brief lŠÔ‚Ì‰ÆƒNƒ‰ƒX
-class CHumanHouse : public CBuildObject
+class CHumanHouse final: public CBuildObject
 {
 private:
 

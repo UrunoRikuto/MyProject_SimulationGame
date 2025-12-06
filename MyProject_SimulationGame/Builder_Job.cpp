@@ -15,6 +15,7 @@
 #include "ImguiSystem.h"
 #include "Main.h"
 #include "CivLevelManager.h"
+#include "Item_Material.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -314,7 +315,7 @@ void CBuilder_Job::GatherMaterialsAction()
 	}
 
 	// 必要素材の取得
-	const auto requiredMaterials = BuildMaterials::GetBuildMaterials(m_pCurrentBuildRequest->eBuildType, nRequiredLevel);
+	const auto requiredMaterials = ::BuildMaterials::GetBuildMaterials(m_pCurrentBuildRequest->eBuildType, nRequiredLevel);
 
 	// 貯蔵庫を取得
 	auto storageHouses = GetScene()->GetGameObject<CStorageHouse>();
@@ -333,7 +334,7 @@ void CBuilder_Job::GatherMaterialsAction()
 	if (!m_pOwner->MoveToTarget(storageHouses, Human_Move_Speed))return;
 
 	// 素材収集処理
-	std::vector<CBuildManager::BuildMaterial> HasMaterials;
+	std::vector<CItem::Material> HasMaterials;
 	// 所持素材リストのサイズを必要素材リストのサイズに合わせる
 	HasMaterials.resize(requiredMaterials.size());
 

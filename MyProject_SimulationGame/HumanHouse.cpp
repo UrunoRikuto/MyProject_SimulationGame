@@ -1,7 +1,7 @@
 /**************************************************//*
 	@file	| HumanHouse.cpp
 	@brief	| 人間の家クラスのcppファイル
-	@note	| 人間の家の処理を定義
+	@note	| 人間が居住する建築物
 			| CBuildObjectを継承
 *//**************************************************/
 #include "HumanHouse.h"
@@ -15,8 +15,6 @@
 CHumanHouse::CHumanHouse()
 	:CBuildObject()
 {
-	// モデルレンダラーコンポーネントの追加
-	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*
@@ -37,15 +35,16 @@ void CHumanHouse::Init()
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("HumanHouse");
-	pModelRenderer->SetRendererParam(m_tParam);
+
+	// シェーダーマネージャーの取得
+	CShaderManager* pShaderManager = CShaderManager::GetInstance();
 
 	// 頂点シェーダーの設定
-	VertexShader* pVS = CShaderManager::GetInstance()->GetVertexShader(VSType::Object);
-	pModelRenderer->SetVertexShader(pVS);
+	pModelRenderer->SetVertexShader(pShaderManager->GetVertexShader(VSType::Object));
 
 	// ピクセルシェーダーの設定
-	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
-	pModelRenderer->SetPixelShader(pPS);
+	pModelRenderer->SetPixelShader(pShaderManager->GetPixelShader(PSType::TexColor));
+
 }
 
 /*****************************************//*

@@ -167,8 +167,10 @@
     <ClInclude Include="HumanHouse.h" />
     <ClInclude Include="ImguiSystem.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="Item_Material.h" />
     <ClInclude Include="JobOperator.h" />
     <ClInclude Include="Job_Strategy.h" />
+    <ClInclude Include="FoodFactory.h" />
     <ClInclude Include="Neet_Job.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoice.h" />
@@ -241,8 +243,10 @@
     <ClCompile Include="HumanHouse.cpp" />
     <ClCompile Include="ImguiSystem.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Item_Material.cpp" />
     <ClCompile Include="JobOperator.cpp" />
     <ClCompile Include="Job_Strategy.cpp" />
+    <ClCompile Include="FoodFactory.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="RefreshFacility.cpp" />

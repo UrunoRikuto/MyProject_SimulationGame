@@ -45,6 +45,9 @@ void CObjectLoad::LoadAll()
 	// 鍛冶屋のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("BlackSmith.obj"), "BlackSmith", 1.0f, Model::ZFlip);
 
+	// 食料加工施設のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("FoodFactory.obj"), "FoodFactory", 1.0f, Model::ZFlip);
+
 	// HPバーのゲージテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Bar_Gauge.png"), "Bar_Gauge");
 }
