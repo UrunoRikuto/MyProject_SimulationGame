@@ -378,6 +378,7 @@
     <ClInclude Include="FarmFacility.h">
       <Filter>コードファイル\GameObject\BuildObject</Filter>
     </ClInclude>
+    <ClInclude Include="Farmer_Job.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -604,6 +605,9 @@
     </ClCompile>
     <ClCompile Include="FarmFacility.cpp">
       <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Farmer_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

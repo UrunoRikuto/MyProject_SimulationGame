@@ -8,6 +8,8 @@
 #include "ShaderManager.h"
 #include "ImguiSystem.h"
 #include "BuildManager.h"
+#include "Item_Material.h"
+#include "CivLevelManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -78,7 +80,7 @@ int CFarmFacility::Inspecter()
 	ImGui::Text("Crops:");
 	for (const auto& crop : m_pCropList)
 	{
-		ImGui::BulletText("Type: %s, Growth Progress: %.2f%%",
+		ImGui::BulletText("Type: %s, Progress: %.2f%%",
 			CItem::ITEM_TYPE_TO_STRING(crop.eCropType).c_str(),
 			crop.fGrowthProgress);
 		itemCount++;
@@ -167,13 +169,17 @@ void CFarmFacility::StoreCompletedCrops()
 		if (it->fGrowthProgress >= 100.0f)
 		{
 			// 完成した農作物をCItemとして生成し、完成リストに追加
-			CItem* pCompletedItem = new(std::nothrow) CItem(it->eCropType);
+			CItem* pCompletedItem = new(std::nothrow) CItem(CropMaterials::GetCropFromSeed(it->eCropType));
 
 			if (pCompletedItem != nullptr)
 			{
 				m_pCompletedItemList.push_back(pCompletedItem);
 
-				m_fBuildXP += BUILD_XP_AMOUNT; // 建築経験値を加算
+				// 建築経験値を加算
+				m_fBuildXP += BUILD_XP_AMOUNT; 
+
+				// 文明レベルに経験値を加算
+				CCivLevelManager::GetInstance()->AddExp(CCivLevelManager::ExpType::Farming);
 
 				if (m_fBuildXP >= 100.0f)
 				{

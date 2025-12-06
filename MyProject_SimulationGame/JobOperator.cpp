@@ -39,10 +39,15 @@ std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& 
 	{
 		pJob = std::make_unique<CCook_Job>();
 	}
+	else if (name == JobName::Farmer)
+	{
+		pJob = std::make_unique<CFarmer_Job>();
+	}
 
 	// 職業が見つからなかった場合、無職を設定
 	if (pJob == nullptr)
 	{
+		MessageBox(nullptr, "指定された職業名が見つかりません。無職を設定します。", "職業エラー", MB_OK | MB_ICONWARNING);
 		// デフォルトで無職を設定
 		pJob = std::make_unique<CNeet_Job>();
 	}

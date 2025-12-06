@@ -24,6 +24,12 @@ namespace ToolMaterials
 		{ CItem::ITEM_TYPE::Iron,  3 }
 	};
 
+	// @brief 鎌の素材リスト
+	const std::vector<CItem::Material> Sickle = {
+		{ CItem::ITEM_TYPE::Wood,  4 },
+		{ CItem::ITEM_TYPE::Iron,  2 }
+	};
+
 	// @brief 指定された道具タイプの素材リストを取得
 	std::vector<CItem::Material> GetToolMaterials(CItem::ITEM_TYPE eType);
 }
@@ -124,10 +130,21 @@ namespace CookMaterials
 		{ CItem::ITEM_TYPE::Sugar,  1 }
 	};
 
+	// @brief パンの素材リスト
+	const std::vector<CItem::Material> Bread = {
+		{ CItem::ITEM_TYPE::Wheat,  3 }
+	};
 
 	// @brief 指定された食事タイプの素材リストを取得
 	std::vector<CItem::Material> GetCookMaterials(CItem::ITEM_TYPE eType);
 
 	// @brief 指定された食事タイプの完成品アイテムリストを取得
 	std::vector<CItem*> GetFinishedMealItems(CItem::ITEM_TYPE eType);
+}
+
+// @brief 農作で完成する作物データ名前空間
+namespace CropMaterials
+{
+	// @brief 指定された種タイプの完成する作物リストを取得
+	CItem::ITEM_TYPE GetCropFromSeed(CItem::ITEM_TYPE eType);
 }

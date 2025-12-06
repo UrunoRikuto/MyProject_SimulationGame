@@ -19,6 +19,8 @@ std::vector<CItem::Material> ToolMaterials::GetToolMaterials(CItem::ITEM_TYPE eT
 		return Pickaxe;
 	case CItem::ITEM_TYPE::Axe:
 		return Axe;
+	case CItem::ITEM_TYPE::Sickle:
+		return Sickle;
 	default:
 		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
 	}
@@ -65,6 +67,8 @@ std::vector<CItem::Material> CookMaterials::GetCookMaterials(CItem::ITEM_TYPE eT
 		return Sugar;
 	case CItem::ITEM_TYPE::ApplePie:
 		return ApplePie;
+	case CItem::ITEM_TYPE::Bread:
+		return Bread;
 	default:
 		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
 	}
@@ -95,6 +99,10 @@ std::vector<CItem*> CookMaterials::GetFinishedMealItems(CItem::ITEM_TYPE eType)
 		// アップルパイは1個生成
 		ItemCount = 1;
 		break;
+	case CItem::ITEM_TYPE::Bread:
+		// パンは2個生成
+		ItemCount = 2;
+		break;
 	default:
 		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
 		break;
@@ -108,4 +116,25 @@ std::vector<CItem*> CookMaterials::GetFinishedMealItems(CItem::ITEM_TYPE eType)
 	}
 
 	return finishedItems;
+}
+
+CItem::ITEM_TYPE CropMaterials::GetCropFromSeed(CItem::ITEM_TYPE eType)
+{
+	// タイプが種じゃない場合は処理を抜ける
+	if(CItem::GetItemCategoryFromType(eType) != CItem::ITEM_CATEGORY::Seed)
+	{
+		MessageBox(nullptr, "種のタイプではありません", "Error", MB_OK);
+		return CItem::ITEM_TYPE::MAX;
+	}
+
+	switch (eType)
+	{
+		// 麦の種
+	case CItem::ITEM_TYPE::WheatSeed:
+		// 完成する作物は麦
+		return CItem::ITEM_TYPE::Wheat;
+	default:
+		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
+		return CItem::ITEM_TYPE::MAX;
+	}
 }

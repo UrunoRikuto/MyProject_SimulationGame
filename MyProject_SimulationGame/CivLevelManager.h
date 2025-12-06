@@ -26,6 +26,10 @@ public:
 		Gathering,
 		// Œš’z
 		Building,
+		// ¶Y
+		Production,
+		// ”_ì
+		Farming,
 
 		MAX
 	};
@@ -34,7 +38,9 @@ public:
 	std::unordered_map<ExpType, float> ExpTypeToValueMap =
 	{
 		{ ExpType::Gathering,	20.0f },	// Ìæ‚Ì‰ÁZŒoŒ±’l
-		{ ExpType::Building,	50.0f }		// Œš’z‚Ì‰ÁZŒoŒ±’l
+		{ ExpType::Building,	50.0f },	// Œš’z‚Ì‰ÁZŒoŒ±’l
+		{ ExpType::Production,	10.0f },	// ¶Y‚Ì‰ÁZŒoŒ±’l
+		{ ExpType::Farming,		10.0f },	// ”_ì‚Ì‰ÁZŒoŒ±’l
 	};
 
 private:

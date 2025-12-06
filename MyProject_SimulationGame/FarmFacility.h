@@ -10,7 +10,7 @@
 #include <list>
 
 // @brief ”_ê{İƒNƒ‰ƒX
-class CFarmFacility :  public CBuildObject
+class CFarmFacility : public CBuildObject
 {
 private:
 	// @brief “¯‚É”_ì‚Å‚«‚éì•¨‚ÌÅ‘å””z—ñ

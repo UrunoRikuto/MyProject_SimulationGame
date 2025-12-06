@@ -29,6 +29,8 @@ public:
 		Pickaxe,
 		// 斧
 		Axe,
+		// 鎌
+		Sickle,
 
 		// リンゴ
 		Apple,
@@ -36,6 +38,8 @@ public:
 		Sugar,
 		// アップルパイ
 		ApplePie,
+		// 麦
+		Wheat,
 		// パン
 		Bread,
 
@@ -54,9 +58,12 @@ public:
 		case ITEM_TYPE::WheatSeed:return "WheatSeed";
 		case ITEM_TYPE::Pickaxe:return "Pickaxe";
 		case ITEM_TYPE::Axe:	return "Axe";
+		case ITEM_TYPE::Sickle:	return "Sickle";
 		case ITEM_TYPE::Apple:	return "Apple";
 		case ITEM_TYPE::Sugar:	return "Sugar";
 		case ITEM_TYPE::ApplePie:return "ApplePie";
+		case ITEM_TYPE::Wheat:	return "Wheat";
+		case ITEM_TYPE::Bread:	return "Bread";
 		default:				return "Unknown";
 		}
 	}
@@ -102,6 +109,7 @@ public:
 		case ITEM_TYPE::Iron:
 		case ITEM_TYPE::Sugar:
 		case ITEM_TYPE::Fiber:
+		case ITEM_TYPE::Wheat:
 			return ITEM_CATEGORY::Material;
 		case ITEM_TYPE::Apple:
 			return ITEM_CATEGORY::UnCookedFood;
@@ -110,6 +118,7 @@ public:
 			return ITEM_CATEGORY::CookedFood;
 		case ITEM_TYPE::Pickaxe:
 		case ITEM_TYPE::Axe:
+		case ITEM_TYPE::Sickle:
 			return ITEM_CATEGORY::Tool;
 		case ITEM_TYPE::WheatSeed:
 			return ITEM_CATEGORY::Seed;

@@ -8,6 +8,7 @@
 #include "ModelRenderer.h"
 #include "ShaderManager.h"
 #include "ImguiSystem.h"
+#include "CivLevelManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -213,6 +214,9 @@ CItem* CBlackSmith::ProgressRequest(ToolRequest* pRequest)
 	{
 		// 新しいCItemインスタンスを生成して返す
 		CItem* pNewItem = new CItem(pRequest->eToolType);
+
+		// 文明レベルに経験値を加算
+		CCivLevelManager::GetInstance()->AddExp(CCivLevelManager::ExpType::Production);
 
 		return pNewItem;
 	}

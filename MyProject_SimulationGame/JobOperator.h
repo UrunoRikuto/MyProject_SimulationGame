@@ -35,6 +35,8 @@
 #include "Smith_Job.h"
 //-料理
 #include "Cook_Job.h"
+//-農業
+#include "Farmer_Job.h"
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前
