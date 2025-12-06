@@ -210,15 +210,5 @@ void CFieldManager::CreateInitialVillage()
 
 	// 人間の家を配置したセルを建築可能地リストから削除
 	cells.erase(cells.begin() + randomIndex);
-
-	// ランダムにセルを選択
-	randomIndex = rand() % cells.size();
-
-	// 農場施設の生成と配置
-	CBuildObject* pFarmFacility = pScene->AddGameObject<CFarmFacility>(Tag::GameObject, "FarmFacility");
-	pFarmFacility->SetPos(cells[randomIndex]->GetPos());
-	cells[randomIndex]->SetUse(true);
-	cells[randomIndex]->SetObject(pFarmFacility);
-	pFarmFacility->SetFieldCellIndex(cells[randomIndex]->GetIndex());
 	
 }

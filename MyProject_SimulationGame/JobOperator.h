@@ -25,6 +25,8 @@
 #include "WoodGatherer_Job.h"
 //-Î
 #include "StoneGatherer_Job.h"
+//-‘
+#include "GrassGatherer_Job.h"
 
 /*********************//*
 	‰ÁHE

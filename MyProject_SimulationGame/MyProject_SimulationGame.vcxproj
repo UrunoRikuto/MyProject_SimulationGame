@@ -165,6 +165,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="GeneratorManager.h" />
     <ClInclude Include="Grass.h" />
+    <ClInclude Include="GrassGatherer_Job.h" />
     <ClInclude Include="GrassGenerator.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Generator.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GeneratorManager.cpp" />
     <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="GrassGatherer_Job.cpp" />
     <ClCompile Include="GrassGenerator.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="HumanGenerator.cpp" />

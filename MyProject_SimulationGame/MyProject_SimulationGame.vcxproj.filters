@@ -379,6 +379,9 @@
       <Filter>コードファイル\GameObject\BuildObject</Filter>
     </ClInclude>
     <ClInclude Include="Farmer_Job.h" />
+    <ClInclude Include="GrassGatherer_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -608,6 +611,9 @@
     </ClCompile>
     <ClCompile Include="Farmer_Job.cpp">
       <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClCompile>
+    <ClCompile Include="GrassGatherer_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
