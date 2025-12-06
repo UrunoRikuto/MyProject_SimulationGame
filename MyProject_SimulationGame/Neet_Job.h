@@ -6,7 +6,12 @@
 *//**************************************************/
 #pragma once
 #include "Job_Strategy.h"
-#include "JobOperator.h"
+
+// @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
+namespace JobName
+{
+	const std::string Neet = "Neet";
+}
 
 // @brief –³EƒNƒ‰ƒX
 class CNeet_Job : public IJob_Strategy

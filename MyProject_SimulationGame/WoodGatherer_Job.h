@@ -6,7 +6,12 @@
 *//**************************************************/
 #pragma once
 #include "Gatherer_Strategy.h"
-#include "JobOperator.h"
+
+// @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
+namespace JobName
+{
+	const std::string WoodGatherer = "WoodGatherer";
+}
 
 // @brief –Ø‚ğ’T‚µ‚ÄûW‚·‚éE‹ÆƒNƒ‰ƒX
 class CWoodGatherer_Job final : public CGatherer_Strategy

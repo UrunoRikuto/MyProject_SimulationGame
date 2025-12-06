@@ -7,6 +7,7 @@
 #pragma once
 #include "BuildObject.h"
 #include "Item.h"
+#include "Enums.h"
 
 // @brief 鍛冶屋クラス
 class CBlackSmith final: public CBuildObject
@@ -16,8 +17,6 @@ private:
 	static constexpr int MAX_REQUEST_TOOL[CBuildObject::MAX_BUILD_LEVEL] = {
 		1, 2, 3, 4, 5
 	};
-
-public:
 
 	// @brief 生産進行度(マイフレーム)
 	static constexpr float TOOL_PRODUCTION_PROGRESS_AMOUNT[CBuildObject::MAX_BUILD_LEVEL] = {
@@ -30,18 +29,12 @@ public:
 		return TOOL_PRODUCTION_PROGRESS_AMOUNT[m_nBuildLevel - 1];
 	}
 
-	enum class TOOL_REQUEST_STATE
-	{
-		// 未処理
-		Unprocessed,
-		// 処理中
-		InProcess,
-	};
+public:
 
 	// @brief ツール生産依頼構造体
 	struct ToolRequest
 	{
-		TOOL_REQUEST_STATE eRequestState;	// 依頼状態
+		REQUEST_STATE eRequestState;	// 依頼状態
 		CItem::ITEM_TYPE eToolType;		// ツールのアイテムタイプ
 		float fProductionProgress;		// 生産進行度
 	};
@@ -62,34 +55,34 @@ public:
 
 	// @brief 生産依頼を追加可能かどうかを取得
 	// @return true:追加可能 false:追加不可
-	bool CanAddRequestTool() const;
+	bool CanAddRequest() const;
 
 	// @brief 指定の道具の生産依頼があるかどうかを取得
 	// @param eToolType：道具のアイテムタイプ
 	// @return true:依頼がある false:依頼がない
-	bool HasRequestTool(CItem::ITEM_TYPE eToolType) const;
+	bool HasRequest(CItem::ITEM_TYPE eToolType) const;
 
 	// @brief 生産依頼の追加
 	// @param eToolType：依頼する道具のアイテムタイプ
-	void AddRequestTool(CItem::ITEM_TYPE eToolType);
+	void AddRequest(CItem::ITEM_TYPE eToolType);
 
 	// @brief 生産依頼を受ける
 	// @return ツール生産依頼構造体のポインタ、無ければnullptr
-	ToolRequest* TakeRequestTool();
+	ToolRequest* TakeRequest();
 
 	// @brief 生産依頼を未処理状態に設定
 	// @param pRequest：ツール生産依頼構造体のポインタ
-	void ResetRequestTool(ToolRequest* pRequest);
+	void ResetRequest(ToolRequest* pRequest);
 
 	// @brief 生産依頼の完了報告
 	// @param pRequest：ツール生産依頼構造体のポインタ
 	// @return true:完了報告成功 false:完了報告失敗
-	bool CompleteRequestTool(ToolRequest* pRequest);
+	bool CompleteRequest(ToolRequest* pRequest);
 
 	// @brief 生産依頼を進める
 	// @param In_Request：ツール生産依頼構造体のポインタ
 	// @return 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
-	CItem* ProgressRequestTool(ToolRequest* In_Request);
+	CItem* ProgressRequest(ToolRequest* pRequest);
 
 private:
 	// @brief 生産依頼アイテムリスト

@@ -10,7 +10,7 @@
 // @brief 加工職業クラス
 class CCrafter_Strategy : public IJob_Strategy
 {
-	public:
+public:
 	// @brief 仮想デストラクタ
 	virtual ~CCrafter_Strategy() = default;
 };

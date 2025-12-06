@@ -105,6 +105,11 @@ std::vector<std::string> CCivLevelManager::GetUnlockJobNames()
 	pUnlockJobNames.push_back(JobName::StoneGatherer);	// 石収集職業
 
 	// レベルに応じて解放される職業を追加
+	if(m_nCivLevel >= 1)
+	{
+		// ここにレベル3で解放される職業を追加
+		pUnlockJobNames.push_back(JobName::Cook);			// 料理職業
+	}
 	if (m_nCivLevel >= 5)
 	{
 		// ここにレベル5で解放される職業を追加

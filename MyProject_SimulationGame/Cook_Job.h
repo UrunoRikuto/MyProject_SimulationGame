@@ -1,23 +1,23 @@
 /**************************************************//*
-	@file	| Smith_Job.h
-	@brief	| 鍛冶職業クラスのhファイル
-	@note	| 鍛冶職業の処理を定義
+	@file	| Cook_Job.h
+	@brief	| 料理職業クラスのhファイル
+	@note	| 料理職業の処理を定義
 			| CCrafter_Strategyを継承
 *//**************************************************/
 #pragma once
 #include "Crafter_Strategy.h"
-#include "BlackSmith.h"
+#include "FoodFactory.h"
 
 // @brief 職業名を管理する名前空間
 namespace JobName
 {
-	const std::string Smith = "Smith";
+	const std::string Cook = "Cook";
 }
 
-// @brief 鍛冶職業クラス
-class CSmith_Job final: public CCrafter_Strategy
+// @brief 料理職業クラス
+class CCook_Job : public CCrafter_Strategy
 {
-private:
+public:
 	// @brief 仕事状態
 	enum class WorkState
 	{
@@ -25,21 +25,20 @@ private:
 		Waiting,
 		// 素材収集中
 		GatheringMaterials,
-		// 製作中
-		Crafting,
-		// 完成品運搬中
-		TransportingFinishedGoods,
+		// 料理中
+		Cooking,
+		// 料理運搬中
+		TransportingFood,
 		// 休憩中
 		Resting
 	};
 
 	// @brief クールタイム時間
-	static constexpr float COOL_TIME_DURATION = 20.0f;
+	static constexpr float COOL_TIME_DURATION = 10.0f;
 
 public:
-
 	// @brief コンストラクタ
-	CSmith_Job();
+	CCook_Job();
 
 	// @brief 仕事処理
 	virtual void DoWork() override;
@@ -56,7 +55,7 @@ public:
 
 	// @brief 職業名を取得するオーバーライド関数
 	// @return 職業名の文字列
-	std::string GetJobName() const override { return JobName::Smith; }
+	std::string GetJobName() const override { return JobName::Cook; }
 
 private:
 
@@ -66,11 +65,11 @@ private:
 	// @brief 素材収集処理
 	void GatheringMaterialsAction();
 
-	// @brief 製作処理
-	void CraftingAction();
+	// @brief 料理処理
+	void CookingAction();
 
-	// @brief 完成品運搬処理
-	void TransportingFinishedGoodsAction();
+	// @brief 料理運搬処理
+	void TransportingFoodAction();
 
 	// @brief 休憩処理
 	void RestingAction();
@@ -80,11 +79,13 @@ private:
 	WorkState m_eCurrentState = WorkState::Resting;
 	WorkState m_ePrevState = WorkState::Resting;
 
-	// @brief 受けた生産依頼の道具タイプのポインタ
-	CBlackSmith::ToolRequest* m_pRequest = nullptr;
+	// @brief 受けている料理依頼のポインタ
+	CFoodFactory::CookRequest* m_pRequest = nullptr;
+	// @brief 料理工場のポインタ
+	CFoodFactory* m_pFoodFactory = nullptr;
 
-	// @brief クールタイム
-	// @note 次の依頼を受けるまでの待機時間
+	// @brief クールタイム時間
 	float m_fCoolTime = 0.0f;
+
 };
 

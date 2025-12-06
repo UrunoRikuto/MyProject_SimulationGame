@@ -11,12 +11,15 @@
 #include "StorageHouse.h"
 #include "Item_Material.h"
 #include "ImguiSystem.h"
+#include "BuildManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
 CFoodFactory::CFoodFactory()
 	:CBuildObject()
+	, m_vCookRequestList()
+	, m_fBuildXP(0.0f)
 {
 }
 
@@ -59,7 +62,7 @@ void CFoodFactory::Update()
 	CBuildObject::Update();
 
 	// 調理依頼がいっぱいの場合は何もしない
-	if (m_vCookRequestList.size() >= MAX_COOK_REQUESTS[GetBuildLevel() - 1]) return;
+	if (m_vCookRequestList.size() >= MAX_COOK_REQUESTS[m_nBuildLevel - 1]) return;
 
 	// 製作可能な料理のアイテムタイプを探索
 	CItem::ITEM_TYPE eMealType = FindProducibleMealType();
@@ -69,6 +72,16 @@ void CFoodFactory::Update()
 	{
 		// 調理依頼の追加
 		AddCookRequest(eMealType);
+	}
+
+	// 現在の建築レベルが最大レベル未満で、建築経験値が100以上の場合
+	if (GetBuildLevel() < CBuildObject::MAX_BUILD_LEVEL && m_fBuildXP >= 100.0f)
+	{
+		// 建築依頼を出す
+		CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::FoodFactory);
+
+		// 建築経験値を100減少
+		m_fBuildXP -= 100.0f;
 	}
 }
 
@@ -97,8 +110,24 @@ int CFoodFactory::Inspecter()
 		// 料理のアイテムタイプ名の取得
 		std::string mealTypeName = CItem::ITEM_TYPE_TO_STRING(cookRequest.eMealType);
 
+		// 依頼状態の表示
+		std::string requestStateName;
+		switch (cookRequest.eRequestState)
+		{
+			case REQUEST_STATE::Unprocessed:
+			requestStateName = "Unprocessed";
+			break;
+			case REQUEST_STATE::InProcess:
+				requestStateName = "InProcess";
+				break;
+			default:
+				requestStateName = "Unknown";
+				break;
+		}
+		ImGui::Text(requestStateName.c_str());
+		ImGui::SameLine();
 		// 調理進行度の表示
-		ImGui::Text("- %s: %.1f%%", mealTypeName.c_str(), cookRequest.fCookingProgress);
+		ImGui::Text(":- %s: %.1f%%", mealTypeName.c_str(), cookRequest.fCookingProgress);
 	}
 
 	ImGui::EndChild();
@@ -108,13 +137,124 @@ int CFoodFactory::Inspecter()
 }
 
 /*****************************************//*
+	@brief　	| 調理依頼を受ける
+	@return		| 調理依頼構造体のポインタ、なければnullptr
+*//*****************************************/
+CFoodFactory::CookRequest* CFoodFactory::TakeRequest()
+{
+	// 依頼リストを走査
+	for (auto& request : m_vCookRequestList)
+	{
+		// 未処理の依頼が存在する場合、その依頼を処理中に設定してポインタを返す
+		if (request.eRequestState == REQUEST_STATE::Unprocessed)
+		{
+			request.eRequestState = REQUEST_STATE::InProcess;
+			return &request;
+		}
+	}
+
+	// 未処理の依頼が存在しなかった場合はnullptrを返す
+	return nullptr;
+}
+
+/*****************************************//*
+	@brief　	| 指定された料理の生産依頼が存在するか確認
+	@param		| eMealType：料理のアイテムタイプ
+	@return		| true:存在する false:存在しない
+*//*****************************************/
+bool CFoodFactory::HasRequest(CItem::ITEM_TYPE eMealType) const
+{
+	// 依頼リストを走査
+	for (const auto& request : m_vCookRequestList)
+	{
+		// 指定された料理の依頼が存在する場合はtrueを返す
+		if (request.eMealType == eMealType)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*****************************************//*
+	@brief　	| 生産依頼を未処理状態に設定
+	@param		| pRequest：ツール生産依頼構造体のポインタ
+*//*****************************************/
+void CFoodFactory::ResetRequest(CookRequest* pRequest)
+{
+	if (pRequest == nullptr) return;
+
+	// 依頼状態を未処理に設定
+	pRequest->eRequestState = REQUEST_STATE::Unprocessed;
+
+	// 調理進行度を0に設定
+	pRequest->fCookingProgress = 0.0f;
+}
+
+/*****************************************//*
+	@brief　	| 生産依頼の完了報告
+	@param		| pRequest：ツール生産依頼構造体のポインタ
+	@return		| true:完了報告成功 false:完了報告失敗
+*//*****************************************/
+bool CFoodFactory::CompleteRequest(CookRequest* pRequest)
+{
+	if (pRequest == nullptr) return false;
+
+	// 依頼リストから削除できなかった場合、もしくは生産が完了していない場合は削除しない
+	m_vCookRequestList.remove_if([pRequest](const CookRequest& request) {
+		return (&request == pRequest) && pRequest->fCookingProgress >= 100.0f;
+		});
+
+	// 正常に削除された場合はtrueを返す
+	if (!HasRequest(pRequest->eMealType))
+	{
+		if(GetBuildLevel() < CBuildObject::MAX_BUILD_LEVEL)
+		{
+			// 建築経験値を加算
+			m_fBuildXP += BUILD_XP_AMOUNT;
+		}
+
+		return true;
+	}
+
+	// 見つからなかった場合はfalseを返す
+	return false;
+}
+
+/*****************************************//*
+	@brief　	| 生産依頼を進める
+	@param		| In_Request：ツール生産依頼構造体のポインタ
+	@return		| 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
+*//*****************************************/
+std::vector<CItem*> CFoodFactory::ProgressRequest(CookRequest* pRequest)
+{
+	std::vector<CItem*> pFinishedItems;
+
+	if (pRequest == nullptr) return pFinishedItems;
+
+	// 生産進行度を進める
+	pRequest->fCookingProgress += GetCookProductionProgressAmount();
+
+	// 生産進行度が100以上になった場合、依頼を完了させる
+	if (pRequest->fCookingProgress >= 100.0f)
+	{
+		// 新しいCItemインスタンスを生成して返す
+		pFinishedItems = CookMaterials::GetFinishedMealItems(pRequest->eMealType);
+	}
+
+	// 生産が完了していなければnullptrを返す
+	return pFinishedItems;
+}
+
+/*****************************************//*
 	@brief　	| 調理依頼の追加
 	@param		| eMealType：食事のアイテムタイプ
 *//*****************************************/
 void CFoodFactory::AddCookRequest(CItem::ITEM_TYPE eMealType)
 {
 	// 調理依頼リストに追加
-	m_vCookRequestList.push_back({ eMealType, 0.0f });
+	m_vCookRequestList.push_back({ REQUEST_STATE::Unprocessed, eMealType, 0.0f });
 }
 
 /*****************************************//*
@@ -185,24 +325,4 @@ std::list<CItem::ITEM_TYPE> CFoodFactory::GetProducibleMealTypes()
 
 	// 製作可能な料理のアイテムタイプリストを返す
 	return vCanCookItems;
-}
-
-/*****************************************//*
-	@brief　	| 調理依頼を進める
-	@param		| fAmount：進める量
-*//*****************************************/
-void CFoodFactory::ProgressCookRequests(float fAmount)
-{
-	// 調理依頼リストを走査
-	for (auto& cookRequest : m_vCookRequestList)
-	{
-		// 調理進行度を進める
-		cookRequest.fCookingProgress += fAmount;
-
-		// 調理進行度が100%以上になった場合は調理完了とする
-		if (cookRequest.fCookingProgress >= 100.0f)
-		{
-			cookRequest.fCookingProgress = 100.0f;
-		}
-	}
 }

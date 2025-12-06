@@ -150,6 +150,7 @@
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
     <ClInclude Include="CivLevelManager.h" />
+    <ClInclude Include="Cook_Job.h" />
     <ClInclude Include="Crafter_Strategy.h" />
     <ClInclude Include="FieldGrid.h" />
     <ClInclude Include="CollectTarget.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="CameraGame.cpp" />
     <ClCompile Include="CivLevelManager.cpp" />
     <ClCompile Include="CollectTarget.cpp" />
+    <ClCompile Include="Cook_Job.cpp" />
     <ClCompile Include="FieldGrid.cpp" />
     <ClCompile Include="FieldCell.cpp" />
     <ClCompile Include="FieldGround.cpp" />

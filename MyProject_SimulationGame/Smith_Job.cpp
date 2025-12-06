@@ -64,7 +64,7 @@ void CSmith_Job::OnChangeJob()
 		// 一番近い鍛冶屋を探す
 		CBlackSmith* pNearestBlackSmith = GetScene()->GetGameObject<CBlackSmith>(m_pOwner->GetPos());
 		// 依頼をリセット
-		pNearestBlackSmith->ResetRequestTool(m_pRequest);
+		pNearestBlackSmith->ResetRequest(m_pRequest);
 		// 依頼ポインタをリセット
 		m_pRequest = nullptr;
 	}
@@ -188,18 +188,17 @@ void CSmith_Job::WaitingAction()
 	}
 
 	// 鍛冶屋に向かう
-	if (m_pOwner->MoveToTarget(pNearestBlackSmith, Human_Move_Speed))
-	{
-		// 依頼がある場合、受ける
-		m_pRequest = pNearestBlackSmith->TakeRequestTool();
-		if (m_pRequest != nullptr)
-		{
-			// 仕事状態を素材収集中に変更
-			m_ePrevState = m_eCurrentState;
-			m_eCurrentState = WorkState::GatheringMaterials;
-		}
-	}
+	if (!m_pOwner->MoveToTarget(pNearestBlackSmith, Human_Move_Speed))return;
 
+	// 依頼がある場合、受ける
+	m_pRequest = pNearestBlackSmith->TakeRequest();
+
+	if (m_pRequest != nullptr)
+	{
+		// 仕事状態を素材収集中に変更
+		m_ePrevState = m_eCurrentState;
+		m_eCurrentState = WorkState::GatheringMaterials;
+	}
 }
 
 /*****************************************//*
@@ -216,7 +215,7 @@ void CSmith_Job::GatheringMaterialsAction()
 		// 一番近い鍛冶屋を探す
 		CBlackSmith* pNearestBlackSmith = GetScene()->GetGameObject<CBlackSmith>(m_pOwner->GetPos());
 		// 依頼をリセット
-		pNearestBlackSmith->ResetRequestTool(m_pRequest);
+		pNearestBlackSmith->ResetRequest(m_pRequest);
 
 		// 処理終了
 		return;
@@ -322,13 +321,13 @@ void CSmith_Job::CraftingAction()
 	if (!m_pOwner->MoveToTarget(pNearestBlackSmith, Human_Move_Speed))return;
 
 	// 生産依頼を進めて、完成品を受け取る
-	CItem* pProducedItem = pNearestBlackSmith->ProgressRequestTool(m_pRequest);
+	CItem* pProducedItem = pNearestBlackSmith->ProgressRequest(m_pRequest);
 
 	// スタミナ値を減少
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease / fFPS;
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
 	// 空腹度を消費
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease / fFPS);
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)
@@ -343,7 +342,7 @@ void CSmith_Job::CraftingAction()
 	if (pProducedItem != nullptr)
 	{
 		// 所持しているアイテムを全て手放す
-		while (!m_pOwner->GetItemList().empty())
+		while (!m_pOwner->HasItem())
 		{
 			m_pOwner->TakeOutItem();
 		}
@@ -373,7 +372,7 @@ void CSmith_Job::TransportingFinishedGoodsAction()
 
 	// 依頼の完了報告
 	CBlackSmith* pNearestBlackSmith = GetScene()->GetGameObject<CBlackSmith>(m_pOwner->GetPos());
-	pNearestBlackSmith->CompleteRequestTool(m_pRequest);
+	pNearestBlackSmith->CompleteRequest(m_pRequest);
 	// 依頼ポインタをリセット
 	m_pRequest = nullptr;
 

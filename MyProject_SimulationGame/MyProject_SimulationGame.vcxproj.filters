@@ -366,6 +366,9 @@
     <ClInclude Include="Crafter_Strategy.h">
       <Filter>コードファイル\System\Job\Crafter\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Cook_Job.h">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -482,9 +485,6 @@
     <ClCompile Include="Human.cpp">
       <Filter>コードファイル\GameObject\Human</Filter>
     </ClCompile>
-    <ClCompile Include="JobOperator.cpp">
-      <Filter>コードファイル\System\Job\Operator</Filter>
-    </ClCompile>
     <ClCompile Include="Neet_Job.cpp">
       <Filter>コードファイル\System\Job\Neet</Filter>
     </ClCompile>
@@ -580,6 +580,12 @@
     </ClCompile>
     <ClCompile Include="Gatherer_Strategy.cpp">
       <Filter>コードファイル\System\Job\Collect\Gatherer\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Cook_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClCompile>
+    <ClCompile Include="JobOperator.cpp">
+      <Filter>コードファイル\System\Job\Operator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -76,6 +76,21 @@ namespace BuildMaterials
 		{{ CItem::ITEM_TYPE::Wood,  50 },{ CItem::ITEM_TYPE::Stone,   50 },{ CItem::ITEM_TYPE::Iron, 25 }},
 	};
 
+	// @brief 食品加工施設に必要な素材
+	const std::vector<CItem::Material> FoodFactory[CBuildObject::MAX_BUILD_LEVEL] =
+	{
+		// Level 1(初期建築)
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 }},
+		// Level 2
+		{{ CItem::ITEM_TYPE::Wood,  15 },{ CItem::ITEM_TYPE::Stone,   15 }},
+		// Level 3
+		{{ CItem::ITEM_TYPE::Wood,  20 },{ CItem::ITEM_TYPE::Stone,   20 }},
+		// Level 4
+		{{ CItem::ITEM_TYPE::Wood,  25 },{ CItem::ITEM_TYPE::Stone,   25 }},
+		// Level 5
+		{{ CItem::ITEM_TYPE::Wood,  30 },{ CItem::ITEM_TYPE::Stone,   30 }},
+	};
+
 	// @brief 指定された建築タイプの建築素材リストを取得
 	std::vector<CItem::Material> GetBuildMaterials(CBuildManager::BuildType eType, int nLevel);
 }
@@ -97,4 +112,7 @@ namespace CookMaterials
 
 	// @brief 指定された食事タイプの素材リストを取得
 	std::vector<CItem::Material> GetCookMaterials(CItem::ITEM_TYPE eType);
+
+	// @brief 指定された食事タイプの完成品アイテムリストを取得
+	std::vector<CItem*> GetFinishedMealItems(CItem::ITEM_TYPE eType);
 }

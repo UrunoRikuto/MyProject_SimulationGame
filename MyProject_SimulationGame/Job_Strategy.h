@@ -16,7 +16,7 @@ class CHuman;
 // @brief スタミナ値の最大値
 constexpr float Job_Max_Stamina = 100.0f;
 
-// @brief 仕事によるスタミナ減少値
+// @brief 仕事によるスタミナ減少値(毎フレーム)
 constexpr float Job_Work_Stamina_Decrease = 10.0f;
 
 

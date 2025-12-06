@@ -16,6 +16,7 @@
 #include "GeneratorManager.h"
 #include "StorageHouse.h"
 #include "Defines.h"
+#include "Enums.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -452,22 +453,20 @@ void CImguiSystem::DrawStoragehouseItem()
 
 	if (pStorageHouse)
 	{
-		if (ImGui::Button("Add Wood"))
+		// 全アイテムタイプの追加ボタン作成
+		for(int i = 0; i < static_cast<int>(CItem::ITEM_TYPE::MAX); ++i)
 		{
-			CItem* pItem = new CItem(CItem::ITEM_TYPE::Wood);
-			pStorageHouse->StoreItem(pItem);
-		}
-		if (ImGui::Button("Add Stone"))
-		{
-			CItem* pItem = new CItem(CItem::ITEM_TYPE::Stone);
-			pStorageHouse->StoreItem(pItem);
-		}
-		if (ImGui::Button("Add Iron"))
-		{
-			CItem* pItem = new CItem(CItem::ITEM_TYPE::Iron);
-			pStorageHouse->StoreItem(pItem);
-		}
+			// アイテムタイプの取得
+			CItem::ITEM_TYPE type = static_cast<CItem::ITEM_TYPE>(i);
+			// アイテムタイプの名前取得
+			std::string itemName = CItem::ITEM_TYPE_TO_STRING(type);
 
+			if (ImGui::Button(("Add " + itemName).c_str()))
+			{
+				CItem* pItem = new CItem(type);
+				pStorageHouse->StoreItem(pItem);
+			}
+		}
 	}
 	ImGui::End();
 	ImGui::PopFont();
@@ -514,10 +513,10 @@ void CImguiSystem::DrawBuildRequestList()
 		const char* RequestState = "";
 		switch (request.eRequestState)
 		{
-		case CBuildManager::RequestState::Unprocessed:
+		case REQUEST_STATE::Unprocessed:
 			RequestState = "Unprocessed";
 			break;
-		case CBuildManager::RequestState::InProcess:
+		case REQUEST_STATE::InProcess:
 			RequestState = "InProcess";
 			break;
 		}

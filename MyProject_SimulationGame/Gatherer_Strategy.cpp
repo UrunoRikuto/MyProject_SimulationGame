@@ -15,6 +15,7 @@
 #include "RefreshFacility.h"
 #include "CivLevelManager.h"
 #include "BlackSmith.h"
+#include "BuildManager.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -175,13 +176,13 @@ void CGatherer_Strategy::SearchAndMoveAction()
 			if (pBlacksmith != nullptr)
 			{
 				// 鍛冶屋に生産依頼を追加可能か確認
-				if (pBlacksmith->CanAddRequestTool())
+				if (pBlacksmith->CanAddRequest())
 				{
 					// 既に生産依頼が出ているか確認
-					if (!pBlacksmith->HasRequestTool(GetRequiredCollectToolType()))
+					if (!pBlacksmith->HasRequest(GetRequiredCollectToolType()))
 					{
 						// 鍛冶屋に生産依頼を出す
-						pBlacksmith->AddRequestTool(GetRequiredCollectToolType());
+						pBlacksmith->AddRequest(GetRequiredCollectToolType());
 					}
 				}
 				// 生産依頼が出せない場合

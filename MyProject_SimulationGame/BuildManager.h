@@ -8,19 +8,13 @@
 #include <list>
 #include "Item.h"
 #include "BuildObject.h"
+#include "Enums.h"
+#include "Main.h"
 
 // @brief 建築物関係の管理システムクラス
 class CBuildManager
 {
 public:
-	// @brief 依頼状態の列挙型
-	enum class RequestState
-	{
-		// 未処理
-		Unprocessed,
-		// 処理中
-		InProcess,
-	};
 
 	// @brief 依頼タイプの列挙型
 	enum class RequestType
@@ -53,6 +47,8 @@ public:
 		HumanHouse,
 		// 鍛冶屋
 		BlackSmith,
+		// 食品加工施設
+		FoodFactory,
 
 		MAX
 	};
@@ -64,9 +60,13 @@ public:
 		case BuildType::RefreshFacility:	return "RefreshFacility";
 		case BuildType::HumanHouse:		return "HumanHouse";
 		case BuildType::BlackSmith:		return "BlackSmith";
+		case BuildType::FoodFactory:	return "FoodFactory";
 		default:						return "Unknown";
 		}
 	}
+	// @brief 建築タイプに応じた建築物クラスのポインタを生成する関数
+	static CBuildObject* CreateBuildObjectByType(BuildType eType);
+
 
 	// @brief 建築依頼構造体
 	struct BuildRequest
@@ -75,14 +75,14 @@ public:
 		BuildRequest()
 			: eRequestType(RequestType::Build)
 			, eBuildType(BuildType::RefreshFacility)
-			, eRequestState(RequestState::Unprocessed)
+			, eRequestState(REQUEST_STATE::Unprocessed)
 			, n2BuildIndex(DirectX::XMINT2(-1, -1))
 		{
 		}
 
 		RequestType eRequestType;		// 依頼タイプ
 		BuildType eBuildType;			// 建築物タイプ
-		RequestState eRequestState;		// 依頼状態
+		REQUEST_STATE eRequestState;		// 依頼状態
 		DirectX::XMINT2 n2BuildIndex;	// 建築位置
 	};
 

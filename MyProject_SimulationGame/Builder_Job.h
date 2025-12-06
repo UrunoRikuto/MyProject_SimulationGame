@@ -6,8 +6,14 @@
 *//**************************************************/
 #pragma once
 #include "Crafter_Strategy.h"
-#include "JobOperator.h"
 #include "BuildManager.h"
+#include <string>
+
+// @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
+namespace JobName
+{
+	const std::string Builder = "Builder";
+}
 
 // @brief Œš’zE‹ÆƒNƒ‰ƒX
 class CBuilder_Job final: public CCrafter_Strategy
@@ -96,4 +102,3 @@ private:
 	bool m_isShowRequestDetail = false;
 
 };
-

@@ -7,12 +7,42 @@
 #include "BuildManager.h"
 #include "Main.h"
 #include "FieldManager.h"
+
+// 建築物のインクルード
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
 #include "BlackSmith.h"
+#include "FoodFactory.h"
+
+
 
 // 静的メンバ変数の初期化
 CBuildManager* CBuildManager::m_pInstance = nullptr;
+
+/*****************************************//*
+	@brief　	| 建築タイプに応じた建築物クラスのポインタを生成する関数
+	@param　	| eType：建築タイプ
+	@return　	| 建築物クラスのポインタ
+*//*****************************************/
+CBuildObject* CBuildManager::CreateBuildObjectByType(BuildType eType)
+{
+	// シーンの取得
+	CScene* pScnee = GetScene();
+
+	switch (eType)
+	{
+	case BuildType::RefreshFacility:
+		return pScnee->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
+	case BuildType::HumanHouse:
+		return pScnee->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
+	case BuildType::BlackSmith:
+		return pScnee->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
+	case BuildType::FoodFactory:
+		return pScnee->AddGameObject<CFoodFactory>(Tag::GameObject, "FoodFactory");
+	default:
+		return nullptr;
+	}
+}
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -173,7 +203,7 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 	break;
 	}
 	newRequest.eBuildType = In_eRequestType;
-	newRequest.eRequestState = RequestState::Unprocessed;
+	newRequest.eRequestState = REQUEST_STATE::Unprocessed;
 
 	if(newRequest.n2BuildIndex.x == -1 && newRequest.n2BuildIndex.y == -1)
 	{
@@ -195,10 +225,10 @@ CBuildManager::BuildRequest* CBuildManager::TakeBuildRequest()
 	for (auto& request : m_BuildRequestList)
 	{
 		// 未処理の依頼が見つかった場合は状態を処理中に変更して返す
-		if (request.eRequestState == RequestState::Unprocessed)
+		if (request.eRequestState == REQUEST_STATE::Unprocessed)
 		{
 			// 状態を処理中に変更
-			request.eRequestState = RequestState::InProcess;
+			request.eRequestState = REQUEST_STATE::InProcess;
 
 			// 依頼構造体のポインタを返す
 			return &request;
@@ -217,7 +247,7 @@ void CBuildManager::ResetBuildRequest(BuildRequest* pRequest)
 	if (pRequest == nullptr)return;
 
 	// 依頼状態を未処理に設定
-	pRequest->eRequestState = RequestState::Unprocessed;
+	pRequest->eRequestState = REQUEST_STATE::Unprocessed;
 }
 
 /*****************************************//*

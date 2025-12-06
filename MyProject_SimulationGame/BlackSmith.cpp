@@ -72,7 +72,7 @@ int CBlackSmith::Inspecter()
 		std::string toolTypeStr = CItem::ITEM_TYPE_TO_STRING(toolType.eToolType);
 
 		// 依頼状態の取得
-		std::string requestStateStr = (toolType.eRequestState == TOOL_REQUEST_STATE::Unprocessed) ? "Unprocessed" : "InProcess";
+		std::string requestStateStr = (toolType.eRequestState == REQUEST_STATE::Unprocessed) ? "Unprocessed" : "InProcess";
 
 		// 生産進行度の取得
 		float productionProgress = toolType.fProductionProgress;
@@ -94,7 +94,7 @@ int CBlackSmith::Inspecter()
 	@brief　	| 生産依頼を追加可能かどうかを取得
 	@return		| true:追加可能 false:追加不可
 *//*****************************************/
-bool CBlackSmith::CanAddRequestTool() const
+bool CBlackSmith::CanAddRequest() const
 {
 	// 現在の依頼数が最大依頼数未満であれば追加可能
 	return m_vRequestToolList.size() < MAX_REQUEST_TOOL[m_nBuildLevel - 1];
@@ -105,7 +105,7 @@ bool CBlackSmith::CanAddRequestTool() const
 	@param		| eToolType：道具のアイテムタイプ
 	@return		| true:依頼がある false:依頼がない
 *//*****************************************/
-bool CBlackSmith::HasRequestTool(CItem::ITEM_TYPE eToolType) const
+bool CBlackSmith::HasRequest(CItem::ITEM_TYPE eToolType) const
 {
 	// 依頼リストを走査
 	for (const auto& toolType : m_vRequestToolList)
@@ -125,7 +125,7 @@ bool CBlackSmith::HasRequestTool(CItem::ITEM_TYPE eToolType) const
 	@brief　	| 生産依頼の追加
 	@param		| eToolType：依頼する道具の種類
 *//*****************************************/
-void CBlackSmith::AddRequestTool(CItem::ITEM_TYPE eToolType)
+void CBlackSmith::AddRequest(CItem::ITEM_TYPE eToolType)
 {
 	// アイテムカテゴリーが道具であるか確認
 	// 道具でなければ処理を抜ける
@@ -133,7 +133,7 @@ void CBlackSmith::AddRequestTool(CItem::ITEM_TYPE eToolType)
 
 	// ツール生産依頼構造体の作成
 	ToolRequest newRequest;
-	newRequest.eRequestState = TOOL_REQUEST_STATE::Unprocessed;	// 依頼状態を未処理に設定
+	newRequest.eRequestState = REQUEST_STATE::Unprocessed;	// 依頼状態を未処理に設定
 	newRequest.eToolType = eToolType;							// ツールのアイテムタイプを設定
 	newRequest.fProductionProgress = 0.0f;						// 生産進行度を初期化
 
@@ -145,16 +145,16 @@ void CBlackSmith::AddRequestTool(CItem::ITEM_TYPE eToolType)
 	@brief　	| 生産依頼を受ける
 	@return		| ツール生産依頼構造体のポインタ、無ければnullptr
 *//*****************************************/
-CBlackSmith::ToolRequest* CBlackSmith::TakeRequestTool()
+CBlackSmith::ToolRequest* CBlackSmith::TakeRequest()
 {
 	// 依頼リストを走査
 	for (auto& request : m_vRequestToolList)
 	{
 		// 未処理の依頼を探す
-		if (request.eRequestState == TOOL_REQUEST_STATE::Unprocessed)
+		if (request.eRequestState == REQUEST_STATE::Unprocessed)
 		{
 			// 依頼状態を処理中に更新
-			request.eRequestState = TOOL_REQUEST_STATE::InProcess;
+			request.eRequestState = REQUEST_STATE::InProcess;
 
 			// 依頼構造体のポインタを返す
 			return &request;
@@ -168,10 +168,10 @@ CBlackSmith::ToolRequest* CBlackSmith::TakeRequestTool()
 	@brief　	| 生産依頼を未処理状態に設定
 	@param		| pRequest：対象のツール生産依頼構造体のポインタ
 *//*****************************************/
-void CBlackSmith::ResetRequestTool(ToolRequest* pRequest)
+void CBlackSmith::ResetRequest(ToolRequest* pRequest)
 {
 	// 依頼状態を未処理に更新
-	pRequest->eRequestState = TOOL_REQUEST_STATE::Unprocessed;
+	pRequest->eRequestState = REQUEST_STATE::Unprocessed;
 }
 
 /*****************************************//*
@@ -179,14 +179,15 @@ void CBlackSmith::ResetRequestTool(ToolRequest* pRequest)
 	@param		| pRequest：ツール生産依頼構造体のポインタ
 	@return		| true:完了報告成功 false:完了報告失敗
 *//*****************************************/
-bool CBlackSmith::CompleteRequestTool(ToolRequest* pRequest)
+bool CBlackSmith::CompleteRequest(ToolRequest* pRequest)
 {
 	// 依頼リストから削除できなかった場合、もしくは生産が完了していない場合は削除しない
 	m_vRequestToolList.remove_if([pRequest](const ToolRequest& request) {
 		return (& request == pRequest) && pRequest->fProductionProgress >= 100.0f;
 		});
+
 	// 正常に削除された場合はtrueを返す
-	if (!HasRequestTool(pRequest->eToolType))
+	if (!HasRequest(pRequest->eToolType))
 	{
 		return true;
 	}
@@ -200,16 +201,18 @@ bool CBlackSmith::CompleteRequestTool(ToolRequest* pRequest)
 	@param		| In_Request：進行させるツール生産依頼構造体のポインタ
 	@return		| 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
 *//*****************************************/
-CItem* CBlackSmith::ProgressRequestTool(ToolRequest* In_Request)
+CItem* CBlackSmith::ProgressRequest(ToolRequest* pRequest)
 {
+	if (pRequest == nullptr) return nullptr;
+
 	// 生産進行度を進める
-	In_Request->fProductionProgress += GetToolProductionProgressAmount();
+	pRequest->fProductionProgress += GetToolProductionProgressAmount();
 
 	// 生産進行度が100以上になった場合、依頼を完了させる
-	if (In_Request->fProductionProgress >= 100.0f)
+	if (pRequest->fProductionProgress >= 100.0f)
 	{
 		// 新しいCItemインスタンスを生成して返す
-		CItem* pNewItem = new CItem(In_Request->eToolType);
+		CItem* pNewItem = new CItem(pRequest->eToolType);
 
 		return pNewItem;
 	}

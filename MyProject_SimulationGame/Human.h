@@ -28,7 +28,7 @@ constexpr float Human_Full_Hunger = 95.0f;
 constexpr float Human_Warning_Hunger = 20.0f;
 // @brief 自然空腹減少値
 constexpr float Human_Natural_Hunger_Decrease = 0.01f;
-// @brief 仕事による空腹減少値
+// @brief 仕事による空腹減少値(マイフレーム)
 constexpr float Human_Work_Hunger_Decrease = 0.5f;
 // @brief 未調理食料による空腹回復倍率
 constexpr float Human_UnCookedFood_Hunger_Recovery_Multiplier = 0.5f;

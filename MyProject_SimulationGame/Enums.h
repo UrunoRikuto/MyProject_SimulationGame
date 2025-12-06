@@ -25,3 +25,16 @@ enum class TransitionType
 	Fade,		// フェード
 	MAX,
 };
+
+/*************************//*
+@brief		|依頼状態
+@param[0]	| 未処理
+@param[1]	| 処理中
+*//*************************/
+enum class REQUEST_STATE
+{
+	// 未処理
+	Unprocessed,
+	// 処理中
+	InProcess
+};

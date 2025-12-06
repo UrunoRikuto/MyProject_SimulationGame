@@ -10,8 +10,6 @@
 #include "StructMath.h"
 #include "Oparation.h"
 #include "StorageHouse.h"
-#include "HumanHouse.h"
-#include "RefreshFacility.h"
 #include "ImguiSystem.h"
 #include "Main.h"
 #include "CivLevelManager.h"
@@ -482,19 +480,7 @@ void CBuilder_Job::BuildingAction()
 	if (m_pBuildingObject == nullptr)
 	{
 		// 建築オブジェクトをシーンに追加
-		switch (m_pCurrentBuildRequest->eBuildType)
-		{
-		case CBuildManager::BuildType::RefreshFacility:
-		{
-			m_pBuildingObject = GetScene()->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
-			break;
-		}
-		case CBuildManager::BuildType::HumanHouse:
-		{
-			m_pBuildingObject = GetScene()->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
-			break;
-		}
-		}
+		m_pBuildingObject = CBuildManager::CreateBuildObjectByType(m_pCurrentBuildRequest->eBuildType);
 
 		if (m_pBuildingObject == nullptr)
 		{
@@ -504,7 +490,7 @@ void CBuilder_Job::BuildingAction()
 			m_eCurrentState = WorkState::Waiting;
 
 			// 建築依頼を未処理状態に設定
-			m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
+			m_pCurrentBuildRequest->eRequestState = REQUEST_STATE::Unprocessed;
 			// 建築依頼のポインタをリセット
 			m_pCurrentBuildRequest = nullptr;
 
@@ -526,9 +512,9 @@ void CBuilder_Job::BuildingAction()
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease / fFPS);
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
 	// スタミナを減少させる
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease / fFPS;
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)
@@ -585,7 +571,7 @@ void CBuilder_Job::UpgradingAction()
 		// 建築オブジェクトが見つからなかった場合は待機状態に戻る
 		m_eCurrentState = WorkState::Waiting;
 		// 建築依頼を未処理状態に設定
-		m_pCurrentBuildRequest->eRequestState = CBuildManager::RequestState::Unprocessed;
+		m_pCurrentBuildRequest->eRequestState = REQUEST_STATE::Unprocessed;
 		// 建築依頼のポインタをリセット
 		m_pCurrentBuildRequest = nullptr;
 
@@ -598,9 +584,9 @@ void CBuilder_Job::UpgradingAction()
 	// 建築進行度を増加させる
 	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
 	// 空腹度を減少させる
-	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease / fFPS);
+	m_pOwner->DecreaseHunger(Human_Work_Hunger_Decrease);
 	// スタミナを減少させる
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease / fFPS;
+	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
 	if (m_Status.m_fStamina <= 0.0f)

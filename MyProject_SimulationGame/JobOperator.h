@@ -5,25 +5,7 @@
 *//**************************************************/
 #pragma once
 #include <string>
-#include <vector>
 #include <memory>
-
-// @brief 職業名を管理する名前空間
-namespace JobName
-{
-	// 無職
-	const std::string Neet = "Neet";
-	// 木材収集職業
-	const std::string WoodGatherer = "WoodGatherer";
-	// 石収集職業
-	const std::string StoneGatherer = "StoneGatherer";
-
-	// 建築職業
-	const std::string Builder = "Builder";
-	// 鍛治職業
-	const std::string Smith = "Smith";
-
-}
 
 //=== @brief 職業クラスのインクルード ===//
 /*********************//*
@@ -51,7 +33,11 @@ namespace JobName
 #include "Builder_Job.h"
 //-鍛治
 #include "Smith_Job.h"
+//-料理
+#include "Cook_Job.h"
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前
+// @param owner：職業を所有するオブジェクトの参照
+// @return 生成した職業ストラテジーのユニークポインタ
 std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& owner);
