@@ -1,46 +1,43 @@
 /**************************************************//*
-	@file	| Wood.cpp
-	@brief	| 木オブジェクトクラスのcppファイル
+	@file	| Grass.cpp
+	@brief	| 草オブジェクトクラスのcppファイル
 	@note	| CGameObjectを継承
 *//**************************************************/
-#include "Wood.h"
-#include "ModelRenderer.h"
-#include "BillboardRenderer.h"
-#include "Oparation.h"
+#include "Grass.h"
 #include "ShaderManager.h"
+#include "Oparation.h"
 
-// 木の初期耐久値
-constexpr float WOOD_INITIAL_HP = 50.0f;
+// 草の初期耐久値
+constexpr float GRASS_INITIAL_HP = 20.0f;
 //  ドロップアイテムの個数
-constexpr int DROP_ITEM_COUNT = 3;
+constexpr int DROP_ITEM_COUNT = 5;
+
 
 /*****************************************//*
-	@brief　	| コンストラクタ
-	@param　	| In_f3Pos：初期位置
+	@brief	| コンストラクタ
 *//*****************************************/
-CWood::CWood()
-	:CCollectTarget()
+CGrass::CGrass()
 {
 }
 
 /*****************************************//*
-	@brief　	| デストラクタ
+	@brief	| デストラクタ
 *//*****************************************/
-CWood::~CWood()
+CGrass::~CGrass()
 {
 }
 
 /*****************************************//*
-	@brief　	| 初期化処理
+	@brief	| 初期化処理
 *//*****************************************/
-void CWood::Init()
+void CGrass::Init()
 {
-	// 基底クラスの初期化処理
-	CGameObject::Init();
+	// 親クラスの初期化処理を呼び出す
+	CCollectTarget::Init();
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
-	pModelRenderer->SetKey("Wood");
+	pModelRenderer->SetKey("Grass");
 	pModelRenderer->SetRendererParam(m_tParam);
 
 	// 頂点シェーダーの設定
@@ -51,24 +48,26 @@ void CWood::Init()
 	PixelShader* pPS = CShaderManager::GetInstance()->GetPixelShader(PSType::TexColor);
 	pModelRenderer->SetPixelShader(pPS);
 
-	// 木の耐久値設定
-	m_Status.m_fHp = WOOD_INITIAL_HP;
-	m_Status.m_fMaxHp = WOOD_INITIAL_HP;
+
+	// 収集対象のステータスを設定
+	m_Status.m_fMaxHp = GRASS_INITIAL_HP;
+	m_Status.m_fHp = m_Status.m_fMaxHp;
 	// ドロップアイテム設定
-	for (int i = 0; i < DROP_ITEM_COUNT; ++i)
+	for(int i = 0; i < DROP_ITEM_COUNT; ++i)
 	{
 		// 0~100のランダムな数値を取得
 		int randomNum = GetRandOfRange(0, 100);
 
-		if (randomNum < 50)
+		// 50%の確率で麦の種をドロップ
+		if(randomNum < 50)
 		{
-			// 木材アイテムを追加
-			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Wood));
+			m_Status.m_DropItems.push_back(new(std::nothrow) CItem(CItem::ITEM_TYPE::WheatSeed));
 		}
+		// 50%の確率で繊維をドロップ
 		else
 		{
-			// リンゴアイテムを追加
-			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Apple));
+			m_Status.m_DropItems.push_back(new(std::nothrow) CItem(CItem::ITEM_TYPE::Fiber));
 		}
 	}
+
 }

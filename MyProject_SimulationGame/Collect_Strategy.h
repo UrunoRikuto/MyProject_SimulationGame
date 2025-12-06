@@ -21,5 +21,5 @@ public:
 
 	// @brief 自身が必要な収集ツールのアイテムタイプを取得する純粋仮想関数
 	virtual CItem::ITEM_TYPE GetRequiredCollectToolType() const = 0;
-	};
+};
 

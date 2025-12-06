@@ -4,6 +4,7 @@
 	@note	| CGameObjectを継承
 *//**************************************************/
 #include "CollectTarget.h"
+#include "ModelRenderer.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -17,6 +18,9 @@ CCollectTarget::CCollectTarget()
 	// 耐久値初期化
 	m_pHpBillboard = new CBillboardRenderer(this);
 	m_pHpBillboard->SetKey("Bar_Gauge");
+
+	// モデルレンダラーコンポーネントの追加
+	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*

@@ -162,6 +162,8 @@
     <ClInclude Include="Collect_Strategy.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GeneratorManager.h" />
+    <ClInclude Include="Grass.h" />
+    <ClInclude Include="GrassGenerator.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="HumanGenerator.h" />
@@ -240,6 +242,8 @@
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GeneratorManager.cpp" />
+    <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="GrassGenerator.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="HumanGenerator.cpp" />
     <ClCompile Include="HumanHouse.cpp" />

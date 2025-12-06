@@ -108,15 +108,20 @@ void CFieldManager::AssignFieldCellType()
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
 				objCount++;
 			}
-			// 空地の出現値(最小値：0.4f|最大値：0.7f)
-			else if (noiseValue >= 0.4f && noiseValue <= 0.7f)
+			// 草地の出現値(最小値：0.45f|最大値：0.5f)
+			else if (noiseValue >= 0.45f && noiseValue <= 0.5f)
 			{
-				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::GRASS);
 			}
 			// 岩の出現値(最小値：0.7f|最大値：1.0f)
-			else
+			else if (noiseValue >= 0.7f && noiseValue <= 1.0f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
+			}
+			// 空地の出現値(0.3f ～ 0.45f | 0.5f ～ 0.7f)
+			else
+			{
+				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
 				objCount++;
 			}
 		}

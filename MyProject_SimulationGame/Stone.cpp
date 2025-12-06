@@ -19,8 +19,6 @@ constexpr int DROP_ITEM_COUNT = 3;
 CStone::CStone()
 	:CCollectTarget()
 {
-	// モデルレンダラーコンポーネントの追加
-	AddComponent<CModelRenderer>();
 }
 
 /*****************************************//*
@@ -38,7 +36,6 @@ void CStone::Init()
 	// 基底クラスの初期化処理
 	CGameObject::Init();
 
-	// 
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();

@@ -369,6 +369,12 @@
     <ClInclude Include="Cook_Job.h">
       <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="GrassGenerator.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -586,6 +592,12 @@
     </ClCompile>
     <ClCompile Include="JobOperator.cpp">
       <Filter>コードファイル\System\Job\Operator</Filter>
+    </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>コードファイル\GameObject\CollectTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="GrassGenerator.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

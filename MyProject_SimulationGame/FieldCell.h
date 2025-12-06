@@ -18,6 +18,7 @@ public:
 		EMPTY,		// 空地
 		TREE,		// 木
 		ROCK,		// 岩
+		GRASS,		// 草地
 		Build,		// 建築可能地
 		MAX			// セルタイプの最大数
 	};

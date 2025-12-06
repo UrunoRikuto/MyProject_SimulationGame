@@ -33,6 +33,9 @@ void CObjectLoad::LoadAll()
 	// 石のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Stone.obj"), "Stone");
 
+	// 草のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Grass.obj"), "Grass");
+
 	// 人間の家のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("HumanHouse.obj"), "HumanHouse", 1.0f, Model::ZFlip);
 

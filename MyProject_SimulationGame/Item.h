@@ -19,6 +19,11 @@ public:
 		Stone,
 		// 鉄材
 		Iron,
+		// 繊維
+		Fiber,
+
+		// 麦の種
+		WheatSeed, 
 
 		// つるはし
 		Pickaxe,
@@ -31,6 +36,8 @@ public:
 		Sugar,
 		// アップルパイ
 		ApplePie,
+		// パン
+		Bread,
 
 		MAX
 	};
@@ -43,6 +50,8 @@ public:
 		case ITEM_TYPE::Wood:	return "Wood";
 		case ITEM_TYPE::Stone:	return "Stone";
 		case ITEM_TYPE::Iron:	return "Iron";
+		case ITEM_TYPE::Fiber:	return "Fiber";
+		case ITEM_TYPE::WheatSeed:return "WheatSeed";
 		case ITEM_TYPE::Pickaxe:return "Pickaxe";
 		case ITEM_TYPE::Axe:	return "Axe";
 		case ITEM_TYPE::Apple:	return "Apple";
@@ -63,6 +72,8 @@ public:
 		CookedFood,
 		// 道具
 		Tool,
+		// 種
+		Seed,
 
 		MAX
 	};
@@ -76,6 +87,7 @@ public:
 		case ITEM_CATEGORY::UnCookedFood:	return "UnCookedFood";
 		case ITEM_CATEGORY::CookedFood:		return "CookedFood";
 		case ITEM_CATEGORY::Tool:			return "Tool";
+		case ITEM_CATEGORY::Seed:			return "Seed";
 		default:							return "Unknown";
 		}
 	}
@@ -89,14 +101,18 @@ public:
 		case ITEM_TYPE::Stone:
 		case ITEM_TYPE::Iron:
 		case ITEM_TYPE::Sugar:
+		case ITEM_TYPE::Fiber:
 			return ITEM_CATEGORY::Material;
 		case ITEM_TYPE::Apple:
 			return ITEM_CATEGORY::UnCookedFood;
 		case ITEM_TYPE::ApplePie:
+		case ITEM_TYPE::Bread:
 			return ITEM_CATEGORY::CookedFood;
 		case ITEM_TYPE::Pickaxe:
 		case ITEM_TYPE::Axe:
 			return ITEM_CATEGORY::Tool;
+		case ITEM_TYPE::WheatSeed:
+			return ITEM_CATEGORY::Seed;
 		default:
 			return ITEM_CATEGORY::Material;
 		}

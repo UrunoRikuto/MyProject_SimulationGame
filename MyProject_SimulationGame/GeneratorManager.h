@@ -84,4 +84,5 @@ private:
 // Generator処理のインクルード
 #include "WoodGenerator.h"
 #include "StoneGenerator.h"
+#include "GrassGenerator.h"
 #include "HumanGenerator.h"

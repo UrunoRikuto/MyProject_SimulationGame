@@ -22,18 +22,12 @@ void CWoodGenerator::Generate()
 	// 配置可能なセルがなければ終了
 	if (cells.empty()) return;
 
-	// 生成数を決定（最大5つまで）
-	int nCreateCount = std::min(5, static_cast<int>(cells.size()));
-
-	for(int i = 0; i < nCreateCount; ++i)
-	{
-		// ランダムにセルを選出
-		int randIndex = rand() % cells.size();
-		// 木オブジェクトを生成し、選出したセルに配置
-		GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood")->SetCreatePos(cells[randIndex]);
-		// デバッグログの追加
-		CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
-	}
+	// ランダムにセルを選出
+	int randIndex = rand() % cells.size();
+	// 木オブジェクトを生成し、選出したセルに配置
+	GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood")->SetCreatePos(cells[randIndex]);
+	// デバッグログの追加
+	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
 
 	// デバッグログの追加
 	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
