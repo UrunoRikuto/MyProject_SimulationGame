@@ -43,6 +43,8 @@ std::vector<CItem::Material> BuildMaterials::GetBuildMaterials(CBuildManager::Bu
 		return BlackSmith[nLevel];
 	case CBuildManager::BuildType::FoodFactory:
 		return FoodFactory[nLevel];
+	case CBuildManager::BuildType::FarmFacility:
+		return FarmFacility[nLevel];
 	default:
 		MessageBox(nullptr, "タイプのケースが用意されていません", "Error", MB_OK);
 	}

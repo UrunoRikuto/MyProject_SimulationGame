@@ -13,6 +13,7 @@
 #include "HumanHouse.h"
 #include "BlackSmith.h"
 #include "FoodFactory.h"
+#include "FarmFacility.h"
 
 
 
@@ -39,6 +40,8 @@ CBuildObject* CBuildManager::CreateBuildObjectByType(BuildType eType)
 		return pScnee->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
 	case BuildType::FoodFactory:
 		return pScnee->AddGameObject<CFoodFactory>(Tag::GameObject, "FoodFactory");
+	case BuildType::FarmFacility:
+		return pScnee->AddGameObject<CFarmFacility>(Tag::GameObject, "FarmFacility");
 	default:
 		return nullptr;
 	}
@@ -108,21 +111,80 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 	// ƒV[ƒ“‚Ìæ“¾
 	CScene* pScene = GetScene();
 
+	std::list<CBuildObject*> buildlist;
+
 	switch (In_eRequestType)
 	{
 		// ‹xŒeŠ
 	case BuildType::RefreshFacility:
 	{
 		// ¡‚ ‚éƒŠƒtƒŒƒbƒVƒ…{İ‚ğæ“¾
-		auto buildlist = pScene->GetGameObjects<CRefreshFacility>();
+		std::list<CRefreshFacility*> RefreshFacilitylist = pScene->GetGameObjects<CRefreshFacility>();
 
-		// ƒŠƒtƒŒƒbƒVƒ…{İ‚ª–³‚¯‚ê‚ÎŒš’zˆË—Š‚ğ’Ç‰Á
-		if (buildlist.empty())
+		for(auto facility : RefreshFacilitylist)
 		{
-			newRequest.eRequestType = RequestType::Build;
-			break;
+			// Œš’z•¨ƒŠƒXƒg‚É’Ç‰Á
+			buildlist.push_back(facility);
 		}
+	}
+	break;
+	case BuildType::HumanHouse:
+	{
+		// ¡‚ ‚élŠÔ‚Ì‰Æ‚ğæ“¾
+		std::list<CHumanHouse*> HumanHouselist = pScene->GetGameObjects<CHumanHouse>();
 
+		for(auto house : HumanHouselist)
+		{
+			// Œš’z•¨ƒŠƒXƒg‚É’Ç‰Á
+			buildlist.push_back(house);
+		}
+	}
+	break;
+	case BuildType::BlackSmith:
+	{
+		// ¡‚ ‚é’b–è‰®‚ğæ“¾
+		std::list<CBlackSmith*> BlackSmithlist = pScene->GetGameObjects<CBlackSmith>();
+
+		for(auto smith : BlackSmithlist)
+		{
+			// Œš’z•¨ƒŠƒXƒg‚É’Ç‰Á
+			buildlist.push_back(smith);
+		}
+	}
+	break;
+	case BuildType::FoodFactory:
+	{
+		// ¡‚ ‚éH•i‰ÁH{İ‚ğæ“¾
+		std::list<CFoodFactory*> FoodFactorylist = pScene->GetGameObjects<CFoodFactory>();
+
+		for(auto factory : FoodFactorylist)
+		{
+			// Œš’z•¨ƒŠƒXƒg‚É’Ç‰Á
+			buildlist.push_back(factory);
+		}
+	}
+	break;
+	case BuildType::FarmFacility:
+	{
+		// ¡‚ ‚é”_ì{İ‚ğæ“¾
+		std::list<CFarmFacility*> FarmFacilitylist = pScene->GetGameObjects<CFarmFacility>();
+
+		for(auto facility : FarmFacilitylist)
+		{
+			// Œš’z•¨ƒŠƒXƒg‚É’Ç‰Á
+			buildlist.push_back(facility);
+		}
+	}
+	break;
+	}
+
+	// ƒŠƒtƒŒƒbƒVƒ…{İ‚ª–³‚¯‚ê‚ÎŒš’zˆË—Š‚ğ’Ç‰Á
+	if (buildlist.empty())
+	{
+		newRequest.eRequestType = RequestType::Build;
+	}
+	else
+	{
 		// ƒŠƒtƒŒƒbƒVƒ…{İ‚ª‚ ‚éê‡‚Í‹­‰»ˆË—Š‚ğ’Ç‰Á
 		for (auto build : buildlist)
 		{
@@ -140,68 +202,7 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 			newRequest.eRequestType = RequestType::Build;
 		}
 	}
-	break;
-	case BuildType::HumanHouse:
-	{
-		// ¡‚ ‚élŠÔ‚Ì‰Æ‚ğæ“¾
-		auto buildlist = pScene->GetGameObjects<CHumanHouse>();
 
-		// lŠÔ‚Ì‰Æ‚ª–³‚¯‚ê‚ÎŒš’zˆË—Š‚ğ’Ç‰Á
-		if (buildlist.empty())
-		{
-			newRequest.eRequestType = RequestType::Build;
-			break;
-		}
-
-		// lŠÔ‚Ì‰Æ‚ª‚ ‚éê‡‚Í‹­‰»ˆË—Š‚ğ’Ç‰Á
-		for (auto build : buildlist)
-		{
-			if (!build->IsMaxBuildLevel())
-			{
-				newRequest.eRequestType = RequestType::Upgrade;
-				newRequest.n2BuildIndex = build->GetFieldCellIndex();
-				break;
-			}
-		}
-
-		// ‘S‚Ä‚ÌlŠÔ‚Ì‰Æ‚ªÅ‘åƒŒƒxƒ‹‚Ìê‡‚ÍŒš’zˆË—Š‚ğ’Ç‰Á
-		if (newRequest.eRequestType != RequestType::Upgrade)
-		{
-			newRequest.eRequestType = RequestType::Build;
-		}
-	}
-	break;
-	case BuildType::BlackSmith:
-	{
-		// ¡‚ ‚é’b–è‰®‚ğæ“¾
-		auto buildlist = pScene->GetGameObjects<CBlackSmith>();
-
-		// ’b–è‰®‚ª–³‚¯‚ê‚ÎŒš’zˆË—Š‚ğ’Ç‰Á
-		if (buildlist.empty())
-		{
-			newRequest.eRequestType = RequestType::Build;
-			break;
-		}
-
-		// ’b–è‰®‚ª‚ ‚éê‡‚Í‹­‰»ˆË—Š‚ğ’Ç‰Á
-		for (auto build : buildlist)
-		{
-			if (!build->IsMaxBuildLevel())
-			{
-				newRequest.eRequestType = RequestType::Upgrade;
-				newRequest.n2BuildIndex = build->GetFieldCellIndex();
-				break;
-			}
-		}
-
-		// ‘S‚Ä‚Ì’b–è‰®‚ªÅ‘åƒŒƒxƒ‹‚Ìê‡‚ÍŒš’zˆË—Š‚ğ’Ç‰Á
-		if (newRequest.eRequestType != RequestType::Upgrade)
-		{
-			newRequest.eRequestType = RequestType::Build;
-		}
-	}
-	break;
-	}
 	newRequest.eBuildType = In_eRequestType;
 	newRequest.eRequestState = REQUEST_STATE::Unprocessed;
 

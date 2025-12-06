@@ -49,6 +49,8 @@ public:
 		BlackSmith,
 		// êHïiâ¡çHé{ê›
 		FoodFactory,
+		// î_çÏé{ê›
+		FarmFacility,
 
 		MAX
 	};
@@ -61,6 +63,7 @@ public:
 		case BuildType::HumanHouse:		return "HumanHouse";
 		case BuildType::BlackSmith:		return "BlackSmith";
 		case BuildType::FoodFactory:	return "FoodFactory";
+		case BuildType::FarmFacility:	return "FarmFacility";
 		default:						return "Unknown";
 		}
 	}

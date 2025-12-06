@@ -51,6 +51,9 @@ void CObjectLoad::LoadAll()
 	// 食料加工施設のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("FoodFactory.obj"), "FoodFactory", 1.0f, Model::ZFlip);
 
+	// 農場施設のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("FarmFacility.obj"), "FarmFacility", 1.0f, Model::ZFlip);
+
 	// HPバーのゲージテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Bar_Gauge.png"), "Bar_Gauge");
 }

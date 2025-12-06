@@ -375,6 +375,9 @@
     <ClInclude Include="GrassGenerator.h">
       <Filter>コードファイル\System\Generator</Filter>
     </ClInclude>
+    <ClInclude Include="FarmFacility.h">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -598,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="GrassGenerator.cpp">
       <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="FarmFacility.cpp">
+      <Filter>コードファイル\GameObject\BuildObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
