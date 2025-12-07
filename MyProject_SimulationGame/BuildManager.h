@@ -5,6 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include <list>
 #include "Item.h"
 #include "BuildObject.h"
@@ -12,7 +13,7 @@
 #include "Main.h"
 
 // @brief 建築物関係の管理システムクラス
-class CBuildManager
+class CBuildManager : public ISingleton<CBuildManager>
 {
 public:
 
@@ -89,19 +90,18 @@ public:
 		DirectX::XMINT2 n2BuildIndex;	// 建築位置
 	};
 
+	// @brief クールタイム時間
+	static constexpr float COOL_TIME_DURATION = 10.0f;
+
 private:
 	// @brief コンストラクタ
 	CBuildManager();
 
+	friend class ISingleton<CBuildManager>;
+
 public:
 	// @brief デストラクタ
 	~CBuildManager();
-
-	// @brief インスタンスを取得
-	static CBuildManager* GetInstance();
-
-	// @brief インスタンスを解放
-	static void ReleaseInstance();
 
 	// @brief 建築依頼を追加
 	// @param In_eRequestType：依頼タイプ
@@ -125,16 +125,25 @@ public:
 	// @brief 建築依頼リストの取得
 	const std::list<BuildRequest>& GetBuildRequestList() const { return m_BuildRequestList; }
 
+	// @brief クールタイム処理
+	void CoolTimeUpdate();
+
 private:
+
+	// @brief 建築依頼がクールタイム中かどうかを取得
+	// @return true:クールタイム中 false:クールタイム終了
+	bool IsCoolTime() const { return m_fCoolTime > 0.0f; }
 
 	// @brief ランダムに建築位置を決定
 	DirectX::XMINT2 DecideRandomBuildPosition();
 
 private:
 
-	// @brief インスタンス
-	static CBuildManager* m_pInstance;
-
 	// 建築依頼リスト
 	std::list<BuildRequest> m_BuildRequestList;
+
+	// @brief クールタイム
+	// @note 次の依頼を受けるまでの待機時間
+	float m_fCoolTime = 0.0f;
+
 };

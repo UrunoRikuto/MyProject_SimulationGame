@@ -5,29 +5,22 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include "FieldGrid.h"
 
 // @brief フィールド管理クラス
-class CFieldManager
+class CFieldManager : public ISingleton<CFieldManager>
 {
 private:
 	// @brief コンストラクタ
 	CFieldManager();
-	// デフォルトコンストラクタ禁止
-	CFieldManager(const CFieldManager&) = delete;
-	// 代入演算子禁止
-	CFieldManager& operator=(const CFieldManager&) = delete;
+
+	friend class ISingleton<CFieldManager>;
 
 public:
 	
 	// @brief デストラクタ
 	~CFieldManager();
-
-	// @brief インスタンスの取得
-	static CFieldManager* GetInstance();
-
-	// @brief インスタンスの解放
-	static void ReleaseInstance();
 
 	// @brief フィールドセルのタイプ選出
 	void AssignFieldCellType();
@@ -41,8 +34,6 @@ private:
 	void CreateInitialVillage();
 
 private:
-	// @brief 静的メンバ変数:インスタンスのポインタ
-	static CFieldManager* m_pInstance;
 	
 	// @brief フィールドグリッドのポインタ
 	CFieldGrid* m_pFieldGrid;

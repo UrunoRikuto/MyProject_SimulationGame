@@ -21,7 +21,7 @@ constexpr float Max_Health = 100.0f;
 constexpr int MaxHoldItem = 50;
 
 // @brief ˆÚ“®‘¬“x
-constexpr float Human_Move_Speed = 0.1f;
+constexpr float Human_Move_Speed = 0.05f;
 
 // @brief –¢’²—H—¿‚É‚æ‚é‹ó• ‰ñ•œ”{—¦
 constexpr float Human_UnCookedFood_Hunger_Recovery_Multiplier = 0.5f;

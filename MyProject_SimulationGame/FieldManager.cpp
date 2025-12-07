@@ -13,14 +13,11 @@
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
 
-#include "FarmFacility.h"
+#include "BlackSmith.h"
 
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
-
-//-- 静的メンバ変数の初期化 --//
-CFieldManager* CFieldManager::m_pInstance = nullptr;
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -39,35 +36,6 @@ CFieldManager::~CFieldManager()
 	// フィールドグリッドの解放
 	delete m_pFieldGrid;
 	m_pFieldGrid = nullptr;
-}
-
-/*****************************************//*
-	@brief　	| インスタンスの取得
-	@return		| CFieldManager型のインスタンスのポインタ
-	@note		| インスタンスが生成されていなければ生成し、インスタンスを返す
-*//*****************************************/
-CFieldManager* CFieldManager::GetInstance()
-{
-	// インスタンスが生成されていなければ生成する
-	if (m_pInstance == nullptr)
-	{
-		m_pInstance = new(std::nothrow) CFieldManager();
-	}
-	// インスタンスを返す
-	return m_pInstance;
-}
-
-/*****************************************//*
-	@brief　	| インスタンスの解放
-*//*****************************************/
-void CFieldManager::ReleaseInstance()
-{
-	// インスタンスが生成されていれば解放する
-	if (m_pInstance != nullptr)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
 }
 
 /*****************************************//*
@@ -103,7 +71,7 @@ void CFieldManager::AssignFieldCellType()
 			// 最大値：1.0f、最小値：0.0f
 
 			// 木の出現値(最小値：0.0f|最大値：0.4f)
-			if (noiseValue >= 0.0f && noiseValue <= 0.4f)
+			if (noiseValue >= 0.0f && noiseValue <= 0.4)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::TREE);
 				objCount++;
@@ -113,12 +81,12 @@ void CFieldManager::AssignFieldCellType()
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::GRASS);
 			}
-			// 岩の出現値(最小値：0.7f|最大値：1.0f)
-			else if (noiseValue >= 0.7f && noiseValue <= 1.0f)
+			// 岩の出現値(最小値：0.7f|最大値：0.9f)
+			else if (noiseValue >= 0.7f && noiseValue <= 0.9f)
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::ROCK);
 			}
-			// 空地の出現値(0.3f ～ 0.45f | 0.5f ～ 0.7f)
+			// 空地の出現値
 			else
 			{
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
@@ -211,4 +179,16 @@ void CFieldManager::CreateInitialVillage()
 	// 人間の家を配置したセルを建築可能地リストから削除
 	cells.erase(cells.begin() + randomIndex);
 	
+	// ランダムにセルを選択
+	randomIndex = rand() % cells.size();
+
+	// 鍛冶屋の生成と配置
+	CBuildObject* pBlackSmith = pScene->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
+	pBlackSmith->SetPos(cells[randomIndex]->GetPos());
+	cells[randomIndex]->SetUse(true);
+	cells[randomIndex]->SetObject(pBlackSmith);
+	pBlackSmith->SetFieldCellIndex(cells[randomIndex]->GetIndex());
+
+
+
 }

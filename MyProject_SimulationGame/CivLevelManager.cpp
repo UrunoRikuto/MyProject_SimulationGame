@@ -12,9 +12,6 @@
 #include "BuildManager.h"
 #include "GeneratorManager.h"
 
-//-------- 静的メンバ変数の初期化 ------//
-CCivLevelManager* CCivLevelManager::m_pInstance = nullptr;
-
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
@@ -29,35 +26,6 @@ CCivLevelManager::CCivLevelManager()
 *//*****************************************/
 CCivLevelManager::~CCivLevelManager()
 {
-}
-
-/*****************************************//*
-	@brief　	| インスタンス取得
-	@return		| インスタンスポインタ
-*//*****************************************/
-CCivLevelManager* CCivLevelManager::GetInstance()
-{
-	// インスタンスが存在しない場合
-	if (m_pInstance == nullptr)
-	{
-		// インスタンスを生成
-		m_pInstance = new(std::nothrow) CCivLevelManager();
-	}
-	// インスタンスを返す
-	return m_pInstance;
-}
-
-/*****************************************//*
-	@brief　	| インスタンス解放
-*//*****************************************/
-void CCivLevelManager::ReleaseInstance()
-{
-	// インスタンスが存在する場合
-	if (m_pInstance != nullptr)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
 }
 
 /*****************************************//*
@@ -99,29 +67,15 @@ std::vector<std::string> CCivLevelManager::GetUnlockJobNames()
 {
 	std::vector<std::string> pUnlockJobNames;
 
-	// 解放している職業名を追加
-	pUnlockJobNames.push_back(JobName::Neet);			// 無職
-	pUnlockJobNames.push_back(JobName::WoodGatherer);	// 木材収集職業
-	pUnlockJobNames.push_back(JobName::StoneGatherer);	// 石収集職業
-
 	// レベルに応じて解放される職業を追加
-	if(m_nCivLevel >= 3)
-	{
-		// ここにレベル3で解放される職業を追加
-		pUnlockJobNames.push_back(JobName::GrassGatherer);	// 草収集職業
-		pUnlockJobNames.push_back(JobName::Farmer);			// 農業職業
-		pUnlockJobNames.push_back(JobName::Cook);			// 料理職業
-	}
-	if (m_nCivLevel >= 5)
-	{
-		// ここにレベル5で解放される職業を追加
-		pUnlockJobNames.push_back(JobName::Builder);		// 建築職業
-	}
-	if(m_nCivLevel >= 10)
-	{
-		// ここにレベル10で解放される職業を追加
-		pUnlockJobNames.push_back(JobName::Smith);			// 鍛冶職業
-	}
+	if (m_nCivLevel >=  1)pUnlockJobNames.push_back(JobName::Neet);				// 無職
+	if (m_nCivLevel >=  1)pUnlockJobNames.push_back(JobName::WoodGatherer);		// 木材収集職業
+	if (m_nCivLevel >=  1)pUnlockJobNames.push_back(JobName::StoneGatherer);	// 石収集職業
+	if (m_nCivLevel >=  3)pUnlockJobNames.push_back(JobName::Builder);			// 建築職業
+	if (m_nCivLevel >=  5)pUnlockJobNames.push_back(JobName::Cook);				// 料理職業
+	if (m_nCivLevel >=  8)pUnlockJobNames.push_back(JobName::GrassGatherer);	// 草収集職業
+	if (m_nCivLevel >= 10)pUnlockJobNames.push_back(JobName::Farmer);			// 農業職業
+	if (m_nCivLevel >= 12)pUnlockJobNames.push_back(JobName::Smith);			// 鍛冶職業
 
 	return pUnlockJobNames;
 }

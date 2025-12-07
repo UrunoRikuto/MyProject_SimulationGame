@@ -6,9 +6,6 @@
 *//**************************************************/
 #include "ShaderManager.h"
 
-// 静的メンバ変数の定義
-CShaderManager* CShaderManager::m_Instance = nullptr;
-
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
@@ -33,31 +30,6 @@ CShaderManager::~CShaderManager()
 		delete psPair.second;
 	}
 	m_PSMap.clear();
-}
-
-/*****************************************//*
-	@brief　	| シングルトンインスタンスを取得する関数
-	@return		| シングルトンインスタンス
-*//*****************************************/
-CShaderManager* CShaderManager::GetInstance()
-{
-	if (m_Instance == nullptr)
-	{
-		m_Instance = new(std::nothrow) CShaderManager();
-	}
-	return m_Instance;
-}
-
-/*****************************************//*
-	@brief　	| シングルトンインスタンスを解放する関数
-*//*****************************************/
-void CShaderManager::ReleaseInstance()
-{
-	if (m_Instance != nullptr)
-	{
-		delete m_Instance;
-		m_Instance = nullptr;
-	}
 }
 
 /*****************************************//*

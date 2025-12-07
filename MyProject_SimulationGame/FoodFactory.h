@@ -21,7 +21,7 @@ private:
 
 	// @brief 生産進行度(マイフレーム)
 	static constexpr float COOK_PRODUCTION_PROGRESS_AMOUNT[CBuildObject::MAX_BUILD_LEVEL] = {
-		10.0f , 15.0f , 20.0f , 25.0f , 30.0f
+		1.0f , 1.5f , 2.0f , 2.5f , 3.0f
 	};
 
 	// @brief 生産進行度の取得

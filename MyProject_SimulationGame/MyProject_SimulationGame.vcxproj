@@ -183,6 +183,7 @@
     <ClInclude Include="PerlinNoice.h" />
     <ClInclude Include="RefreshFacility.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Smith_Job.h" />
     <ClInclude Include="Stone.h" />

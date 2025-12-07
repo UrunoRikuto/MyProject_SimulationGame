@@ -136,6 +136,9 @@
     <Filter Include="コードファイル\GameObject\Entity\Human">
       <UniqueIdentifier>{e336f92f-eb97-4c31-81d7-4d48de688259}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Manager\DesignPattern">
+      <UniqueIdentifier>{dcfbbf1c-bddf-43b3-b753-5aa87004d82a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -389,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="Farmer_Job.h">
       <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>コードファイル\System\Manager\DesignPattern</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

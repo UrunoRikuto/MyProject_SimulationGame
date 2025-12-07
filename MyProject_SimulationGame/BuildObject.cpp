@@ -99,7 +99,7 @@ void CBuildObject::UpgradeBuildLevel()
 *//*****************************************/
 void CBuildObject::ProgressBuild(float fAmount)
 {
-	m_fBuildProgress += fAmount / fFPS;
+	m_fBuildProgress += fAmount;
 
 	if (m_fBuildProgress > BUILD_PROGRESS_MAX)
 	{

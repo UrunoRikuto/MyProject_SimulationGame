@@ -5,6 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include "SubJect.h"
 #include "Generator.h"
 
@@ -12,7 +13,7 @@
 const float Human_Regenerate_Wait_Time = 5.0f;
 
 // @brief 生成管理システムクラス
-class CGeneratorManager final : public ISubJect
+class CGeneratorManager final : public ISubJect, public ISingleton<CGeneratorManager>
 {
 public:
 	// @brief 生成タイプ列挙型
@@ -37,12 +38,7 @@ private:
 	// @brief コンストラクタ
 	CGeneratorManager() = default;
 
-	// @brief コピーコンストラクタ（禁止）
-	CGeneratorManager(const CGeneratorManager& other) = delete;
-
-	// @brief コピー代入演算子（禁止）
-	CGeneratorManager& operator=(const CGeneratorManager& other) = delete;
-
+	friend class ISingleton<CGeneratorManager>;
 public:
 	// @brief デストラクタ
 	~CGeneratorManager() override = default;
@@ -58,13 +54,6 @@ public:
 	template<typename T = IGenerator>
 	void NotifyObserver();
 
-	// @brief シングルトンインスタンスの取得
-	// @return シングルトンインスタンスのポインタ
-	static CGeneratorManager* GetInstance();
-
-	// @brief シングルトンインスタンスの解放
-	static void ReleaseInstance();
-
 	// @brief 生成リクエストの追加処理
 	// @param request：追加する生成リクエスト
 	void AddGenerateRequest(GenerateRequest request);
@@ -74,8 +63,6 @@ public:
 	std::list<GenerateRequest>& GetGenerateRequestList() { return m_GenerateRequestList; }
 
 private:
-	// @brief シングルトンインスタンス
-	static CGeneratorManager* m_pInstance;
 
 	// @brief 生成リクエストリスト
 	std::list<GenerateRequest> m_GenerateRequestList;

@@ -5,12 +5,13 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
 
 // @brief 文明レベル管理クラス
-class CCivLevelManager
+class CCivLevelManager : public ISingleton<CCivLevelManager>
 {
 private:
 	// @brief 文明レベルアップに必要な経験値の基準
@@ -44,20 +45,15 @@ public:
 	};
 
 private:
-
 	// @brief コンストラクタ
 	CCivLevelManager();
+
+	friend class ISingleton<CCivLevelManager>;
 
 public:
 
 	// @brief デストラクタ
 	~CCivLevelManager();
-
-	// @brief インスタンス取得
-	static CCivLevelManager* GetInstance();
-
-	// @brief インスタンス解放
-	static void ReleaseInstance();
 
 	// @brief 文明レベル取得
 	int GetCivLevel() const { return m_nCivLevel; }
@@ -79,9 +75,6 @@ public:
 	std::vector<std::string> GetUnlockJobNames();
 
 private:
-
-	// @brief インスタンス
-	static CCivLevelManager* m_pInstance;
 
 	// @brief 文明レベル
 	int m_nCivLevel;

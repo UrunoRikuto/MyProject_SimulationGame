@@ -5,24 +5,20 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include "Shader.h"
 
 // @brief シェーダーマネージャークラス
-class CShaderManager
+class CShaderManager : public ISingleton<CShaderManager>
 {
 private:
 	// @brief コンストラクタ
 	CShaderManager();
-	// コピーコンストラクタ・代入演算子の禁止
-	CShaderManager(const CShaderManager&) = delete;
-	CShaderManager& operator=(const CShaderManager&) = delete;
+
+	friend class ISingleton<CShaderManager>;
 public:
 	// @brief デストラクタ
 	~CShaderManager();
-	// @brief シングルトンインスタンスを取得する関数
-	static CShaderManager* GetInstance();
-	// @brief シングルトンインスタンスを解放する関数
-	static void ReleaseInstance();
 	
 	// @brief シェーダーの読み込み
 	void LoadShaders();
@@ -37,8 +33,6 @@ public:
 
 
 private:
-	// @brief シングルトンインスタンス
-	static CShaderManager* m_Instance;
 
 	// @brief 頂点シェーダー格納用マップ
 	std::map<VSType, VertexShader*> m_VSMap;

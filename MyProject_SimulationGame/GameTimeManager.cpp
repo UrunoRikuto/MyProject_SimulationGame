@@ -6,9 +6,6 @@
 #include "GameTimeManager.h"
 #include <new>
 
-// 静的メンバ変数の定義
-CGameTimeManager* CGameTimeManager::m_Instance = nullptr;
-
 /****************************************//*
 	@brief　	| コンストラクタ
 *//****************************************/
@@ -22,31 +19,6 @@ CGameTimeManager::CGameTimeManager()
 *//****************************************/
 CGameTimeManager::~CGameTimeManager()
 {
-}
-
-/****************************************//*
-	@brief　	| シングルトンインスタンスを取得する関数
-	@return		| シングルトンインスタンス
-*//****************************************/
-CGameTimeManager* CGameTimeManager::GetInstance()
-{
-	if (m_Instance == nullptr)
-	{
-		m_Instance = new(std::nothrow) CGameTimeManager();
-	}
-	return m_Instance;
-}
-
-/****************************************//*
-	@brief　	| シングルトンインスタンスを解放する関数
-*//****************************************/
-void CGameTimeManager::ReleaseInstance()
-{
-	if (m_Instance != nullptr)
-	{
-		delete m_Instance;
-		m_Instance = nullptr;
-	}
 }
 
 /****************************************//*

@@ -73,6 +73,9 @@ void CSceneGame::Update()
 
 	// ゲーム内時間の更新
 	CGameTimeManager::GetInstance()->UpdateGameTime();
+
+	// クールタイム処理
+	CBuildManager::GetInstance()->CoolTimeUpdate();
 }
 
 /****************************************//*

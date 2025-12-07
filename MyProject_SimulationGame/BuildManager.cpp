@@ -16,10 +16,6 @@
 #include "FarmFacility.h"
 
 
-
-// 静的メンバ変数の初期化
-CBuildManager* CBuildManager::m_pInstance = nullptr;
-
 /*****************************************//*
 	@brief　	| 建築タイプに応じた建築物クラスのポインタを生成する関数
 	@param　	| eType：建築タイプ
@@ -52,6 +48,7 @@ CBuildObject* CBuildManager::CreateBuildObjectByType(BuildType eType)
 *//*****************************************/
 CBuildManager::CBuildManager()
 	: m_BuildRequestList()
+	, m_fCoolTime(0.0f)
 {
 }
 
@@ -60,31 +57,6 @@ CBuildManager::CBuildManager()
 *//*****************************************/
 CBuildManager::~CBuildManager()
 {
-}
-
-/*****************************************//*
-	@brief	| インスタンスを取得
-	@return	| インスタンスのポインタ
-*//*****************************************/
-CBuildManager* CBuildManager::GetInstance()
-{
-	if (m_pInstance == nullptr)
-	{
-		m_pInstance = new CBuildManager();
-	}
-	return m_pInstance;
-}
-
-/*****************************************//*
-	@brief	| インスタンスを解放
-*//*****************************************/
-void CBuildManager::ReleaseInstance()
-{
-	if (m_pInstance != nullptr)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
 }
 
 /*****************************************//*
@@ -222,6 +194,8 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 *//*****************************************/
 CBuildManager::BuildRequest* CBuildManager::TakeBuildRequest()
 {
+	if (!IsCoolTime())return nullptr;
+
 	// 未処理の依頼を探す
 	for (auto& request : m_BuildRequestList)
 	{
@@ -265,6 +239,29 @@ void CBuildManager::CompleteBuildRequest(BuildRequest* pRequest)
 	{
 		return &request == pRequest;
 		});
+
+	// クールタイムを設定（例：2秒）
+	m_fCoolTime = COOL_TIME_DURATION;
+}
+
+/*****************************************//*
+	@brief	| クールタイム処理
+	@return	| true:クールタイム中 false:クールタイム終了
+*//*****************************************/
+void CBuildManager::CoolTimeUpdate()
+{
+	// クールタイムが残っている場合
+	if (m_fCoolTime > 0.0f)
+	{
+		// クールタイムを減少
+		m_fCoolTime -= 1.0f / fFPS;
+
+		// クールタイムが終了した場合
+		if (m_fCoolTime <= 0.0f)
+		{
+			m_fCoolTime = 0.0f;
+		}
+	}
 }
 
 /*****************************************//*

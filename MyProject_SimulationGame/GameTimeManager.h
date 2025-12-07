@@ -4,11 +4,12 @@
 	@note	| ゲーム内時間の進行や管理を担当するクラスを定義しています。
 *//**************************************************/
 #pragma once
+#include "Singleton.h"
 #include "Defines.h"
 #include <string>
 
 // @brief ゲーム内時間管理クラス
-class CGameTimeManager
+class CGameTimeManager : public ISingleton<CGameTimeManager>
 {
 public:
 	// @brief 1日の時間帯を表す列挙型
@@ -28,19 +29,12 @@ private:
 	// @brief コンストラクタ
 	CGameTimeManager();
 
-	// コピーコンストラクタ・代入演算子の禁止
-	CGameTimeManager(const CGameTimeManager&) = delete;
-	CGameTimeManager& operator=(const CGameTimeManager&) = delete;
+	friend class ISingleton<CGameTimeManager>;
+
 public:
 
 	// @brief デストラクタ
 	~CGameTimeManager();
-
-	// @brief シングルトンインスタンスを取得する関数
-	static CGameTimeManager* GetInstance();
-
-	// @brief シングルトンインスタンスを解放する関数
-	static void ReleaseInstance();
 
 	// @brief ゲーム内時間を進行させる関数
 	void UpdateGameTime();
@@ -68,9 +62,6 @@ public:
 	const float GetTimeOfDayProgress() const;
 
 private:
-
-	// @brief シングルトンインスタンス
-	static CGameTimeManager* m_Instance;
 
 	// @brief ゲーム内時間
 	float m_fGameTime;

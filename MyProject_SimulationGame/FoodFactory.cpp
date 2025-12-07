@@ -317,6 +317,9 @@ std::list<CItem::ITEM_TYPE> CFoodFactory::GetProducibleMealTypes()
 	// 製作可能な料理のアイテムタイプリスト
 	std::list<CItem::ITEM_TYPE> vCanCookItems;
 
+	// パン
+	vCanCookItems.push_back(CItem::ITEM_TYPE::Bread);
+
 	// アップルパイ
 	vCanCookItems.push_back(CItem::ITEM_TYPE::ApplePie);
 

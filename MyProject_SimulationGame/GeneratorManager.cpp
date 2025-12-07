@@ -7,9 +7,6 @@
 #include "GeneratorManager.h"
 #include "Main.h"
 
-// 静的メンバ変数の初期化
-CGeneratorManager* CGeneratorManager::m_pInstance = nullptr;
-
 /*****************************************
 	@brief　	| 更新処理
 *//*****************************************/
@@ -60,27 +57,6 @@ void CGeneratorManager::NotifyObservers()
 	{
 		observer->Notify();
 	}
-}
-
-/*****************************************
-	@brief　	| シングルトンインスタンスの取得
-*//*****************************************/
-CGeneratorManager* CGeneratorManager::GetInstance()
-{
-	if (m_pInstance == nullptr)
-	{
-		m_pInstance = new CGeneratorManager();
-	}
-	return m_pInstance;
-}
-
-/*****************************************
-	@brief　	| シングルトンインスタンスの解放
-*//*****************************************/
-void CGeneratorManager::ReleaseInstance()
-{
-	delete m_pInstance;
-	m_pInstance = nullptr;
 }
 
 /*****************************************

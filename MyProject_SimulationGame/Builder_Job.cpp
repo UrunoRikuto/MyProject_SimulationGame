@@ -22,7 +22,6 @@ CBuilder_Job::CBuilder_Job()
 	: CCrafter_Strategy()
 	, m_eCurrentState(WorkState::Resting)
 	, m_ePrevState(WorkState::Resting)
-	, m_fCoolTime(0.0f)
 {
 	// 建築職業の労働力を設定
 	m_Status.m_fWorkPower = 15.0f;
@@ -91,8 +90,6 @@ void CBuilder_Job::OnChangeJob()
 	// 仕事状態を待機中にリセット
 	m_eCurrentState = WorkState::Waiting;
 	m_ePrevState = WorkState::Waiting;
-	// クールタイムをリセット
-	m_fCoolTime = 0.0f;
 }
 
 /*****************************************//*
@@ -183,12 +180,6 @@ void CBuilder_Job::DrawJobStatusImGui()
 	{
 		ImGui::Text("NoRequest");
 	}
-
-	// クールタイムの表示
-	if (m_fCoolTime > 0.0f)
-	{
-		ImGui::Text("Cool Time: %.2f", m_fCoolTime);
-	}
 }
 
 /*****************************************//*
@@ -230,22 +221,6 @@ void CBuilder_Job::DrawBuildRequestDetailImGui()
 *//*****************************************/
 void CBuilder_Job::WaitingAction()
 {
-	// クールタイムが残っている場合
-	if (m_fCoolTime > 0.0f)
-	{
-		// クールタイムを減少
-		m_fCoolTime -= 1.0f / fFPS;
-
-		// クールタイムが終了した場合
-		if (m_fCoolTime <= 0.0f)
-		{
-			m_fCoolTime = 0.0f;
-		}
-
-		// クールタイム中は処理を抜ける
-		return;
-	}
-
 	// 建築依頼がない場合は処理を抜ける
 	if (!CBuildManager::GetInstance()->HasBuildRequest())return;
 
@@ -472,6 +447,12 @@ void CBuilder_Job::BuildingAction()
 	// 建築オブジェクトのポインタを取得
 	if (m_pBuildingObject == nullptr)
 	{
+		// 建築進行度が100%に達していない場合は進行度を増加させる
+		if (m_fWorkProgress <= 100.0f)
+		{
+			m_fWorkProgress += m_Status.m_fWorkPower / fFPS;
+			return;
+		}
 		// 建築オブジェクトをシーンに追加
 		m_pBuildingObject = CBuildManager::CreateBuildObjectByType(m_pCurrentBuildRequest->eBuildType);
 
@@ -545,9 +526,6 @@ void CBuilder_Job::BuildingAction()
 		m_ePrevState = m_eCurrentState;
 		// 待機状態に移行
 		m_eCurrentState = WorkState::Waiting;
-
-		// クールタイムを設定
-		m_fCoolTime = COOL_TIME_DURATION;
 	}
 }
 
@@ -618,9 +596,6 @@ void CBuilder_Job::UpgradingAction()
 		m_ePrevState = m_eCurrentState;
 		// 待機状態に移行
 		m_eCurrentState = WorkState::Waiting;
-
-		// クールタイムを設定
-		m_fCoolTime = COOL_TIME_DURATION;
 	}
 }
 
@@ -637,8 +612,8 @@ void CBuilder_Job::RestingAction()
 		if (m_ePrevState != m_eCurrentState)
 		{
 			// 前の状態を保存
-			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = m_ePrevState;
+			m_ePrevState = WorkState::Resting;
 		}
 		else
 		{
