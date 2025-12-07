@@ -179,16 +179,4 @@ void CFieldManager::CreateInitialVillage()
 	// 人間の家を配置したセルを建築可能地リストから削除
 	cells.erase(cells.begin() + randomIndex);
 	
-	// ランダムにセルを選択
-	randomIndex = rand() % cells.size();
-
-	// 鍛冶屋の生成と配置
-	CBuildObject* pBlackSmith = pScene->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
-	pBlackSmith->SetPos(cells[randomIndex]->GetPos());
-	cells[randomIndex]->SetUse(true);
-	cells[randomIndex]->SetObject(pBlackSmith);
-	pBlackSmith->SetFieldCellIndex(cells[randomIndex]->GetIndex());
-
-
-
 }
