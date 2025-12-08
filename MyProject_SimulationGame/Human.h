@@ -10,6 +10,7 @@
 #include "Item.h"
 #include <memory>
 #include "BillboardRenderer.h"
+#include "Skill.h"
 
 // 前方宣言
 class CHumanHouse;
@@ -128,6 +129,9 @@ public:
 	// @brief ツールアイテムを取り出す
 	CItem* TakeOutToolItem();
 
+	// @brief スキルポインタの取得
+	CSkill* GetSkill() const { return m_pSkill.get(); }
+
 private:
 
 	// @brief 家に帰って休む処理
@@ -142,6 +146,9 @@ private:
 
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
+
+	// @brief スキルポインタ
+	std::unique_ptr<CSkill> m_pSkill;
 
 	// @brief ツールアイテム
 	CItem* m_pToolItem;

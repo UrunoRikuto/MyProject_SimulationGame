@@ -18,6 +18,69 @@
 ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
+[実装]：生誕時に付与されるスキル
+= 人間が生誕時にランダムでスキルを持つようにする
+- スキルは人間の能力に影響を与える
+- スキルの種類は複数用意する
+- 例:木を採取する職についたとき労働力+1.5倍など
+- 作成する時は標的+効果の形で定義する
+- 例:木の採取+労働力1.5倍
+-標的の作成例
+enum class SkillTarget
+{
+	// 職種
+	None,
+	WoodGatherer,
+	StoneGatherer,
+	Cook,
+	...など(全職種分)
+
+	// 最大スタミナ
+	MaxStamina,
+
+	// 最大体力
+	Health,
+
+	// 移動速度
+	MoveSpeed,
+};
+- 効果の作成例
+enum class SkillEffect
+{
+	// 倍率
+	Multiplier_1_5,
+	Multiplier_2_0,
+
+};
+- 効果の判別
+void JobBuff(float& workPower, std::string nowJobName)
+{
+	bool IsSkill_JobBuff = false;
+	switch (skillTarget)
+	{
+	case SkillTarget::WoodGatherer:
+		if (nowJobName == JobName::WoodGatherer)
+		{
+			IsSkill_JobBuff = true;
+		}
+		break;
+	...他の職種分も同様に判別
+	}
+
+	// 対応する職種がなかった場合は処理を抜ける
+	if (!IsSkill_JobBuff) return;
+
+	switch (skillEffect)
+	{
+	case SkillEffect::Multiplier_1_5:
+		workPower *= 1.5f;
+		break;
+	case SkillEffect::Multiplier_2_0:
+		workPower *= 2.0f;
+		break;
+	}
+}
+
 [実装]：脅威度
 = 動物と人間の脅威度システムの実装
 - 動物は脅威度に応じて行動を変化させる

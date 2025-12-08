@@ -20,7 +20,7 @@ private:
 
 	// @brief 生産進行度(マイフレーム)
 	static constexpr float TOOL_PRODUCTION_PROGRESS_AMOUNT[CBuildObject::MAX_BUILD_LEVEL] = {
-		1.0f , 1.5f , 2.0f , 2.5f , 3.0f
+		0.1f , 0.2f , 0.3f , 0.4f , 0.5f
 	};
 
 	// @brief 生産進行度の取得
@@ -82,7 +82,7 @@ public:
 	// @brief 生産依頼を進める
 	// @param In_Request：ツール生産依頼構造体のポインタ
 	// @return 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
-	CItem* ProgressRequest(ToolRequest* pRequest);
+	CItem* ProgressRequest(ToolRequest* pRequest, float fAmount);
 
 private:
 	// @brief 生産依頼アイテムリスト

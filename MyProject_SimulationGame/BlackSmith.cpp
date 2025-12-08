@@ -202,12 +202,12 @@ bool CBlackSmith::CompleteRequest(ToolRequest* pRequest)
 	@param		| In_Request：進行させるツール生産依頼構造体のポインタ
 	@return		| 生産が完了した場合は生成したCItemポインタ、未完了の場合はnullptr
 *//*****************************************/
-CItem* CBlackSmith::ProgressRequest(ToolRequest* pRequest)
+CItem* CBlackSmith::ProgressRequest(ToolRequest* pRequest, float fAmount)
 {
 	if (pRequest == nullptr) return nullptr;
 
 	// 生産進行度を進める
-	pRequest->fProductionProgress += GetToolProductionProgressAmount();
+	pRequest->fProductionProgress += fAmount * GetToolProductionProgressAmount();
 
 	// 生産進行度が100以上になった場合、依頼を完了させる
 	if (pRequest->fProductionProgress >= 100.0f)

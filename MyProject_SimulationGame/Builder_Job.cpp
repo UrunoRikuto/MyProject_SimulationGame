@@ -151,8 +151,8 @@ int CBuilder_Job::Inspecter(bool isEnd)
 *//*****************************************/
 void CBuilder_Job::DrawJobStatusImGui()
 {
-	ImGui::Separator();
-	ImGui::Text("[JobStatus]");
+	// 職業ステータスの基本表示
+	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている建築依頼の表示
 	ImGui::Text("Request: ");

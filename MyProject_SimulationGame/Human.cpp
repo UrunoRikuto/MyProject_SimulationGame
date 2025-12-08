@@ -42,6 +42,20 @@ CHuman::CHuman()
 	m_fHealth = Max_Health;
 	// 脅威度の初期化
 	m_fThreat = ThreatLevels::Human;
+
+	// スキルの追加
+	m_pSkill = std::make_unique<CSkill>();
+
+	// 職業に所属を設定
+	m_pJob->SetOwner(*this);
+
+	// スタミナのスキルボーナス適用
+	m_pSkill->ApplySkillBuff(m_pJob->GetJobStatus().m_fMaxStamina, CSkill::SkillTarget::MaxStamina);
+	m_pJob->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fMaxStamina;
+
+	// 体力のスキルボーナス適用
+	m_pSkill->ApplySkillBuff(m_fMaxHealth, CSkill::SkillTarget::MaxHealth);
+	m_fHealth = m_fMaxHealth;
 }
 
 /****************************************//*
@@ -274,6 +288,17 @@ int CHuman::Inspecter(bool isEnd)
 
 	ImGui::Separator();
 
+	// 体力の表示
+	// テキストカラーの設定
+	// 通常時は緑色、体力が20以下の場合は赤色に変更
+	ImVec4 HealthTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+	if(m_fHealth <= 20.0f)
+	{
+		HealthTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	ImGui::TextColored(HealthTextColor, "Health: %.2f / %.2f", m_fHealth, Max_Health);
+
 	// 空腹度表示
 	// テキストカラーの設定
 	// 通常時は緑色、空腹度が20以下の場合は赤色に変更
@@ -470,6 +495,11 @@ void CHuman::SetHumanJob(std::unique_ptr<IJob_Strategy> job)
 
 	// スタミナ値を引き継ぐ
 	job->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fStamina;
+	// スタミナ最大値を引き継ぐ
+	job->GetJobStatus().m_fMaxStamina = m_pJob->GetJobStatus().m_fMaxStamina;
+
+	// 親オブジェクトを設定
+	job->SetOwner(*this);
 
 	// ツールを持っていた場合、貯蔵庫に返却するフラグを立てる
 	if (m_pToolItem != nullptr)m_isReturnToolToStorage = true;

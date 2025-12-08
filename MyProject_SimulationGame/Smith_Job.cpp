@@ -133,8 +133,8 @@ int CSmith_Job::Inspecter(bool isEnd)
 *//*****************************************/
 void CSmith_Job::DrawJobStatusImGui()
 {
-	ImGui::Separator();
-	ImGui::Text("[JobStatus]");
+	// 職業ステータスの基本表示
+	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている依頼の表示
 	ImGui::Text("Current Request:");
@@ -321,7 +321,7 @@ void CSmith_Job::CraftingAction()
 	if (!m_pOwner->MoveToTarget(pNearestBlackSmith, Human_Move_Speed))return;
 
 	// 生産依頼を進めて、完成品を受け取る
-	CItem* pProducedItem = pNearestBlackSmith->ProgressRequest(m_pRequest);
+	CItem* pProducedItem = pNearestBlackSmith->ProgressRequest(m_pRequest, m_Status.m_fWorkPower);
 
 	// スタミナ値を減少
 	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;

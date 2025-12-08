@@ -139,6 +139,9 @@
     <Filter Include="コードファイル\System\Manager\DesignPattern">
       <UniqueIdentifier>{dcfbbf1c-bddf-43b3-b753-5aa87004d82a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Skill">
+      <UniqueIdentifier>{dc77b8d7-bbdf-41ff-bb84-05f6ed26a781}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -396,6 +399,9 @@
     <ClInclude Include="Singleton.h">
       <Filter>コードファイル\System\Manager\DesignPattern</Filter>
     </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>コードファイル\System\Skill</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -631,6 +637,9 @@
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>コードファイル\GameObject\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Skill.cpp">
+      <Filter>コードファイル\System\Skill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

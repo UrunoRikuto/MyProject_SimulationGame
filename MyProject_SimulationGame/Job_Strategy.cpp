@@ -11,6 +11,7 @@
 #include "Oparation.h"
 #include "RefreshFacility.h"
 #include "BuildManager.h"
+#include "ImguiSystem.h"
 
 /*****************************************//*
 	@brief　	| デストラクタ
@@ -25,6 +26,17 @@ IJob_Strategy::~IJob_Strategy()
 	}
 }
 
+/*****************************************//*
+	@brief　	| 所有者の設定
+	@param　	| pOwner：所有者の参照
+*//*****************************************/
+void IJob_Strategy::SetOwner(CHuman& pOwner)
+{
+	m_pOwner = &pOwner;
+
+	// 労働力のスキルバフ
+	m_pOwner->GetSkill()->ApplySkillBuff(m_Status.m_fWorkPower, this);
+}
 /*****************************************//*
 	@brief　	| スタミナの増加処理
 	@param　	| fAmount：増加量
@@ -125,4 +137,21 @@ bool IJob_Strategy::RestAction()
 
 	// 休憩中
 	return false;
+}
+
+/*****************************************//*
+	@brief　	| 職業ステータスのImGui描画処理
+*//*****************************************/
+void IJob_Strategy::DrawJobStatusImGui()
+{
+	ImGui::Separator();
+	ImGui::Text("[JobStatus]");
+
+	// 労働力の描画
+	ImGui::Text("Work Power: %.2f", m_Status.m_fWorkPower);
+
+	// スタミナゲージの描画
+	ImGui::Text("Stamina:");
+	ImGui::SameLine();
+	ImGui::ProgressBar(m_Status.m_fStamina / m_Status.m_fMaxStamina, ImVec2(200.0f, 30.0f), nullptr);
 }

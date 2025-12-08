@@ -109,9 +109,9 @@ int CFarmer_Job::Inspecter(bool isEnd)
 *//*****************************************/
 void CFarmer_Job::DrawJobStatusImGui()
 {
-	ImGui::Separator();
+	// 職業ステータスの基本表示
+	IJob_Strategy::DrawJobStatusImGui();
 
-	ImGui::Text("[JobStatus]");
 	// 現在の仕事状態の表示
 	ImGui::Text("Current State:");
 	switch (m_eCurrentState)

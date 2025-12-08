@@ -13,6 +13,7 @@
 CEntity::CEntity()
 	: CGameObject()
 	, m_fHealth(100.0f)
+	, m_fMaxHealth(100.0f)
 	, m_fHunger(Max_Hunger)
 	, m_isEating(false)
 	, m_fThreat(0.0f)

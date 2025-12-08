@@ -95,9 +95,8 @@ int CCook_Job::Inspecter(bool isEnd)
 *//****************************************/
 void CCook_Job::DrawJobStatusImGui()
 {
-	ImGui::Separator();
-
-	ImGui::Text("[JobStatus]");
+	// 職業ステータスの基本表示
+	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている依頼の表示
 	ImGui::Text("Current Request:");

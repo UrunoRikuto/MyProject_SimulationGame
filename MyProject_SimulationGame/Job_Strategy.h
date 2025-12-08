@@ -30,8 +30,8 @@ public:
 		// @brief コンストラクタ
 		JobStatus()
 			: m_fWorkPower(1.0f)
-			, m_fStamina(100.0f)
-			, m_fMaxStamina(m_fStamina)
+			, m_fMaxStamina(Job_Max_Stamina)
+			, m_fStamina(m_fMaxStamina)
 		{
 		}
 
@@ -55,7 +55,7 @@ public:
 
 	// @brief 職業ステータスのImGui描画処理
 	// @note 職業ごとのステータス表示処理を実装する場合はオーバーライドする
-	virtual void DrawJobStatusImGui() = 0;
+	virtual void DrawJobStatusImGui();
 
 	// @brief 職業ごとの仕事処理の純粋仮想関数
 	virtual void DoWork() = 0;
@@ -67,10 +67,9 @@ public:
 	// @return 職業名の文字列
 	virtual std::string GetJobName() const = 0;
 
-	// @brief 所属しているオブジェクトの取得
-	// @param pOwner：所属しているオブジェクトの参照
-	// @return 所属しているオブジェクトのポインタ
-	void SetOwner(CHuman& pOwner) { m_pOwner = &pOwner; }
+	// @brief 所属しているオブジェクトの設定
+	// @param pOwner：所属するオブジェクトの参照
+	void SetOwner(CHuman& pOwner);
 
 	// @brief 所属しているオブジェクトの取得
 	// @return 所属しているオブジェクトのポインタ

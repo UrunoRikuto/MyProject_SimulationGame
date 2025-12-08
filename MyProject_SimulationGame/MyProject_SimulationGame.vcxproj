@@ -184,6 +184,7 @@
     <ClInclude Include="RefreshFacility.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Smith_Job.h" />
     <ClInclude Include="Stone.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="RefreshFacility.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="Skill.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Smith_Job.cpp" />
     <ClCompile Include="Stone.cpp" />

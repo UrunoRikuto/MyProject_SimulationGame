@@ -128,8 +128,8 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 *//****************************************/
 void CGatherer_Strategy::DrawJobStatusImGui()
 {
-	ImGui::Separator();
-	ImGui::Text("[JobStatus]");
+	// 職業ステータスの基本表示
+	IJob_Strategy::DrawJobStatusImGui();
 
 	// 標的にしているオブジェクトの表示
 	ImGui::Text("Target Object ID: ");

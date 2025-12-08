@@ -817,20 +817,21 @@ void CImguiSystem::Release_DrawHuman()
 	ImGui::Separator();
 	ImGui::Text("[Status]");
 
-	// スタミナ値の表示
-	IJob_Strategy::JobStatus currentJobStatus = m_pHumanObject->GetHumanJob()->GetJobStatus();
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Stamina: %.1f / %.1f", currentJobStatus.m_fStamina, currentJobStatus.m_fMaxStamina);
+	// 体力値の表示
+	const float maxHealth = m_pHumanObject->GetMaxHealth();
+	const float currentHealth = m_pHumanObject->GetHealth();
 
+	ImGui::Text("Health:");
+	ImGui::SameLine();
+	ImGui::ProgressBar(currentHealth / maxHealth, ImVec2(200.0f, 30.0f), nullptr);
 
 	// 空腹値の表示
+	const float maxHunger = Max_Hunger;
 	float currentHunger = m_pHumanObject->GetHunger();
-	ImVec4 hungerTextColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // デフォルトは緑色
-	if (currentHunger < Warning_Hunger)
-	{
-		hungerTextColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 警告閾値未満は黄色
-	}
+	ImGui::Text("Hunger:");
+	ImGui::SameLine();
+	ImGui::ProgressBar(currentHunger / maxHunger, ImVec2(200.0f, 30.0f), nullptr);
 
-	ImGui::TextColored(hungerTextColor, "Hunger: %.1f / %.1f", currentHunger, Max_Hunger);
 
 	// 所持しているツールの表示
 	CItem* pTool = m_pHumanObject->GetToolItem();
@@ -863,6 +864,9 @@ void CImguiSystem::Release_DrawHuman()
 		}
 		ImGui::EndCombo();
 	}
+
+	// スキル表示
+	m_pHumanObject->GetSkill()->DrawSkillImGui();
 
 	// 職業別のステータス表示
 	m_pHumanObject->GetHumanJob()->DrawJobStatusImGui();

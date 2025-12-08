@@ -49,9 +49,16 @@ public:
 	// @param fAmountFŒ¸­—Ê
 	void DecreaseHunger(float fAmount);
 
+	// @brief ‘Ì—Í‚Ìæ“¾
+	float GetHealth() const { return m_fHealth; }
+	// @brief Å‘å‘Ì—Í‚Ìæ“¾
+	float GetMaxHealth() const { return m_fMaxHealth; }
+
 protected:
 	// @brief ‘Ì—Í
 	float m_fHealth;
+	// @brief ‘Ì—ÍÅ‘å’l
+	float m_fMaxHealth;
 
 	// @brief ‹ó• “x
 	float m_fHunger;
