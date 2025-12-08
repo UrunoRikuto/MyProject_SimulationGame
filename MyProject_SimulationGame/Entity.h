@@ -74,4 +74,6 @@ namespace ThreatLevels
 {
 	// @brief 人間の脅威度
 	constexpr float Human = 50.0f;
+	// @brief オオカミの脅威度
+	constexpr float Wolf = 10.0f;
 }

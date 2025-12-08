@@ -141,6 +141,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animal.h" />
     <ClInclude Include="BillboardRenderer.h" />
     <ClInclude Include="BlackSmith.h" />
     <ClInclude Include="Builder_Job.h" />
@@ -224,11 +225,13 @@
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
+    <ClInclude Include="Wolf.h" />
     <ClInclude Include="Wood.h" />
     <ClInclude Include="WoodGatherer_Job.h" />
     <ClInclude Include="WoodGenerator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animal.cpp" />
     <ClCompile Include="BillboardRenderer.cpp" />
     <ClCompile Include="BlackSmith.cpp" />
     <ClCompile Include="Builder_Job.cpp" />
@@ -305,6 +308,7 @@
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="Wolf.cpp" />
     <ClCompile Include="Wood.cpp" />
     <ClCompile Include="WoodGatherer_Job.cpp" />
     <ClCompile Include="WoodGenerator.cpp" />

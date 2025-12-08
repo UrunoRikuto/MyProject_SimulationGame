@@ -142,6 +142,12 @@
     <Filter Include="コードファイル\System\Skill">
       <UniqueIdentifier>{dc77b8d7-bbdf-41ff-bb84-05f6ed26a781}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\Entity\Animal">
+      <UniqueIdentifier>{4e49dedf-013f-4426-9829-11964c028583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\Entity\Animal\Base">
+      <UniqueIdentifier>{dd2e7bcc-bce8-4087-aab9-882ed4447d39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -402,6 +408,12 @@
     <ClInclude Include="Skill.h">
       <Filter>コードファイル\System\Skill</Filter>
     </ClInclude>
+    <ClInclude Include="Animal.h">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Wolf.h">
+      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -640,6 +652,12 @@
     </ClCompile>
     <ClCompile Include="Skill.cpp">
       <Filter>コードファイル\System\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="Animal.cpp">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Wolf.cpp">
+      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
