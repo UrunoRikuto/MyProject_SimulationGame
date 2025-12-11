@@ -95,8 +95,15 @@ void CImguiSystem::Init()
 
 	// 日本語グリフ範囲を指定してフォント追加（NotoSansJP推奨）
 	const ImWchar* jpRanges = io.Fonts->GetGlyphRangesJapanese();
-	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 35.0f, nullptr, jpRanges);
-	m_pDebugFont   = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 15.0f, nullptr, jpRanges);
+	//文字サイズは据え置きでさらに太さを上げる設定
+	ImFontConfig cfg;
+	cfg.OversampleH =3; // 水平方向のオーバーサンプリング
+	cfg.OversampleV =3; // 垂直方向のオーバーサンプリング
+	cfg.PixelSnapH = true; // ピクセル境界にスナップ
+	cfg.RasterizerMultiply =1.6f; //さらに濃くして太く見せる
+	// フォントサイズは既存のまま
+	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"),30.0f, &cfg, jpRanges);
+	m_pDebugFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"),15.0f, &cfg, jpRanges);
 
 #ifdef _DEBUG
 	// サイズ調整不可
@@ -596,9 +603,9 @@ void CImguiSystem::DrawGenerateRequestList()
 void CImguiSystem::Release_DrawCivLevel()
 {
 	// ウィンドウの位置設定
-	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
 	// サイズ変更ハンドルを非表示に設定
-	ImGui::SetNextWindowSizeConstraints(ImVec2(250, 100), ImVec2(250, 100));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(250,100), ImVec2(250,100));
 	// フォントの設定
 	ImGui::PushFont(m_pReleaseFont);
 	// ウィンドウの開始
@@ -606,17 +613,17 @@ void CImguiSystem::Release_DrawCivLevel()
 	// インスタンスの取得
 	CCivLevelManager* pCivLevelManager = CCivLevelManager::GetInstance();
 #ifndef _DEBUG
-	// 文明レベルの表示
+	// 文明レベルの表示（視認性を高めるため白色）
 	std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
 	ImGui::TextColored(
-		ImVec4(0.5f, 1.0f, 0.0f, 1.0f),
+		ImVec4(1.0f,1.0f,1.0f,1.0f),
 		u8"文明レベル: %s",
 		sLevel.c_str()
 	);
 #else
 	// 編集可能な文明レベルの表示
 	int level = pCivLevelManager->GetCivLevel();
-	ImGui::InputInt(u8"文明レベル", &level);
+	ImGui::InputInt("Civ Level", &level);
 	pCivLevelManager->SetCivLevel(level);
 
 #endif // !_DEBUG
@@ -626,7 +633,7 @@ void CImguiSystem::Release_DrawCivLevel()
 	// 必要経験値を取得
 	std::string sExpThreshold = std::to_string(static_cast<int>(pCivLevelManager->GetExpThreshold()));
 	// 経験値の表示
-	ImGui::Text(std::string(u8"経験値: " + sExp + " / " + sExpThreshold).c_str());
+	ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
 	ImGui::End();
 	ImGui::PopFont();
 }
