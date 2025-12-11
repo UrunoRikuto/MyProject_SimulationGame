@@ -45,10 +45,10 @@ void CHumanGenerator::Generate()
 	if (!canGenerate)return;
 
 	// 生成ログ出力
-	CImguiSystem::GetInstance()->AddDebugLog("HumanGenerator: Generate [Human]", false);
+	CImguiSystem::GetInstance()->AddDebugLog(u8"人間を生成しました", false);
 
 	// 人間を生成
-	CHuman* pHuman = GetScene()->AddGameObject<CHuman>(Tag::GameObject, "Human");
+	CHuman* pHuman = GetScene()->AddGameObject<CHuman>(Tag::GameObject, u8"人間");
 
 	// 生成した人間の位置を家の位置に設定
 	pHuman->SetPos(targetHouse->GetPos());

@@ -7,7 +7,8 @@
 #include <vector>
 
 // @brief パーリンノイズ生成クラス
-class PerlinNoise {
+class PerlinNoise 
+{
 public:
 	// @brief コンストラクタ
 	// @param seed：シード値

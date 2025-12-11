@@ -73,7 +73,7 @@ int CStorageHouse::Inspecter()
 		// アイテム名の取得
 		std::string itemName = CItem::ITEM_TYPE_TO_STRING(pair.first);
 		// アイテム名と数量の表示
-		ImGui::Text(std::string(itemName + ": " + std::to_string(pair.second)).c_str());
+		ImGui::Text(std::string(itemName + ":" + std::to_string(pair.second)).c_str());
 	}
 
 	ImGui::EndChildFrame();

@@ -60,7 +60,7 @@ int CBlackSmith::Inspecter()
 	itemCount += CBuildObject::Inspecter();
 
 	// 生産依頼リストの表示
-	ImGui::Text("Request Tool List:");
+	ImGui::Text(u8"道具制作依頼:");
 	ImGui::SameLine();
 	int maxRequestTool = MAX_REQUEST_TOOL[m_nBuildLevel - 1];
 	ImGui::Text("(%d / %d)", static_cast<int>(m_vRequestToolList.size()), maxRequestTool);
@@ -79,9 +79,9 @@ int CBlackSmith::Inspecter()
 		float productionProgress = toolType.fProductionProgress;
 
 		// 依頼内容の表示
-		ImGui::Text("Tool Type: %s", toolTypeStr.c_str());
-		ImGui::Text("Request State: %s", requestStateStr.c_str());
-		ImGui::Text("Production Progress: %.2f", productionProgress);
+		ImGui::Text(u8"種類: %s", toolTypeStr.c_str());
+		ImGui::Text(u8"依頼状態: %s", requestStateStr.c_str());
+		ImGui::Text(u8"進行度: %.2f", productionProgress);
 		ImGui::Separator();
 
 		itemCount++;

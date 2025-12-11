@@ -77,20 +77,20 @@ int CFarmFacility::Inspecter()
 	itemCount += CBuildObject::Inspecter();
 
 	// 農作物リストの表示
-	ImGui::Text("Crops:");
+	ImGui::Text(u8"種:");
 	for (const auto& crop : m_pCropList)
 	{
-		ImGui::BulletText("Type: %s, Progress: %.2f%%",
+		ImGui::BulletText(u8"種類: %s, 進行度: %.2f%%",
 			CItem::ITEM_TYPE_TO_STRING(crop.eCropType).c_str(),
 			crop.fGrowthProgress);
 		itemCount++;
 	}
 
 	// 完成した農作物リストの表示
-	ImGui::Text("Completed Crops:");
+	ImGui::Text(u8"完成した農作物:");
 	for (const auto& item : m_pCompletedItemList)
 	{
-		ImGui::BulletText("Type: %s",
+		ImGui::BulletText(u8"種類: %s",
 			CItem::ITEM_TYPE_TO_STRING(item->GetItemType()).c_str());
 		itemCount++;
 	}

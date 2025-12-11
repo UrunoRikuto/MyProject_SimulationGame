@@ -41,7 +41,8 @@ CHuman::CHuman()
 	// 体力初期化
 	m_fHealth = Max_Health;
 	// 脅威度の初期化
-	m_fThreat = ThreatLevels::Human;
+	m_fThreat = ThreatLevels::Entity::Human;
+	m_fDefaultThreat = m_fThreat;
 
 	// スキルの追加
 	m_pSkill = std::make_unique<CSkill>();
@@ -107,7 +108,7 @@ void CHuman::Init()
 void CHuman::Uninit()
 {
 	// 基底クラスの終了処理
-	CGameObject::Uninit();
+	CEntity::Uninit();
 }
 
 /****************************************//*

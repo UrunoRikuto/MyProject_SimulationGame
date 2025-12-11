@@ -93,15 +93,15 @@ const std::string CGameTimeManager::GetCurrentDayTimeString() const
 	switch (currentDayTime)
 	{
 	case DAY_TIME::MORNING:
-		return "Morning";
+		return u8"朝";
 	case DAY_TIME::NOON:
-		return "Noon";
+		return u8"昼";
 	case DAY_TIME::EVENING:
-		return "Evening";
+		return u8"夕";
 	case DAY_TIME::NIGHT:
-		return "Night";
+		return u8"夜";
 	default:
-		return "Unknown";
+		return u8"Unknown";
 	}
 }
 

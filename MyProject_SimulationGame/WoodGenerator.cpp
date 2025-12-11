@@ -25,10 +25,7 @@ void CWoodGenerator::Generate()
 	// ランダムにセルを選出
 	int randIndex = rand() % cells.size();
 	// 木オブジェクトを生成し、選出したセルに配置
-	GetScene()->AddGameObject<CWood>(Tag::GameObject, "Wood")->SetCreatePos(cells[randIndex]);
+	GetScene()->AddGameObject<CWood>(Tag::GameObject, u8"木")->SetCreatePos(cells[randIndex]);
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
-
-	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("WoodGenerator: Generate [Wood]", false);
+	CImguiSystem::GetInstance()->AddDebugLog(u8"木を生成しました", false);
 }

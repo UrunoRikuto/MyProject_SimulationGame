@@ -11,7 +11,7 @@
 // @brief 職業名を管理する名前空間
 namespace JobName
 {
-	const std::string Cook = "Cook";
+	const std::string Cook = u8"料理人";
 }
 
 // @brief 料理職業クラス

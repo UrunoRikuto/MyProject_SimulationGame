@@ -411,9 +411,6 @@
     <ClInclude Include="Animal.h">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Wolf.h">
-      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -655,9 +652,6 @@
     </ClCompile>
     <ClCompile Include="Animal.cpp">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Wolf.cpp">
-      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

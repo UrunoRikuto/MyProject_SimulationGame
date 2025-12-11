@@ -78,7 +78,7 @@ int CBuildObject::Inspecter()
 	int itemCount = 0;
 
 	// 建築物レベルの表示と編集
-	ImGui::Text(std::string("Build Level:"+ std::to_string(m_nBuildLevel)).c_str());
+	ImGui::Text(std::string(u8"建築物レベル:"+ std::to_string(m_nBuildLevel)).c_str());
 
 	return itemCount;
 }

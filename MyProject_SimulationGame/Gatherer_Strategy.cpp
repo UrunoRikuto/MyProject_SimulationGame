@@ -82,33 +82,33 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 	ImGui::BeginChild("Gatherer Job Inspecter");
 
 	// 職業名の表示
-	ImGui::Text(std::string("JobName:"+ GetJobName()).c_str());
+	ImGui::Text(std::string(u8"職業名:"+ GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string("WorkPower:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string("Stamina:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
+	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
 
 	// 現在の仕事状態の表示
 	std::string sWorkState;
 	switch (m_eCurrentState)
 	{
 	case WorkState::SearchAndMove:
-		sWorkState = "SearchAndMove";
+		sWorkState = u8"探索移動";
 		break;
 	case WorkState::Gathering:
-		sWorkState = "Gathering";
+		sWorkState = u8"採取中";
 		break;
 	case WorkState::Transporting:
-		sWorkState = "Transporting";
+		sWorkState = u8"貯蔵庫に運搬中";
 		break;
 	case WorkState::Storing:
-		sWorkState = "Storing";
+		sWorkState = u8"貯蔵庫に貯蔵中";
 		break;
 	case WorkState::Resting:
-		sWorkState = "Resting";
+		sWorkState = u8"休憩中";
 		break;
 	}
-	ImGui::Text(std::string("CurrentWorkState:" + sWorkState).c_str());
+	ImGui::Text(std::string(u8"現在の状態:" + sWorkState).c_str());
 
 	ImGui::EndChild();
 	nItemCount++;
@@ -132,14 +132,14 @@ void CGatherer_Strategy::DrawJobStatusImGui()
 	IJob_Strategy::DrawJobStatusImGui();
 
 	// 標的にしているオブジェクトの表示
-	ImGui::Text("Target Object ID: ");
+	ImGui::Text(u8"標的オブジェクトのID: ");
 	if (m_pTarget != nullptr)
 	{
 		ImGui::Text(std::string(m_pTarget->GetID().m_sName + "_" + std::to_string(m_pTarget->GetID().m_nSameCount)).c_str());
 	}
 	else
 	{
-		ImGui::Text("NoTarget");
+		ImGui::Text(u8"標的なし");
 	}
 }
 

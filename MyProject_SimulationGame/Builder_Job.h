@@ -12,7 +12,7 @@
 // @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
 namespace JobName
 {
-	const std::string Builder = "Builder";
+	const std::string Builder = u8"Œš’zE";
 }
 
 // @brief Œš’zE‹ÆƒNƒ‰ƒX

@@ -156,44 +156,44 @@ void CSkill::ApplySkillBuff(float& Out_WorkPower, IJob_Strategy* In_Job)
 void CSkill::DrawSkillImGui()
 {
 	ImGui::Separator();
-	ImGui::Text("[Skill]:");
+	ImGui::Text(u8"[スキル]:");
 
 	// スキル対象の表示
 	std::string skillTargetStr;
 	switch (m_eSkillTarget)
 	{
 	case CSkill::SkillTarget::MaxStamina:
-		skillTargetStr = "MaxStamina";
+		skillTargetStr = u8"最大スタミナ";
 		break;
 	case CSkill::SkillTarget::MaxHealth:
-		skillTargetStr = "MaxHealth";
+		skillTargetStr = u8"最大体力";
 		break;
 	case CSkill::SkillTarget::Collector:
-		skillTargetStr = "Collector";
+		skillTargetStr = u8"採取職";
 		break;
 	case CSkill::SkillTarget::Crafter:
-		skillTargetStr = "Crafter";
+		skillTargetStr = u8"生産職";
 		break;
 	case CSkill::SkillTarget::WoodGatherer:
-		skillTargetStr = "WoodGatherer";
+		skillTargetStr = JobName::WoodGatherer;
 		break;
 	case CSkill::SkillTarget::StoneGatherer:
-		skillTargetStr = "StoneGatherer";
+		skillTargetStr = JobName::StoneGatherer;
 		break;
 	case CSkill::SkillTarget::GrassGatherer:
-		skillTargetStr = "GrassGatherer";
+		skillTargetStr = JobName::GrassGatherer;
 		break;
 	case CSkill::SkillTarget::Builder:
-		skillTargetStr = "Builder";
+		skillTargetStr = JobName::Builder;
 		break;
 	case CSkill::SkillTarget::Cook:
-		skillTargetStr = "Cook";
+		skillTargetStr = JobName::Cook;
 		break;
 	case CSkill::SkillTarget::Smith:
-		skillTargetStr = "Smith";
+		skillTargetStr = JobName::Smith;
 		break;
 	case CSkill::SkillTarget::None:
-		skillTargetStr = "None";
+		skillTargetStr = u8"なし";
 		break;
 	default:
 		skillTargetStr = "Unknown";
@@ -208,13 +208,13 @@ void CSkill::DrawSkillImGui()
 	switch (m_eSkillEffect)
 	{
 	case CSkill::SkillEffect::Multiplier_1_5:
-		skillEffectStr = "1.5x";
+		skillEffectStr = u8"1.5倍";
 		break;
 	case CSkill::SkillEffect::Multiplier_2_0:
-		skillEffectStr = "2.0x";
+		skillEffectStr = u8"2.0倍";
 		break;
 	case CSkill::SkillEffect::None:
-		skillEffectStr = "None";
+		skillEffectStr = u8"なし";
 		break;
 	default:
 		skillEffectStr = "Unknown";

@@ -42,13 +42,13 @@ int CNeet_Job::Inspecter(bool isEnd)
 {
 	int nItemCount = 0;
 
-	ImGui::BeginChild("Builder Job Inspector", ImVec2(0, 150), true);
+	ImGui::BeginChild(u8"職業インスペクター", ImVec2(0, 150), true);
 
 	ImGui::Separator();
-	ImGui::Text("[JobStatus]");
+	ImGui::Text(u8"[職業ステータス]");
 
 	// 職業名の表示
-	ImGui::Text(std::string("JobName:" + GetJobName()).c_str());
+	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 
 	ImGui::EndChild();
 	nItemCount++;
@@ -69,7 +69,7 @@ int CNeet_Job::Inspecter(bool isEnd)
 *//******************************************/
 void CNeet_Job::DrawJobStatusImGui()
 {
-	ImGui::BeginChild("Neet Job Status", ImVec2(300, 200), true);
-	ImGui::Text("No Work");
+	ImGui::BeginChild(u8"無職の職業ステータス", ImVec2(300, 200), true);
+	ImGui::Text(u8"虚無");
 	ImGui::EndChild();
 }

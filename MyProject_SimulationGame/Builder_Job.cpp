@@ -104,32 +104,34 @@ int CBuilder_Job::Inspecter(bool isEnd)
 	ImGui::BeginChild("Builder Job Inspector", ImVec2(0, 150), true);
 
 	// 職業名の表示
-	ImGui::Text(std::string("JobName:" + GetJobName()).c_str());
+	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string("WorkPower:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string("Stamina:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
+	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
 
 	// 現在の仕事状態を表示
+	ImGui::Text(u8"現在の状態: ");
+	ImGui::SameLine();
 	switch (m_eCurrentState)
 	{
 	case WorkState::Waiting:
-		ImGui::Text("Current State: Waiting");
+		ImGui::Text(u8"待機中");
 		break;
 	case WorkState::GatheringMaterials:
-		ImGui::Text("Current State: Gathering Materials");
+		ImGui::Text(u8"素材収集中");
 		break;
 	case WorkState::SearchingTarget:
-		ImGui::Text("Current State: Searching Target");
+		ImGui::Text(u8"標的の探索中");
 		break;
 	case WorkState::Building:
-		ImGui::Text("Current State: Building");
+		ImGui::Text(u8"建築中");
 		break;
 	case WorkState::Upgrading:
-		ImGui::Text("Current State: Upgrading");
+		ImGui::Text(u8"強化中");
 		break;
 	case WorkState::Resting:
-		ImGui::Text("Current State: Resting");
+		ImGui::Text(u8"休憩中");
 		break;
 	}
 
@@ -155,9 +157,9 @@ void CBuilder_Job::DrawJobStatusImGui()
 	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている建築依頼の表示
-	ImGui::Text("Request: ");
+	ImGui::Text(u8"依頼: ");
 	ImGui::SameLine();
-	if (ImGui::Button("Detail"))
+	if (ImGui::Button(u8"詳細"))
 	{
 		m_isShowRequestDetail = !m_isShowRequestDetail;
 	}
@@ -178,7 +180,7 @@ void CBuilder_Job::DrawJobStatusImGui()
 	}
 	else
 	{
-		ImGui::Text("NoRequest");
+		ImGui::Text(u8"依頼なし");
 	}
 }
 
@@ -192,18 +194,18 @@ void CBuilder_Job::DrawBuildRequestDetailImGui()
 	// ウィンドウ背景色の設定
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
 
-	ImGui::Begin("Build Request Detail", &m_isShowRequestDetail, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin(u8"建築依頼の詳細", &m_isShowRequestDetail, ImGuiWindowFlags_AlwaysAutoResize);
 
 	// 依頼タイプの文字列
 	std::string requestTypeStr = CBuildManager::REQUEST_TYPE_TO_STRING(m_pCurrentBuildRequest->eRequestType);
-	ImGui::Text("Request Type: %s", requestTypeStr.c_str());
+	ImGui::Text(u8"依頼タイプ: %s", requestTypeStr.c_str());
 
 	// 建築物タイプの文字列
 	std::string buildTypeStr = CBuildManager::BUILD_TYPE_TO_STRING(m_pCurrentBuildRequest->eBuildType);
-	ImGui::Text("Build Type: %s", buildTypeStr.c_str());
+	ImGui::Text(u8"建築物: %s", buildTypeStr.c_str());
 
 	// 必要素材の表示
-	ImGui::Text("Required Materials:");
+	ImGui::Text(u8"必要素材:");
 	const auto requiredMaterials = BuildMaterials::GetBuildMaterials(m_pCurrentBuildRequest->eBuildType,
 		(m_pCurrentBuildRequest->eRequestType == CBuildManager::RequestType::Build) ? 0 : m_pBuildingObject->GetBuildLevel());
 	for (const auto& material : requiredMaterials)

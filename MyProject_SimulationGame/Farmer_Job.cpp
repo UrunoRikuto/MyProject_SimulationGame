@@ -72,27 +72,29 @@ int CFarmer_Job::Inspecter(bool isEnd)
 	ImGui::BeginChild("Farmer Job Inspector", ImVec2(0, 150), true);
 
 	// 職業名の表示
-	ImGui::Text(std::string("JobName:" + GetJobName()).c_str());
+	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 	// ステータスの表示
-	ImGui::Text(std::string("WorkPower:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string("Stamina:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
+	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
 	// 現在の仕事状態の表示
+	ImGui::Text(u8"現在の状態: ");
+	ImGui::SameLine();
 	switch (m_eCurrentState)
 	{
 	case CFarmer_Job::WorkState::TendingCrops:
-		ImGui::Text("CurrentState: TendingCrops");
+		ImGui::Text(u8"作物の世話中");
 		break;
 	case CFarmer_Job::WorkState::RetrievingSeeds:
-		ImGui::Text("CurrentState: RetrievingSeeds");
+		ImGui::Text(u8"種を貯蔵庫に取りに行く");
 		break;
 	case CFarmer_Job::WorkState::Harvesting:
-		ImGui::Text("CurrentState: Harvesting");
+		ImGui::Text(u8"収穫中");
 		break;
 	case CFarmer_Job::WorkState::TransportingCrops:
-		ImGui::Text("CurrentState: TransportingCrops");
+		ImGui::Text(u8"貯蔵庫に運搬中");
 		break;
 	case CFarmer_Job::WorkState::Resting:
-		ImGui::Text("CurrentState: Resting");
+		ImGui::Text(u8"休憩中");
 		break;
 	}
 	ImGui::EndChild();
@@ -113,23 +115,23 @@ void CFarmer_Job::DrawJobStatusImGui()
 	IJob_Strategy::DrawJobStatusImGui();
 
 	// 現在の仕事状態の表示
-	ImGui::Text("Current State:");
+	ImGui::Text(u8"現在状態:");
 	switch (m_eCurrentState)
 	{
 	case CFarmer_Job::WorkState::TendingCrops:
-		ImGui::Text("Tending Crops");
+		ImGui::Text(u8"作物の世話中");
 		break;
 	case CFarmer_Job::WorkState::RetrievingSeeds:
-		ImGui::Text("Retrieving Seeds");
+		ImGui::Text(u8"種を貯蔵庫に取りに行く");
 		break;
 	case CFarmer_Job::WorkState::Harvesting:
-		ImGui::Text("Harvesting");
+		ImGui::Text(u8"収穫中");
 		break;
 	case CFarmer_Job::WorkState::TransportingCrops:
-		ImGui::Text("Transporting Crops");
+		ImGui::Text(u8"貯蔵庫に運搬中");
 		break;
 	case CFarmer_Job::WorkState::Resting:
-		ImGui::Text("Resting");
+		ImGui::Text("休憩中");
 		break;
 	}
 }

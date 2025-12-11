@@ -225,7 +225,6 @@
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
-    <ClInclude Include="Wolf.h" />
     <ClInclude Include="Wood.h" />
     <ClInclude Include="WoodGatherer_Job.h" />
     <ClInclude Include="WoodGenerator.h" />
@@ -308,7 +307,6 @@
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
-    <ClCompile Include="Wolf.cpp" />
     <ClCompile Include="Wood.cpp" />
     <ClCompile Include="WoodGatherer_Job.cpp" />
     <ClCompile Include="WoodGenerator.cpp" />

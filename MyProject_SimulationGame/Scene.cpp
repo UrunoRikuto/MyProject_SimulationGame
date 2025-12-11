@@ -164,6 +164,14 @@ void CScene::Draw()
     Geometory::SetView(pCamera->GetViewMatrix());
     Geometory::SetProjection(pCamera->GetProjectionMatrix());
 
+  //  for (auto list : m_pGameObject_List)
+  //  {
+  //      for (auto obj : list)
+  //      {
+  //          obj->Draw();
+		//}
+  //  }
+
 	// Ž‹‘ä•½–Ê‚Ì’Šo
     DirectX::XMFLOAT4X4 viewMat = pCamera->GetViewMatrix(false);
     DirectX::XMFLOAT4X4 projMat = pCamera->GetProjectionMatrix(false);

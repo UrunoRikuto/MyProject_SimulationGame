@@ -5,7 +5,7 @@
 			| CGameObjectを継承
 *//**************************************************/
 #include "Entity.h"
-
+#include "ImguiSystem.h"
 
 /****************************************//* 
 	@brief　	| コンストラクタ
@@ -17,6 +17,7 @@ CEntity::CEntity()
 	, m_fHunger(Max_Hunger)
 	, m_isEating(false)
 	, m_fThreat(0.0f)
+	, m_fDefaultThreat(0.0f)
 {
 }
 
@@ -39,6 +40,29 @@ void CEntity::Update()
 		Destroy();
 		return;
 	}
+
+	// 空腹状態なら脅威度を上げる
+	if (IsWarningHunger())
+	{
+		// 空腹度の不足分に応じて脅威度を上昇させる
+		// ーーーーーーーーーーーーーーー
+		// 警告値 - 空腹度 = 不足分
+		// 例：空腹度が10の場合
+		//(警告値20)-(空腹度10) = (不足分10)
+		// ーーーーーーーーーーーーーーー
+		float fHungerDeficit = Warning_Hunger - m_fHunger;
+
+		// 脅威度上昇量を計算して設定
+		// ーーーーーーーーーーーーーーー
+		// 空腹時の上昇値 * 空腹度の不足分
+		// 例：空腹度が10の場合
+		// (脅威度上昇値1.0) * (不足分10) = (脅威度上昇量10.0)
+		// ーーーーーーーーーーーーーーー
+		float fHungerUpThreat = ThreatLevels::Hunger_Increase_Amount * fHungerDeficit;
+		m_fThreat = m_fDefaultThreat + fHungerUpThreat;
+	}
+	// 空腹状態でないなら脅威度を初期値に戻す
+	else m_fThreat = m_fDefaultThreat;
 
 	// 基底クラスの更新処理
 	CGameObject::Update();

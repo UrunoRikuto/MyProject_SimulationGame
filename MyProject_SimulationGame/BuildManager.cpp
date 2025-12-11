@@ -29,15 +29,15 @@ CBuildObject* CBuildManager::CreateBuildObjectByType(BuildType eType)
 	switch (eType)
 	{
 	case BuildType::RefreshFacility:
-		return pScnee->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
+		return pScnee->AddGameObject<CRefreshFacility>(Tag::GameObject, u8"ãxåeé{ê›");
 	case BuildType::HumanHouse:
-		return pScnee->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
+		return pScnee->AddGameObject<CHumanHouse>(Tag::GameObject, u8"êlä‘ÇÃâ∆");
 	case BuildType::BlackSmith:
-		return pScnee->AddGameObject<CBlackSmith>(Tag::GameObject, "BlackSmith");
+		return pScnee->AddGameObject<CBlackSmith>(Tag::GameObject, u8"íbñËâÆ");
 	case BuildType::FoodFactory:
-		return pScnee->AddGameObject<CFoodFactory>(Tag::GameObject, "FoodFactory");
+		return pScnee->AddGameObject<CFoodFactory>(Tag::GameObject, u8"êHóøâ¡çHé{ê›");
 	case BuildType::FarmFacility:
-		return pScnee->AddGameObject<CFarmFacility>(Tag::GameObject, "FarmFacility");
+		return pScnee->AddGameObject<CFarmFacility>(Tag::GameObject, u8"î_çÏé{ê›");
 	default:
 		return nullptr;
 	}

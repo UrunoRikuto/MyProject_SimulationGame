@@ -98,11 +98,11 @@ int CFoodFactory::Inspecter()
 	itemCount += CBuildObject::Inspecter();
 
 	// 調理依頼リストの表示
-	ImGui::Text("Cook Request List:");
+	ImGui::Text(u8"調理依頼:");
 	ImGui::SameLine();
 	int maxCookRequests = MAX_COOK_REQUESTS[m_nBuildLevel - 1];
 	ImGui::Text("(%d / %d)", static_cast<int>(m_vCookRequestList.size()), maxCookRequests);
-	ImGui::BeginChild("CookRequestList", ImVec2(0, 150), true);
+	ImGui::BeginChild(u8"CookRequestList", ImVec2(0, 150), true);
 
 	// 調理依頼リストを走査して表示
 	for(const auto& cookRequest : m_vCookRequestList)
@@ -115,19 +115,19 @@ int CFoodFactory::Inspecter()
 		switch (cookRequest.eRequestState)
 		{
 			case REQUEST_STATE::Unprocessed:
-			requestStateName = "Unprocessed";
+			requestStateName = u8"未受注";
 			break;
 			case REQUEST_STATE::InProcess:
-				requestStateName = "InProcess";
+				requestStateName = u8"受注済み";
 				break;
 			default:
-				requestStateName = "Unknown";
+				requestStateName = u8"Unknown";
 				break;
 		}
 		ImGui::Text(requestStateName.c_str());
 		ImGui::SameLine();
 		// 調理進行度の表示
-		ImGui::Text(":- %s: %.1f%%", mealTypeName.c_str(), cookRequest.fCookingProgress);
+		ImGui::Text(u8":- %s: %.1f%%", mealTypeName.c_str(), cookRequest.fCookingProgress);
 	}
 
 	ImGui::EndChild();

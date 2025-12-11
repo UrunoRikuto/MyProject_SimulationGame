@@ -51,20 +51,20 @@ public:
 	{
 		switch (eType)
 		{
-		case ITEM_TYPE::Wood:	return "Wood";
-		case ITEM_TYPE::Stone:	return "Stone";
-		case ITEM_TYPE::Iron:	return "Iron";
-		case ITEM_TYPE::Fiber:	return "Fiber";
-		case ITEM_TYPE::WheatSeed:return "WheatSeed";
-		case ITEM_TYPE::Pickaxe:return "Pickaxe";
-		case ITEM_TYPE::Axe:	return "Axe";
-		case ITEM_TYPE::Sickle:	return "Sickle";
-		case ITEM_TYPE::Apple:	return "Apple";
-		case ITEM_TYPE::Sugar:	return "Sugar";
-		case ITEM_TYPE::ApplePie:return "ApplePie";
-		case ITEM_TYPE::Wheat:	return "Wheat";
-		case ITEM_TYPE::Bread:	return "Bread";
-		default:				return "Unknown";
+		case ITEM_TYPE::Wood:		return u8"木";
+		case ITEM_TYPE::Stone:		return u8"石";
+		case ITEM_TYPE::Iron:		return u8"鉄";
+		case ITEM_TYPE::Fiber:		return u8"繊維";
+		case ITEM_TYPE::WheatSeed:	return u8"麦の種";
+		case ITEM_TYPE::Pickaxe:	return u8"つるはし";
+		case ITEM_TYPE::Axe:		return u8"斧";
+		case ITEM_TYPE::Sickle:		return u8"鎌";
+		case ITEM_TYPE::Apple:		return u8"リンゴ";
+		case ITEM_TYPE::Sugar:		return u8"砂糖";
+		case ITEM_TYPE::ApplePie:	return u8"アップルパイ";
+		case ITEM_TYPE::Wheat:		return u8"麦";
+		case ITEM_TYPE::Bread:		return u8"パン";
+		default:					return u8"Unknown";
 		}
 	}
 
@@ -90,12 +90,12 @@ public:
 	{
 		switch (eCategory)
 		{
-		case ITEM_CATEGORY::Material:		return "Material";
-		case ITEM_CATEGORY::UnCookedFood:	return "UnCookedFood";
-		case ITEM_CATEGORY::CookedFood:		return "CookedFood";
-		case ITEM_CATEGORY::Tool:			return "Tool";
-		case ITEM_CATEGORY::Seed:			return "Seed";
-		default:							return "Unknown";
+		case ITEM_CATEGORY::Material:		return u8"素材";
+		case ITEM_CATEGORY::UnCookedFood:	return u8"未調理食材";
+		case ITEM_CATEGORY::CookedFood:		return u8"調理済み食品";
+		case ITEM_CATEGORY::Tool:			return u8"装備";
+		case ITEM_CATEGORY::Seed:			return u8"種";
+		default:							return u8"Unknown";
 		}
 	}
 

@@ -91,12 +91,12 @@ void CImguiSystem::Init()
 	ImGui_ImplWin32_Init(GetMyWindow());
 	ImGui_ImplDX11_Init(GetDevice(), GetContext());
 
-	// ImGuiスタイルの設定
 	ImGui::StyleColorsDark();
 
-	// フォントの設定
-	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 30.0f);
-	m_pDebugFont   = io.Fonts->AddFontFromFileTTF(FONT_PATH("Roboto-VariableFont_wdth,wght.ttf"), 15.0f);
+	// 日本語グリフ範囲を指定してフォント追加（NotoSansJP推奨）
+	const ImWchar* jpRanges = io.Fonts->GetGlyphRangesJapanese();
+	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 35.0f, nullptr, jpRanges);
+	m_pDebugFont   = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 15.0f, nullptr, jpRanges);
 
 #ifdef _DEBUG
 	// サイズ調整不可
@@ -243,35 +243,35 @@ void CImguiSystem::DrawCameraParam()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::Begin("Camera");
+	ImGui::Begin(u8"カメラ");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250,200), ImGuiWindowFlags_NoTitleBar);
 
-	if (ImGui::Button("Reset"))
+	if (ImGui::Button(u8"リセット"))
 	{
 		CCamera::GetInstance()->Init();
 	}
 
-	if (ImGui::CollapsingHeader(std::string("[Transform]").c_str()))
+	if (ImGui::CollapsingHeader(std::string(u8"[トランスフォーム]").c_str()))
 	{
-		ImGui::Text("Position");
+		ImGui::Text(u8"位置");
 		DirectX::XMFLOAT3 pos = pCamera->GetPos();
-		ImGui::Text("PosX: %.3f", pos.x);
-		ImGui::Text("PosY: %.3f", pos.y);
-		ImGui::Text("PosZ: %.3f", pos.z);
+		ImGui::Text(u8"X座標: %.3f", pos.x);
+		ImGui::Text(u8"Y座標: %.3f", pos.y);
+		ImGui::Text(u8"Z座標: %.3f", pos.z);
 		ImGui::Text("\n");
 
-		ImGui::Text("Look");
+		ImGui::Text(u8"視点位置");
 		DirectX::XMFLOAT3 look = pCamera->GetLook();
-		ImGui::Text("LookX: %.3f", look.x);
-		ImGui::Text("LookY: %.3f", look.y);
-		ImGui::Text("LookZ: %.3f", look.z);
+		ImGui::Text(u8"X座標: %.3f", look.x);
+		ImGui::Text(u8"Y座標: %.3f", look.y);
+		ImGui::Text(u8"Z座標: %.3f", look.z);
 		ImGui::Text("\n");
 
-		ImGui::Text("UpVector");
+		ImGui::Text(u8"上方向ベクトル");
 		DirectX::XMFLOAT3 up = pCamera->GetUp();
-		ImGui::Text("UpX: %.3f", up.x);
-		ImGui::Text("UpY: %.3f", up.y);
-		ImGui::Text("UpZ: %.3f", up.z);
+		ImGui::Text(u8"X座標: %.3f", up.x);
+		ImGui::Text(u8"Y座標: %.3f", up.y);
+		ImGui::Text(u8"Z座標: %.3f", up.z);
 	}
 
 
@@ -297,13 +297,13 @@ void CImguiSystem::DrawInspecter()
 	// 選択しているゲームオブジェクトが存在しない場合
 	else
 	{
-		ImGui::Begin("Inspecter");
+		ImGui::Begin(u8"インスペクター");
 
 		/**** 名前表示 ****/
 		ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 30), ImGuiWindowFlags_NoTitleBar);
 
 		// 名前の表示
-		std::string name = "No Selected Object";
+		std::string name = u8"選択しているオブジェクトがありません";
 		ImGui::Text(name.c_str());
 		// 子要素の終了
 		ImGui::EndChild();
@@ -326,17 +326,17 @@ void CImguiSystem::DrawDebugSystem()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::Begin("DebugSystem");
+	ImGui::Begin(u8"デバックシステム");
 
-	ImGui::Checkbox("CameraParam", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
-	ImGui::Checkbox("Inspecter", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
-	ImGui::Checkbox("BuildRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
-	ImGui::Checkbox("GenerateRequestList", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
-	ImGui::Checkbox("Update",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
-	ImGui::Checkbox("FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
-	ImGui::Checkbox("AllObjectNum", &m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)]);
-	ImGui::Checkbox("Log",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
-	ImGui::Checkbox("AddStoragehouseItem", &m_bDebug[static_cast<int>(DebugSystemFlag::AddStoragehouseItem)]);
+	ImGui::Checkbox(u8"カメラ情報", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
+	ImGui::Checkbox(u8"インスペクター", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
+	ImGui::Checkbox(u8"建築リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
+	ImGui::Checkbox(u8"生成リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
+	ImGui::Checkbox(u8"更新判定",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
+	ImGui::Checkbox(u8"FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
+	ImGui::Checkbox(u8"全オブジェクト数", &m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)]);
+	ImGui::Checkbox(u8"ログ",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
+	ImGui::Checkbox(u8"倉庫にアイテムを追加", &m_bDebug[static_cast<int>(DebugSystemFlag::AddStoragehouseItem)]);
 
 	ImGui::End();
 	ImGui::PopFont();
@@ -353,13 +353,13 @@ void CImguiSystem::DrawUpdateTick()
 	ImGui::Begin("UpdateTick");
 
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(ce_f2InspecterSize), ImGuiWindowFlags_NoTitleBar);
-	ImGui::Checkbox("Use Update", &m_bUpdate);
+	ImGui::Checkbox(u8"更新処理を行う", &m_bUpdate);
 	ImGui::EndChild();
 
 	if (!m_bUpdate)
 	{
 		ImGui::BeginChild(ImGui::GetID((void*)1), ImVec2(ce_f2InspecterSize), ImGuiWindowFlags_NoTitleBar);
-		if (ImGui::Button("Step"))
+		if (ImGui::Button(u8"一フレーム進める"))
 		{
 			GetScene()->Update();
 		}
@@ -407,7 +407,7 @@ void CImguiSystem::DrawAllObjectNum()
 	// 全オブジェクト数の取得
 	int nObjectNum = pScene->GetIDVec().size();
 
-	ImGui::Text("All Object Num: %d", nObjectNum);
+	ImGui::Text(u8"全オブジェクト数: %d", nObjectNum);
 
 	ImGui::End();
 	ImGui::PopFont();
@@ -421,7 +421,7 @@ void CImguiSystem::DrawDebugLog()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::Begin("DebugLog");
+	ImGui::Begin(u8"デバックログ");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(380,120), ImGuiWindowFlags_NoTitleBar);
 	for (const auto& log : m_DebugLog)
 	{
@@ -442,13 +442,13 @@ void CImguiSystem::DrawDebugLog()
 }
 
 /****************************************//*
-	@brief　	| 倉庫の資源表示
+	@brief　	| 倉庫にアイテムを収納する
 *//****************************************/
 void CImguiSystem::DrawStoragehouseItem()
 {
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
-	ImGui::Begin("AddStoragehouseItem");
+	ImGui::Begin(u8"倉庫に資源追加");
 	CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
 
 	if (pStorageHouse)
@@ -461,7 +461,7 @@ void CImguiSystem::DrawStoragehouseItem()
 			// アイテムタイプの名前取得
 			std::string itemName = CItem::ITEM_TYPE_TO_STRING(type);
 
-			if (ImGui::Button(("Add " + itemName).c_str()))
+			if (ImGui::Button((u8"追加:" + itemName).c_str()))
 			{
 				CItem* pItem = new CItem(type);
 				pStorageHouse->StoreItem(pItem);
@@ -481,7 +481,7 @@ void CImguiSystem::DrawBuildRequestList()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::Begin("BuildRequestList");
+	ImGui::Begin(u8"建築リクエスト");
 
 	CBuildManager* pBuildManager = CBuildManager::GetInstance();
 
@@ -492,13 +492,13 @@ void CImguiSystem::DrawBuildRequestList()
 		switch (request.eRequestType)
 		{
 		case CBuildManager::RequestType::Build:
-			RequestType = "Build";
+			RequestType = u8"建築";
 			break;
 		case CBuildManager::RequestType::Upgrade:
-			RequestType = "Upgrade";
+			RequestType = u8"強化";
 			break;
 		case CBuildManager::RequestType::Demolition:
-			RequestType = "Demolition";
+			RequestType = u8"解体";
 			break;
 		}
 
@@ -506,7 +506,19 @@ void CImguiSystem::DrawBuildRequestList()
 		switch (request.eBuildType)
 		{
 		case CBuildManager::BuildType::RefreshFacility:
-			BuildType = "RefreshFacility";
+			BuildType = u8"休憩施設";
+			break;
+		case CBuildManager::BuildType::HumanHouse:
+			BuildType = u8"人間の家";
+			break;
+		case CBuildManager::BuildType::BlackSmith:
+			BuildType = u8"鍛冶屋";
+			break;
+		case CBuildManager::BuildType::FoodFactory:
+			BuildType = u8"食料加工施設";
+			break;
+		case CBuildManager::BuildType::FarmFacility:
+			BuildType = u8"農作施設";
 			break;
 		}
 
@@ -514,16 +526,16 @@ void CImguiSystem::DrawBuildRequestList()
 		switch (request.eRequestState)
 		{
 		case REQUEST_STATE::Unprocessed:
-			RequestState = "Unprocessed";
+			RequestState = u8"未受注";
 			break;
 		case REQUEST_STATE::InProcess:
-			RequestState = "InProcess";
+			RequestState = u8"受注済み";
 			break;
 		}
 
-		ImGui::Text("Type: %s", RequestType);
-		ImGui::Text("BuildType: %s", BuildType);
-		ImGui::Text("State: %s", RequestState);
+		ImGui::Text(u8"タイプ: %s", RequestType);
+		ImGui::Text(u8"建築タイプ: %s", BuildType);
+		ImGui::Text(u8"状態: %s", RequestState);
 
 		ImGui::EndChild();
 	}
@@ -540,7 +552,7 @@ void CImguiSystem::DrawGenerateRequestList()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::Begin("GenerateRequestList");
+	ImGui::Begin(u8"生成リクエスト");
 	
 	// 生成マネージャーのインスタンス取得
 	CGeneratorManager* pGeneratorManager = CGeneratorManager::GetInstance();
@@ -549,22 +561,22 @@ void CImguiSystem::DrawGenerateRequestList()
 	{
 		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280, 80), ImGuiWindowFlags_NoTitleBar);
 
-		std::string strType = "Type:";
+		std::string strType = "タイプ:";
 		switch (request.m_GenerateType)
 		{
 		case CGeneratorManager::GenerateType::Wood:
-			strType += "Wood";
+			strType += "木";
 			break;
 		case CGeneratorManager::GenerateType::Stone:
-			strType += "Stone";
+			strType += "石";
 			break;
 		case CGeneratorManager::GenerateType::Human:
-			strType += "Human";
+			strType += "人間";
 			break;
 		}
 		ImGui::Text(strType.c_str());
 
-		ImGui::Text("Timer: %.2f", request.m_fGenerateTime);
+		ImGui::Text(u8"生成するまでの時間: %.2f", request.m_fGenerateTime);
 
 		ImGui::EndChild();
 	}
@@ -598,12 +610,13 @@ void CImguiSystem::Release_DrawCivLevel()
 	std::string sLevel = std::to_string(pCivLevelManager->GetCivLevel());
 	ImGui::TextColored(
 		ImVec4(0.5f, 1.0f, 0.0f, 1.0f),
-		std::string("Civ Level: " + sLevel).c_str()
+		u8"文明レベル: %s",
+		sLevel.c_str()
 	);
 #else
 	// 編集可能な文明レベルの表示
 	int level = pCivLevelManager->GetCivLevel();
-	ImGui::InputInt("Civ Level", &level);
+	ImGui::InputInt(u8"文明レベル", &level);
 	pCivLevelManager->SetCivLevel(level);
 
 #endif // !_DEBUG
@@ -613,7 +626,7 @@ void CImguiSystem::Release_DrawCivLevel()
 	// 必要経験値を取得
 	std::string sExpThreshold = std::to_string(static_cast<int>(pCivLevelManager->GetExpThreshold()));
 	// 経験値の表示
-	ImGui::Text(std::string("Exp: " + sExp + " / " + sExpThreshold).c_str());
+	ImGui::Text(std::string(u8"経験値: " + sExp + " / " + sExpThreshold).c_str());
 	ImGui::End();
 	ImGui::PopFont();
 }
@@ -630,7 +643,7 @@ void CImguiSystem::Release_DrawGameTime()
 	// フォントの設定
 	ImGui::PushFont(m_pReleaseFont);
 	// ウィンドウの開始
-	ImGui::Begin("Game Time", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin(u8"ゲーム内時間", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
 	// インスタンスの取得
 	CGameTimeManager* pGameTimeManager = CGameTimeManager::GetInstance();
@@ -641,16 +654,16 @@ void CImguiSystem::Release_DrawGameTime()
 	float time = pGameTimeManager->GetGameTime();
 
 	// ゲーム内時間と日数の表示
-	ImGui::Text("Game Time");
+	ImGui::Text(u8"ゲーム内時間");
 
 	// 区切り線の表示
 	ImGui::Separator();
 
 	// 現在の日数の表示
-	ImGui::Text(std::string("Day:" + std::to_string(day)).c_str());
+	ImGui::Text(std::string(u8"経過日数:" + std::to_string(day)).c_str());
 
 	// 現在の時間の表示
-	ImGui::Text("Time: %.2f", time);
+	ImGui::Text(u8"現在時刻: %.2f", time);
 
 	// 現在の時間帯の取得
 	CGameTimeManager::DAY_TIME dayTime = pGameTimeManager->GetCurrentDayTime();
@@ -675,7 +688,7 @@ void CImguiSystem::Release_DrawGameTime()
 	// 現在の時間帯を文字列で取得
 	std::string currendDayTime = pGameTimeManager->GetCurrentDayTimeString();
 
-	std::string dayTimeFormat = std::string("[" + currendDayTime + "]");
+	std::string dayTimeFormat = std::string(u8"[" + currendDayTime + "]");
 
 	// 区切り線の表示
 	ImGui::Separator();
@@ -717,7 +730,7 @@ void CImguiSystem::Release_DrawHuman()
 		// オブジェクトIDの取得
 		ObjectID id = m_pHumanObject->GetID();
 		// 表示名の作成
-		std::string name = std::string("[Name]:" + id.m_sName).c_str();
+		std::string name = std::string(u8"[名前]:" + id.m_sName).c_str();
 		// 同名オブジェクトの区別のために番号を付与
 		name += std::to_string(id.m_nSameCount + 1);
 		// 職業名を表示名に追加
@@ -725,12 +738,12 @@ void CImguiSystem::Release_DrawHuman()
 	}
 	else
 	{
-		ImGui::Text("No Selected");
+		ImGui::Text(u8"未設定");
 	}
 
 	// コンボボックスの表示
 	static int currentHumanIndex = 0;
-	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? "No Humans" : "HumanSelect"))
+	if (ImGui::BeginCombo("##SelectHuman", Humans.empty() ? u8"人間が見つからない" : u8"人間選択"))
 	{
 		// 人間オブジェクトの表示
 		for (size_t n = 0; n < Humans.size(); n++)
@@ -768,8 +781,8 @@ void CImguiSystem::Release_DrawHuman()
 	CHuman* pFocusHuman = dynamic_cast<CHuman*>(m_pGameObject);
 
 	// 選択ボタンのラベル作成
-	std::string SelectButtonLabel = "Camera:";
-	SelectButtonLabel += (pFocusHuman) ? "Focus" : "NoFocus";
+	std::string SelectButtonLabel = u8"カメラ:";
+	SelectButtonLabel += (pFocusHuman) ? u8"注視をやめる" : u8"注視する";
 
 	// 選択ボタンの表示
 	if (ImGui::Button(SelectButtonLabel.c_str()))
@@ -815,31 +828,34 @@ void CImguiSystem::Release_DrawHuman()
 
 	// 区切り線の表示
 	ImGui::Separator();
-	ImGui::Text("[Status]");
+	ImGui::Text(u8"[ステータス]");
 
 	// 体力値の表示
 	const float maxHealth = m_pHumanObject->GetMaxHealth();
 	const float currentHealth = m_pHumanObject->GetHealth();
-
-	ImGui::Text("Health:");
-	ImGui::SameLine();
-	ImGui::ProgressBar(currentHealth / maxHealth, ImVec2(200.0f, 30.0f), nullptr);
+	std::string healthText = u8"体力: " + std::to_string(static_cast<int>(currentHealth)) + " / " + std::to_string(static_cast<int>(maxHealth));
+	ImGui::ProgressBar(currentHealth / maxHealth, ImVec2(200.0f, 30.0f), healthText.c_str());
 
 	// 空腹値の表示
 	const float maxHunger = Max_Hunger;
 	float currentHunger = m_pHumanObject->GetHunger();
-	ImGui::Text("Hunger:");
-	ImGui::SameLine();
-	ImGui::ProgressBar(currentHunger / maxHunger, ImVec2(200.0f, 30.0f), nullptr);
+	std::string hungerText = u8"空腹値: " + std::to_string(static_cast<int>(currentHunger)) + " / " + std::to_string(static_cast<int>(maxHunger));
+	ImGui::ProgressBar(currentHunger / maxHunger, ImVec2(200.0f, 30.0f), hungerText.c_str());
+
+	// 脅威度の表示
+	const float maxThreat = ThreatLevels::Max_Threat;
+	float currentThreat = m_pHumanObject->GetThreat();
+	std::string threatText = u8"脅威度: " + std::to_string(static_cast<int>(currentThreat)) + " / " + std::to_string(static_cast<int>(maxThreat));
+	ImGui::ProgressBar(currentThreat / maxThreat, ImVec2(200.0f, 30.0f), threatText.c_str());
 
 
 	// 所持しているツールの表示
 	CItem* pTool = m_pHumanObject->GetToolItem();
-	std::string toolName = pTool ? CItem::ITEM_TYPE_TO_STRING(pTool->GetItemType()) : "None";
-	ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "Tool: %s", toolName.c_str());
+	std::string toolName = pTool ? CItem::ITEM_TYPE_TO_STRING(pTool->GetItemType()) : u8"なし";
+	ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), u8"道具: %s", toolName.c_str());
 
 	// 現在の職業名の表示
-	ImGui::Text("[Job]:%s", items[currentJobIndex]);
+	ImGui::Text(u8"[職業]:%s", items[currentJobIndex]);
 
 	// コンボボックスの表示
 	if(ImGui::BeginCombo("##SelectJob", currentJob.c_str()))
@@ -873,7 +889,7 @@ void CImguiSystem::Release_DrawHuman()
 
 	// アイテムリストの表示
 	ImGui::Separator();
-	ImGui::Text("[Item List]");
+	ImGui::Text(u8"[所持アイテム]");
 	const auto& itemList = m_pHumanObject->GetItemList();
 
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(580, 300), ImGuiWindowFlags_NoTitleBar);
@@ -909,7 +925,7 @@ void CImguiSystem::Release_DrawBuildObject()
 	ImGui::PushFont(m_pReleaseFont);
 
 	// ウィンドウの開始
-	ImGui::Begin("BuildObject", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin(u8"建築物", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 	
 	// コンボボックスで選択
 	static int currentBuildObjectIndex = 0;
@@ -920,7 +936,7 @@ void CImguiSystem::Release_DrawBuildObject()
 	// vector型に変換
 	std::vector<CBuildObject*> buildObjectVec(buildObjects.begin(), buildObjects.end());
 
-	if (ImGui::BeginCombo("##SelectBuild", buildObjects.empty() ? "No BuildObjects" : "BuildSelect"))
+	if (ImGui::BeginCombo("##SelectBuild", buildObjects.empty() ? u8"建築物が見つかりません" : u8"建築物選択"))
 	{
 		for (size_t n = 0; n < buildObjects.size(); n++)
 		{
@@ -950,8 +966,8 @@ void CImguiSystem::Release_DrawBuildObject()
 	CBuildObject* pFocusBuildObject = dynamic_cast<CBuildObject*>(m_pGameObject);
 
 	// 選択ボタンの表示
-	std::string SelectButtonLabel = "Camera:";
-	SelectButtonLabel += (pFocusBuildObject) ? "Focus" : "NoFocus";
+	std::string SelectButtonLabel = u8"カメラ:";
+	SelectButtonLabel += (pFocusBuildObject) ? u8"注視をやめる" : u8"注視する";
 
 	// 選択ボタンの表示
 	if (ImGui::Button(SelectButtonLabel.c_str()))
@@ -972,7 +988,7 @@ void CImguiSystem::Release_DrawBuildObject()
 	// 区切り線の表示
 	ImGui::Separator();
 	// 選択中の建築物の名前表示
-	std::string selectedObjectName = "No Select BuildObject";
+	std::string selectedObjectName = u8"建築物を選択していません";
 	// 選択されている場合
 	if (m_pBuildObject != nullptr)
 	{

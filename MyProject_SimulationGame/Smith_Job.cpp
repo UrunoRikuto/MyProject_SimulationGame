@@ -88,29 +88,31 @@ int CSmith_Job::Inspecter(bool isEnd)
 	ImGui::BeginChild("Builder Job Inspector", ImVec2(0, 150), true);
 
 	// 職業名の表示
-	ImGui::Text(std::string("JobName:" + GetJobName()).c_str());
+	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string("WorkPower:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string("Stamina:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
+	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
 
 	// 現在の仕事状態の表示
+	ImGui::Text(u8"現在の状態: ");
+	ImGui::SameLine();
 	switch (m_eCurrentState)
 	{
 	case CSmith_Job::WorkState::Waiting:
-		ImGui::Text("CurrentState: Waiting");
+		ImGui::Text(u8"待機中");
 		break;
 	case CSmith_Job::WorkState::GatheringMaterials:
-		ImGui::Text("CurrentState: GatheringMaterials");
+		ImGui::Text(u8"素材収集中");
 		break;
 	case CSmith_Job::WorkState::Crafting:
-		ImGui::Text("CurrentState: Crafting");
+		ImGui::Text(u8"制作中");
 		break;
 	case CSmith_Job::WorkState::TransportingFinishedGoods:
-		ImGui::Text("CurrentState: TransportingFinishedGoods");
+		ImGui::Text(u8"完成品の運搬中");
 		break;
 	case CSmith_Job::WorkState::Resting:
-		ImGui::Text("CurrentState: Resting");
+		ImGui::Text(u8"休憩中");
 		break;
 	}
 
@@ -137,24 +139,24 @@ void CSmith_Job::DrawJobStatusImGui()
 	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている依頼の表示
-	ImGui::Text("Current Request:");
+	ImGui::Text(u8"現在の状態:");
 	if (m_pRequest != nullptr)
 	{
 		// 依頼内容の表示
 		std::string ToolTypeStr = CItem::ITEM_TYPE_TO_STRING(m_pRequest->eToolType);
 		std::string ProgressStr = std::to_string(m_pRequest->fProductionProgress);
 
-		ImGui::Text("%s (Progress: %s)", ToolTypeStr.c_str(), ProgressStr.c_str());
+		ImGui::Text(u8"%s (進行度: %s)", ToolTypeStr.c_str(), ProgressStr.c_str());
 	}
 	else
 	{
-		ImGui::Text("None");
+		ImGui::Text(u8"なし");
 	}
 
 	// クールタイムの表示
 	if (m_fCoolTime > 0.0f)
 	{
-		ImGui::Text("Cool Time: %.2f", m_fCoolTime);
+		ImGui::Text(u8"クールタイム: %.2f", m_fCoolTime);
 	}
 }
 

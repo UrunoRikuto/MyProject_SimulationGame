@@ -144,7 +144,7 @@ void CFieldManager::CreateInitialVillage()
 	int randomIndex = rand() % cells.size();
 
 	// ’™‘ ŒÉ‚Ì¶¬‚Æ”z’u
-	CBuildObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, "StorageHouse");
+	CBuildObject* pStorageHouse = pScene->AddGameObject<CStorageHouse>(Tag::GameObject, u8"’™‘ ŒÉ");
 	pStorageHouse->SetPos(cells[randomIndex]->GetPos());
 	cells[randomIndex]->SetUse(true);
 	cells[randomIndex]->SetObject(pStorageHouse);
@@ -157,7 +157,7 @@ void CFieldManager::CreateInitialVillage()
 	randomIndex = rand() % cells.size();
 
 	// ‹xŒeŠ‚Ì¶¬‚Æ”z’u
-	CBuildObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, "RefreshFacility");
+	CBuildObject* pRefreshFacility = pScene->AddGameObject<CRefreshFacility>(Tag::GameObject, u8"‹xŒeŽ{Ý");
 	pRefreshFacility->SetPos(cells[randomIndex]->GetPos());
 	cells[randomIndex]->SetUse(true);
 	cells[randomIndex]->SetObject(pRefreshFacility);
@@ -170,7 +170,7 @@ void CFieldManager::CreateInitialVillage()
 	randomIndex = rand() % cells.size();
 
 	// lŠÔ‚Ì‰Æ‚Ì¶¬‚Æ”z’u
-	CHumanHouse* pHumanHouse = pScene->AddGameObject<CHumanHouse>(Tag::GameObject, "HumanHouse");
+	CHumanHouse* pHumanHouse = pScene->AddGameObject<CHumanHouse>(Tag::GameObject, u8"lŠÔ‚Ì‰Æ");
 	pHumanHouse->SetPos(cells[randomIndex]->GetPos());
 	cells[randomIndex]->SetUse(true);
 	cells[randomIndex]->SetObject(pHumanHouse);

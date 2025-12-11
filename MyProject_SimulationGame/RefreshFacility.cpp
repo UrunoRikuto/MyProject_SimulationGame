@@ -60,7 +60,7 @@ int CRefreshFacility::Inspecter()
 	itemCount += CBuildObject::Inspecter();
 
 	// 使用中の人間数の表示
-	ImGui::Text("Using Humans: %d / %d", static_cast<int>(m_pUsingHumans.size()), MAX_USING_HUMANS[m_nBuildLevel - 1]);
+	ImGui::Text(u8"使用人数: %d / %d", static_cast<int>(m_pUsingHumans.size()), MAX_USING_HUMANS[m_nBuildLevel - 1]);
 
 	return itemCount;
 }

@@ -11,7 +11,7 @@
 // @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
 namespace JobName
 {
-	const std::string Smith = "Smith";
+	const std::string Smith = u8"’b–èt";
 }
 
 // @brief ’b–èE‹ÆƒNƒ‰ƒX

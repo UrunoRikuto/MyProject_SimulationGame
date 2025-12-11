@@ -10,7 +10,7 @@
 // @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
 namespace JobName
 {
-	const std::string GrassGatherer = "GrassGatherer";
+	const std::string GrassGatherer = u8"‘‚ÌÌæE";
 }
 
 // @brief ‘‚ğ’T‚µ‚ÄûW‚·‚éE‹ÆƒNƒ‰ƒX

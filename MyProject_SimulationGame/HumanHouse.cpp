@@ -76,7 +76,7 @@ int CHumanHouse::Inspecter()
 	int itemCount = CBuildObject::Inspecter();
 
 	// ‹ZÒ”‚Ì•\¦
-	ImGui::Text("Residents: %d / %d", static_cast<int>(m_Residents.size()), GetMaxResidents());
+	ImGui::Text(u8"‹ZÒ”: %d / %d", static_cast<int>(m_Residents.size()), GetMaxResidents());
 
 	return itemCount;
 }

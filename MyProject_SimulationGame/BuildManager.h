@@ -32,10 +32,10 @@ public:
 	{
 		switch (eType)
 		{
-		case RequestType::Build:		return "Build";
-		case RequestType::Upgrade:		return "Upgrade";
-		case RequestType::Demolition:	return "Demolition";
-		default:						return "Unknown";
+		case RequestType::Build:		return u8"Œš’z";
+		case RequestType::Upgrade:		return u8"‹­‰»";
+		case RequestType::Demolition:	return u8"‰ğ‘Ì";
+		default:						return u8"Unknown";
 		}
 	}
 
@@ -60,12 +60,12 @@ public:
 	{
 		switch (eType)
 		{
-		case BuildType::RefreshFacility:	return "RefreshFacility";
-		case BuildType::HumanHouse:		return "HumanHouse";
-		case BuildType::BlackSmith:		return "BlackSmith";
-		case BuildType::FoodFactory:	return "FoodFactory";
-		case BuildType::FarmFacility:	return "FarmFacility";
-		default:						return "Unknown";
+		case BuildType::RefreshFacility:	return u8"‹xŒe{İ";
+		case BuildType::HumanHouse:			return u8"lŠÔ‚Ì‰Æ";
+		case BuildType::BlackSmith:			return u8"’b–è‰®";
+		case BuildType::FoodFactory:		return u8"H—¿‰ÁH{İ";
+		case BuildType::FarmFacility:		return u8"”_ì{İ";
+		default:							return u8"Unknown";
 		}
 	}
 	// @brief Œš’zƒ^ƒCƒv‚É‰‚¶‚½Œš’z•¨ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^‚ğ¶¬‚·‚éŠÖ”

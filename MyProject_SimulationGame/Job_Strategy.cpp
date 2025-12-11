@@ -145,13 +145,13 @@ bool IJob_Strategy::RestAction()
 void IJob_Strategy::DrawJobStatusImGui()
 {
 	ImGui::Separator();
-	ImGui::Text("[JobStatus]");
+	ImGui::Text(u8"[職業ステータス]");
 
 	// 労働力の描画
-	ImGui::Text("Work Power: %.2f", m_Status.m_fWorkPower);
+	ImGui::Text(u8"労働力: %.2f", m_Status.m_fWorkPower);
 
 	// スタミナゲージの描画
-	ImGui::Text("Stamina:");
+	ImGui::Text(u8"スタミナ:");
 	ImGui::SameLine();
 	ImGui::ProgressBar(m_Status.m_fStamina / m_Status.m_fMaxStamina, ImVec2(200.0f, 30.0f), nullptr);
 }

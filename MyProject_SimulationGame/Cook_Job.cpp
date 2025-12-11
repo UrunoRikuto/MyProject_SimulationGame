@@ -99,25 +99,25 @@ void CCook_Job::DrawJobStatusImGui()
 	IJob_Strategy::DrawJobStatusImGui();
 
 	// 受けている依頼の表示
-	ImGui::Text("Current Request:");
+	ImGui::Text(u8"現在の依頼:");
 	if (m_pRequest != nullptr)
 	{
 		// 依頼内容の表示
 		std::string ToolTypeStr = CItem::ITEM_TYPE_TO_STRING(m_pRequest->eMealType);
 		std::string ProgressStr = std::to_string(m_pRequest->fCookingProgress);
 
-		ImGui::Text("%s (Progress: %s)", ToolTypeStr.c_str(), ProgressStr.c_str());
+		ImGui::Text(u8"%s (進行度: %s)", ToolTypeStr.c_str(), ProgressStr.c_str());
 	}
 	else
 	{
-		ImGui::Text("None");
+		ImGui::Text(u8"なし");
 	}
 
 
 	// クールタイムの表示
 	if (m_fCoolTime > 0.0f)
 	{
-		ImGui::Text("Cool Time: %.2f", m_fCoolTime);
+		ImGui::Text(u8"クールタイム: %.2f", m_fCoolTime);
 	}
 }
 

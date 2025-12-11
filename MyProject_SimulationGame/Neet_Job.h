@@ -10,7 +10,7 @@
 // @brief E‹Æ–¼‚ğŠÇ—‚·‚é–¼‘O‹óŠÔ
 namespace JobName
 {
-	const std::string Neet = "Neet";
+	const std::string Neet = u8"–³E";
 }
 
 // @brief –³EƒNƒ‰ƒX

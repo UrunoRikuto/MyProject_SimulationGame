@@ -25,10 +25,7 @@ void CStoneGenerator::Generate()
 	// ランダムにセルを選出
 	int randIndex = rand() % cells.size();
 	// 石オブジェクトを生成し、選出したセルに配置
-	GetScene()->AddGameObject<CStone>(Tag::GameObject, "Stone")->SetCreatePos(cells[randIndex]);
+	GetScene()->AddGameObject<CStone>(Tag::GameObject, u8"石")->SetCreatePos(cells[randIndex]);
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]", false);
-
-	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("StoneGenerator: Generate [Stone]", false);
+	CImguiSystem::GetInstance()->AddDebugLog(u8"石を生成しました", false);
 }
