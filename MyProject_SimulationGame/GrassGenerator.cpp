@@ -26,11 +26,8 @@ void CGrassGenerator::Generate()
 	int randIndex = rand() % cells.size();
 
 	// 草オブジェクトを生成し、選出したセルに配置
-	GetScene()->AddGameObject<CGrass>(Tag::GameObject, "Grass")->SetCreatePos(cells[randIndex]);
+	GetScene()->AddGameObject<CGrass>(Tag::GameObject, u8"草")->SetCreatePos(cells[randIndex]);
 
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("GrassGenerator: Generate [Grass]", false);
-
-	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog("GrassGenerator: Generate [Grass]", false);
+	CImguiSystem::GetInstance()->AddDebugLog(u8"草を生成しました", false);
 }

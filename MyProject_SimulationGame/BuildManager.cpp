@@ -194,7 +194,7 @@ void CBuildManager::AddBuildRequest(const BuildType In_eRequestType)
 *//*****************************************/
 CBuildManager::BuildRequest* CBuildManager::TakeBuildRequest()
 {
-	if (!IsCoolTime())return nullptr;
+	if (IsCoolTime())return nullptr;
 
 	// –¢ˆ—‚ÌˆË—Š‚ğ’T‚·
 	for (auto& request : m_BuildRequestList)
