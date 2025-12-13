@@ -19,10 +19,7 @@ CFarmer_Job::CFarmer_Job()
 	, m_ePrevState(WorkState::TendingCrops)
 {
 	// 労働力の設定
-	m_Status.m_fWorkPower = 10.0f;
-	// スタミナの設定
-	m_Status.m_fStamina = 100.0f;
-	m_Status.m_fMaxStamina = m_Status.m_fStamina;
+	m_fWorkPower = 10.0f;
 }
 
 /*****************************************//*
@@ -74,8 +71,7 @@ int CFarmer_Job::Inspecter(bool isEnd)
 	// 職業名の表示
 	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 	// ステータスの表示
-	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_fWorkPower)).c_str());
 	// 現在の仕事状態の表示
 	ImGui::Text(u8"現在の状態: ");
 	ImGui::SameLine();
@@ -228,9 +224,9 @@ void CFarmer_Job::TendingCropsAction()
 			// 空腹値を消費
 			m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 			// スタミナを消費
-			m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+			m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 			// スタミナが0以下になった場合は休憩状態に移行
-			if (m_Status.m_fStamina <= 0.0f)
+			if (m_pOwner->IsZeroStamina())
 			{
 				m_ePrevState = m_eCurrentState;
 				m_eCurrentState = WorkState::Resting;
@@ -315,10 +311,10 @@ void CFarmer_Job::HarvestingAction()
 		// 空腹値を消費
 		m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 		// スタミナを消費
-		m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+		m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 		// スタミナが0以下になった場合は休憩状態に移行
-		if (m_Status.m_fStamina <= 0.0f)
+		if (m_pOwner->IsZeroStamina())
 		{
 			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Resting;
@@ -367,9 +363,6 @@ void CFarmer_Job::RestingAction()
 	// 休憩が完了したら再び待機状態に戻る
 	if (RestAction())
 	{
-		// スタミナを最大に回復
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-
 		// 前回の状態に戻る
 		// ※もし前回の状態と現在の状態が同じになってしまっている場合は作物の世話状態に戻る
 		if (m_ePrevState != m_eCurrentState)

@@ -13,37 +13,12 @@
 // 前方宣言
 class CHuman;
 
-// @brief スタミナ値の最大値
-constexpr float Job_Max_Stamina = 100.0f;
-
 // @brief 仕事によるスタミナ減少値(毎フレーム)
 constexpr float Job_Work_Stamina_Decrease = 10.0f;
-
 
 // @brief 職業クラスの基底インターフェース
 class IJob_Strategy
 {
-public:
-	// @brief 職業のステータス構造体
-	struct JobStatus
-	{
-		// @brief コンストラクタ
-		JobStatus()
-			: m_fWorkPower(1.0f)
-			, m_fMaxStamina(Job_Max_Stamina)
-			, m_fStamina(m_fMaxStamina)
-		{
-		}
-
-		// 労働力
-		float m_fWorkPower;
-
-		// スタミナ
-		float m_fStamina;
-		// 最大スタミナ
-		float m_fMaxStamina;
-	};
-
 public:
 	// @brief 仮想デストラクタ
 	virtual ~IJob_Strategy();
@@ -75,21 +50,10 @@ public:
 	// @return 所属しているオブジェクトのポインタ
 	CHuman* GetOwner() const { return m_pOwner; }
 
-	// @brief 職業のステータスを取得
-	// @return 職業のステータス構造体の参照
-	JobStatus& GetJobStatus() { return m_Status; }
-
-	// @brief 職業のステータスを設定
-	// @param status：設定する職業のステータス構造体の参照
-	void SetJobStatus(const JobStatus& status) { m_Status = status; }
-
-	// @brief スタミナの増加処理
-	// @param fAmount：増加量
-	void ChangeStamina(float fAmount);
-
-	// @brief スタミナ値が最大かどうかの取得
-	// @return true:最大 false:最大ではない
-	bool IsMaxStamina() const { return m_Status.m_fStamina >= m_Status.m_fMaxStamina; }
+	// @brief 労働力の取得
+	float GetWorkPower() const { return m_fWorkPower; }
+	// @brief 労働力の設定
+	void SetWorkPower(float fWorkPower) { m_fWorkPower = fWorkPower; }
 
 protected:
 
@@ -101,8 +65,8 @@ protected:
 	// @brief 所属しているオブジェクトのポインタ
 	CHuman* m_pOwner = nullptr;
 
-	// @brief 職業のステータス
-	JobStatus m_Status;
+	// @brief 労働力
+	float m_fWorkPower;
 
 	// @brief 休憩に利用している休憩施設のID
 	CRefreshFacility* m_UsingRefreshFacility = nullptr;

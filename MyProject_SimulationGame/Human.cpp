@@ -48,8 +48,8 @@ CHuman::CHuman()
 	m_pJob->SetOwner(*this);
 
 	// スタミナのスキルボーナス適用
-	m_pSkill->ApplySkillBuff(m_pJob->GetJobStatus().m_fMaxStamina, CSkill::SkillTarget::MaxStamina);
-	m_pJob->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fMaxStamina;
+	m_pSkill->ApplySkillBuff(m_fMaxStamina, CSkill::SkillTarget::MaxStamina);
+	m_fStamina = m_fMaxStamina;
 
 	// 体力のスキルボーナス適用
 	m_pSkill->ApplySkillBuff(m_fMaxHealth, CSkill::SkillTarget::MaxHealth);
@@ -227,7 +227,7 @@ void CHuman::Draw()
 	}
 
 	// スタミナゲージの描画
-	float fStaminaRatio = m_pJob->GetJobStatus().m_fStamina / m_pJob->GetJobStatus().m_fMaxStamina;
+	float fStaminaRatio = m_fStamina / m_fMaxStamina;
 
 	// スタミナが満タンでなければ描画
 	if (fStaminaRatio < 1.0f)
@@ -491,11 +491,6 @@ void CHuman::SetHumanJob(std::unique_ptr<IJob_Strategy> job)
 	// 職業切り替え時の処理
 	m_pJob->OnChangeJob();
 
-	// スタミナ値を引き継ぐ
-	job->GetJobStatus().m_fStamina = m_pJob->GetJobStatus().m_fStamina;
-	// スタミナ最大値を引き継ぐ
-	job->GetJobStatus().m_fMaxStamina = m_pJob->GetJobStatus().m_fMaxStamina;
-
 	// 親オブジェクトを設定
 	job->SetOwner(*this);
 
@@ -530,7 +525,7 @@ void CHuman::GoHomeAndRest()
 			// 家で休憩中フラグを立てる
 			m_isRestingAtHome = true;
 			// 休憩処理
-			if (m_pJob)m_pJob->ChangeStamina(1.0f);
+			RecoverStamina(1.0f);
 
 			return;
 		}

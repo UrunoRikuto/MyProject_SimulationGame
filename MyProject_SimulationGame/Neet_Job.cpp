@@ -13,7 +13,7 @@
 CNeet_Job::CNeet_Job()
 	: IJob_Strategy()
 {
-	m_Status.m_fWorkPower = 0.0f;
+	m_fWorkPower = 0.0f;
 }
 
 /******************************************//*

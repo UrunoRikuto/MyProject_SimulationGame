@@ -35,22 +35,7 @@ void IJob_Strategy::SetOwner(CHuman& pOwner)
 	m_pOwner = &pOwner;
 
 	// 労働力のスキルバフ
-	m_pOwner->GetSkill()->ApplySkillBuff(m_Status.m_fWorkPower, this);
-}
-/*****************************************//*
-	@brief　	| スタミナの増加処理
-	@param　	| fAmount：増加量
-*//*****************************************/
-void IJob_Strategy::ChangeStamina(float fAmount)
-{
-	// スタミナを増加
-	m_Status.m_fStamina += fAmount;
-
-	// スタミナが最大値を超えた場合は最大値に設定
-	if (m_Status.m_fStamina > m_Status.m_fMaxStamina)
-	{
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-	}
+	m_pOwner->GetSkill()->ApplySkillBuff(m_fWorkPower, this);
 }
 
 /*****************************************//*
@@ -59,7 +44,7 @@ void IJob_Strategy::ChangeStamina(float fAmount)
 bool IJob_Strategy::RestAction()
 {
 	// スタミナが最大の場合は休憩完了
-	if(m_Status.m_fStamina >= m_Status.m_fMaxStamina)
+	if(m_pOwner->IsMaxStamina())
 	{
 		return true;
 	}
@@ -121,12 +106,11 @@ bool IJob_Strategy::RestAction()
 		}
 
 		// スタミナを回復
-		m_Status.m_fStamina += m_UsingRefreshFacility->GetRefreshStaminaAmount();
+		m_pOwner->RecoverStamina(m_UsingRefreshFacility->GetRefreshStaminaAmount());
 
 		// 休憩が完了したらtrueを返す
-		if (m_Status.m_fStamina >= m_Status.m_fMaxStamina)
+		if (m_pOwner->IsMaxStamina())
 		{
-			m_Status.m_fStamina = m_Status.m_fMaxStamina;
 			// 休憩施設の使用を解除
 			m_UsingRefreshFacility->ReleaseRefreshFacility(*m_pOwner);
 			// 休憩施設IDをリセット
@@ -148,10 +132,5 @@ void IJob_Strategy::DrawJobStatusImGui()
 	ImGui::Text(u8"[職業ステータス]");
 
 	// 労働力の描画
-	ImGui::Text(u8"労働力: %.2f", m_Status.m_fWorkPower);
-
-	// スタミナゲージの描画
-	ImGui::Text(u8"スタミナ:");
-	ImGui::SameLine();
-	ImGui::ProgressBar(m_Status.m_fStamina / m_Status.m_fMaxStamina, ImVec2(200.0f, 30.0f), nullptr);
+	ImGui::Text(u8"労働力: %.2f", m_fWorkPower);
 }

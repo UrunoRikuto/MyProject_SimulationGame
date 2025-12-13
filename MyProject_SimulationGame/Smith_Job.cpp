@@ -23,10 +23,7 @@ CSmith_Job::CSmith_Job()
 	, m_fCoolTime(0.0f)
 {
 	// 労働力の設定
-	m_Status.m_fWorkPower = 15.0f;
-	// スタミナの設定
-	m_Status.m_fStamina = 100.0f;
-	m_Status.m_fMaxStamina = m_Status.m_fStamina;
+	m_fWorkPower = 15.0f;
 }
 
 /*****************************************//*
@@ -91,8 +88,7 @@ int CSmith_Job::Inspecter(bool isEnd)
 	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_fWorkPower)).c_str());
 
 	// 現在の仕事状態の表示
 	ImGui::Text(u8"現在の状態: ");
@@ -323,18 +319,16 @@ void CSmith_Job::CraftingAction()
 	if (!m_pOwner->MoveToTarget(pNearestBlackSmith, Human_Move_Speed))return;
 
 	// 生産依頼を進めて、完成品を受け取る
-	CItem* pProducedItem = pNearestBlackSmith->ProgressRequest(m_pRequest, m_Status.m_fWorkPower);
-
-	// スタミナ値を減少
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+	CItem* pProducedItem = pNearestBlackSmith->ProgressRequest(m_pRequest, m_fWorkPower);
 
 	// 空腹度を消費
 	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
+	// スタミナを消費
+	m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-	if (m_Status.m_fStamina <= 0.0f)
+	if (m_pOwner->IsZeroStamina())
 	{
-		m_Status.m_fStamina = 0.0f;
 		m_ePrevState = m_eCurrentState;
 		m_eCurrentState = WorkState::Resting;
 		return;
@@ -394,9 +388,6 @@ void CSmith_Job::RestingAction()
 	// 休憩が完了したら再び待機状態に戻る
 	if (RestAction())
 	{
-		// スタミナを最大に回復
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-
 		if (m_ePrevState != m_eCurrentState)
 		{
 			// 前の状態を保存

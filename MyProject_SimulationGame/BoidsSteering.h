@@ -45,12 +45,11 @@ struct BoidsParams
 	// 分離半径
     float fSeparationRadius = 2.0f;
 
-	// 重み付け係数
-	// 分離
+	// 分離行動の重み係数
     float fWeightSeparation = 1.2f;
-	// 整列
+	// 整列行動の重み係数
     float fWeightAlignment  = 1.0f;
-	// 凝集
+	// 凝集行動の重み係数
     float fWeightCohesion   = 1.0f;
 
     // 最大速度

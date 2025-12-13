@@ -16,6 +16,9 @@ constexpr float Warning_Hunger = 20.0f;
 // @brief 自然空腹減少値
 constexpr float Natural_Hunger_Decrease = 0.01f;
 
+// @brief スタミナ値の最大値
+constexpr float Job_Max_Stamina = 100.0f;
+
 // @brief エンティティオブジェクトクラス
 class CEntity : public CGameObject
 {
@@ -54,6 +57,25 @@ public:
 	// @brief 最大体力の取得
 	float GetMaxHealth() const { return m_fMaxHealth; }
 
+	// @brief スタミナの取得
+	// @return スタミナ値
+	float GetStamina() const { return m_fStamina; }
+	// @brief 最大スタミナの取得
+	// @return 最大スタミナ値
+	float GetMaxStamina() const { return m_fMaxStamina; }
+	// @brief スタミナが最大かどうかの取得
+	// @return true:最大 false:最大ではない
+	bool IsMaxStamina() const { return m_fStamina >= m_fMaxStamina; }
+	// @brief スタミナが0かどうかの取得
+	// @return true:0 false:0ではない
+	bool IsZeroStamina() const { return m_fStamina <= 0.0f; }
+	// @brief スタミナの減少
+	// @param fAmount：減少量
+	void DecreaseStamina(float fAmount);
+	// @brief スタミナの回復
+	// @param fAmount：回復量
+	void RecoverStamina(float fAmount);
+
 protected:
 	// @brief 体力
 	float m_fHealth;
@@ -62,6 +84,11 @@ protected:
 
 	// @brief 空腹度
 	float m_fHunger;
-	// brief 食事フラグ
+	// @brief 食事フラグ
 	bool m_isEating;
+
+	// @brief スタミナ
+	float m_fStamina;
+	// @brief 最大スタミナ
+	float m_fMaxStamina;
 };

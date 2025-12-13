@@ -24,10 +24,7 @@ CBuilder_Job::CBuilder_Job()
 	, m_ePrevState(WorkState::Resting)
 {
 	// 建築職業の労働力を設定
-	m_Status.m_fWorkPower = 15.0f;
-	// 建築職業のスタミナを設定
-	m_Status.m_fStamina = 100.0f;
-	m_Status.m_fMaxStamina = m_Status.m_fStamina;
+	m_fWorkPower = 15.0f;
 }
 
 /*****************************************//*
@@ -107,8 +104,7 @@ int CBuilder_Job::Inspecter(bool isEnd)
 	ImGui::Text(std::string(u8"職業名:" + GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_fWorkPower)).c_str());
 
 	// 現在の仕事状態を表示
 	ImGui::Text(u8"現在の状態: ");
@@ -452,7 +448,7 @@ void CBuilder_Job::BuildingAction()
 		// 建築進行度が100%に達していない場合は進行度を増加させる
 		if (m_fWorkProgress <= 100.0f)
 		{
-			m_fWorkProgress += m_Status.m_fWorkPower / fFPS;
+			m_fWorkProgress += m_fWorkPower / fFPS;
 			return;
 		}
 		// 建築オブジェクトをシーンに追加
@@ -486,16 +482,15 @@ void CBuilder_Job::BuildingAction()
 	if(!m_pOwner->MoveToTarget(m_pBuildingObject, Human_Move_Speed))return;
 
 	// 建築進行度を増加させる
-	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
+	m_pBuildingObject->ProgressBuild(m_fWorkPower);
 	// 空腹度を減少させる
 	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少させる
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+	m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-	if (m_Status.m_fStamina <= 0.0f)
+	if (m_pOwner->IsZeroStamina())
 	{
-		m_Status.m_fStamina = 0.0f;
 		// 前の状態を保存
 		m_ePrevState = m_eCurrentState;
 		// 休憩状態に移行
@@ -555,16 +550,15 @@ void CBuilder_Job::UpgradingAction()
 	if (!m_pOwner->MoveToTarget(m_pBuildingObject, Human_Move_Speed))return;
 
 	// 建築進行度を増加させる
-	m_pBuildingObject->ProgressBuild(m_Status.m_fWorkPower);
+	m_pBuildingObject->ProgressBuild(m_fWorkPower);
 	// 空腹度を減少させる
 	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少させる
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+	m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-	if (m_Status.m_fStamina <= 0.0f)
+	if (m_pOwner->IsZeroStamina())
 	{
-		m_Status.m_fStamina = 0.0f;
 		// 前の状態を保存
 		m_ePrevState = m_eCurrentState;
 		// 休憩状態に移行
@@ -609,8 +603,6 @@ void CBuilder_Job::RestingAction()
 	// 休憩が完了したら再び待機状態に戻る
 	if (RestAction())
 	{
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-
 		if (m_ePrevState != m_eCurrentState)
 		{
 			// 前の状態を保存

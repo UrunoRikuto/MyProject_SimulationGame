@@ -15,7 +15,7 @@
 CStoneGatherer_Job::CStoneGatherer_Job()
 	: CGatherer_Strategy()
 {
-	m_Status.m_fWorkPower = 10.0f;
+	m_fWorkPower = 10.0f;
 }
 
 /******************************************//*

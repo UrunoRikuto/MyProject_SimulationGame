@@ -15,7 +15,7 @@
 CWoodGatherer_Job::CWoodGatherer_Job()
 	: CGatherer_Strategy()
 {
-	m_Status.m_fWorkPower = 10.0f;
+	m_fWorkPower = 10.0f;
 }
 
 /******************************************//*

@@ -70,3 +70,35 @@ void CEntity::DecreaseHunger(float fAmount)
 		m_fHunger = 0.0f;
 	}
 }
+
+/****************************************//* 
+	@brief　	| スタミナの減少
+	@param		| fAmount：減少量
+*//****************************************/
+void CEntity::DecreaseStamina(float fAmount)
+{
+	// スタミナを減少
+	m_fStamina -= fAmount;
+
+	// スタミナが0未満にならないように補正
+	if (m_fStamina < 0.0f)
+	{
+		m_fStamina = 0.0f;
+	}
+}
+
+/****************************************//* 
+	@brief　	| スタミナの回復
+	@param		| fAmount：回復量
+*//****************************************/
+void CEntity::RecoverStamina(float fAmount)
+{
+	// スタミナを回復
+	m_fStamina += fAmount;
+
+	// スタミナが最大値を超えないように補正
+	if (m_fStamina > m_fMaxStamina)
+	{
+		m_fStamina = m_fMaxStamina;
+	}
+}

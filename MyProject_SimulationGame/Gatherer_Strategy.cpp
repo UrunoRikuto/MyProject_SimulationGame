@@ -85,8 +85,7 @@ int CGatherer_Strategy::Inspecter(bool isEnd)
 	ImGui::Text(std::string(u8"職業名:"+ GetJobName()).c_str());
 
 	// ステータスの表示
-	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_Status.m_fWorkPower)).c_str());
-	ImGui::Text(std::string(u8"スタミナ:" + std::to_string(m_Status.m_fStamina) + "/" + std::to_string(m_Status.m_fMaxStamina)).c_str());
+	ImGui::Text(std::string(u8"労働力:" + std::to_string(m_fWorkPower)).c_str());
 
 	// 現在の仕事状態の表示
 	std::string sWorkState;
@@ -249,20 +248,18 @@ void CGatherer_Strategy::GatheringAction()
 		if (HasCollectTool())
 		{
 			// 標的オブジェクトの耐久値を労働力分減少させる
-			m_pTarget->DecreaseHp(m_Status.m_fWorkPower * 2.0f);
-			// スタミナを消費
-			m_Status.m_fStamina -= Job_Work_Stamina_Decrease / 2.0f;
+			m_pTarget->DecreaseHp(m_fWorkPower * 2.0f);
 		}
 		// 収集ツールを持っていない場合の処理
 		else
 		{
 			// 標的オブジェクトの耐久値を労働力分減少させる
-			m_pTarget->DecreaseHp(m_Status.m_fWorkPower);
-			// スタミナを消費
-			m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+			m_pTarget->DecreaseHp(m_fWorkPower);
 		}
 		// 空腹度を消費
 		m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
+		// スタミナを消費
+		m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 
 		// 標的オブジェクトが破壊された場合はオブジェクトを破棄し、標的ポインタをnullptrに設定
@@ -291,9 +288,8 @@ void CGatherer_Strategy::GatheringAction()
 		}
 
 		// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-		if (m_Status.m_fStamina <= 0.0f)
+		if (m_pOwner->IsZeroStamina())
 		{
-			m_Status.m_fStamina = 0.0f;
 			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Resting;
 			return;
@@ -316,9 +312,8 @@ void CGatherer_Strategy::TransportingAction()
 	if (pStorageHouse == nullptr)
 	{
 		// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-		if (m_Status.m_fStamina <= 0.0f)
+		if (m_pOwner->IsZeroStamina())
 		{
-			m_Status.m_fStamina = 0.0f;
 			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Resting;
 			return;
@@ -361,9 +356,8 @@ void CGatherer_Strategy::StoringAction()
 	else
 	{
 		// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-		if (m_Status.m_fStamina <= 0.0f)
+		if (m_pOwner->IsZeroStamina())
 		{
-			m_Status.m_fStamina = 0.0f;
 			m_ePrevState = m_eCurrentState;
 			m_eCurrentState = WorkState::Resting;
 			return;
@@ -392,8 +386,6 @@ void CGatherer_Strategy::RestingAction()
 	// 休憩が完了したら再び標的オブジェクトを探して移動する状態に戻る
 	if (RestAction())
 	{
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-
 		m_ePrevState = m_eCurrentState;
 		m_eCurrentState = WorkState::SearchAndMove;
 	}

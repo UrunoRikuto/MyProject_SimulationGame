@@ -726,5 +726,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Text\TODOリスト.txt" />
+    <Text Include="Assets\Text\作成予定動物.txt" />
   </ItemGroup>
 </Project>

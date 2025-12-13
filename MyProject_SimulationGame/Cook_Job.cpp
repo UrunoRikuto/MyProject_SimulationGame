@@ -23,10 +23,7 @@ CCook_Job::CCook_Job()
 	, m_fCoolTime(0.0f)
 {
 	// 労働力の設定
-	m_Status.m_fWorkPower = 15.0f;
-	// スタミナの設定
-	m_Status.m_fStamina = 100.0f;
-	m_Status.m_fMaxStamina = m_Status.m_fStamina;
+	m_fWorkPower = 15.0f;
 }
 
 /****************************************//*
@@ -275,7 +272,7 @@ void CCook_Job::CookingAction()
 	// 空腹値の減少
 	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
 	// スタミナを減少
-	m_Status.m_fStamina -= Job_Work_Stamina_Decrease;
+	m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 	// 料理が完成した場合
 	if (!pCookedItems.empty())
@@ -292,9 +289,8 @@ void CCook_Job::CookingAction()
 	}
 
 	// スタミナが0以下になったらスタミナを0に設定し、休憩状態に移行
-	if (m_Status.m_fStamina <= 0.0f)
+	if (m_pOwner->IsZeroStamina())
 	{
-		m_Status.m_fStamina = 0.0f;
 		m_ePrevState = m_eCurrentState;
 		m_eCurrentState = WorkState::Resting;
 	}
@@ -339,9 +335,6 @@ void CCook_Job::RestingAction()
 	// 休憩が完了したら再び待機状態に戻る
 	if (RestAction())
 	{
-		// スタミナを最大に回復
-		m_Status.m_fStamina = m_Status.m_fMaxStamina;
-
 		if (m_ePrevState != m_eCurrentState)
 		{
 			// 前の状態を保存

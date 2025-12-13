@@ -14,7 +14,7 @@
 *//******************************************/
 CGrassGatherer_Job::CGrassGatherer_Job()
 {
-	m_Status.m_fWorkPower = 10.0f;
+	m_fWorkPower = 10.0f;
 }
 
 /******************************************//*
