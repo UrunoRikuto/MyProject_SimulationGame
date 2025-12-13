@@ -14,13 +14,16 @@
 CWolf::CWolf()
 	: CCarnivorousAnimal()
 {
-	// 群れ攻撃AIを作成して設定
 	BoidsParams params;
-	// パラメータ調整
-	params.fWeightCohesion = 1.0f;
-	params.fWeightAlignment = 1.2f;
-	params.fWeightSeparation = 0.8f;
-	params.fViewRadius = 10.0f;
+	// パラメータ設定
+	params.fViewRadius = 5.0f;
+	params.fSeparationRadius = 10.0f;
+	params.fWeightSeparation = 1.0f;
+	params.fWeightAlignment = 0.1f;
+	params.fWeightCohesion = 0.1f;
+	params.fMaxSpeed = 3.0f;
+	params.fMaxForce = 1.0f;
+	// 行動AI生成
 	m_pActionAI = new(std::nothrow) CFlockAttackAI(params);
 }
 
@@ -36,6 +39,9 @@ CWolf::~CWolf()
 *//****************************************/
 void CWolf::Init()
 {
+	// 親クラスの初期化処理
+	CCarnivorousAnimal::Init();
+
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("Wolf");
@@ -47,40 +53,49 @@ void CWolf::Init()
 *//****************************************/
 void CWolf::Update()
 {
-	// 基底クラスの更新処理を呼び出し
+	// 親クラスの更新処理
 	CCarnivorousAnimal::Update();
 
-	// -- 行動AIの更新
-	// 近隣情報リストをクリア
+	// 近隣情報を値で保持（動的メモリ排除）
 	m_SameAnimalNeighbors.clear();
-	// 周囲の同種動物の取得
+
+	// 同種の動物を取得
 	auto WolfObjects = GetScene()->GetGameObjects<CWolf>(m_tParam.m_f3Pos, 1000.0f);
-	// 近くのオオカミを近隣情報リストに追加
 	for (auto& wolf : WolfObjects)
 	{
-		// 自分自身は除外
+		// 自身は除外
 		if (wolf->GetID().m_sName == this->GetID().m_sName
 			&& wolf->GetID().m_nSameCount == this->GetID().m_nSameCount) continue;
-		// 近隣情報構造体を作成
+
+		// 近隣情報を追加
 		BoidsNeighbor neighbor;
-		// 位置情報ポインタを設定
-		neighbor.v3Position = new Vec3{ wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
-		// 速度情報ポインタを設定
-		neighbor.v3Velocity = new Vec3{ wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
-		// 近隣リストに追加
+		neighbor.v3Position = { wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
+		neighbor.v3Velocity = { wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
+		// リストに追加
 		m_SameAnimalNeighbors.push_back(neighbor);
 	}
 
 	Vec3 pos = { m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z };
 	Vec3 vel = { m_f3Velocity.x, m_f3Velocity.y, m_f3Velocity.z };
-	// ステアリングベクトルを取得
+
+	// ステアリングベクトル
 	Vec3 steer = m_pActionAI->UpdateAI(pos, vel, m_SameAnimalNeighbors);
 
 	// 速度にステアリングを加算
 	vel += steer * fDeltaTime;
-	// 変数に速度を保存
+
+	// 最大速度で制限
+	float speed = Length(vel);
+	// 最大速度を超えていたら制限
+	if (speed > 3.0f && speed > 0.0001f)
+	{
+		// 最大速度で正規化
+		vel = vel * (3.0f / speed);
+	}
+
+	// 速度を保存
 	m_f3Velocity = { vel.x, vel.y, vel.z };
-	// 向きを速度方向に変更
+	// 回転を速度方向に向ける
 	m_tParam.m_f3Rotate.y = atan2f(m_f3Velocity.x, m_f3Velocity.z);
 
 	// 位置に速度を加算

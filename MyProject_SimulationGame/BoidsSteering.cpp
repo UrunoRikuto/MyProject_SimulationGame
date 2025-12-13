@@ -1,150 +1,155 @@
 /**************************************************//*
 	@file	| BoidsSteering.cpp
 	@brief	| Boidsのステアリングクラス実装
-	@note	| Boidsのステアリングを実装
+	@note	| Boidsのステアリング処理
 *//**************************************************/
 #include "BoidsSteering.h"
 #include "DirectXMath.h"
 
-/****************************************//*
-	@brief　	| ステアリング計算
-	@param      | selfPos：自身の位置
-	@param      | selfVel：自身の速度
-	@param      | neighbors：近隣情報リスト
-	@param      | params：Boidsパラメータ
-	@return     | ステアリングベクトル
-*//****************************************/
-Vec3 BoidsSteering::Compute(const Vec3& selfPos, const Vec3& selfVel, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
+// @brief ベクトルの長さを制限
+// @param v ベクトル
+// @param maxLen 最大長さ
+static Vec3 Limit(const Vec3& v, float maxLen)
 {
-	// 各ルールの力を計算
-	// 分離
-    Vec3 sep = Separation(selfPos, neighbors, params);
-	// 整列
-    Vec3 ali = Alignment(selfPos, neighbors, params);
-	// 結合
-    Vec3 coh = Cohesion(selfPos, neighbors, params);
-
-	// 重み付けして合成
-    Vec3 force = sep * params.fWeightSeparation
-        + ali * params.fWeightAlignment
-        + coh * params.fWeightCohesion;
-
-	// 最大力でクランプ
-    float len = Length(force);
-    if (len > params.fMaxForce)
-        force = force * (params.fMaxForce / len);
-
-    return force;
+    float len = Length(v);
+    if (len > maxLen && len > 0.0001f)
+        return v * (maxLen / len);
+    return v;
 }
 
 /****************************************//*
-    @brief　	| 分離ルール計算
+	@brief　	| Boidsのステアリング力を計算
+    @param      | selfPos：自身の位置
+    @param      | selfVel：自身の速度
+    @param      | neighbors：近隣情報リスト
+    @param      | params：Boidsパラメータ
+    @return     | ステアリングベクトル
+*//****************************************/
+Vec3 BoidsSteering::Compute(const Vec3& selfPos, const Vec3& selfVel, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
+{
+	// 各ステアリング力の計算
+    // 分離
+    Vec3 sep = Separation(selfPos, neighbors, params);
+	// 整列
+    Vec3 ali = Alignment(selfPos, selfVel, neighbors, params);
+	// 凝集
+    Vec3 coh = Cohesion(selfPos, selfVel, neighbors, params);
+
+	// 重み付けと合成
+    Vec3 force = sep * params.fWeightSeparation
+               + ali * params.fWeightAlignment
+               + coh * params.fWeightCohesion;
+
+	// 最大力で制限して返す
+    return Limit(force, params.fMaxForce);
+}
+
+/****************************************//*
+    @brief　	| 分離ステアリング力を計算
     @param      | selfPos：自身の位置
     @param      | neighbors：近隣情報リスト
     @param      | params：Boidsパラメータ
-    @return     | 分離ベクトル
+    @return     | 分離ステアリングベクトル
 *//****************************************/
 Vec3 BoidsSteering::Separation(const Vec3& selfPos, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
 {
     Vec3 steer{ 0,0,0 };
     int count = 0;
 
-	// 近隣エージェントをループ
+	// 近隣のBoidsをループ
     for (auto& nb : neighbors)
     {
-		// 自身との距離計算
-        float dist = Length(selfPos - *nb.v3Position);
-
-		// 分離距離以内なら分離ベクトルに寄与
+		// 自身との距離を計算
+        Vec3 toMe = selfPos - nb.v3Position;
+		// 分離半径以内なら反発力を加算
+        float dist = Length(toMe);
+		// 分離半径以内なら反発力を加算
         if (dist < params.fSeparationRadius && dist > 0.0001f)
         {
-			// 近隣エージェントから遠ざかる方向に寄与
-            steer += Normalize(selfPos - *nb.v3Position) * (1.0f / dist);
-
-			// カウントアップ
+            // 近距離で強く反発するように寄与を距離の二乗で減衰
+            float weight = 1.0f / (dist * dist);
+			// 反発力を加算
+            steer += Normalize(toMe) * weight;
             count++;
         }
     }
 
-	// 平均化
     if (count == 0) return { 0,0,0 };
     return steer * (1.0f / count);
 }
 
 /****************************************//*
-    @brief　	| 整列ルール計算
+    @brief　	| 整列ステアリング力を計算
     @param      | selfPos：自身の位置
+    @param      | selfVel：自身の速度
     @param      | neighbors：近隣情報リスト
     @param      | params：Boidsパラメータ
-    @return     | 整列ベクトル
+    @return     | 整列ステアリングベクトル
 *//****************************************/
-Vec3 BoidsSteering::Alignment(const Vec3& selfPos, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
+Vec3 BoidsSteering::Alignment(const Vec3& selfPos, const Vec3& selfVel, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
 {
     Vec3 avgVel{ 0,0,0 };
     int count = 0;
 
-	// 近隣エージェントをループ
+	// 近隣のBoidsをループ
     for (auto& nb : neighbors)
     {
-		// 自身との距離計算
-        float dist = Length(selfPos - *nb.v3Position);
+		// 自身との距離を計算
+        float dist = Length(selfPos - nb.v3Position);
 
-		// 視界距離以内なら平均速度に寄与
+		// 視野半径以内なら平均速度に加算
         if (dist < params.fViewRadius)
         {
 			// 速度を加算
-            avgVel += *nb.v3Velocity;
+            avgVel += nb.v3Velocity;
             count++;
         }
     }
-	// 平均化
     if (count == 0) return { 0,0,0 };
 
-	// 平均速度計算
+	// 平均速度を計算
     avgVel = avgVel * (1.0f / count);
-	// 目標速度を最大速度にスケーリング
-    avgVel = Normalize(avgVel) * params.fMaxSpeed;
+    Vec3 desired = Normalize(avgVel) * params.fMaxSpeed;
 
-	// 目標速度から現在速度を引いたものが整列ベクトル
-    return avgVel - selfPos;
+    // 現在速度との差分（本来のアラインメントのステア）
+    return desired - selfVel;
 }
 
 /****************************************//*
-    @brief　	| 結合ルール計算
+    @brief　	| 凝集ステアリング力を計算
     @param      | selfPos：自身の位置
+    @param      | selfVel：自身の速度
     @param      | neighbors：近隣情報リスト
     @param      | params：Boidsパラメータ
-    @return     | 結合ベクトル
+    @return     | 凝集ステアリングベクトル
 *//****************************************/
-Vec3 BoidsSteering::Cohesion(const Vec3& selfPos, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
+Vec3 BoidsSteering::Cohesion(const Vec3& selfPos, const Vec3& selfVel, const std::vector<BoidsNeighbor>& neighbors, const BoidsParams& params)
 {
     Vec3 center{ 0,0,0 };
     int count = 0;
 
-	// 近隣エージェントをループ
+	// 近隣のBoidsをループ
     for (auto& nb : neighbors)
     {
-		// 自身との距離計算
-        float dist = Length(selfPos - *nb.v3Position);
+		// 自身との距離を計算
+        float dist = Length(selfPos - nb.v3Position);
 
-		// 視界距離以内なら中心点に寄与
+		// 視野半径以内なら中心位置に加算
         if (dist < params.fViewRadius)
         {
 			// 位置を加算
-            center += *nb.v3Position;
+            center += nb.v3Position;
             count++;
         }
     }
 
-	// 平均化
     if (count == 0) return { 0,0,0 };
 
-	// 中心点計算
+	// 中心位置の平均を計算
     center = center * (1.0f / count);
-
-	// 目標位置への望ましい速度を計算
+	// 求心方向の望ましい速度を計算
     Vec3 desired = Normalize(center - selfPos) * params.fMaxSpeed;
 
-	// 目標速度から現在速度を引いたものが結合ベクトル
-    return desired;
+    // 現在速度との差分（本来のコヒージョンのステア）
+    return desired - selfVel;
 }
