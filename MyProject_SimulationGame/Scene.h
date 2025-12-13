@@ -293,6 +293,46 @@ public:
 		return gameObjectList;
 	}
 
+	// @brief 指定した位置から一定距離内にあるゲームオブジェクトを取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param In_Center：基準位置
+	// @param distance：距離
+	// @return 指定した位置から一定距離内にあるゲームオブジェクトのリスト
+	template<typename T = CGameObject>
+	std::list<T*> GetGameObjects(DirectX::XMFLOAT3 In_Center, float distance)
+	{
+		std::list<T*> gameObjectList;
+		gameObjectList.clear();
+		float distanceSq = distance * distance;
+		// 自身を紐付けている全てのゲームオブジェクトを探索
+		for (auto list : m_pGameObject_List)
+		{
+			// T*型のゲームオブジェクトが見つかった場合はその値をリストに追加
+			for (auto obj : list)
+			{
+				// T*型にキャストを試みる
+				T* ret = dynamic_cast<T*>(obj);
+				// 見つかった場合は距離を計算
+				if (ret != nullptr)
+				{
+					// オブジェクトの位置を取得
+					DirectX::XMFLOAT3 objPos = ret->GetPos();
+					// 距離の二乗を計算
+					float distSq = 
+						powf(In_Center.x - objPos.x, 2) +
+						powf(In_Center.y - objPos.y, 2) +
+						powf(In_Center.z - objPos.z, 2);
+					// 指定した距離内にある場合はリストに追加
+					if (distSq <= distanceSq)
+					{
+						gameObjectList.push_back(ret);
+					}
+				}
+			}
+		}
+		return gameObjectList;
+	}
+
 	// @brief フェード中かどうかの設定・取得
 	// @param isFade：フェード中かどうか
     void SetIsFade(bool isFade) { m_bFade = isFade; }

@@ -40,9 +40,6 @@ CHuman::CHuman()
 
 	// ‘Ì—Í‰Šú‰»
 	m_fHealth = Max_Health;
-	// ‹ºˆĞ“x‚Ì‰Šú‰»
-	m_fThreat = ThreatLevels::Entity::Human;
-	m_fDefaultThreat = m_fThreat;
 
 	// ƒXƒLƒ‹‚Ì’Ç‰Á
 	m_pSkill = std::make_unique<CSkill>();

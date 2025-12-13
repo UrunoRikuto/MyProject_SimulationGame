@@ -54,10 +54,6 @@ public:
 	// @brief 最大体力の取得
 	float GetMaxHealth() const { return m_fMaxHealth; }
 
-	// @brief 脅威度の取得
-	// @return 脅威度
-	float GetThreat() const { return m_fThreat; }
-
 protected:
 	// @brief 体力
 	float m_fHealth;
@@ -68,30 +64,4 @@ protected:
 	float m_fHunger;
 	// brief 食事フラグ
 	bool m_isEating;
-
-	// @brief 脅威度
-	float m_fThreat;
-	// @brief 脅威度の初期値
-	float m_fDefaultThreat;
 };
-
-// @brief 脅威度の定義
-// @note 0.0f～100.0fの範囲で設定
-namespace ThreatLevels
-{
-	// @brief 脅威度の最大値
-	constexpr float Max_Threat = 100.0f;
-
-	// @brief 空腹値の増加量
-	constexpr float Hunger_Increase_Amount = 1.0f;
-
-	// @brief エンティティの初期値
-	namespace Entity
-	{
-		// @brief 人間の脅威度
-		constexpr float Human = 20.0f;
-
-		// @brief オオカミの脅威度
-		constexpr float Wolf = 10.0f;
-	}
-}

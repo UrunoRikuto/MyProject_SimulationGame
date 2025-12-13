@@ -849,13 +849,6 @@ void CImguiSystem::Release_DrawHuman()
 	std::string hungerText = u8"空腹値: " + std::to_string(static_cast<int>(currentHunger)) + " / " + std::to_string(static_cast<int>(maxHunger));
 	ImGui::ProgressBar(currentHunger / maxHunger, ImVec2(200.0f, 30.0f), hungerText.c_str());
 
-	// 脅威度の表示
-	const float maxThreat = ThreatLevels::Max_Threat;
-	float currentThreat = m_pHumanObject->GetThreat();
-	std::string threatText = u8"脅威度: " + std::to_string(static_cast<int>(currentThreat)) + " / " + std::to_string(static_cast<int>(maxThreat));
-	ImGui::ProgressBar(currentThreat / maxThreat, ImVec2(200.0f, 30.0f), threatText.c_str());
-
-
 	// 所持しているツールの表示
 	CItem* pTool = m_pHumanObject->GetToolItem();
 	std::string toolName = pTool ? CItem::ITEM_TYPE_TO_STRING(pTool->GetItemType()) : u8"なし";

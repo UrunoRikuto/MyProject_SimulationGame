@@ -148,6 +148,18 @@
     <Filter Include="コードファイル\GameObject\Entity\Animal\Base">
       <UniqueIdentifier>{dd2e7bcc-bce8-4087-aab9-882ed4447d39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\AnimalAI">
+      <UniqueIdentifier>{b0a7db4b-b176-4a0c-874b-899104e48e09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\AnimalAI\BoidsSteering">
+      <UniqueIdentifier>{125ac21d-589b-4c8f-b717-7a9314940a63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\System\AnimalAI\Base">
+      <UniqueIdentifier>{01ac2ec6-0469-4c2f-ad3e-8eebe2ac49b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="コードファイル\GameObject\Entity\Base">
+      <UniqueIdentifier>{9fb0855c-ad77-4550-bd31-6b5a9f249710}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -396,9 +408,6 @@
     <ClInclude Include="GrassGatherer_Job.h">
       <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>コードファイル\GameObject\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Farmer_Job.h">
       <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
@@ -410,6 +419,30 @@
     </ClInclude>
     <ClInclude Include="Animal.h">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CarnivorousAnimal.h">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="HerbivorousAnimal.h">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidsSteering.h">
+      <Filter>コードファイル\System\AnimalAI\BoidsSteering</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalAI.h">
+      <Filter>コードファイル\System\AnimalAI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="FlockAttackAI.h">
+      <Filter>コードファイル\System\AnimalAI</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupAI.h">
+      <Filter>コードファイル\System\AnimalAI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>コードファイル\GameObject\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Wolf.h">
+      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -644,14 +677,29 @@
     <ClCompile Include="GrassGatherer_Job.cpp">
       <Filter>コードファイル\System\Job\Collect\Gatherer</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>コードファイル\GameObject\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="Skill.cpp">
       <Filter>コードファイル\System\Skill</Filter>
     </ClCompile>
     <ClCompile Include="Animal.cpp">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="HerbivorousAnimal.cpp">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="CarnivorousAnimal.cpp">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="BoidsSteering.cpp">
+      <Filter>コードファイル\System\AnimalAI\BoidsSteering</Filter>
+    </ClCompile>
+    <ClCompile Include="FlockAttackAI.cpp">
+      <Filter>コードファイル\System\AnimalAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>コードファイル\GameObject\Entity\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Wolf.cpp">
+      <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

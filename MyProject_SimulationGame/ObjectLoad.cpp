@@ -27,6 +27,9 @@ void CObjectLoad::LoadAll()
 	// 人間のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Human.obj"), "Human");
 
+	// オオカミのモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wolf.obj"), "Wolf");
+
 	// 木のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wood.obj"), "Wood");
 

@@ -142,14 +142,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animal.h" />
+    <ClInclude Include="AnimalAI.h" />
     <ClInclude Include="BillboardRenderer.h" />
     <ClInclude Include="BlackSmith.h" />
+    <ClInclude Include="BoidsSteering.h" />
     <ClInclude Include="Builder_Job.h" />
     <ClInclude Include="BuildManager.h" />
     <ClInclude Include="BuildObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="CarnivorousAnimal.h" />
     <ClInclude Include="CivLevelManager.h" />
     <ClInclude Include="Cook_Job.h" />
     <ClInclude Include="Crafter_Strategy.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="FieldCell.h" />
     <ClInclude Include="FieldGround.h" />
     <ClInclude Include="FieldManager.h" />
+    <ClInclude Include="FlockAttackAI.h" />
     <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
@@ -169,6 +173,8 @@
     <ClInclude Include="Grass.h" />
     <ClInclude Include="GrassGatherer_Job.h" />
     <ClInclude Include="GrassGenerator.h" />
+    <ClInclude Include="GroupAI.h" />
+    <ClInclude Include="HerbivorousAnimal.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="HumanGenerator.h" />
@@ -225,6 +231,7 @@
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transition.h" />
+    <ClInclude Include="Wolf.h" />
     <ClInclude Include="Wood.h" />
     <ClInclude Include="WoodGatherer_Job.h" />
     <ClInclude Include="WoodGenerator.h" />
@@ -233,12 +240,14 @@
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="BillboardRenderer.cpp" />
     <ClCompile Include="BlackSmith.cpp" />
+    <ClCompile Include="BoidsSteering.cpp" />
     <ClCompile Include="Builder_Job.cpp" />
     <ClCompile Include="BuildManager.cpp" />
     <ClCompile Include="BuildObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="CarnivorousAnimal.cpp" />
     <ClCompile Include="CivLevelManager.cpp" />
     <ClCompile Include="CollectTarget.cpp" />
     <ClCompile Include="Cook_Job.cpp" />
@@ -249,6 +258,7 @@
     <ClCompile Include="FieldCell.cpp" />
     <ClCompile Include="FieldGround.cpp" />
     <ClCompile Include="FieldManager.cpp" />
+    <ClCompile Include="FlockAttackAI.cpp" />
     <ClCompile Include="GameTimeManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -256,6 +266,7 @@
     <ClCompile Include="Grass.cpp" />
     <ClCompile Include="GrassGatherer_Job.cpp" />
     <ClCompile Include="GrassGenerator.cpp" />
+    <ClCompile Include="HerbivorousAnimal.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="HumanGenerator.cpp" />
     <ClCompile Include="HumanHouse.cpp" />
@@ -307,6 +318,7 @@
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="Wolf.cpp" />
     <ClCompile Include="Wood.cpp" />
     <ClCompile Include="WoodGatherer_Job.cpp" />
     <ClCompile Include="WoodGenerator.cpp" />

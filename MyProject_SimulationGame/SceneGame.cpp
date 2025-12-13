@@ -14,6 +14,9 @@
 #include "SkyBox.h"
 #include "ImguiSystem.h"
 
+#include "Wolf.h"
+#include "Oparation.h"
+
 /****************************************//*
 	@brief　	| コンストラクタ
 *//****************************************/
@@ -50,8 +53,27 @@ void CSceneGame::Init()
 	CGeneratorManager::GetInstance()->AddObserver(*(new CGrassGenerator()));
 	CGeneratorManager::GetInstance()->AddObserver(*(new CHumanGenerator()));
 
+	// 狼の生成
+	DirectX::XMFLOAT3 wolfBasePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	float offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(offset, 0.0f, 0.0f));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(-offset, 0.0f, 0.0f));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(0.0f, 0.0f, offset));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(0.0f, 0.0f, -offset));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(offset, 0.0f, offset));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(offset, 0.0f, -offset));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(-offset, 0.0f, offset));
+	offset = (rand() % 6 - 3.0f) + 1.0f;
+	AddGameObject<CWolf>(Tag::GameObject, "Wolf")->SetPos(wolfBasePos + XMFLOAT3(-offset, 0.0f, -offset));
+
 	// フィールド管理システムの初期化
-	CFieldManager::GetInstance()->AssignFieldCellType();
+	//CFieldManager::GetInstance()->AssignFieldCellType();
 
 	// フィールド地面オブジェクトの生成
 	AddGameObject<CFieldGround>(Tag::Field, "FieldGround");
