@@ -1,5 +1,5 @@
 /**************************************************//*
-	@file	| Wolf.h
+	@file	| Wolf_Animal.h
 	@brief	| オオカミクラスの定義
 	@note	| オオカミの処理を定義
 *//**************************************************/
@@ -8,14 +8,14 @@
 
 
 // @brief オオカミクラス
-class CWolf final: public CCarnivorousAnimal
+class CWolf_Animal final: public CCarnivorousAnimal
 {
 public:
 	// @brief コンストラクタ
-	CWolf();
+	CWolf_Animal();
 
 	// @brief デストラクタ
-	~CWolf()override;
+	~CWolf_Animal()override;
 
 	// @brief 初期化処理
 	void Init() override;

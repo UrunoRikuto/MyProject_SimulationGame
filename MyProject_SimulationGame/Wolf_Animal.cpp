@@ -1,9 +1,9 @@
 /**************************************************//*
-	@file	| Wolf.cpp
+	@file	| Wolf_Animal.cpp
 	@brief	| オオカミクラスの定義
 	@note	| オオカミの処理を定義
 *//**************************************************/
-#include "Wolf.h"
+#include "Wolf_Animal.h"
 #include "FlockAttackAI.h"
 #include "Oparation.h"
 #include "Main.h"
@@ -11,7 +11,7 @@
 /****************************************//*
 	@brief　	| コンストラクタ
 *//****************************************/
-CWolf::CWolf()
+CWolf_Animal::CWolf_Animal()
 	: CCarnivorousAnimal()
 {
 	BoidsParams params;
@@ -30,14 +30,14 @@ CWolf::CWolf()
 /****************************************//*
 	@brief　	| デストラクタ
 *//****************************************/
-CWolf::~CWolf()
+CWolf_Animal::~CWolf_Animal()
 {
 }
 
 /****************************************//*
 	@brief　	| 初期化処理
 *//****************************************/
-void CWolf::Init()
+void CWolf_Animal::Init()
 {
 	// 親クラスの初期化処理
 	CCarnivorousAnimal::Init();
@@ -51,7 +51,7 @@ void CWolf::Init()
 /****************************************//*
 	@brief　	| 更新処理
 *//****************************************/
-void CWolf::Update()
+void CWolf_Animal::Update()
 {
 	// 親クラスの更新処理
 	CCarnivorousAnimal::Update();
@@ -60,7 +60,7 @@ void CWolf::Update()
 	m_SameAnimalNeighbors.clear();
 
 	// 同種の動物を取得
-	auto WolfObjects = GetScene()->GetGameObjects<CWolf>(m_tParam.m_f3Pos, 1000.0f);
+	auto WolfObjects = GetScene()->GetGameObjects<CWolf_Animal>(m_tParam.m_f3Pos, 1000.0f);
 	for (auto& wolf : WolfObjects)
 	{
 		// 自身は除外
