@@ -28,6 +28,9 @@ public:
 	// @brief フィールドグリッドの取得
 	CFieldGrid* GetFieldGrid() { return m_pFieldGrid; }
 
+	// @brief フィールドグリッドの表示
+	void DebugDraw();
+
 private:
 
 	// @brief 初期村の作成

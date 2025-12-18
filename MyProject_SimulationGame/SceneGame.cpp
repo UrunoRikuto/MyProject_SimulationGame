@@ -14,8 +14,10 @@
 #include "SkyBox.h"
 #include "ImguiSystem.h"
 
+#include "TestObject.h"
 #include "Wolf_Animal.h"
 #include "Oparation.h"
+#include "Deer_Animal.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -71,6 +73,23 @@ void CSceneGame::Init()
 	}
 
 
+	// シカの生成
+	DirectX::XMFLOAT3 deerBasePos = DirectX::XMFLOAT3(20.0f, 0.0f, 20.0f);
+	std::vector<CDeer_Animal*> deerList;
+	for (int i = 0; i < 8; ++i)
+	{
+		CDeer_Animal* pDeer = AddGameObject<CDeer_Animal>(Tag::GameObject, "Deer_Animal");
+		deerBasePos.x += GetRandOfRange(-5, 5);
+		deerBasePos.z += GetRandOfRange(-5, 5);
+		pDeer->SetPos(deerBasePos);
+		deerList.push_back(pDeer);
+	}
+	for (CDeer_Animal* deer : deerList)
+	{
+		deer->RegisterToFlock(deerList);
+	}
+
+
 	// フィールド管理システムの初期化
 	//CFieldManager::GetInstance()->AssignFieldCellType();
 
@@ -97,6 +116,23 @@ void CSceneGame::Update()
 
 	// クールタイム処理
 	CBuildManager::GetInstance()->CoolTimeUpdate();
+
+	// ------------------------------------------------------------
+	// シカの群れ情報（近傍）の更新
+	// ※脅威検知/共有のロジック自体は各DeerのUpdate()->SetThreat()に任せる
+	// ------------------------------------------------------------
+	{
+		auto deerList = GetGameObjects<CDeer_Animal>();
+		if (!deerList.empty())
+		{
+			std::vector<CDeer_Animal*> deerVec(deerList.begin(), deerList.end());
+			for (CDeer_Animal* deer : deerList)
+			{
+				if (!deer) continue;
+				deer->RegisterToFlock(deerVec);
+			}
+		}
+	}
 }
 
 /****************************************//*
@@ -104,6 +140,6 @@ void CSceneGame::Update()
 *//****************************************/
 void CSceneGame::Draw()
 {
-	// 基底クラスの描画処理
+	//// 基底クラスの描画処理
 	CScene::Draw();
 }

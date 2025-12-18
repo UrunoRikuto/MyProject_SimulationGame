@@ -19,9 +19,9 @@ public:
 	// @param vel：自身の速度
 	// @param neighbors：近隣情報リスト
 	// @return ステアリングベクトル
-	Vec3 ComputeGroupSteering(
-		const Vec3& pos,
-		const Vec3& vel,
+	DirectX::XMFLOAT3 ComputeGroupSteering(
+		const DirectX::XMFLOAT3& pos,
+		const DirectX::XMFLOAT3& vel,
 		const std::vector<BoidsNeighbor>& neighbors)
 	{
 		// Boidsステアリング計算を呼び出し

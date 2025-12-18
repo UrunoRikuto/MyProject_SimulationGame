@@ -156,6 +156,7 @@
     <ClInclude Include="CivLevelManager.h" />
     <ClInclude Include="Cook_Job.h" />
     <ClInclude Include="Crafter_Strategy.h" />
+    <ClInclude Include="Deer_Animal.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Farmer_Job.h" />
     <ClInclude Include="FarmFacility.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="FieldGround.h" />
     <ClInclude Include="FieldManager.h" />
     <ClInclude Include="FlockAttackAI.h" />
+    <ClInclude Include="FlockEscapeAI.h" />
     <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
@@ -251,6 +253,7 @@
     <ClCompile Include="CivLevelManager.cpp" />
     <ClCompile Include="CollectTarget.cpp" />
     <ClCompile Include="Cook_Job.cpp" />
+    <ClCompile Include="Deer_Animal.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Farmer_Job.cpp" />
     <ClCompile Include="FarmFacility.cpp" />
@@ -259,6 +262,7 @@
     <ClCompile Include="FieldGround.cpp" />
     <ClCompile Include="FieldManager.cpp" />
     <ClCompile Include="FlockAttackAI.cpp" />
+    <ClCompile Include="FlockEscapeAI.cpp" />
     <ClCompile Include="GameTimeManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />

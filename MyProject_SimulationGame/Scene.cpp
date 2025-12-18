@@ -12,6 +12,9 @@
 #include "Geometory.h"
 #include <DirectXMath.h>
 
+#include "ImguiSystem.h"
+#include "FieldManager.h"
+
 // @brief ƒJƒŠƒ“ƒO‹——£
 constexpr float CULLING_DISTANCE = 100.0f;
 
@@ -164,13 +167,19 @@ void CScene::Draw()
     Geometory::SetView(pCamera->GetViewMatrix());
     Geometory::SetProjection(pCamera->GetProjectionMatrix());
 
-  //  for (auto list : m_pGameObject_List)
-  //  {
-  //      for (auto obj : list)
-  //      {
-  //          obj->Draw();
-		//}
-  //  }
+    //  for (auto list : m_pGameObject_List)
+    //  {
+    //      for (auto obj : list)
+    //      {
+    //          obj->Draw();
+	    	//}
+    //  }
+
+    if (CImguiSystem::GetInstance()->IsFieldCellsDraw())
+    {
+        CFieldManager::GetInstance()->DebugDraw();
+        return;
+    }
 
 	// Ž‹‘ä•½–Ê‚Ì’Šo
     DirectX::XMFLOAT4X4 viewMat = pCamera->GetViewMatrix(false);

@@ -12,12 +12,14 @@
 #include "StorageHouse.h"
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
-
-#include "BlackSmith.h"
+#include "ImguiSystem.h"
 
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
+
+// フィールドデバック表示サイズ
+constexpr int DEBUG_DRAW_SIZE = 50; // DEBUG_DRAW_SIZE x DEBUG_DRAW_SIZE の範囲で表示
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -104,6 +106,31 @@ void CFieldManager::AssignFieldCellType()
 		for(int y = 0; y < fieldCells[x].size(); ++y)
 		{
 			CGeneratorManager::GetInstance()->NotifyObservers();
+		}
+	}
+}
+
+/*****************************************//*
+	@brief　	| フィールドグリッドの表示
+*//*****************************************/
+void CFieldManager::DebugDraw()
+{
+	// フィールドセルの2次元配列を取得
+	auto fieldCells = m_pFieldGrid->GetFieldCells();
+
+	int halfSizeX = (CFieldGrid::GridSizeX - DEBUG_DRAW_SIZE) / 2;
+	int halfSizeY = (CFieldGrid::GridSizeY - DEBUG_DRAW_SIZE) / 2;
+
+	DirectX::XMINT2 CenterPos = CImguiSystem::GetInstance()->GetFieldCellDebugCenterPos();
+
+	// 各フィールドセルのデバック描画を実行
+	for(int x = halfSizeX + CenterPos.x; x < DEBUG_DRAW_SIZE + halfSizeX + CenterPos.x; ++x)
+	{
+		if (x >= fieldCells.size())continue;
+		for(int y = halfSizeY + CenterPos.y; y < DEBUG_DRAW_SIZE + halfSizeY + CenterPos.y; ++y)
+		{
+			if (y >= fieldCells[0].size())continue;
+			fieldCells[x][y]->DebugDraw();
 		}
 	}
 }

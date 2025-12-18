@@ -39,6 +39,9 @@ public:
 	// @brief ゲーム内時間を進行させる関数
 	void UpdateGameTime();
 
+	// @brief ゲーム内時間を設定する関数
+	void SetGameTime(const float In_fTime) { m_fGameTime = In_fTime; }
+
 	// @brief ゲーム内時間を取得する関数
 	// @return ゲーム内時間
 	const float GetGameTime() const;

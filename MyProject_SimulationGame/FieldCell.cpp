@@ -48,6 +48,10 @@ void CFieldCell::DebugDraw()
 		// ê¬
 		color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 		break;
+	case CFieldCell::CellType::GRASS:
+		// ê‘
+		color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+		break;
 	case CFieldCell::CellType::Build:
 		// â©
 		color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);

@@ -35,6 +35,7 @@ CImguiSystem::CImguiSystem()
 	, m_bUpdate(true)
 	, m_bDebug{ false }
 	, m_bCellsDraw(false)
+	, m_n2DebugCenterPos(DirectX::XMINT2(0, 0))
 	, m_bOnlyHuman(false)
 {
 }
@@ -189,6 +190,8 @@ void CImguiSystem::Draw()
 	// デバッグ用チェックボックス表示
 	DrawDebugSystem();
 
+	// ヒストリー表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::History)])		DrawHistory();
 	// カメラのパラメータ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)])	DrawCameraParam();
 	// インスペクター表示
@@ -199,6 +202,8 @@ void CImguiSystem::Draw()
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)])	DrawGenerateRequestList();
 	// 更新を止めるチェックボックス表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::Update)])	DrawUpdateTick();
+	// フィールドセル表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::FieldCells)])	DrawFieldCells();
 	// フレームレート表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::FPS)])		DrawFPS();
 	// 全オブジェクト数表示
@@ -235,6 +240,73 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 	info.m_sLog = log;
 	info.m_bClear = clear;
 	m_DebugLog.push_back(info);
+}
+
+/****************************************//*
+	@brief　	| 履歴表示
+*//****************************************/
+void CImguiSystem::DrawHistory()
+{
+	ImGui::SetNextWindowPos(ImVec2(20, 20));
+	ImGui::SetNextWindowSize(ImVec2(280, 300));
+	ImGui::Begin("Hierarchy");
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
+
+	auto Objects = GetScene()->GetIDVec();
+
+	std::list<ObjectID> objectIDList{};
+	for (auto Id : Objects)
+	{
+		objectIDList.push_back(Id);
+	}
+
+	objectIDList.sort([](ObjectID a, ObjectID b)
+		{
+			return a.m_nSameCount < b.m_nSameCount;
+		});
+
+	objectIDList.sort([](ObjectID a, ObjectID b)
+		{
+			return a.m_sName < b.m_sName;
+		});
+
+	for (auto itr = objectIDList.begin(); itr != objectIDList.end();)
+	{
+		std::string name = itr->m_sName;
+
+		int nItrCount = 0;
+		for (auto idItr : objectIDList)
+		{
+			if (idItr.m_sName == name)
+			{
+				nItrCount++;
+			}
+		}
+		ObjectID id;
+		id.m_sName = name;
+
+		if (ImGui::CollapsingHeader(std::string("[" + name + "]").c_str()))
+		{
+			for (int i = 0; i < nItrCount; i++)
+			{
+				std::string sButtonName = name;
+				if (i != 0) sButtonName += std::to_string(i);
+				id.m_nSameCount = i;
+				if (ImGui::Button(sButtonName.c_str()))
+				{
+					m_pGameObject = GetScene()->GetGameObject(id);
+				}
+
+			}
+
+		}
+
+
+		std::advance(itr, nItrCount);
+	}
+
+	ImGui::EndChild();
+	ImGui::End();
 }
 
 /****************************************//*
@@ -335,11 +407,13 @@ void CImguiSystem::DrawDebugSystem()
 
 	ImGui::Begin(u8"デバックシステム");
 
+	ImGui::Checkbox(u8"ヒストリー", &m_bDebug[static_cast<int>(DebugSystemFlag::History)]);
 	ImGui::Checkbox(u8"カメラ情報", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
 	ImGui::Checkbox(u8"インスペクター", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
 	ImGui::Checkbox(u8"建築リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
 	ImGui::Checkbox(u8"生成リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
 	ImGui::Checkbox(u8"更新判定",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
+	ImGui::Checkbox(u8"フィールドセル描画", &m_bDebug[static_cast<int>(DebugSystemFlag::FieldCells)]);
 	ImGui::Checkbox(u8"FPS",			&m_bDebug[static_cast<int>(DebugSystemFlag::FPS)]);
 	ImGui::Checkbox(u8"全オブジェクト数", &m_bDebug[static_cast<int>(DebugSystemFlag::AllObjectNum)]);
 	ImGui::Checkbox(u8"ログ",			&m_bDebug[static_cast<int>(DebugSystemFlag::Log)]);
@@ -373,6 +447,21 @@ void CImguiSystem::DrawUpdateTick()
 		ImGui::EndChild();
 	}
 
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| フィールドセル描画
+*//****************************************/
+void CImguiSystem::DrawFieldCells()
+{
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+	ImGui::Begin("FieldCells");
+	ImGui::Checkbox(u8"フィールドセル描画", &m_bCellsDraw);
+	ImGui::Text(u8"中心位置");
+	ImGui::InputInt2(u8"X,Y座標", &m_n2DebugCenterPos.x);
 	ImGui::End();
 	ImGui::PopFont();
 }
@@ -696,6 +785,31 @@ void CImguiSystem::Release_DrawGameTime()
 	std::string currendDayTime = pGameTimeManager->GetCurrentDayTimeString();
 
 	std::string dayTimeFormat = std::string(u8"[" + currendDayTime + "]");
+#ifdef _DEBUG
+	// 時刻を次にの時間帯に変更するボタンの表示
+	if (ImGui::Button(u8"時間帯を進める"))
+	{
+		float newTime = 0.0f;
+		switch (dayTime)
+		{
+		case CGameTimeManager::DAY_TIME::MORNING:
+			newTime = 30.0f;
+			break;
+		case CGameTimeManager::DAY_TIME::NOON:
+			newTime = 60.0f;
+			break;
+		case CGameTimeManager::DAY_TIME::EVENING:
+			newTime = 90.0f;
+			break;
+		case CGameTimeManager::DAY_TIME::NIGHT:
+			newTime = 0.0f;
+			break;
+		}
+		pGameTimeManager->SetGameTime(newTime);
+	}
+	
+#endif // _DEBUG
+
 
 	// 区切り線の表示
 	ImGui::Separator();

@@ -10,6 +10,7 @@
 	@brief　	| コンストラクタ
 *//*****************************************/
 CHerbivorousAnimal::CHerbivorousAnimal()
+	: CAnimal()
 {
 }
 

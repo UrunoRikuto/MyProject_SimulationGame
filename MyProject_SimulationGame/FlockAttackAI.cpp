@@ -1,59 +1,165 @@
-/**************************************************//*
+ï»¿/**************************************************//*
 	@file	| FlockAttackAI.cpp
-	@brief	| W’cUŒ‚AIƒNƒ‰ƒX‚Ì’è‹`
-	@note	| ŒQ‚ê‚ÅUŒ‚s“®‚ğs‚¤AI‚ğ’è‹`
+	@brief	| é›†å›£æ”»æ’ƒAIã‚¯ãƒ©ã‚¹ã®å®šç¾©
+	@note	| ç¾¤ã‚Œã§æ”»æ’ƒè¡Œå‹•ã‚’è¡Œã†AIã‚’å®šç¾©
 *//**************************************************/
 #include "FlockAttackAI.h"
+#include "Oparation.h"
+#include "Defines.h"
+
+static DirectX::XMFLOAT3 Limit(const DirectX::XMFLOAT3& v, float maxLen)
+{
+	float len = StructMath::Length(v);
+	if (len > maxLen && len > 0.0001f) return v * (maxLen / len);
+	return v;
+}
 
 /****************************************//*
-	@brief@	| ˆø”•t‚«ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	@param      | paramsFBoidsƒpƒ‰ƒ[ƒ^
+	@briefã€€	| å¼•æ•°ä»˜ãã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	@param      | paramsï¼šBoidsãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 *//****************************************/
 CFlockAttackAI::CFlockAttackAI(const BoidsParams& params)
 	: CGroupAI(params)
-	, m_TargetPos(nullptr)
 {
 }
 
 /****************************************//*
-	@brief@	| “®•¨‚Ìs“®‚ğXV
-	@param      | posF“®•¨‚ÌŒ»İˆÊ’u
-	@param      | velF“®•¨‚ÌŒ»İ‘¬“x
-	@param      | neighborsF‹ß—×‚Ì“®•¨î•ñƒŠƒXƒg
+	 @brief		| æ¨™çš„åº§æ¨™ã®è¨­å®š
+	 @param		| pos	æ¨™çš„ã®ä½ç½®
 *//****************************************/
-Vec3 CFlockAttackAI::UpdateAI(const Vec3& pos,const Vec3& vel,const std::vector<BoidsNeighbor>& neighbors)
+void CFlockAttackAI::SetTargetPosition(const DirectX::XMFLOAT3& pos)
 {
-    // Boids ‚ÌŠî–{ƒXƒeƒAƒŠƒ“ƒOiŒQ‚ê‹““®j
-    Vec3 steering = ComputeGroupSteering(pos, vel, neighbors);
+	m_TargetPos = pos;
+	m_HasTarget = true;
+}
 
-    // UŒ‚‘ÎÛ‚ª‘¶İ‚·‚é‚È‚çuP‚¤vƒxƒNƒgƒ‹‚ğ‰ÁZ
-    if (m_TargetPos)
-    {
-		// •W“I‚Ö‚ÌƒxƒNƒgƒ‹ŒvZ
-        Vec3 toTarget = *m_TargetPos - pos;
-		// ‚»‚Ì‹——£‚ğŒvZ
-        float dist = Length(toTarget);
+/****************************************//*
+	 @brief		| ãƒ›ãƒ¼ãƒ åº§æ¨™ã®è¨­å®š
+	 @param		| pos	ãƒ›ãƒ¼ãƒ ã®ä½ç½®
+*//****************************************/
+void CFlockAttackAI::SetHomePosition(const DirectX::XMFLOAT3& pos)
+{
+	m_HomePos = pos;
+	m_HasHome = true;
 
-		// ‹——£‚ª\•ª‚É‚ ‚é‚È‚çP‚¤ƒxƒNƒgƒ‹‚ğŒvZ
-        if (dist > 0.001f)
-        {
-            // ’ÇÕF‹ß‚Ã‚­‚Ù‚ÇƒXƒs[ƒh‚ğŠÉ‚ß‚é
-			Vec3 desired = Normalize(toTarget) * m_BoidsParams.fMaxSpeed;
+	// åˆå›ã®ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ«ç‚¹ã‚’ä½œã‚‹
+	m_HasPatrolPoint = false;
+	m_RepathTimer = 0.0f;
+}
 
-            // ‹——£‚ª‹ß‚¢‚ÆŒ¸‘¬i_‚ç‚©‚­Ú‹ß‚·‚éj
-            if (dist < 3.0f)
-            {
-                desired = desired * (dist / 3.0f);
-            }
+/****************************************//*
+	 @brief		| 0ã€œ1ã®ä¹±æ•°å–å¾—
+	 @return	| ä¹±æ•°
+*//****************************************/
+float CFlockAttackAI::Rand01()
+{
+	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+}
 
-			// –]‚Ü‚µ‚¢‘¬“x‚©‚çŒ»İ‘¬“x‚ğˆø‚¢‚½‚à‚Ì‚ªP‚¤ƒxƒNƒgƒ‹
-            Vec3 attack = desired - vel;
+/****************************************//*
+	 @brief		| XZå¹³é¢ä¸Šã®ãƒ©ãƒ³ãƒ€ãƒ ãƒ™ã‚¯ãƒˆãƒ«å–å¾—
+	 @return	| ãƒ©ãƒ³ãƒ€ãƒ ãƒ™ã‚¯ãƒˆãƒ«
+*//****************************************/
+DirectX::XMFLOAT3 CFlockAttackAI::RandomDirXZ()
+{
+	float x = Rand01() * 2.0f - 1.0f;
+	float z = Rand01() * 2.0f - 1.0f;
+	DirectX::XMFLOAT3 v{ x, 0.0f, z };
+	if (StructMath::Length(v) < 0.0001f) v = { 1.0f, 0.0f, 0.0f };
+	return StructMath::Normalize(v);
+}
 
-            // d‚İ‚Ã‚¯‚µ‚Ä‰ÁZ
-            steering += attack * 1.3f;
-        }
-    }
+/****************************************//*
+	 @brief		| ã‚·ãƒ¼ã‚¯ï¼ˆç›®çš„åœ°ã«å‘ã‹ã†ï¼‰
+	 @param		| pos	ç¾åœ¨ä½ç½®
+	 @param		| vel	ç¾åœ¨é€Ÿåº¦
+	 @param		| target	ç›®çš„åœ°
+	 @param		| maxSpeed	æœ€å¤§é€Ÿåº¦
+	 @param		| maxForce	æœ€å¤§ãƒ™ã‚¯ãƒˆãƒ«é•·
+	 @return	| ä¿®æ­£ãƒ™ã‚¯ãƒˆãƒ«
+*//****************************************/
+DirectX::XMFLOAT3 CFlockAttackAI::Seek(
+	const DirectX::XMFLOAT3& pos,
+	const DirectX::XMFLOAT3& vel,
+	const DirectX::XMFLOAT3& target,
+	float maxSpeed,
+	float maxForce)
+{
+	DirectX::XMFLOAT3 to = target - pos;
+	float dist = StructMath::Length(to);
+	if (dist < 0.001f) return { 0,0,0 };
 
-	// ƒXƒeƒAƒŠƒ“ƒO‚ğ•Ô‚·
-    return steering;
-};
+	DirectX::XMFLOAT3 desired = StructMath::Normalize(to) * maxSpeed;
+	DirectX::XMFLOAT3 steer = desired - vel;
+	return Limit(steer, maxForce);
+}
+
+/****************************************//*
+	@briefã€€	| å‹•ç‰©ã®è¡Œå‹•ã‚’æ›´æ–°
+	@param      | posï¼šå‹•ç‰©ã®ç¾åœ¨ä½ç½®
+	@param      | velï¼šå‹•ç‰©ã®ç¾åœ¨é€Ÿåº¦
+	@param      | neighborsï¼šè¿‘éš£ã®å‹•ç‰©æƒ…å ±ãƒªã‚¹ãƒˆ
+	@return     | ã‚¹ãƒ†ã‚¢ãƒªãƒ³ã‚°ãƒ™ã‚¯ãƒˆãƒ«
+*//****************************************/
+DirectX::XMFLOAT3 CFlockAttackAI::UpdateAI(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& vel, const std::vector<BoidsNeighbor>& neighbors)
+{
+	// 1) ç¾¤ã‚Œä¸­å¿ƒï¼ˆè¿‘éš£å¹³å‡ã€‚ç„¡ã‘ã‚Œã°è‡ªåˆ†ï¼‰
+	DirectX::XMFLOAT3 flockCenter = pos;
+	if (!neighbors.empty())
+	{
+		flockCenter = { 0,0,0 };
+		for (const auto& nb : neighbors) flockCenter += nb.v3Position;
+		flockCenter = flockCenter * (1.0f / static_cast<float>(neighbors.size()));
+	}
+
+	// 2) Boidsï¼ˆãƒ‘ãƒˆãƒ­ãƒ¼ãƒ«ä¸­ã¯å›ºã¾ã‚Šå¯¾ç­–ã§Cohesionå¼±ã‚/Separationå¼·ã‚ï¼‰
+	BoidsParams params = m_BoidsParams;
+	if (!m_HasTarget)
+	{
+		// å¾˜å¾Šä¸­ã¯å‡çµã‚’å¼±ã‚ã€åˆ†é›¢ã‚’å¼·ã‚ã«
+		params.fWeightCohesion *=0.65f;
+		params.fWeightSeparation *=1.05f;
+		params.fWeightAlignment *=1.05f;
+	}
+	DirectX::XMFLOAT3 steering = BoidsSteering::Compute(pos, vel, neighbors, params);
+
+	// 3) ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒã‚ã‚‹ãªã‚‰æ”»æ’ƒ
+	if (m_HasTarget)
+	{
+		steering += Seek(pos, vel, m_TargetPos, m_BoidsParams.fMaxSpeed, m_BoidsParams.fMaxForce) * 1.3f;
+		return steering;
+	}
+
+	// 4) ã‚¿ãƒ¼ã‚²ãƒƒãƒˆç„¡ã—ï¼ãªã‚ã°ã‚Šãƒ‘ãƒˆãƒ­ãƒ¼ãƒ«
+	// ãƒ›ãƒ¼ãƒ æœªè¨­å®šãªã‚‰ã€Œä»Šã„ã‚‹å ´æ‰€ã€ã‚’ãƒ›ãƒ¼ãƒ æ‰±ã„ï¼ˆç¾¤ã‚Œç”Ÿæˆç›´å¾Œã®åˆæœŸåŒ–ãŒæ¥½ï¼‰
+	if (!m_HasHome)
+	{
+		SetHomePosition(flockCenter);
+	}
+
+	// ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ«ç‚¹ã®æ›´æ–°ï¼šåˆ°é” or ä¸€å®šæ™‚é–“
+	m_RepathTimer += fDeltaTime;
+
+	const float distToPatrol = StructMath::Length(m_PatrolPoint - flockCenter);
+	const bool needNewPoint =
+		(!m_HasPatrolPoint) ||
+		(distToPatrol < m_PatrolReach) ||
+		(m_RepathTimer >= m_RepathInterval);
+
+	if (needNewPoint)
+	{
+		m_RepathTimer = 0.0f;
+		m_HasPatrolPoint = true;
+
+		// ãƒ›ãƒ¼ãƒ ã®å‘¨ã‚Šã®å††å‘¨ä¸Šã¸ï¼ˆã€Œå·¡å›æ„Ÿã€ã‚’å‡ºã™ãªã‚‰ â€œä¸­å¿ƒã‹ã‚‰ãƒ©ãƒ³ãƒ€ãƒ æ–¹å‘â€ ãŒç°¡å˜ã§ãã‚Œã£ã½ã„ï¼‰
+		DirectX::XMFLOAT3 dir = RandomDirXZ();
+		m_PatrolPoint = m_HomePos + dir * m_PatrolRadius;
+	}
+
+	// ç¾¤ã‚Œä¸­å¿ƒã‚’ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ«ç‚¹ã«å¼•ã£å¼µã‚‹ï¼ˆå„å€‹ä½“ã¯ç¾¤ã‚Œä¸­å¿ƒã«è¿½å¾“ã—ã¤ã¤ç§»å‹•ï¼‰
+	// â†’ ç›®çš„ãŒã§ãã‚‹ã®ã§å›ºã¾ã£ã¦åœæ­¢ã—ã«ãã„
+	DirectX::XMFLOAT3 patrol = Seek(pos, vel, m_PatrolPoint, m_BoidsParams.fMaxSpeed, m_BoidsParams.fMaxForce);
+	steering += patrol * m_PatrolSeekWeight;
+
+	return steering;
+}

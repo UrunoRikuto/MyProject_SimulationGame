@@ -208,10 +208,10 @@ void Geometory::DrawPlane(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSi
 			{In_vCenter.x + halfSize.x, In_vCenter.y
 			, In_vCenter.z + halfSize.z}, // 3
 		};
-		AddLine(vertex[0], vertex[1], In_Color);
-		AddLine(vertex[1], vertex[2], In_Color);
-		AddLine(vertex[2], vertex[3], In_Color);
-		AddLine(vertex[3], vertex[0], In_Color);
+		//AddLine(vertex[0], vertex[1], In_Color);
+		//AddLine(vertex[1], vertex[2], In_Color);
+		//AddLine(vertex[2], vertex[3], In_Color);
+		//AddLine(vertex[3], vertex[0], In_Color);
 		AddLine(vertex[0], vertex[2], In_Color);
 		AddLine(vertex[1], vertex[3], In_Color);
 		DrawLines();
@@ -228,10 +228,10 @@ void Geometory::DrawPlane(DirectX::XMFLOAT3 In_vCenter, DirectX::XMFLOAT3 In_vSi
 		{In_vCenter.x + halfSize.x, In_vCenter.y + halfSize.y
 		, In_vCenter.z}, // 3
 	};
-	AddLine(vertex[0], vertex[1], In_Color);
-	AddLine(vertex[1], vertex[2], In_Color);
-	AddLine(vertex[2], vertex[3], In_Color);
-	AddLine(vertex[3], vertex[0], In_Color);
+	//AddLine(vertex[0], vertex[1], In_Color);
+	//AddLine(vertex[1], vertex[2], In_Color);
+	//AddLine(vertex[2], vertex[3], In_Color);
+	//AddLine(vertex[3], vertex[0], In_Color);
 	AddLine(vertex[0], vertex[2], In_Color);
 	AddLine(vertex[1], vertex[3], In_Color);
 	DrawLines();

@@ -17,6 +17,6 @@ public:
 	// @param pos：動物の現在位置
 	// @param vel：動物の現在速度
 	// @param neighbors：近隣の動物情報リスト
-	virtual Vec3 UpdateAI(const Vec3& pos,const Vec3& vel,const std::vector<BoidsNeighbor>& neighbors) = 0;
+	virtual DirectX::XMFLOAT3 UpdateAI(const DirectX::XMFLOAT3& pos,const DirectX::XMFLOAT3& vel,const std::vector<BoidsNeighbor>& neighbors) = 0;
 };
 

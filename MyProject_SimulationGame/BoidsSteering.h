@@ -8,35 +8,6 @@
 #include <cmath>
 #include "StructMath.h"
 
-// @brief 簡易ベクトル構造体
-struct Vec3
-{
-    float x, y, z;
-
-    Vec3 operator+(const Vec3& o) const { return { x + o.x, y + o.y, z + o.z }; }
-    Vec3 operator-(const Vec3& o) const { return { x - o.x, y - o.y, z - o.z }; }
-    Vec3 operator*(float s) const { return { x * s, y * s, z * s }; }
-    Vec3& operator+=(const Vec3& o) { x += o.x; y += o.y; z += o.z; return *this; }
-};
-
-// @brief ベクトルの長さを計算
-// @param v ベクトル
-// @return ベクトルの長さ
-inline float Length(const Vec3& v)
-{
-    return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-}
-
-// @brief ベクトルを正規化
-// @param v ベクトル
-// @return 正規化されたベクトル
-inline Vec3 Normalize(const Vec3& v)
-{
-    float len = Length(v);
-    if (len < 0.0001f) return { 0,0,0 };
-    return { v.x / len, v.y / len, v.z / len };
-}
-
 // Boidsのパラメータ構造体
 struct BoidsParams
 {
@@ -69,9 +40,13 @@ struct BoidsParams
 struct BoidsNeighbor
 {
 	// 位置
-    Vec3 v3Position;
+	DirectX::XMFLOAT3 v3Position = { 0.0f, 0.0f, 0.0f };
 	// 速度
-    Vec3 v3Velocity;
+	DirectX::XMFLOAT3 v3Velocity = { 0.0f, 0.0f, 0.0f };
+	// 標的が設定されているか
+	bool bSetTarget = false;
+	// 標的位置ポインタ（存在する場合）
+	DirectX::XMFLOAT3 pTargetPos = { 0.0f, 0.0f, 0.0f };
 };
 
 // @brief Boidsのステアリングクラス
@@ -84,9 +59,9 @@ public:
 	// @param neighbors 近隣のBoids情報リスト
 	// @param params Boidsのパラメータ
 	// @return ステアリング力ベクトル
-    static Vec3 Compute(
-        const Vec3& selfPos,
-        const Vec3& selfVel,
+    static DirectX::XMFLOAT3 Compute(
+        const DirectX::XMFLOAT3& selfPos,
+        const DirectX::XMFLOAT3& selfVel,
         const std::vector<BoidsNeighbor>& neighbors,
         const BoidsParams& params
     );
@@ -97,8 +72,8 @@ private:
 	// @param neighbors 近隣のBoids情報リスト
 	// @param params Boidsのパラメータ
 	// @return 分離ステアリング力ベクトル
-    static Vec3 Separation(
-        const Vec3& selfPos,
+    static DirectX::XMFLOAT3 Separation(
+        const DirectX::XMFLOAT3& selfPos,
         const std::vector<BoidsNeighbor>& neighbors,
         const BoidsParams& params
     );
@@ -109,9 +84,9 @@ private:
 	// @param neighbors 近隣のBoids情報リスト
 	// @param params Boidsのパラメータ
 	// @return 整列ステアリング力ベクトル
-    static Vec3 Alignment(
-        const Vec3& selfPos,
-        const Vec3& selfVel,
+    static DirectX::XMFLOAT3 Alignment(
+        const DirectX::XMFLOAT3& selfPos,
+        const DirectX::XMFLOAT3& selfVel,
         const std::vector<BoidsNeighbor>& neighbors,
         const BoidsParams& params
     );
@@ -122,9 +97,9 @@ private:
 	// @param neighbors 近隣のBoids情報リスト
 	// @param params Boidsのパラメータ
 	// @return 凝集ステアリング力ベクトル
-    static Vec3 Cohesion(
-        const Vec3& selfPos,
-        const Vec3& selfVel,
+    static DirectX::XMFLOAT3 Cohesion(
+        const DirectX::XMFLOAT3& selfPos,
+        const DirectX::XMFLOAT3& selfVel,
         const std::vector<BoidsNeighbor>& neighbors,
         const BoidsParams& params
     );

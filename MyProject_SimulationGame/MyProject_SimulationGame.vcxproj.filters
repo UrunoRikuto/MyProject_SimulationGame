@@ -441,9 +441,11 @@
     <ClInclude Include="Entity.h">
       <Filter>コードファイル\GameObject\Entity\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Wolf.h">
+    <ClInclude Include="Wolf_Animal.h">
       <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClInclude>
+    <ClInclude Include="FlockEscapeAI.h" />
+    <ClInclude Include="Deer_Animal.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -698,9 +700,11 @@
     <ClCompile Include="Entity.cpp">
       <Filter>コードファイル\GameObject\Entity\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Wolf.cpp">
+    <ClCompile Include="Wolf_Animal.cpp">
       <Filter>コードファイル\GameObject\Entity\Animal</Filter>
     </ClCompile>
+    <ClCompile Include="FlockEscapeAI.cpp" />
+    <ClCompile Include="Deer_Animal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

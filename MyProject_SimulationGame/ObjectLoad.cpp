@@ -30,6 +30,9 @@ void CObjectLoad::LoadAll()
 	// オオカミのモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wolf.obj"), "Wolf");
 
+	// 鹿のモデルのロード
+	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Deer.obj"), "Deer");
+
 	// 木のモデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("Wood.obj"), "Wood");
 

@@ -32,11 +32,13 @@ private:
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
+		History,
 		CameraParam,
 		Inspecter,
 		BuildRequestList,
 		GenerateRequestList,
 		Update,
+		FieldCells,
 		FPS,
 		AllObjectNum,
 		Log,
@@ -81,6 +83,11 @@ public:
 	// @return true:更新処理を行う false:更新処理を止める
 	bool IsUpdate() { return m_bUpdate; }
 
+	// @brief フィールドセル描画フラグの取得
+	bool IsFieldCellsDraw() { return m_bCellsDraw; }
+	// @brief フィールドセル表示用中心座標の取得
+	DirectX::XMINT2 GetFieldCellDebugCenterPos() { return m_n2DebugCenterPos; }
+
 	// @brief 選択しているゲームオブジェクトの取得
 	// @return 選択しているゲームオブジェクトのポインタ
 	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
@@ -95,6 +102,9 @@ public:
 	void AddDebugLog(const std::string& log, bool clear = true);
 
 private: //-- デバックモード --//
+
+	// @brief ヒストリー表示
+	void DrawHistory();
 
 	// @brief カメラのパラメータ表示
 	void DrawCameraParam();
@@ -113,6 +123,9 @@ private: //-- デバックモード --//
 
 	// @brief 更新を止めるチェックボックス表示
 	void DrawUpdateTick();
+
+	// @brief フィールドセル表示
+	void DrawFieldCells();
 
 	// @brief フレームレート表示
 	void DrawFPS();
@@ -168,6 +181,8 @@ private:
 
 	// @brief デバッグ用セル描画フラグ
 	bool m_bCellsDraw;
+	// @brief デバック表示の中心位置
+	DirectX::XMINT2 m_n2DebugCenterPos;
 
 	// @brief 人間のみ表示するフラグ
 	bool m_bOnlyHuman;
