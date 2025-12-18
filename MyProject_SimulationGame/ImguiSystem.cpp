@@ -36,6 +36,9 @@ CImguiSystem::CImguiSystem()
 	, m_bDebug{ false }
 	, m_bCellsDraw(false)
 	, m_n2DebugCenterPos(DirectX::XMINT2(0, 0))
+	, m_nCellDisplayMode(0)
+	, m_pDebugFont(nullptr)
+	, m_pReleaseFont(nullptr)
 	, m_bOnlyHuman(false)
 {
 }
@@ -247,6 +250,9 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 *//****************************************/
 void CImguiSystem::DrawHistory()
 {
+	// フォントの設定
+	ImGui::PushFont(m_pDebugFont);
+
 	ImGui::SetNextWindowPos(ImVec2(20, 20));
 	ImGui::SetNextWindowSize(ImVec2(280, 300));
 	ImGui::Begin("Hierarchy");
@@ -307,6 +313,7 @@ void CImguiSystem::DrawHistory()
 
 	ImGui::EndChild();
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /****************************************//*
@@ -462,6 +469,13 @@ void CImguiSystem::DrawFieldCells()
 	ImGui::Checkbox(u8"フィールドセル描画", &m_bCellsDraw);
 	ImGui::Text(u8"中心位置");
 	ImGui::InputInt2(u8"X,Y座標", &m_n2DebugCenterPos.x);
+	
+	std::string ButtonLabel = (m_nCellDisplayMode == 0) ? u8"セルタイプ" : u8"縄張りタイプ";
+	if (ImGui::Button(ButtonLabel.c_str()))
+	{
+		m_nCellDisplayMode ^= 1;
+	}
+
 	ImGui::End();
 	ImGui::PopFont();
 }

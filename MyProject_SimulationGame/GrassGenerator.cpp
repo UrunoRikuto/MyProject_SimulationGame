@@ -22,12 +22,15 @@ void CGrassGenerator::Generate()
 	// 配置可能なセルがなければ終了
 	if (cells.empty()) return;
 
-	// ランダムにセルを選出
-	int randIndex = rand() % cells.size();
-
-	// 草オブジェクトを生成し、選出したセルに配置
-	GetScene()->AddGameObject<CGrass>(Tag::GameObject, u8"草")->SetCreatePos(cells[randIndex]);
+	// 草の最大生成数
+	int createNum = 0;
+	for(auto cell : cells)
+	{
+		// 草オブジェクトを生成し、選出したセルに配置
+		GetScene()->AddGameObject<CGrass>(Tag::GameObject, u8"草")->SetCreatePos(cell);
+		createNum++;
+	}
 
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog(u8"草を生成しました", false);
+	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"草を%n生成しました", createNum), false);
 }

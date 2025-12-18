@@ -73,3 +73,4 @@ private:
 #include "StoneGenerator.h"
 #include "GrassGenerator.h"
 #include "HumanGenerator.h"
+#include "AnimalGenerator.h"

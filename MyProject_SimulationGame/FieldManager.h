@@ -36,6 +36,9 @@ private:
 	// @brief 初期村の作成
 	void CreateInitialVillage();
 
+	// @brief 縄張りの作成
+	void CreateTerritory();
+
 private:
 	
 	// @brief フィールドグリッドのポインタ

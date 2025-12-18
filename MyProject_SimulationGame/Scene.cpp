@@ -131,31 +131,56 @@ void CScene::Uninit()
 *//****************************************/
 void CScene::Update()
 {
-    std::vector<ObjectID> newIDVec;
-    // 各オブジェクトの Update と同時に破棄判定・削除を行う
+	// 視錐台平面の抽出
+	DirectX::XMFLOAT4X4 viewMat = CCamera::GetInstance()->GetViewMatrix(false);
+	DirectX::XMFLOAT4X4 projMat = CCamera::GetInstance()->GetProjectionMatrix(false);
+	DirectX::XMMATRIX view = DirectX::XMLoadFloat4x4(&viewMat);
+	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&projMat);
+	DirectX::XMMATRIX viewProj = DirectX::XMMatrixMultiply(view, proj);
+	DirectX::XMFLOAT4 frustumPlanes[6];
+	ExtractFrustumPlanes(frustumPlanes, viewProj);
+
+	// カメラ位置をキャッシュ
+	DirectX::XMFLOAT3 camPos = CCamera::GetInstance()->GetPos(); // カメラに GetPosition() を用意している前提
+
+	// カリング距離（チューニング可能）
+	const float globalCullDistance = CULLING_DISTANCE;
+    const float globalCullDistSq = globalCullDistance * globalCullDistance;
+
     for (auto& list : m_pGameObject_List)
     {
-        for (auto it = list.begin(); it != list.end(); )
+        for (auto obj : list)
         {
-            CGameObject* obj = *it;
+            // GameObject以外ははカリング対象外
+            if (obj->GetTag() != Tag::GameObject)
+            {
+                obj->Update();
+                continue;
+            }
+            
+            // オブジェクト位置と半径取得
+            DirectX::XMFLOAT3 objPos = obj->GetPos();
+            float r = obj->GetBoundingRadius();
+            // 視錐台との当たり判定
+            if (!SphereInFrustum(frustumPlanes, objPos, r))
+            {
+                // 完全に視錐外 -> 更新をスキップ
+                continue;
+            }
+            float dx = objPos.x - camPos.x;
+            float dy = objPos.y - camPos.y;
+            float dz = objPos.z - camPos.z;
+            float distSq = dx*dx + dy*dy + dz*dz;
+            // 半径を考慮した閾値（二乗）
+            float thresh = globalCullDistSq + 2.0f * globalCullDistance * r + r*r; // (D + r)^2
+            if (distSq > thresh)
+            {
+                // カリング：更新をスキップ
+                continue;
+            }
             obj->Update();
-
-            if (obj->IsDestroy())
-            {
-                obj->OnDestroy();
-                obj->Uninit();
-                delete obj;
-                it = list.erase(it); // イテレータ対応で安全に削除
-            }
-            else
-            {
-                newIDVec.push_back(obj->GetID());
-                ++it;
-            }
         }
-    }
-    // 残存オブジェクトの ID で m_tIDVec を再構築
-    m_tIDVec = std::move(newIDVec);
+	}
 }
 
 /****************************************//*

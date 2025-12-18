@@ -13,6 +13,7 @@
 *//****************************************/
 CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In_vIndex)
 	: m_eCellType(CellType::EMPTY)
+	, m_eTerritoryType(TerritoryType::NONE)
 	, m_bUse(false)
 	, m_vPos(In_vPos)
 	, m_n2Index(In_vIndex)
@@ -29,32 +30,59 @@ CFieldCell::~CFieldCell()
 
 /****************************************//*
 	@brief　	| デバック描画
+	@param		| nMode：描画モード(0:セルタイプ, 1:縄張りタイプ)
 *//****************************************/
-void CFieldCell::DebugDraw()
+void CFieldCell::DebugDraw(int nMode)
 {
 	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	switch (m_eCellType)
+	switch (nMode)
 	{
-	case CFieldCell::CellType::EMPTY:
-		// 黒
-		color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	case 0:
+		switch (m_eCellType)
+		{
+		case CFieldCell::CellType::EMPTY:
+			// 白
+			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case CFieldCell::CellType::TREE:
+			// 緑
+			color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		case CFieldCell::CellType::ROCK:
+			// 青
+			color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			break;
+		case CFieldCell::CellType::GRASS:
+			// 赤
+			color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			break;
+		case CFieldCell::CellType::Build:
+			// 黄
+			color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		}
 		break;
-	case CFieldCell::CellType::TREE:
-		// 緑
-		color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-		break;
-	case CFieldCell::CellType::ROCK:
-		// 青
-		color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-		break;
-	case CFieldCell::CellType::GRASS:
-		// 赤
-		color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		break;
-	case CFieldCell::CellType::Build:
-		// 黄
-		color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	case 1:
+		switch (m_eTerritoryType)
+		{
+		case CFieldCell::TerritoryType::NONE:
+			// 白
+			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case CFieldCell::TerritoryType::Human:
+			// 黄
+			color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		case CFieldCell::TerritoryType::Wolf:
+			// 赤
+			color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			break;
+		case CFieldCell::TerritoryType::Deer:
+			// 茶
+			color = DirectX::XMFLOAT4(0.6f, 0.3f, 0.0f, 1.0f);
+			break;
+		}
 		break;
 	}
 

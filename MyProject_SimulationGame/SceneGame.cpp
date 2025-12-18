@@ -50,48 +50,15 @@ void CSceneGame::Init()
 	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);
 
 	// 生成管理システムの通知処理を実行
-	CGeneratorManager::GetInstance()->AddObserver(*(new CWoodGenerator()));
-	CGeneratorManager::GetInstance()->AddObserver(*(new CStoneGenerator()));
-	CGeneratorManager::GetInstance()->AddObserver(*(new CGrassGenerator()));
-	CGeneratorManager::GetInstance()->AddObserver(*(new CHumanGenerator()));
-
-	// 狼の生成
-	DirectX::XMFLOAT3 wolfBasePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	std::vector<CWolf_Animal*> wolfList;
-	for (int i = 0; i < 5; ++i)
-	{
-		CWolf_Animal* pWolf = AddGameObject<CWolf_Animal>(Tag::GameObject, "Wolf_Animal");
-		wolfBasePos.x += GetRandOfRange(-5, 5);
-		wolfBasePos.z += GetRandOfRange(-5, 5);
-		pWolf->SetPos(wolfBasePos);
-		wolfList.push_back(pWolf);
-	}
-	// 群れの形成
-	for (CWolf_Animal* wolf : wolfList)
-	{
-		wolf->RegisterToFlock(wolfList);
-	}
-
-
-	// シカの生成
-	DirectX::XMFLOAT3 deerBasePos = DirectX::XMFLOAT3(20.0f, 0.0f, 20.0f);
-	std::vector<CDeer_Animal*> deerList;
-	for (int i = 0; i < 8; ++i)
-	{
-		CDeer_Animal* pDeer = AddGameObject<CDeer_Animal>(Tag::GameObject, "Deer_Animal");
-		deerBasePos.x += GetRandOfRange(-5, 5);
-		deerBasePos.z += GetRandOfRange(-5, 5);
-		pDeer->SetPos(deerBasePos);
-		deerList.push_back(pDeer);
-	}
-	for (CDeer_Animal* deer : deerList)
-	{
-		deer->RegisterToFlock(deerList);
-	}
-
+	CGeneratorManager* pGeneratorManager = CGeneratorManager::GetInstance();
+	pGeneratorManager->AddObserver(*(new CWoodGenerator()));
+	pGeneratorManager->AddObserver(*(new CStoneGenerator()));
+	pGeneratorManager->AddObserver(*(new CGrassGenerator()));
+	pGeneratorManager->AddObserver(*(new CHumanGenerator()));
+	pGeneratorManager->AddObserver(*(new CAnimalGenerator()));
 
 	// フィールド管理システムの初期化
-	//CFieldManager::GetInstance()->AssignFieldCellType();
+	CFieldManager::GetInstance()->AssignFieldCellType();
 
 	// フィールド地面オブジェクトの生成
 	AddGameObject<CFieldGround>(Tag::Field, "FieldGround");

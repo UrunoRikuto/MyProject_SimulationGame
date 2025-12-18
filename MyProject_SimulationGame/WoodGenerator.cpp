@@ -22,10 +22,15 @@ void CWoodGenerator::Generate()
 	// 配置可能なセルがなければ終了
 	if (cells.empty()) return;
 
-	// ランダムにセルを選出
-	int randIndex = rand() % cells.size();
-	// 木オブジェクトを生成し、選出したセルに配置
-	GetScene()->AddGameObject<CWood>(Tag::GameObject, u8"木")->SetCreatePos(cells[randIndex]);
+	// 木の最大生成数
+	int createNum = 0;
+	for(auto cell : cells)
+	{
+		// 木オブジェクトを生成し、選出したセルに配置
+		GetScene()->AddGameObject<CWood>(Tag::GameObject, u8"木")->SetCreatePos(cell);
+		createNum++;
+	}
+
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog(u8"木を生成しました", false);
+	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"木を%n生成しました", createNum), false);
 }

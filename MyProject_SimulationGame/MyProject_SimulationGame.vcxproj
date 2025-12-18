@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Animal.h" />
     <ClInclude Include="AnimalAI.h" />
+    <ClInclude Include="AnimalGenerator.h" />
     <ClInclude Include="BillboardRenderer.h" />
     <ClInclude Include="BlackSmith.h" />
     <ClInclude Include="BoidsSteering.h" />
@@ -240,6 +241,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animal.cpp" />
+    <ClCompile Include="AnimalGenerator.cpp" />
     <ClCompile Include="BillboardRenderer.cpp" />
     <ClCompile Include="BlackSmith.cpp" />
     <ClCompile Include="BoidsSteering.cpp" />

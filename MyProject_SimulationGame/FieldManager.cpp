@@ -59,9 +59,9 @@ void CFieldManager::AssignFieldCellType()
 
 	int objCount = 0;
 	// 各フィールドセルに対してタイプをランダムに割り当てる
-	for(int x = 0; x < fieldCells.size(); ++x)
+	for (int x = 0; x < fieldCells.size(); ++x)
 	{
-		for(int y = 0; y < fieldCells[x].size(); ++y)
+		for (int y = 0; y < fieldCells[x].size(); ++y)
 		{
 			// パーリンノイズの値を取得
 			float noiseValue = perlinNoise.noise(x * scale, y * scale);
@@ -97,17 +97,14 @@ void CFieldManager::AssignFieldCellType()
 		}
 	}
 
+	// 縄張りの作成
+	CreateTerritory();
+
 	// 初期村の配置
 	CreateInitialVillage();
 
-	// オブジェクトを生成
-	for(int x = 0; x < fieldCells.size(); ++x)
-	{
-		for(int y = 0; y < fieldCells[x].size(); ++y)
-		{
-			CGeneratorManager::GetInstance()->NotifyObservers();
-		}
-	}
+	// 生成通知
+	CGeneratorManager::GetInstance()->NotifyObservers();
 }
 
 /*****************************************//*
@@ -130,7 +127,7 @@ void CFieldManager::DebugDraw()
 		for(int y = halfSizeY + CenterPos.y; y < DEBUG_DRAW_SIZE + halfSizeY + CenterPos.y; ++y)
 		{
 			if (y >= fieldCells[0].size())continue;
-			fieldCells[x][y]->DebugDraw();
+			fieldCells[x][y]->DebugDraw(CImguiSystem::GetInstance()->GetFieldCellDisplayMode());
 		}
 	}
 }
@@ -158,6 +155,8 @@ void CFieldManager::CreateInitialVillage()
 
 			// フィールドセルのタイプを建築可能地に設定
 			fieldCells[cellX][cellY]->SetCellType(CFieldCell::CellType::Build);
+			// フィールドセルの縄張りタイプを人間に設定
+			fieldCells[cellX][cellY]->SetTerritoryType(CFieldCell::TerritoryType::Human);
 		}
 	}
 
@@ -206,4 +205,70 @@ void CFieldManager::CreateInitialVillage()
 	// 人間の家を配置したセルを建築可能地リストから削除
 	cells.erase(cells.begin() + randomIndex);
 	
+}
+
+/*****************************************//*
+	@brief　	| 縄張りの作成
+*//*****************************************/
+void CFieldManager::CreateTerritory()
+{
+	// 生成する縄張りの数
+	std::vector<int> territoryNum;
+	territoryNum.push_back(10); // オオカミ
+	territoryNum.push_back(10); // シカ
+
+	// フィールドセルの2次元配列を取得
+	auto fieldCells = m_pFieldGrid->GetFieldCells();
+	// 各縄張りタイプごとに縄張りを作成
+	for (int t = 0; t < territoryNum.size(); ++t)
+	{
+		// 縄張りタイプの決定
+		CFieldCell::TerritoryType territoryType = CFieldCell::TerritoryType::NONE;
+		if (t == 0)
+		{
+			territoryType = CFieldCell::TerritoryType::Wolf;
+		}
+		else if (t == 1)
+		{
+			territoryType = CFieldCell::TerritoryType::Deer;
+		}
+		// 縄張りの数だけ繰り返す
+		for (int n = 0; n < territoryNum[t]; ++n)
+		{
+			// ランダムにフィールドセルを選択
+			int randX = rand() % CFieldGrid::GridSizeX;
+			int randY = rand() % CFieldGrid::GridSizeY;
+
+			if(fieldCells[randX][randY]->GetTerritoryType() != CFieldCell::TerritoryType::NONE)
+			{
+				// すでに縄張りが設定されている場合はスキップ
+				--n;
+				continue;
+			}
+
+			// 縄張りのサイズを0～1の範囲でランダムに決定
+			int territorySizeX = rand() % 3 + 1; // 1～3の範囲でランダムに決定
+			int territorySizeY = rand() % 3 * 1; // 1～3の範囲でランダムに決定
+
+
+			// 縄張りの範囲内のフィールドセルを縄張りタイプに設定
+			for (int x = -territorySizeX / 2; x <= territorySizeX / 2; ++x)
+			{
+				for (int y = -territorySizeY / 2; y <= territorySizeY / 2; ++y)
+				{
+					int cellX = randX + x;
+					int cellY = randY + y;
+					// フィールドセルの範囲内かチェック
+					if (cellX >= 0 && cellX < CFieldGrid::GridSizeX &&
+						cellY >= 0 && cellY < CFieldGrid::GridSizeY)
+					{
+
+						fieldCells[cellX][cellY]->SetTerritoryType(territoryType);
+						fieldCells[cellX][cellY]->SetUse(false);
+					}
+				}
+			}
+
+		}
+	}
 }

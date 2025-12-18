@@ -148,6 +148,10 @@ void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 	{
 		// ©•ª©g‚Í“o˜^‚µ‚È‚¢
 		if (wolf == this)continue;
+		// “®•¨‚Ì‹——£‚ğŒvZ
+		float dist = StructMath::Distance(GetPos(), wolf->GetPos());
+		// ˆê’è”ÍˆÍŠO‚Í“o˜^‚µ‚È‚¢
+		if (dist > 20.0f)continue;
 
 		// W’cs“®AI‚Ìæ“¾
 		CFlockAttackAI* pFlockAI = dynamic_cast<CFlockAttackAI*>(wolf->m_pActionAI);

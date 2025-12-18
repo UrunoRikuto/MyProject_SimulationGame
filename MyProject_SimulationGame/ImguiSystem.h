@@ -87,6 +87,8 @@ public:
 	bool IsFieldCellsDraw() { return m_bCellsDraw; }
 	// @brief フィールドセル表示用中心座標の取得
 	DirectX::XMINT2 GetFieldCellDebugCenterPos() { return m_n2DebugCenterPos; }
+	// @brief フィールドセル表示モードの取得
+	int GetFieldCellDisplayMode() { return m_nCellDisplayMode; }
 
 	// @brief 選択しているゲームオブジェクトの取得
 	// @return 選択しているゲームオブジェクトのポインタ
@@ -183,6 +185,8 @@ private:
 	bool m_bCellsDraw;
 	// @brief デバック表示の中心位置
 	DirectX::XMINT2 m_n2DebugCenterPos;
+	// @brief セルの表示モード
+	int m_nCellDisplayMode;
 
 	// @brief 人間のみ表示するフラグ
 	bool m_bOnlyHuman;

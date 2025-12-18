@@ -13,6 +13,7 @@
 class CFieldCell
 {
 public:
+	// @brief セルタイプ(オブジェクト)
 	enum class CellType
 	{
 		EMPTY,		// 空地
@@ -21,6 +22,16 @@ public:
 		GRASS,		// 草地
 		Build,		// 建築可能地
 		MAX			// セルタイプの最大数
+	};
+
+	// @brief セルタイプ(エンティティの縄張り)
+	enum class TerritoryType
+	{
+		Human,		// 人間
+		Wolf,		// オオカミ
+		Deer,		// シカ
+		MAX,		// セルタイプの最大数
+		NONE		// なし
 	};
 
 	// @brief セルのサイズ
@@ -34,13 +45,20 @@ public:
 	~CFieldCell();
 
 	// @brief デバック描画
-	void DebugDraw();
+	// @param nMode：描画モード(0:セルタイプ, 1:縄張りタイプ)
+	void DebugDraw(int nMode);
 
 	// @brief セルタイプの取得
 	const CellType GetCellType() { return m_eCellType; }
 
 	// @brief セルタイプの設定
 	void SetCellType(const CellType In_eType);
+
+	// @brief セルの縄張りタイプの取得
+	const TerritoryType GetTerritoryType() { return m_eTerritoryType; }
+
+	// @brief セルの縄張りタイプの設定
+	void SetTerritoryType(const TerritoryType In_eType) { m_eTerritoryType = In_eType; }
 
 	// @brief セルを使用しているかどうかの取得
 	// @return true:使用している false:使用していない
@@ -73,6 +91,9 @@ private:
 
 	// @brief セルタイプ
 	CellType m_eCellType;
+
+	// @brief セルの縄張りタイプ
+	TerritoryType m_eTerritoryType;
 
 	// @brief セルを使用しているかどうか
 	bool m_bUse;
