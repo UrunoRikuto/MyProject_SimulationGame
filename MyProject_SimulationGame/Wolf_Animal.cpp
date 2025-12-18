@@ -75,6 +75,8 @@ void CWolf_Animal::Update()
 		SetTarget();
 		break;
 	default:
+		// 標的解除
+		dynamic_cast<CFlockAttackAI*>(m_pActionAI)->ClearTarget();
 		break;
 	}
 
@@ -87,10 +89,14 @@ void CWolf_Animal::Update()
 	// 速度にステアリングを加算
 	vel += steer * fDeltaTime;
 
+	// 簡易減衰（暴れ防止）
+	vel = vel * 0.98f;
+
 	// 最大速度で制限
 	float speed = StructMath::Length(vel);
+	const float maxSpeed = 6.0f; // BoidsParams.fMaxSpeed と揃える
 	// 最大速度を超えていたら制限
-	if (speed > 3.0f) vel = vel * (3.0f / speed);
+	if (speed > maxSpeed) vel = vel * (maxSpeed / speed);
 
 	// 速度を保存
 	m_f3Velocity = { vel.x, vel.y, vel.z };

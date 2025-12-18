@@ -19,10 +19,10 @@ public:
 
 private:
 	// @brief 逃避開始距離（群れの誰かがこの距離で見つけたら全員逃げ）
-	float m_AlertRange = 18.0f;
+	float m_AlertRange = 15.0f;
 
 	// @brief 逃避解除距離
-	float m_ClearRange = 35.0f;
+	float m_ClearRange = 20.0f;
 
 	// ------------------------------------------------------------
 	// Idle/Wander 用（個体差＋立ち止まり）

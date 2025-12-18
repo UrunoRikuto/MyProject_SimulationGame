@@ -22,6 +22,16 @@ public:
 		m_EscapeCohesionWeight = cohesionWeight;
 	}
 
+	// @brief逃避中の整列重み倍率（全員が同じ向きに揃いすぎる対策）
+	void SetEscapeAlignmentScale(float scale) { m_EscapeAlignmentScale = scale; }
+
+	// @brief逃避強さ調整
+	void SetFleeParams(float fleeWeight, float fleeRadius)
+	{
+		m_FleeWeight = fleeWeight;
+		m_FleeRadius = fleeRadius;
+	}
+
 private:
 	static DirectX::XMFLOAT3 Flee(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& vel, const DirectX::XMFLOAT3& threat, float maxSpeed, float maxForce);
 
@@ -35,4 +45,5 @@ private:
 	//逃避中Boids調整
 	float m_EscapeSeparationWeight =2.6f;
 	float m_EscapeCohesionWeight =0.05f;
+	float m_EscapeAlignmentScale =0.6f;
 };
