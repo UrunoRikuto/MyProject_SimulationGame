@@ -46,7 +46,7 @@ struct BoidsParams
     float fSeparationRadius = 2.0f;
 
 	// 分離行動の重み係数
-    float fWeightSeparation = 1.2f;
+    float fWeightSeparation = 1.0f;
 	// 整列行動の重み係数
     float fWeightAlignment  = 1.0f;
 	// 凝集行動の重み係数
@@ -56,9 +56,16 @@ struct BoidsParams
     float fMaxSpeed = 3.0f;
 	// 最大力
     float fMaxForce = 1.0f;
+
+    // 分離行動の最大力
+	float fMaxSeparationForce = 1.50;
+	// 整列行動の最大力
+	float fMaxAlignmentForce = 1.0f;
+	// 凝集行動の最大力
+	float fMaxCohesionForce = 1.0f;
 };
 
-// 値保持に変更（ポインタを排除）
+// @brief Boidsの近隣情報構造体
 struct BoidsNeighbor
 {
 	// 位置

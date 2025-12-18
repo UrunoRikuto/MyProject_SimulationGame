@@ -23,5 +23,9 @@ public:
 	// @brief 更新処理
 	void Update() override;
 
+	// @brief 群れの登録
+	// @param In_Wolfs：オオカミリスト
+	void RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs);
+
 };
 

@@ -15,14 +15,22 @@ CWolf_Animal::CWolf_Animal()
 	: CCarnivorousAnimal()
 {
 	BoidsParams params;
-	// パラメータ設定
+
+	// --- 視野半径と分離半径 ---
 	params.fViewRadius = 5.0f;
 	params.fSeparationRadius = 10.0f;
-	params.fWeightSeparation = 1.0f;
-	params.fWeightAlignment = 0.1f;
-	params.fWeightCohesion = 0.1f;
-	params.fMaxSpeed = 3.0f;
-	params.fMaxForce = 1.0f;
+	// --- 各行動の重み係数 ---
+	params.fWeightSeparation = 1.0f;	// 分離行動の重み係数
+	params.fWeightAlignment = 0.1f;	// 整列行動の重み係数
+	params.fWeightCohesion = 0.1f;	// 凝集行動の重み係数
+	// --- 速度と力の最大値 ---
+	params.fMaxSpeed = 6.0f;		// 最大速度
+	params.fMaxForce = 3.0f;		// 最大力
+	// --- 各行動の最大力 ---
+	params.fMaxSeparationForce = 3.0f;	// 分離行動の最大力
+	params.fMaxAlignmentForce = 3.0f;		// 整列行動の最大力
+	params.fMaxCohesionForce = 3.0f;		// 凝集行動の最大力
+	
 	// 行動AI生成
 	m_pActionAI = new(std::nothrow) CFlockAttackAI(params);
 }
@@ -56,25 +64,6 @@ void CWolf_Animal::Update()
 	// 親クラスの更新処理
 	CCarnivorousAnimal::Update();
 
-	// 近隣情報を値で保持（動的メモリ排除）
-	m_SameAnimalNeighbors.clear();
-
-	// 同種の動物を取得
-	auto WolfObjects = GetScene()->GetGameObjects<CWolf_Animal>(m_tParam.m_f3Pos, 1000.0f);
-	for (auto& wolf : WolfObjects)
-	{
-		// 自身は除外
-		if (wolf->GetID().m_sName == this->GetID().m_sName
-			&& wolf->GetID().m_nSameCount == this->GetID().m_nSameCount) continue;
-
-		// 近隣情報を追加
-		BoidsNeighbor neighbor;
-		neighbor.v3Position = { wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
-		neighbor.v3Velocity = { wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
-		// リストに追加
-		m_SameAnimalNeighbors.push_back(neighbor);
-	}
-
 	Vec3 pos = { m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z };
 	Vec3 vel = { m_f3Velocity.x, m_f3Velocity.y, m_f3Velocity.z };
 
@@ -102,3 +91,27 @@ void CWolf_Animal::Update()
 	m_tParam.m_f3Pos += m_f3Velocity * fDeltaTime;
 }
 
+/****************************************//*
+	@brief　	| 群れの登録
+	@param      | In_Wolfs：オオカミリスト
+*//****************************************/
+void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
+{
+	// 近隣リストをクリア
+	m_SameAnimalNeighbors.clear();
+
+	// オオカミリストを走査
+	for(CWolf_Animal* wolf : In_Wolfs)
+	{
+		// 自分自身は登録しない
+		if (wolf != this)
+		{
+			// 近隣情報構造体の作成
+			BoidsNeighbor neighbor;
+			neighbor.v3Position = { wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
+			neighbor.v3Velocity = { wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
+			// 近隣リストに追加
+			m_SameAnimalNeighbors.push_back(neighbor);
+		}
+	}
+}

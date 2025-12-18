@@ -29,11 +29,11 @@ Vec3 BoidsSteering::Compute(const Vec3& selfPos, const Vec3& selfVel, const std:
 {
 	// 各ステアリング力の計算
     // 分離
-    Vec3 sep = Separation(selfPos, neighbors, params);
+    Vec3 sep = Limit(Separation(selfPos, neighbors, params), params.fMaxSeparationForce);
 	// 整列
-    Vec3 ali = Alignment(selfPos, selfVel, neighbors, params);
+    Vec3 ali = Limit(Alignment(selfPos, selfVel, neighbors, params), params.fMaxAlignmentForce);
 	// 凝集
-    Vec3 coh = Cohesion(selfPos, selfVel, neighbors, params);
+    Vec3 coh = Limit(Cohesion(selfPos, selfVel, neighbors, params), params.fMaxCohesionForce);
 
 	// 重み付けと合成
     Vec3 force = sep * params.fWeightSeparation

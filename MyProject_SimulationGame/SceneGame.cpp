@@ -55,12 +55,19 @@ void CSceneGame::Init()
 
 	// òTÇÃê∂ê¨
 	DirectX::XMFLOAT3 wolfBasePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	std::vector<CWolf_Animal*> wolfList;
 	for (int i = 0; i < 5; ++i)
 	{
 		CWolf_Animal* pWolf = AddGameObject<CWolf_Animal>(Tag::GameObject, "Wolf_Animal");
 		wolfBasePos.x += GetRandOfRange(-5, 5);
 		wolfBasePos.z += GetRandOfRange(-5, 5);
 		pWolf->SetPos(wolfBasePos);
+		wolfList.push_back(pWolf);
+	}
+	// åQÇÍÇÃå`ê¨
+	for (CWolf_Animal* wolf : wolfList)
+	{
+		wolf->RegisterToFlock(wolfList);
 	}
 
 
