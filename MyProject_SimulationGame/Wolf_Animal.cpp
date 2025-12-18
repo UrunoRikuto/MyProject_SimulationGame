@@ -109,9 +109,6 @@ void CWolf_Animal::SetTarget()
 	// 行動AIの取得
 	CFlockAttackAI* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI);
 
-	// 既に標的が存在する場合は処理終了
-	if (pFlockAI->HasTarget()) return;
-
 	// 群れのメンバーが存在するか確認
 	if (m_SameAnimalNeighbors.empty()) return;
 

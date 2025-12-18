@@ -713,6 +713,7 @@
     <None Include="StructMath.inl">
       <Filter>コードファイル\Utility</Filter>
     </None>
+    <None Include="Assets\Text\TODOリスト.md" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PS_TexColor.hlsl">
@@ -729,7 +730,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Text\TODOリスト.txt" />
     <Text Include="Assets\Text\作成予定動物.txt" />
   </ItemGroup>
 </Project>
