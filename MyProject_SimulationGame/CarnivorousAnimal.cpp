@@ -11,6 +11,8 @@
 *//****************************************/
 CCarnivorousAnimal::CCarnivorousAnimal()
 	: CAnimal()
+	, m_fAttack(0.0f)
+	, m_fAttackInterval(0.0f)
 {
 }
 

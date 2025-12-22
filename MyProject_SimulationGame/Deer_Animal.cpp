@@ -69,10 +69,11 @@ void CDeer_Animal::Init()
 	mix(static_cast<uint32_t>(static_cast<int>(p.z *1000.0f)));
 	m_uRandSeed = (h ==0 ?1u : h);
 
-	//初期wander方向
+	// 初期wander方向
 	float angle = Rand01() * DirectX::XM_2PI;
 	m_WanderDir = {sinf(angle),0.0f, cosf(angle) };
 
+	// Idle/Wander用変数初期化
 	m_fWanderUpdateTimer =0.0f;
 	m_fIdleTimer =0.0f;
 	m_fNextWanderUpdate =0.8f + Rand01() *1.6f; //0.8..2.4
@@ -186,9 +187,39 @@ void CDeer_Animal::Update()
 	const float accelScale = hasThreat ?1.25f :1.1f;
 	vel += (steer + wander + jitter) * (fDeltaTime * moveFactor * accelScale);
 
-	// 最大速度制限
+	// ------------------------------------------------------------
+	// スタミナ参照で最大速度を制御
+	// ------------------------------------------------------------
+	const float staminaMax = (GetMaxStamina() >0.0f) ? GetMaxStamina() :1.0f;
+	float staminaRate = GetStamina() / staminaMax; //0..1想定
+	if (staminaRate <0.0f) staminaRate =0.0f;
+	if (staminaRate >1.0f) staminaRate =1.0f;
+
+	// スタミナ0でも最低限動ける速度（好みで調整）
+	const float baseMaxSpeed = hasThreat ?9.5f :7.0f;
+	const float minMaxSpeed = hasThreat ?2.0f :1.5f;
+
+	// スタミナが切れかけた時に急激に速度上限が落ちるカーブ
+	//0.2未満は一気に鈍化（追いつかれやすくする）
+	float shaped = staminaRate;
+	if (staminaRate <=0.2f)
+	{
+		//0..0.2 ->0..0.05くらいに圧縮
+		shaped = staminaRate *0.25f;
+	}
+	else
+	{
+		//0.2..1 ->0.05..1 に戻す（急に速くなりすぎないよう少し丸める）
+		const float t = (staminaRate -0.2f) /0.8f;
+		shaped =0.05f +0.95f * t;
+		// 高スタミナ域は少しだけ伸びを抑える
+		shaped = shaped * shaped;
+	}
+
+	const float maxMoveSpeed = minMaxSpeed + (baseMaxSpeed - minMaxSpeed) * shaped;
+
+	// 最大速度制限（スタミナに応じた上限）
 	float speed = StructMath::Length(vel);
-	const float maxMoveSpeed = hasThreat ?9.5f :7.0f;
 	if (speed > maxMoveSpeed)
 	{
 		vel = vel * (maxMoveSpeed / speed);
@@ -199,6 +230,27 @@ void CDeer_Animal::Update()
 	if (!hasThreat && m_bIdle)
 	{
 		vel = vel *0.65f;
+	}
+
+	// ------------------------------------------------------------
+	// スタミナ消費/回復（移動量に応じて）
+	//逃避中は消費を増やす
+	// ------------------------------------------------------------
+	const float speed01 = (baseMaxSpeed >0.0f) ? (speed / baseMaxSpeed) :0.0f;
+	float consume =0.0f;
+	if (!m_bIdle)
+	{
+		// 消費を増やす（鹿）
+		consume = (hasThreat ?18.0f :9.0f) * speed01 * fDeltaTime;
+	}
+	if (consume >0.0f)
+	{
+		DecreaseStamina(consume);
+	}
+	else
+	{
+		//立ち止まり/ほぼ停止時は回復
+		RecoverStamina(6.0f * fDeltaTime);
 	}
 
 	m_f3Velocity = {vel.x, vel.y, vel.z };

@@ -33,6 +33,7 @@ void CAnimalGenerator::Generate()
 			{
 				CWolf_Animal* pWolf = GetScene()->AddGameObject<CWolf_Animal>(Tag::GameObject, u8"ШT");
 				pWolf->SetPos(cell->GetPos());
+				pWolf->RegisterToCell(cell->GetIndex());
 				wolfList.push_back(pWolf);
 				cell->SetUse(true);
 			}
@@ -41,6 +42,7 @@ void CAnimalGenerator::Generate()
 			{
 				CDeer_Animal* pDeer = GetScene()->AddGameObject<CDeer_Animal>(Tag::GameObject, u8"Он");
 				pDeer->SetPos(cell->GetPos());
+				pDeer->RegisterToCell(cell->GetIndex());
 				deerList.push_back(pDeer);
 				cell->SetUse(true);
 			}

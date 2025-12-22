@@ -234,7 +234,6 @@ public:
 		return pNearObject;
 	}
 
-
 	// @brief ゲームオブジェクトを名前で取得する
 	// @param inName：オブジェクト名
 	// @return 一番最初に見つかったCGameObject型のポインタ、見つからなかった場合はnullptr

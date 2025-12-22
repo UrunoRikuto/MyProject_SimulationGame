@@ -16,5 +16,15 @@ public:
 
 	// @brief ƒfƒXƒgƒ‰ƒNƒ^
 	~CCarnivorousAnimal();
+
+	// @brief UŒ‚—Í
+	float GetAttack() const { return m_fAttack; }
+
+protected:
+
+	// @brief UŒ‚—Í
+	float m_fAttack;
+	// @brief UŒ‚ŠÔŠu
+	float m_fAttackInterval;
 };
 

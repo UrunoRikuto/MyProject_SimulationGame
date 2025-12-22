@@ -44,9 +44,6 @@ void CHumanGenerator::Generate()
 	// 生成不可の場合は処理終了
 	if (!canGenerate)return;
 
-	// 生成ログ出力
-	CImguiSystem::GetInstance()->AddDebugLog(u8"人間を生成しました", false);
-
 	// 人間を生成
 	CHuman* pHuman = GetScene()->AddGameObject<CHuman>(Tag::GameObject, u8"人間");
 

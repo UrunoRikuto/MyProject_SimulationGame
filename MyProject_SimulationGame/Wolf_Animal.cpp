@@ -9,9 +9,10 @@
 #include "Main.h"
 #include "HerbivorousAnimal.h"
 #include "GameTimeManager.h"
+#include <algorithm>
 
 /****************************************//*
-	@brief　	| コンストラクタ
+	@brief	| コンストラクタ
 *//****************************************/
 CWolf_Animal::CWolf_Animal()
 	: CCarnivorousAnimal()
@@ -19,156 +20,223 @@ CWolf_Animal::CWolf_Animal()
 	BoidsParams params;
 
 	// --- 視野半径と分離半径 ---
-	params.fViewRadius = 12.0f;
-	params.fSeparationRadius = 6.0f;
+	params.fViewRadius =12.0f;
+	params.fSeparationRadius =6.0f;
 	// --- 各行動の重み係数 ---
-	params.fWeightSeparation = 1.5f;	// 分離行動の重み係数
-	params.fWeightAlignment = 0.5f;		// 整列行動の重み係数
-	params.fWeightCohesion = 0.5f;		// 凝集行動の重み係数
-	// --- 速度と力の最大値 ---
-	params.fMaxSpeed = 6.0f;			// 最大速度
-	params.fMaxForce = 3.0f;			// 最大力
+	params.fWeightSeparation =1.5f;
+	params.fWeightAlignment =0.5f;
+	params.fWeightCohesion =0.5f;
+	// ---速度と力の最大値 ---
+	params.fMaxSpeed =6.0f;
+	params.fMaxForce =3.0f;
 	// --- 各行動の最大力 ---
-	params.fMaxSeparationForce = 3.0f;	// 分離行動の最大力
-	params.fMaxAlignmentForce = 3.0f;	// 整列行動の最大力
-	params.fMaxCohesionForce = 3.0f;	// 凝集行動の最大力
-	
-	// 行動AI生成
+	params.fMaxSeparationForce =3.0f;
+	params.fMaxAlignmentForce =3.0f;
+	params.fMaxCohesionForce =3.0f;
+
 	m_pActionAI = new(std::nothrow) CFlockAttackAI(params);
+
+	m_fAttack =15.0f;
+	m_fAttackInterval =0.8f;
 }
 
 /****************************************//*
-	@brief　	| デストラクタ
+	@brief	| デストラクタ
 *//****************************************/
-CWolf_Animal::~CWolf_Animal()
-{
-}
+CWolf_Animal::~CWolf_Animal() = default;
 
 /****************************************//*
-	@brief　	| 初期化処理
+	@brief	| 初期化処理
 *//****************************************/
 void CWolf_Animal::Init()
 {
-	// 親クラスの初期化処理
 	CCarnivorousAnimal::Init();
 
-	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();
 	pModelRenderer->SetKey("Wolf");
 	pModelRenderer->SetRendererParam(m_tParam);
 }
 
 /****************************************//*
-	@brief　	| 更新処理
+	@brief	| 更新処理
 *//****************************************/
 void CWolf_Animal::Update()
 {
-	// 親クラスの更新処理
 	CCarnivorousAnimal::Update();
 
-	// 時間帯の取得
+	// 攻撃クールダウン更新
+	if (m_fAttackCooldown >0.0f)
+	{
+		m_fAttackCooldown -= fDeltaTime;
+		if (m_fAttackCooldown <0.0f) m_fAttackCooldown =0.0f;
+	}
+
+	// 時間帯によって狩りをする/しない
 	switch (CGameTimeManager::GetInstance()->GetCurrentDayTime())
 	{
 	case CGameTimeManager::DAY_TIME::EVENING:
 	case CGameTimeManager::DAY_TIME::NIGHT:
-		// 標的は設定するが、ここでreturnすると移動更新が止まって硬直する
 		SetTarget();
 		break;
 	default:
-		// 標的解除
-		dynamic_cast<CFlockAttackAI*>(m_pActionAI)->ClearTarget();
+		if (auto* pAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI))
+		{
+			pAI->ClearTarget();
+		}
 		break;
 	}
 
 	DirectX::XMFLOAT3 pos = { m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z };
 	DirectX::XMFLOAT3 vel = { m_f3Velocity.x, m_f3Velocity.y, m_f3Velocity.z };
 
-	// ステアリングベクトル
 	DirectX::XMFLOAT3 steer = m_pActionAI->UpdateAI(pos, vel, m_SameAnimalNeighbors);
-
-	// 速度にステアリングを加算
 	vel += steer * fDeltaTime;
+	vel = vel *0.98f;
 
-	// 簡易減衰（暴れ防止）
-	vel = vel * 0.98f;
+	// ------------------------------------------------------------
+	// スタミナ参照で最大移動速度を制御（狼）
+	//追跡している標的のスタミナが一定以下なら加速（追い込み）
+	// ------------------------------------------------------------
+	const float staminaMax = (GetMaxStamina() >0.0f) ? GetMaxStamina() :1.0f;
+	float staminaRate = GetStamina() / staminaMax;
+	staminaRate = std::clamp(staminaRate,0.0f,1.0f);
 
-	// 最大速度で制限
+	const float baseMaxSpeed =6.0f;
+	const float minMaxSpeed =3.0f;
+
+	float targetExhaustBoost =1.0f;
+	const float targetStaminaThreshold =25.0f;
+
+	// 標的との距離が離れるほど少し加速（追跡の伸びを作る）
+	float distanceBoost =1.0f;
+	const float distBoostStart =6.0f;
+	const float distBoostEnd =22.0f;
+	const float distBoostMax =1.12f;
+
+	CHerbivorousAnimal* pTarget = nullptr;
+	bool hasTarget = false;
+
+	if (auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI))
+	{
+		hasTarget = pFlockAI->HasTarget();
+		if (hasTarget)
+		{
+			DirectX::XMFLOAT3 targetPos = pFlockAI->GetTargetPosition();
+			pTarget = GetScene()->GetGameObject<CHerbivorousAnimal>(targetPos);
+			if (pTarget)
+			{
+				// 標的が疲れているときの追い込み加速
+				if (pTarget->GetStamina() <= targetStaminaThreshold)
+				{
+					targetExhaustBoost =1.0f +0.35f * staminaRate;
+				}
+
+				// 距離が離れているほど少しだけ上限速度を上げる
+				const float dist = StructMath::Distance(GetPos(), pTarget->GetPos());
+				if (dist > distBoostStart)
+				{
+					float t = (dist - distBoostStart) / (distBoostEnd - distBoostStart);
+					t = std::clamp(t,0.0f,1.0f);
+					distanceBoost =1.0f + (distBoostMax -1.0f) * t;
+				}
+			}
+		}
+	}
+
+	float maxSpeed = (minMaxSpeed + (baseMaxSpeed - minMaxSpeed) * staminaRate) * targetExhaustBoost * distanceBoost;
+
 	float speed = StructMath::Length(vel);
-	const float maxSpeed = 6.0f; // BoidsParams.fMaxSpeed と揃える
-	// 最大速度を超えていたら制限
-	if (speed > maxSpeed) vel = vel * (maxSpeed / speed);
+	if (speed > maxSpeed && speed >0.0001f)
+	{
+		vel = vel * (maxSpeed / speed);
+		speed = maxSpeed;
+	}
 
-	// 速度を保存
+	// ------------------------------------------------------------
+	// 一定距離になったら攻撃（一定間隔）
+	// ------------------------------------------------------------
+	if (hasTarget && pTarget != nullptr)
+	{
+		const float attackRange =1.2f;
+		const float dist = StructMath::Distance(GetPos(), pTarget->GetPos());
+		const float attackDamage = (GetAttack() >0.0f) ? GetAttack() :15.0f;
+		const float attackInterval = (m_fAttackInterval >0.0f) ? m_fAttackInterval :0.8f;
+
+		if (dist <= attackRange && m_fAttackCooldown <=0.0f)
+		{
+			pTarget->TakeDamage(attackDamage);
+			m_fAttackCooldown = attackInterval;
+		}
+	}
+
+	// ------------------------------------------------------------
+	// スタミナ消費/回復
+	// ------------------------------------------------------------
+	const float speed01 = (baseMaxSpeed >0.0f) ? (speed / baseMaxSpeed) :0.0f;
+	const float moveEps =0.15f;
+	if (speed > moveEps)
+	{
+		const float baseConsume =3.0f;
+		const float boostConsume = (targetExhaustBoost >1.01f) ?1.5f :1.0f;
+		DecreaseStamina(baseConsume * boostConsume * speed01 * fDeltaTime);
+	}
+	else
+	{
+		RecoverStamina(5.0f * fDeltaTime);
+	}
+
 	m_f3Velocity = { vel.x, vel.y, vel.z };
-	// 回転を速度方向に向ける
 	m_tParam.m_f3Rotate.y = atan2f(m_f3Velocity.x, m_f3Velocity.z);
-
-	// 位置に速度を加算
 	m_tParam.m_f3Pos += m_f3Velocity * fDeltaTime;
 }
 
 /****************************************//*
-	@brief　	| 標的の設定
+	@brief	| ターゲット設定
 *//****************************************/
 void CWolf_Animal::SetTarget()
 {
-	// 行動AIの取得
-	CFlockAttackAI* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI);
+	auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI);
+	if (!pFlockAI) return;
 
-	// 群れのメンバーが存在するか確認
-	if (m_SameAnimalNeighbors.empty()) return;
-
-	// 群れの中に標的を見つけているものがいるか確認
-	for (const BoidsNeighbor Animal : m_SameAnimalNeighbors)
+	// 群れの誰かがターゲットを持っていたら共有
+	for (const BoidsNeighbor& Animal : m_SameAnimalNeighbors)
 	{
 		if (!Animal.bSetTarget) continue;
-
-		// 標的位置を共有（値コピー）
 		pFlockAI->SetTargetPosition(Animal.pTargetPos);
 		return;
 	}
 
 	CHerbivorousAnimal* pTargetAnimal = GetScene()->GetGameObject<CHerbivorousAnimal>(m_tParam.m_f3Pos);
-	if (pTargetAnimal == nullptr) return;
+	if (!pTargetAnimal) return;
 
 	pFlockAI->SetTargetPosition(pTargetAnimal->GetPos());
 }
 
 /****************************************//*
-	@brief　	| 群れの登録
-	@param      | In_Wolfs：オオカミリスト
+	@brief	| 群れ登録
 *//****************************************/
 void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 {
-	// 近隣リストをクリア
 	m_SameAnimalNeighbors.clear();
 
-	// オオカミリストを走査
 	for (CWolf_Animal* wolf : In_Wolfs)
 	{
-		// 自分自身は登録しない
-		if (wolf == this)continue;
-		// 動物の距離を計算
+		if (wolf == this) continue;
+
 		float dist = StructMath::Distance(GetPos(), wolf->GetPos());
-		// 一定範囲外は登録しない
-		if (dist > 20.0f)continue;
+		if (dist >20.0f) continue;
 
-		// 集団行動AIの取得
-		CFlockAttackAI* pFlockAI = dynamic_cast<CFlockAttackAI*>(wolf->m_pActionAI);
+		auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(wolf->m_pActionAI);
 
-		// 近隣情報構造体の作成
 		BoidsNeighbor neighbor;
 		neighbor.v3Position = { wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
 		neighbor.v3Velocity = { wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
-		// 標的位置ポインタの取得
-		neighbor.bSetTarget = pFlockAI->HasTarget();
-		neighbor.pTargetPos = pFlockAI->GetTargetPosition();
+		neighbor.bSetTarget = (pFlockAI != nullptr) ? pFlockAI->HasTarget() : false;
+		neighbor.pTargetPos = (pFlockAI != nullptr) ? pFlockAI->GetTargetPosition() : DirectX::XMFLOAT3(0,0,0);
 
-		// 近隣リストに追加
 		m_SameAnimalNeighbors.push_back(neighbor);
 	}
 
-	// RegisterToFlock() 内のどこかで一回だけ
 	if (auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI))
 	{
 		pFlockAI->SetHomePosition(GetPos());

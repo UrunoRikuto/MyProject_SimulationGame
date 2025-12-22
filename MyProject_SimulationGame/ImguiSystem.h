@@ -32,9 +32,8 @@ private:
 	// @brief デバッグ用フラグ列挙型
 	enum class DebugSystemFlag
 	{
-		History,
+		History＆Inspecter,
 		CameraParam,
-		Inspecter,
 		BuildRequestList,
 		GenerateRequestList,
 		Update,
@@ -85,8 +84,6 @@ public:
 
 	// @brief フィールドセル描画フラグの取得
 	bool IsFieldCellsDraw() { return m_bCellsDraw; }
-	// @brief フィールドセル表示用中心座標の取得
-	DirectX::XMINT2 GetFieldCellDebugCenterPos() { return m_n2DebugCenterPos; }
 	// @brief フィールドセル表示モードの取得
 	int GetFieldCellDisplayMode() { return m_nCellDisplayMode; }
 
@@ -183,8 +180,6 @@ private:
 
 	// @brief デバッグ用セル描画フラグ
 	bool m_bCellsDraw;
-	// @brief デバック表示の中心位置
-	DirectX::XMINT2 m_n2DebugCenterPos;
 	// @brief セルの表示モード
 	int m_nCellDisplayMode;
 

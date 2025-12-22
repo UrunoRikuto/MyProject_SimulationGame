@@ -32,5 +32,5 @@ void CGrassGenerator::Generate()
 	}
 
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"草を%n生成しました", createNum), false);
+	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"草を") + std::to_string(createNum) + std::string(u8"個生成しました"), false);
 }

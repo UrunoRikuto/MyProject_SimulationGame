@@ -13,11 +13,7 @@
 #include "FieldGround.h"
 #include "SkyBox.h"
 #include "ImguiSystem.h"
-
-#include "TestObject.h"
-#include "Wolf_Animal.h"
-#include "Oparation.h"
-#include "Deer_Animal.h"
+#include "Animal.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -84,22 +80,22 @@ void CSceneGame::Update()
 	// クールタイム処理
 	CBuildManager::GetInstance()->CoolTimeUpdate();
 
-	// ------------------------------------------------------------
-	// シカの群れ情報（近傍）の更新
-	// ※脅威検知/共有のロジック自体は各DeerのUpdate()->SetThreat()に任せる
-	// ------------------------------------------------------------
+	// 削除可能なオブジェクトの削除処理
+	for (auto& Objectlist : m_pGameObject_List)
 	{
-		auto deerList = GetGameObjects<CDeer_Animal>();
-		if (!deerList.empty())
+		Objectlist.remove_if([](CGameObject* pObj)
 		{
-			std::vector<CDeer_Animal*> deerVec(deerList.begin(), deerList.end());
-			for (CDeer_Animal* deer : deerList)
+			if (pObj->IsDestroy())
 			{
-				if (!deer) continue;
-				deer->RegisterToFlock(deerVec);
+				pObj->Uninit();
+				pObj->OnDestroy();
+				SAFE_DELETE(pObj);
+				return true;
 			}
-		}
+			return false;
+		});
 	}
+
 }
 
 /****************************************//*

@@ -33,6 +33,9 @@ public:
 
 private:
 
+	// @brief フィールドタイプの作成
+	void CreateFieldType();
+
 	// @brief 初期村の作成
 	void CreateInitialVillage();
 

@@ -450,7 +450,9 @@
     <ClInclude Include="FlockEscapeAI.h">
       <Filter>コードファイル\System\AnimalAI</Filter>
     </ClInclude>
-    <ClInclude Include="AnimalGenerator.h" />
+    <ClInclude Include="AnimalGenerator.h">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -714,7 +716,9 @@
     <ClCompile Include="FlockEscapeAI.cpp">
       <Filter>コードファイル\System\AnimalAI</Filter>
     </ClCompile>
-    <ClCompile Include="AnimalGenerator.cpp" />
+    <ClCompile Include="AnimalGenerator.cpp">
+      <Filter>コードファイル\System\Generator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

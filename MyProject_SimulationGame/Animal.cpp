@@ -6,6 +6,9 @@
 *//**************************************************/
 #include "Animal.h"
 #include "ShaderManager.h"
+#include "FieldManager.h"
+#include "Main.h"
+#include "CarnivorousAnimal.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -32,4 +35,22 @@ CAnimal::CAnimal()
 *//*****************************************/
 CAnimal::~CAnimal()
 {
+	// 体力が0以下なら攻撃されて死亡したので
+	if (IsDead())
+	{
+		// 一定範囲内の肉食動物を取得
+		std::list<CCarnivorousAnimal*> carnivorousAnimals;
+		carnivorousAnimals = GetScene()->GetGameObjects<CCarnivorousAnimal>(m_tParam.m_f3Pos, 20.0f);
+		// 取得した肉食動物全ての空腹度を回復させる
+		for (CCarnivorousAnimal* pCarnivorousAnimal : carnivorousAnimals)
+		{
+			pCarnivorousAnimal->RecoverHunger(80.0f);
+		}
+	}
+
+	// 動物の行動AIの解放
+	SAFE_DELETE(m_pActionAI);
+
+	// 登録しているセルの使用フラグを解除
+	CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[m_n2BornCellIndex.x][m_n2BornCellIndex.y]->SetUse(false);
 }

@@ -13,10 +13,21 @@
 #include "RefreshFacility.h"
 #include "HumanHouse.h"
 #include "ImguiSystem.h"
+#include "Camera.h"
+#include "Oparation.h"
 
 // 初期村のサイズ
 const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
+
+// 縄張り
+const int TERRITORY_COUNT = 40;		// 縄張りの数
+
+const int TERRITORY_MINSIZE_X = 2;		// 縄張りの最大Xサイズ
+const int TERRITORY_MAXSIZE_X = 3;		// 縄張りの最大Xサイズ
+const int TERRITORY_MINSIZE_Y = 1;		// 縄張りの最大Yサイズ
+const int TERRITORY_MAXSIZE_Y = 3;		// 縄張りの最大Yサイズ
+
 
 // フィールドデバック表示サイズ
 constexpr int DEBUG_DRAW_SIZE = 50; // DEBUG_DRAW_SIZE x DEBUG_DRAW_SIZE の範囲で表示
@@ -44,6 +55,72 @@ CFieldManager::~CFieldManager()
 	@brief　	| フィールドセルのタイプ選出
 *//*****************************************/
 void CFieldManager::AssignFieldCellType()
+{
+	// フィールドタイプの作成
+	CreateFieldType();
+
+	// 縄張りの作成
+	CreateTerritory();
+
+	// 初期村の配置
+	CreateInitialVillage();
+
+	// 生成通知
+	CGeneratorManager::GetInstance()->NotifyObservers();
+}
+
+/*****************************************//*
+	@brief　	| フィールドグリッドの表示
+*//*****************************************/
+void CFieldManager::DebugDraw()
+{
+	// フィールドセルの2次元配列を取得
+	auto fieldCells = m_pFieldGrid->GetFieldCells();
+
+	int halfSizeX = (CFieldGrid::GridSizeX - DEBUG_DRAW_SIZE) / 2;
+	int halfSizeY = (CFieldGrid::GridSizeY - DEBUG_DRAW_SIZE) / 2;
+
+	DirectX::XMINT2 CenterPos = { 0,0 };
+
+	DirectX::XMFLOAT3 cameraPos = CCamera::GetInstance()->GetLook();
+
+	// カメラ位置に最も近いフィールドセルを中心座標に設定
+	float minDistance = FLT_MAX;
+	for(auto cells : fieldCells)
+	{
+		for(auto cell : cells)
+		{
+			// フィールドセルの中心座標を取得
+			DirectX::XMFLOAT3 cellPos = cell->GetPos();
+
+			// カメラ位置とフィールドセルの距離を計算
+			float distance = sqrtf(powf(cameraPos.x - cellPos.x, 2) + powf(cameraPos.z - cellPos.z, 2));
+			if (distance < minDistance)
+			{
+				CenterPos.x = cell->GetIndex().x - CFieldGrid::GridSizeX / 2;
+				CenterPos.y = cell->GetIndex().y - CFieldGrid::GridSizeY / 2;
+				minDistance = distance;
+			}
+		}
+	}
+
+
+	// 各フィールドセルのデバック描画を実行
+	for(int x = halfSizeX + CenterPos.x; x < DEBUG_DRAW_SIZE + halfSizeX + CenterPos.x; ++x)
+	{
+		if (x >= fieldCells.size())continue;
+		for(int y = halfSizeY + CenterPos.y; y < DEBUG_DRAW_SIZE + halfSizeY + CenterPos.y; ++y)
+		{
+			if (y >= fieldCells[0].size())continue;
+			fieldCells[x][y]->DebugDraw(CImguiSystem::GetInstance()->GetFieldCellDisplayMode());
+		}
+	}
+}
+
+/*****************************************//*
+	@brief　	| フィールドタイプの作成
+*//*****************************************/
+void CFieldManager::CreateFieldType()
 {
 	float scale = 0.1f; // ノイズのスケール
 
@@ -94,40 +171,6 @@ void CFieldManager::AssignFieldCellType()
 				fieldCells[x][y]->SetCellType(CFieldCell::CellType::EMPTY);
 				objCount++;
 			}
-		}
-	}
-
-	// 縄張りの作成
-	CreateTerritory();
-
-	// 初期村の配置
-	CreateInitialVillage();
-
-	// 生成通知
-	CGeneratorManager::GetInstance()->NotifyObservers();
-}
-
-/*****************************************//*
-	@brief　	| フィールドグリッドの表示
-*//*****************************************/
-void CFieldManager::DebugDraw()
-{
-	// フィールドセルの2次元配列を取得
-	auto fieldCells = m_pFieldGrid->GetFieldCells();
-
-	int halfSizeX = (CFieldGrid::GridSizeX - DEBUG_DRAW_SIZE) / 2;
-	int halfSizeY = (CFieldGrid::GridSizeY - DEBUG_DRAW_SIZE) / 2;
-
-	DirectX::XMINT2 CenterPos = CImguiSystem::GetInstance()->GetFieldCellDebugCenterPos();
-
-	// 各フィールドセルのデバック描画を実行
-	for(int x = halfSizeX + CenterPos.x; x < DEBUG_DRAW_SIZE + halfSizeX + CenterPos.x; ++x)
-	{
-		if (x >= fieldCells.size())continue;
-		for(int y = halfSizeY + CenterPos.y; y < DEBUG_DRAW_SIZE + halfSizeY + CenterPos.y; ++y)
-		{
-			if (y >= fieldCells[0].size())continue;
-			fieldCells[x][y]->DebugDraw(CImguiSystem::GetInstance()->GetFieldCellDisplayMode());
 		}
 	}
 }
@@ -214,8 +257,48 @@ void CFieldManager::CreateTerritory()
 {
 	// 生成する縄張りの数
 	std::vector<int> territoryNum;
-	territoryNum.push_back(10); // オオカミ
-	territoryNum.push_back(10); // シカ
+
+	// 狼、鹿
+	enum TerritoryType
+	{
+		Deer,
+		Wolf,
+		Max
+	};
+
+
+
+	// 残りの縄張り数
+	int remainingTerritory = TERRITORY_COUNT / 2;
+	// ランダムに分割
+	for (int i = 0; i < TerritoryType::Max; ++i)
+	{
+		// 最後の要素の場合は残りをすべて割り当てる
+		if (i == TerritoryType::Max - 1)
+		{
+			territoryNum.push_back(remainingTerritory);
+			break;
+		}
+
+		// ランダムに縄張り数を決定
+		int randNum = rand() % (remainingTerritory + 1);
+
+		// 縄張り数を格納
+		territoryNum.push_back(randNum);
+
+		// 残りの縄張り数を更新
+		remainingTerritory -= randNum;
+	}
+
+	// 半分は要素数で等分して割り当てる
+	int halfTerritory = TERRITORY_COUNT / 2;
+	int equalNum = halfTerritory / TerritoryType::Max;
+	for (int i = 0; i < TerritoryType::Max; ++i)
+	{
+		territoryNum[i] += equalNum;
+	}
+
+	
 
 	// フィールドセルの2次元配列を取得
 	auto fieldCells = m_pFieldGrid->GetFieldCells();
@@ -224,11 +307,11 @@ void CFieldManager::CreateTerritory()
 	{
 		// 縄張りタイプの決定
 		CFieldCell::TerritoryType territoryType = CFieldCell::TerritoryType::NONE;
-		if (t == 0)
+		if (t == TerritoryType::Wolf)
 		{
 			territoryType = CFieldCell::TerritoryType::Wolf;
 		}
-		else if (t == 1)
+		else if (t == TerritoryType::Deer)
 		{
 			territoryType = CFieldCell::TerritoryType::Deer;
 		}
@@ -247,27 +330,51 @@ void CFieldManager::CreateTerritory()
 			}
 
 			// 縄張りのサイズを0～1の範囲でランダムに決定
-			int territorySizeX = rand() % 3 + 1; // 1～3の範囲でランダムに決定
-			int territorySizeY = rand() % 3 * 1; // 1～3の範囲でランダムに決定
+			int territorySizeX = GetRandOfRange(TERRITORY_MINSIZE_X, TERRITORY_MAXSIZE_X);
+			int territorySizeY = GetRandOfRange(TERRITORY_MINSIZE_Y, TERRITORY_MAXSIZE_Y);
+			std::vector<std::vector<bool>> createflag;
 
-
-			// 縄張りの範囲内のフィールドセルを縄張りタイプに設定
-			for (int x = -territorySizeX / 2; x <= territorySizeX / 2; ++x)
+			createflag.resize(territorySizeX);
+			for (int i = 0; i < territorySizeX; ++i)
 			{
-				for (int y = -territorySizeY / 2; y <= territorySizeY / 2; ++y)
+				createflag[i].resize(territorySizeY);
+				for (int j = 0; j < territorySizeY; ++j)
 				{
-					int cellX = randX + x;
-					int cellY = randY + y;
-					// フィールドセルの範囲内かチェック
-					if (cellX >= 0 && cellX < CFieldGrid::GridSizeX &&
-						cellY >= 0 && cellY < CFieldGrid::GridSizeY)
+					
+					int randFlag = rand() % 10; // 0～9の範囲でランダムに決定
+					if(5 > randFlag)
 					{
-
-						fieldCells[cellX][cellY]->SetTerritoryType(territoryType);
-						fieldCells[cellX][cellY]->SetUse(false);
+						createflag[i][j] = true;
+					}
+					else
+					{
+						createflag[i][j] = false;
 					}
 				}
 			}
+
+			// 縄張りのサイズ分だけフィールドセルの縄張りタイプを設定
+			for (int x = 0; x < territorySizeX; ++x)
+			{
+				for (int y = 0; y < territorySizeY; ++y)
+				{
+					// フィールドセルのインデックスを計算
+					int cellX = randX + (x - territorySizeX / 2);
+					int cellY = randY + (y - territorySizeY / 2);
+					// フィールドセルの範囲外の場合はスキップ
+					if (cellX < 0 || cellX >= CFieldGrid::GridSizeX || cellY < 0 || cellY >= CFieldGrid::GridSizeY)
+					{
+						continue;
+					}
+					if (createflag[x][y] == false)
+					{
+						continue;
+					}
+					// フィールドセルの縄張りタイプを設定
+					fieldCells[cellX][cellY]->SetTerritoryType(territoryType);
+				}
+			}
+
 
 		}
 	}

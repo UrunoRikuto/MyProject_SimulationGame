@@ -30,5 +30,8 @@ public:
 	// @param In_Wolfs：オオカミリスト
 	void RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs);
 
+private:
+	// @brief 攻撃クールダウン（秒）
+	float m_fAttackCooldown =0.0f;
 };
 

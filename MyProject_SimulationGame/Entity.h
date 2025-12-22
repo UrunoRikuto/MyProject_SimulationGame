@@ -32,30 +32,38 @@ public:
 	// @brief 更新処理
 	void Update() override;
 
+	// @brief インスペクター表示処理
+	int Inspecter(bool isEnd = true) override;
+
 	// @brief 空腹度が満タンかどうかの取得
 	// @return true:満タン false:満タンではない
 	bool IsMaxHunger() const { return m_fHunger >= Max_Hunger; }
-
 	// @brief 空腹度が満腹値以上かどうかの取得
 	// @return true:満腹値以上 false:満腹値未満
 	bool IsFullHunger() const { return m_fHunger >= Full_Hunger; }
-
 	// @brief 空腹度が警告値以下かどうかの取得
 	// @return true:警告値以下 false:警告値以上
 	bool IsWarningHunger() const { return m_fHunger <= Warning_Hunger; }
-
 	// @brief 空腹度の取得
 	// @return 空腹度
 	float GetHunger() const { return m_fHunger; }
-
 	// @brief 空腹度の減少
 	// @param fAmount：減少量
 	void DecreaseHunger(float fAmount);
+	// @brief 空腹度の回復
+	// @param fAmount：回復量
+	void RecoverHunger(float fAmount);
 
 	// @brief 体力の取得
 	float GetHealth() const { return m_fHealth; }
 	// @brief 最大体力の取得
 	float GetMaxHealth() const { return m_fMaxHealth; }
+	// @brief 死亡しているかどうかの取得
+	bool IsDead() const { return m_fHealth <= 0.0f; }
+
+	// @brief ダメージを受ける
+	// @param fDamage : ダメージ量
+	void TakeDamage(float fDamage);
 
 	// @brief スタミナの取得
 	// @return スタミナ値

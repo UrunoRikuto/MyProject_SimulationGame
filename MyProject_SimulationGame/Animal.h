@@ -19,7 +19,13 @@ public:
 	// @brief デストラクタ
 	~CAnimal();
 
+	// @brief セルの登録
+	void RegisterToCell(DirectX::XMINT2 In_n2Cell) { m_n2BornCellIndex = In_n2Cell; }
+
 protected:
+	// @brief 生誕した場所のセルインデックス
+	DirectX::XMINT2 m_n2BornCellIndex;
+
 	// @brief 動物の速度
 	DirectX::XMFLOAT3 m_f3Velocity;
 

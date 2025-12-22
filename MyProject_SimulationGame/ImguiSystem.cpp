@@ -35,7 +35,6 @@ CImguiSystem::CImguiSystem()
 	, m_bUpdate(true)
 	, m_bDebug{ false }
 	, m_bCellsDraw(false)
-	, m_n2DebugCenterPos(DirectX::XMINT2(0, 0))
 	, m_nCellDisplayMode(0)
 	, m_pDebugFont(nullptr)
 	, m_pReleaseFont(nullptr)
@@ -193,12 +192,10 @@ void CImguiSystem::Draw()
 	// デバッグ用チェックボックス表示
 	DrawDebugSystem();
 
-	// ヒストリー表示
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::History)])		DrawHistory();
+	// ヒストリー表示とインスペクター表示
+	if (m_bDebug[static_cast<int>(DebugSystemFlag::History＆Inspecter)]) { DrawHistory(); DrawInspecter(); }
 	// カメラのパラメータ表示
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)])	DrawCameraParam();
-	// インスペクター表示
-	if (m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)])		DrawInspecter();
 	// 建築依頼リスト
 	if (m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)])	DrawBuildRequestList();
 	// 生成依頼リスト
@@ -253,8 +250,6 @@ void CImguiSystem::DrawHistory()
 	// フォントの設定
 	ImGui::PushFont(m_pDebugFont);
 
-	ImGui::SetNextWindowPos(ImVec2(20, 20));
-	ImGui::SetNextWindowSize(ImVec2(280, 300));
 	ImGui::Begin("Hierarchy");
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 260), ImGuiWindowFlags_NoTitleBar);
 
@@ -291,7 +286,11 @@ void CImguiSystem::DrawHistory()
 		ObjectID id;
 		id.m_sName = name;
 
-		if (ImGui::CollapsingHeader(std::string("[" + name + "]").c_str()))
+		// 折りたたみヘッダー
+		std::string sHeaderName = ("[%s]",name);
+		sHeaderName += std::to_string(nItrCount);
+
+		if (ImGui::CollapsingHeader(sHeaderName.c_str()))
 		{
 			for (int i = 0; i < nItrCount; i++)
 			{
@@ -414,9 +413,8 @@ void CImguiSystem::DrawDebugSystem()
 
 	ImGui::Begin(u8"デバックシステム");
 
-	ImGui::Checkbox(u8"ヒストリー", &m_bDebug[static_cast<int>(DebugSystemFlag::History)]);
+	ImGui::Checkbox(u8"ヒストリー＆インスペクター", &m_bDebug[static_cast<int>(DebugSystemFlag::History＆Inspecter)]);
 	ImGui::Checkbox(u8"カメラ情報", &m_bDebug[static_cast<int>(DebugSystemFlag::CameraParam)]);
-	ImGui::Checkbox(u8"インスペクター", &m_bDebug[static_cast<int>(DebugSystemFlag::Inspecter)]);
 	ImGui::Checkbox(u8"建築リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::BuildRequestList)]);
 	ImGui::Checkbox(u8"生成リクエスト", &m_bDebug[static_cast<int>(DebugSystemFlag::GenerateRequestList)]);
 	ImGui::Checkbox(u8"更新判定",		&m_bDebug[static_cast<int>(DebugSystemFlag::Update)]);
@@ -468,7 +466,6 @@ void CImguiSystem::DrawFieldCells()
 	ImGui::Begin("FieldCells");
 	ImGui::Checkbox(u8"フィールドセル描画", &m_bCellsDraw);
 	ImGui::Text(u8"中心位置");
-	ImGui::InputInt2(u8"X,Y座標", &m_n2DebugCenterPos.x);
 	
 	std::string ButtonLabel = (m_nCellDisplayMode == 0) ? u8"セルタイプ" : u8"縄張りタイプ";
 	if (ImGui::Button(ButtonLabel.c_str()))
@@ -976,6 +973,12 @@ void CImguiSystem::Release_DrawHuman()
 	float currentHunger = m_pHumanObject->GetHunger();
 	std::string hungerText = u8"空腹値: " + std::to_string(static_cast<int>(currentHunger)) + " / " + std::to_string(static_cast<int>(maxHunger));
 	ImGui::ProgressBar(currentHunger / maxHunger, ImVec2(200.0f, 30.0f), hungerText.c_str());
+
+	// スタミナ値の表示
+	const float maxStamina = m_pHumanObject->GetMaxStamina();
+	const float currentStamina = m_pHumanObject->GetStamina();
+	std::string staminaText = u8"スタミナ: " + std::to_string(static_cast<int>(currentStamina)) + " / " + std::to_string(static_cast<int>(maxStamina));
+	ImGui::ProgressBar(currentStamina / maxStamina, ImVec2(200.0f, 30.0f), staminaText.c_str());
 
 	// 所持しているツールの表示
 	CItem* pTool = m_pHumanObject->GetToolItem();
