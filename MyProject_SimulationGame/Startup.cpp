@@ -3,7 +3,6 @@
     @brief		|起動時処理
 *//***********************************************************************************/
 #pragma warning(disable: 4819)
-
 #include <windows.h>
 #include "Main.h"
 #include <stdio.h>
@@ -18,20 +17,24 @@
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+//--- グローバル変数
+// アプリケーション終了フラグ
 bool g_bEnd = false;
+// ウィンドウハンドル
 HWND myHWnd;
-DWORD myFPS = 0;				//直近のFPS
+// FPS値
+DWORD myFPS = 0;
 // 1フレーム内でホイールが動いたか
 static int g_MouseWheelDelta = 0;
 
-/*************************//*
-@brief		|エントリーポイント
-@param[in]  |hInstance	インスタンスハンドル
-@param[in]  |hPrevInstance	前のインスタンスハンドル
-@param[in]  |lpCmdLine	コマンドライン
-@param[in]  |nCmdShow	ウィンドウの表示方法
-@return		| 成功したら0
-*//*************************/
+/****************************************//*
+	@brief		|エントリーポイント
+	@param		|hInstance：インスタンスハンドル
+	@param		|hPrevInstance：前のインスタンスハンドル
+	@param		|lpCmdLine：コマンドライン
+	@param		|nCmdShow：ウィンドウの表示方法
+	@return		| 成功したら0
+*//****************************************/
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // メモリリーク検出
@@ -157,14 +160,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
-/*************************//*
-@brief		|ウィンドウプロシージャ
-@param[in]  |hWnd	ウィンドウハンドル
-@param[in]  |message	メッセージ
-@param[in]  |wParam	メッセージのパラメータ
-@param[in]  |lParam	メッセージのパラメータ
-@return		| メッセージを処理したら0、処理しなかったらDefWindowProcの戻り値
-*//*************************/
+/****************************************//*
+	@brief		| ウインドウプロシージャ
+	@param		| hWnd：ウィンドウハンドル
+	@param		| message：メッセージ
+	@param		| wParam：メッセージの追加情報1
+	@param		| lParam：メッセージの追加情報2
+	@return		| 処理結果
+*//****************************************/
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
@@ -187,45 +190,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-/*************************//*
-	@brief		|アプリケーション終了処理
-*//*************************/
+/****************************************//*
+	@brief 	|アプリケーション終了処理
+*//****************************************/
 void AppEnd()
 {
 	g_bEnd = true;
 }
 
-
-/*************************//*
-	@brief		|ウインドウハンドル取得
+/****************************************//*
+	@brief		| ウインドウハンドル取得
 	@return		| ウインドウハンドル
-*//*************************/
+*//****************************************/
 HWND GetMyWindow()
 {
 	return myHWnd;
 }
 
-/*************************//*
-	@brief		|フレームレート取得
+/****************************************//*
+	@brief		| フレームレート取得
 	@return		| フレームレート
-*//*************************/
+*//****************************************/
 int GetFPS()
 {
 	return myFPS;
 }
 
-/*************************//*
-	@brief		|マウスホイールの回転量取得
-	@return		| マウスホイールの回転量
-*//*************************/
+/****************************************//*
+	@brief		| マウスホイールの回転量取得
+	@return		| 回転量
+*//****************************************/
 int GetMouseWheelDelta()
 {
 	return g_MouseWheelDelta;
 }
 
-/*************************//*
-	@brief		|リセットマウスホイールの回転量
-*//*************************/
+/****************************************//*
+	@brief		| リセットマウスホイールの回転量
+*//****************************************/
 void ResetMouseWheelDelta()
 {
 	g_MouseWheelDelta = 0;

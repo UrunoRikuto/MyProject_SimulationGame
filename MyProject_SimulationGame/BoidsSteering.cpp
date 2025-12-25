@@ -35,12 +35,6 @@ DirectX::XMFLOAT3 BoidsSteering::Compute(const DirectX::XMFLOAT3& selfPos, const
     DirectX::XMFLOAT3 ali = Limit(Alignment(selfPos, selfVel, neighbors, params), params.fMaxAlignmentForce);
 	// 凝集
     DirectX::XMFLOAT3 coh = Limit(Cohesion(selfPos, selfVel, neighbors, params), params.fMaxCohesionForce);
-    //// 分離
-    //DirectX::XMFLOAT3 sep = Separation(selfPos, neighbors, params);
-	//// 整列
-    //DirectX::XMFLOAT3 ali = Alignment(selfPos, selfVel, neighbors, params);
-	//// 凝集
-    //DirectX::XMFLOAT3 coh = Cohesion(selfPos, selfVel, neighbors, params);
 
 	// 重み付けと合成
     DirectX::XMFLOAT3 force = sep * params.fWeightSeparation

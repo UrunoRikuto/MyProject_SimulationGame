@@ -5,6 +5,7 @@
 *//**************************************************/
 #pragma once
 #include "AnimalAI.h"
+#include "Oparation.h"
 
 // @brief 群れAI基底クラス
 class CGroupAI : public CAnimalAI
@@ -26,6 +27,18 @@ public:
 	{
 		// Boidsステアリング計算を呼び出し
 		return BoidsSteering::Compute(pos, vel, neighbors, m_BoidsParams);
+	}
+protected:
+
+	// @brief ベクトルの長さを制限
+	// @param v：ベクトル
+	// @param maxLen：最大長さ
+	// @return 制限後ベクトル
+	static DirectX::XMFLOAT3 Limit(const DirectX::XMFLOAT3& v, float maxLen)
+	{
+		float len = StructMath::Length(v);
+		if (len > maxLen && len > 0.0001f) return v * (maxLen / len);
+		return v;
 	}
 
 protected:

@@ -4,9 +4,9 @@
 *//***********************************************************************************/
 #include "MeshBuffer.h"
 
-/*************************//*
-@brief  | コンストラクタ
-*//*************************/
+/****************************************//*
+	@brief　	| コンストラクタ
+*//****************************************/
 MeshBuffer::MeshBuffer()
 	: m_pVtxBuffer(NULL)
 	, m_pIdxBuffer(NULL)
@@ -14,9 +14,9 @@ MeshBuffer::MeshBuffer()
 {
 }
 
-/*************************//*
-@brief  | デストラクタ
-*//*************************/
+/****************************************//*
+	@brief　	| デストラクタ
+*//****************************************/
 MeshBuffer::~MeshBuffer()
 {
 	SAFE_DELETE_ARRAY(m_desc.pIdx);
@@ -25,11 +25,11 @@ MeshBuffer::~MeshBuffer()
 	SAFE_RELEASE(m_pVtxBuffer);
 }
 
-/*************************//*
-@brief		| メッシュバッファの作成
-@param[in]	| desc：メッシュバッファの情報
-@return		| HRESULT
-*//*************************/
+/****************************************//*
+	@brief		| メッシュバッファの作成
+	@param		| desc：メッシュバッファの情報
+	@return		| 生成に成功したかどうか
+*//****************************************/
 HRESULT MeshBuffer::Create(const Description& desc)
 {
 	HRESULT hr = E_FAIL;
@@ -62,16 +62,18 @@ HRESULT MeshBuffer::Create(const Description& desc)
 	return hr;
 }
 
-/*************************//*
-@brief		| メッシュバッファの描画
-@param[in]	| count：描画する頂点数、インデックス数(0を指定した場合はバッファの数)
-*//*************************/
+/****************************************//*
+	@brief		| メッシュバッファの描画
+	@param		| count：描画する頂点数(0を指定した場合はバッファに設定されている頂点数)
+*//****************************************/
 void MeshBuffer::Draw(int count)
 {
+	// バッファの設定
 	ID3D11DeviceContext* pContext = GetContext();
 	UINT stride = m_desc.vtxSize;
 	UINT offset = 0;
 
+	// 頂点バッファ、インデックスバッファの設定
 	pContext->IASetPrimitiveTopology(m_desc.topology);
 	pContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &stride, &offset);
 
@@ -95,11 +97,11 @@ void MeshBuffer::Draw(int count)
 
 }
 
-/*************************//*
-@brief		| 頂点バッファの書き込み
-@param[in]	| pVtx：頂点データ
-@return		| HRESULT(書き込みに失敗した場合はE_FAIL)
-*//*************************/
+/****************************************//*
+	@brief		| 頂点バッファの書き込み
+	@param		| pVtx：頂点データ
+	@return		| 書き込みに成功したかどうか
+*//****************************************/
 HRESULT MeshBuffer::Write(void* pVtx)
 {
 	if (!m_desc.isWrite) { return E_FAIL; }
@@ -120,23 +122,23 @@ HRESULT MeshBuffer::Write(void* pVtx)
 	return hr;
 }
 
-/*************************//*
-@brief  | バッファ情報の取得
-@return | バッファ情報
-*//*************************/
+/****************************************//*
+	@brief		| バッファ情報の取得
+	@return		| バッファ情報
+*//****************************************/
 MeshBuffer::Description MeshBuffer::GetDesc()
 {
 	return m_desc;
 }
 
-/*************************//*
-@brief		| 頂点バッファの作成
-@param[in]	| pVtx 頂点データ
-@param[in]	| size 頂点1つあたりのサイズ
-@param[in]	| count 頂点数
-@param[in]	| isWrite 書き込み可能かどうか
-@return		| HRESULT
-*//*************************/
+/****************************************//*
+	@brief		| 頂点バッファの作成
+	@param		| pVtx：頂点データ
+	@param		| size：頂点1つあたりのサイズ
+	@param		| count：頂点数
+	@param		| isWrite：書き込み可能かどうか
+	@return		| 生成に成功したかどうか
+*//****************************************/
 HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, bool isWrite)
 {
 	//--- 作成するバッファの情報
@@ -162,13 +164,13 @@ HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, 
 	return hr;
 }
 
-/*************************//*
-@brief		| インデックスバッファの作成
-@param[in]	| pIdx インデックスデータ
-@param[in]	| size インデックス1つあたりのサイズ(2 or 4)
-@param[in]	| count インデックス数
-@return		| HRESULT
-*//*************************/
+/****************************************//*
+	@brief		| インデックスバッファの作成
+	@param		| pIdx：頂点データ
+	@param		| size：インデックス1つあたりのサイズ
+	@param		| count：インデックス数
+	@return		| 生成に成功したかどうか
+*//****************************************/
 HRESULT MeshBuffer::CreateIndexBuffer(const void* pIdx, UINT size, UINT count)
 {
 	// インデックスサイズの確認

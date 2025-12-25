@@ -1,40 +1,63 @@
+/**************************************************//*
+	@file	| Deer_Animal.h
+	@brief	| 鹿クラス定義
+	@note	| 鹿の振る舞いを定義
+			| CHerbivorousAnimalを継承
+*//**************************************************/
 #pragma once
 #include "HerbivorousAnimal.h"
 
-// @brief シカクラス
+// @brief 鹿クラス
 class CDeer_Animal final : public CHerbivorousAnimal
 {
 public:
+	// @brief コンストラクタ
 	CDeer_Animal();
+
+	// @brief デストラクタ
 	~CDeer_Animal() override;
 
+	// @brief 初期化処理
 	void Init() override;
+
+	// @brief 更新処理
 	void Update() override;
 
-	// @brief 脅威（肉食動物）を群れで共有して逃避開始
+	// @brief 脅威の設定
 	void SetThreat();
 
 	// @brief 群れの登録
+	// @param In_Deers：鹿リスト
 	void RegisterToFlock(std::vector<CDeer_Animal*> In_Deers);
 
 private:
-	// @brief 逃避開始距離（群れの誰かがこの距離で見つけたら全員逃げ）
+
+	// @brief 0..1の乱数取得
+	float Rand01();
+
+private:
+
+	// @brief 警戒範囲
 	float m_AlertRange = 15.0f;
 
-	// @brief 逃避解除距離
+	// @brief クリア範囲
 	float m_ClearRange = 20.0f;
 
-	// ------------------------------------------------------------
-	// Idle/Wander 用（個体差＋立ち止まり）
-	// ------------------------------------------------------------
+	// @brief 徘徊方向
 	DirectX::XMFLOAT3 m_WanderDir{0.0f,0.0f,1.0f };
+
+	// @brief 徘徊と待機のタイマー
 	float m_fWanderUpdateTimer =0.0f;
 	float m_fIdleTimer =0.0f;
+
+	// @brief 次回更新時間
 	float m_fNextWanderUpdate =1.0f;
 	float m_fNextIdleChange =2.0f;
+
+	// @brief 待機中かどうかのフラグ
 	bool m_bIdle = false;
+
+	// @brief 乱数シード
 	unsigned int m_uRandSeed =0;
 
-	// @brief 個体毎の乱数（0..1）
-	float Rand01();
 };

@@ -1,10 +1,18 @@
+/**************************************************//*
+	@file	| CameraDebug.cpp
+	@brief	| デバッグカメラクラス実装
+*//**************************************************/
 #include "CameraDebug.h"
 #include "Input.h"
 #include "Oparation.h"
 #include "Main.h"
 
+// 回転速度
 constexpr float ce_fCameraRotate(0.001f);
 
+/****************************************//*
+	@brief　	| コンストラクタ
+*//****************************************/
 CCameraDebug::CCameraDebug()
 	: m_fRadXZ(0.0f)
 	, m_fRadY(DirectX::XMConvertToRadians(125.0f))
@@ -13,16 +21,25 @@ CCameraDebug::CCameraDebug()
 
 }
 
+/****************************************//*
+	@brief　	| デストラクタ
+*//****************************************/
 CCameraDebug::~CCameraDebug()
 {
 
 }
 
+/****************************************//*
+	@brief　	| 初期化処理
+*//****************************************/
 void CCameraDebug::Init()
 {
+	// 回転角度の初期化
 	m_fRadXZ = 0.0f;
 	m_fRadY = DirectX::XMConvertToRadians(125.0f);
+	// カメラの距離の初期化
 	m_fRadius = 50.0f;
+	// 注視点の初期化
 	m_f3Look = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	// カメラの初期座標を設定
@@ -31,6 +48,9 @@ void CCameraDebug::Init()
 	m_f3Pos.z = cosf(m_fRadY) * cosf(m_fRadXZ) * m_fRadius + m_f3Look.z;
 }
 
+/****************************************//*
+	@brief　	| 更新処理
+*//****************************************/
 void CCameraDebug::Update()
 {
 	// カメラの座標と注視点を使い、前方向ベクトルを取得

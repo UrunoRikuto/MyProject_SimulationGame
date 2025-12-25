@@ -3,15 +3,15 @@
     @brief		|メイン処理
 *//***********************************************************************************/
 #pragma once
-
 #include <Windows.h>
 #include <string>
 #include "Scene.h"
 
 // @brief 初期化
-// @param[in]	hWnd	ウィンドウハンドル
-// @param[in] 	width 画面幅
-// @param[in] 	height 画面高さ
+// @param　hWnd：ウィンドウハンドル
+// @param　width：画面幅
+// @param　height：画面高さ
+// @return 初期化に成功したかどうか
 HRESULT Init(HWND hWnd, UINT width, UINT height);
 
 // @brief 終了
@@ -31,22 +31,24 @@ void AppEnd();
 CScene* GetScene();
 
 // @brief シーン変更
-// @param[in] inScene	変更先のシーンポインタ
+// @param inScene：変更先のシーンポインタ
 void ChangeScene(CScene* inScene);
 
 // @brief フェードイン
-// @param[in] onFadeComplete	フェードイン完了時に呼ばれる関数
+// @param onFadeComplete：フェードイン完了時に呼ばれる関数
 void FadeIn(std::function<void()> onFadeComplete);
 
 // @brief フェードアウト
-// @param[in] onFadeComplete	フェードアウト完了時に呼ばれる関数
+// @param onFadeComplete：フェードアウト完了時に呼ばれる関数
 void FadeOut(std::function<void()> onFadeComplete);
 
 
 // @brief ウインドウハンドル取得
+// @return ウインドウハンドル
 HWND GetMyWindow();
 
 // @brief フレームレート取得
+// @return フレームレート
 int GetFPS();
 
 // @brief マウスホイールの回転量取得
@@ -55,7 +57,3 @@ int GetMouseWheelDelta();
 
 // @brief リセットマウスホイールの回転量
 void ResetMouseWheelDelta();
-
-
-// @brief デバッグモードかどうか取得
-bool IsDebugMode();

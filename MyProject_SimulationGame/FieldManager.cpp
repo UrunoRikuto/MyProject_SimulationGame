@@ -188,6 +188,7 @@ void CFieldManager::CreateInitialVillage()
 	// フィールドセルの2次元配列を取得
 	auto fieldCells = m_pFieldGrid->GetFieldCells();
 
+	// フィールドの中央付近に初期村の建築可能地を設定
 	for(int i = -INITIAL_VILLAGE_SIZE_X / 2; i <= INITIAL_VILLAGE_SIZE_X / 2; ++i)
 	{
 		for(int j = -INITIAL_VILLAGE_SIZE_Y / 2; j <= INITIAL_VILLAGE_SIZE_Y / 2; ++j)
@@ -266,8 +267,6 @@ void CFieldManager::CreateTerritory()
 		Max
 	};
 
-
-
 	// 残りの縄張り数
 	int remainingTerritory = TERRITORY_COUNT / 2;
 	// ランダムに分割
@@ -322,6 +321,15 @@ void CFieldManager::CreateTerritory()
 			int randX = rand() % CFieldGrid::GridSizeX;
 			int randY = rand() % CFieldGrid::GridSizeY;
 
+			// 中心10x10の範囲はスキップ
+			if (randX >= (CFieldGrid::GridSizeX / 2 - 5) && randX <= (CFieldGrid::GridSizeX / 2 + 5) &&
+				randY >= (CFieldGrid::GridSizeY / 2 - 5) && randY <= (CFieldGrid::GridSizeY / 2 + 5))
+			{
+				--n;
+				continue;
+			}
+
+
 			if(fieldCells[randX][randY]->GetTerritoryType() != CFieldCell::TerritoryType::NONE)
 			{
 				// すでに縄張りが設定されている場合はスキップ
@@ -374,8 +382,6 @@ void CFieldManager::CreateTerritory()
 					fieldCells[cellX][cellY]->SetTerritoryType(territoryType);
 				}
 			}
-
-
 		}
 	}
 }
