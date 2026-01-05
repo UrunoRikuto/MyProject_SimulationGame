@@ -124,11 +124,24 @@ void CFieldManager::CreateFieldType()
 {
 	float scale = 0.1f; // ノイズのスケール
 
-	// ランダムデバイスでシード値を生成
-	std::random_device rd;
-	// 10桁のシード値を生成
-	unsigned int seed = rd();
+	// シード値の初期化
+	unsigned int seed = 0;
 
+	CImguiSystem* pImGui = CImguiSystem::GetInstance();
+	if (pImGui->IsSettingSeed())
+	{
+		// シード値を取得
+		seed = pImGui->GetSeed();
+	}
+	else
+	{
+		// ランダムデバイスでシード値を生成
+		std::random_device rd;
+		// シード値を生成
+		seed = rd();
+		// シード値をImguiシステムに設定
+		pImGui->SetSeed(seed);
+	}
 	// パーリンノイズ生成クラスのインスタンス
 	PerlinNoise perlinNoise(seed);
 

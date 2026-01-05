@@ -28,11 +28,21 @@ public:
 	// @brief 更新処理
 	void Update() override;
 
+	// @brief 描画処理
+	void Draw() override;
+
+private:
+	// @brief シード値入力モードの移行
+	void Mode_SeedInputMode();
+
 private:
 	// @brief メニュー選択インデックス
 	int m_nSelectIndex = 0;
 
 	// @brief メニュー選択肢オブジェクトリスト
 	std::vector<CTitleObject*> m_pMenuObjectList;
+
+	// @brief シード値入力モードフラグ
+	bool m_bSeedInputMode = false;
 };
 

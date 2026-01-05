@@ -78,6 +78,18 @@ public:
 	// @brief 描画処理
 	void Draw();
 
+	// @brief シード値入力モードの表示
+	void DrawSeedInputMode();
+	// @brief シード値の設定フラグ
+	bool IsSettingSeed() { return m_bSettingSeed; }
+
+	// @brief シード値の取得
+	unsigned int GetSeed() { return m_nSeed; }
+	// @brief シード値の設定
+	void SetSeed(unsigned int seed) { m_nSeed = seed; }
+	// @brief シード値設定の決定
+	void DecideSettingSeed();
+
 	// @brief 更新処理を管理するフラグの取得
 	// @return true:更新処理を行う false:更新処理を止める
 	bool IsUpdate() { return m_bUpdate; }
@@ -99,6 +111,7 @@ public:
 	// @param log：登録するログ文字列
 	// @param clear：true:描画後に削除 false:常に残り続ける
 	void AddDebugLog(const std::string& log, bool clear = true);
+
 
 private: //-- デバックモード --//
 
@@ -188,5 +201,11 @@ private:
 
 	// @brief 倉庫の資源表示フラグ
 	bool m_bStoragehouseDisplay;
+
+	// @brief シード値
+	char seedInput[50] = "";
+	unsigned int m_nSeed;
+	// @brief シード値設定フラグ
+	bool m_bSettingSeed = true;
 };
 

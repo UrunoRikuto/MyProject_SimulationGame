@@ -39,6 +39,7 @@ CImguiSystem::CImguiSystem()
 	, m_pDebugFont(nullptr)
 	, m_pReleaseFont(nullptr)
 	, m_bOnlyHuman(false)
+	, m_nSeed(0)
 {
 }
 
@@ -240,6 +241,58 @@ void CImguiSystem::AddDebugLog(const std::string& log, bool clear)
 	info.m_sLog = log;
 	info.m_bClear = clear;
 	m_DebugLog.push_back(info);
+}
+
+/****************************************//*
+	@brief　	| シード値入力モードの表示
+*//****************************************/
+void CImguiSystem::DrawSeedInputMode()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	// ウィンドウ背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+	// フレーム背景色の設定
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	// フレーム境界線色の設定
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH / 2) - 300, 300));
+	ImGui::SetNextWindowSize(ImVec2(600, 80));
+
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
+	ImGui::Begin("Seed Input Mode", nullptr,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar );
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(500, 60), ImGuiWindowFlags_NoTitleBar);
+
+	// シード値入力欄
+	ImGui::Separator();
+	ImGui::Text(u8"シード値を入力:");
+	ImGui::SameLine();
+	ImGui::InputText(" ", seedInput, IM_ARRAYSIZE(seedInput));
+	ImGui::Separator();
+
+
+	ImGui::EndChild();
+	ImGui::End();
+	ImGui::PopFont();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+/****************************************//*
+	@brief　	| シード値設定の決定
+*//****************************************/
+void CImguiSystem::DecideSettingSeed()
+{
+	m_nSeed = static_cast<unsigned int>(std::stoul(seedInput));
+	m_bSettingSeed = true;
 }
 
 /****************************************//*

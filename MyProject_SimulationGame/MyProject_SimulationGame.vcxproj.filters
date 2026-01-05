@@ -461,9 +461,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>コードファイル\App</Filter>
-    </ClCompile>
     <ClCompile Include="Startup.cpp">
       <Filter>コードファイル\App</Filter>
     </ClCompile>
@@ -730,6 +727,9 @@
     </ClCompile>
     <ClCompile Include="CameraTitle.cpp">
       <Filter>コードファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>コードファイル\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

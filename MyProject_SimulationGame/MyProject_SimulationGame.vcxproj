@@ -285,6 +285,7 @@
     <ClCompile Include="JobOperator.cpp" />
     <ClCompile Include="Job_Strategy.cpp" />
     <ClCompile Include="FoodFactory.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="RefreshFacility.cpp" />
@@ -308,7 +309,6 @@
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="MeshBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
