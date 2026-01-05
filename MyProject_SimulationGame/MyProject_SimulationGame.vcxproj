@@ -153,6 +153,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraGame.h" />
+    <ClInclude Include="CameraTitle.h" />
     <ClInclude Include="CarnivorousAnimal.h" />
     <ClInclude Include="CivLevelManager.h" />
     <ClInclude Include="Cook_Job.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoice.h" />
     <ClInclude Include="RefreshFacility.h" />
+    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Skill.h" />
@@ -202,7 +204,6 @@
     <ClInclude Include="StoneGenerator.h" />
     <ClInclude Include="StorageHouse.h" />
     <ClInclude Include="SubJect.h" />
-    <ClInclude Include="TestObject.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DirectX.h" />
     <ClInclude Include="Easing.h" />
@@ -233,6 +234,7 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StructMath.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TitleObject.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="Wolf_Animal.h" />
     <ClInclude Include="Wood.h" />
@@ -251,6 +253,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraGame.cpp" />
+    <ClCompile Include="CameraTitle.cpp" />
     <ClCompile Include="CarnivorousAnimal.cpp" />
     <ClCompile Include="CivLevelManager.cpp" />
     <ClCompile Include="CollectTarget.cpp" />
@@ -285,6 +288,7 @@
     <ClCompile Include="Neet_Job.cpp" />
     <ClCompile Include="PerlinNoice.cpp" />
     <ClCompile Include="RefreshFacility.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Skill.cpp" />
     <ClCompile Include="SkyBox.cpp" />
@@ -293,7 +297,6 @@
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />
     <ClCompile Include="StorageHouse.cpp" />
-    <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Geometory.cpp" />
@@ -323,6 +326,7 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Startup.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TitleObject.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="Wolf_Animal.cpp" />
     <ClCompile Include="Wood.cpp" />
@@ -363,9 +367,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Assets\Text\作成予定動物.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

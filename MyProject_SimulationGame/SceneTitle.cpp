@@ -1,0 +1,134 @@
+/**************************************************//*
+	@file	| SceneTitle.cpp
+	@brief	| タイトルシーンクラスのcppファイル
+	@note	| タイトルシーン内のゲームオブジェクト管理、更新、描画等を行う
+			| CSceneを継承
+*//**************************************************/
+#include "SceneTitle.h"
+#include "Input.h"
+#include "Main.h"
+#include "Sprite3DRenderer.h"
+
+/*****************************************//*
+	@brief　	| コンストラクタ
+*//*****************************************/
+CSceneTitle::CSceneTitle()
+	:CScene()
+	, m_nSelectIndex(0)
+	, m_pMenuObjectList()
+{
+}
+
+/*****************************************//*
+	@brief　	| デストラクタ
+*//*****************************************/
+CSceneTitle::~CSceneTitle()
+{
+}
+
+/*****************************************//*
+	@brief　	| 初期化処理
+*//*****************************************/
+void CSceneTitle::Init()
+{
+	// 基底クラスの初期化処理
+	CScene::Init();
+
+	// ゲーム開始ボタンの生成
+	CTitleObject* pStartButton = AddGameObject<CTitleObject>(Tag::UI, "StartGameButton");
+	pStartButton->GetComponent<CSprite3DRenderer>()->SetKey("GameStartButton");
+	pStartButton->SetPos(DirectX::XMFLOAT3(0.0f, -10.0f, 0.0f));
+	pStartButton->SetSize(DirectX::XMFLOAT3(10.0f, 5.0f, 10.0f));
+	pStartButton->SetFunction([]()
+		{
+			// シーンをゲームシーンに変更
+			ChangeScene(new CSceneGame());
+			SetOnImgui(true);
+		});
+	m_pMenuObjectList.push_back(pStartButton);
+
+	// ゲーム終了ボタンの生成
+	CTitleObject* pExitButton = AddGameObject<CTitleObject>(Tag::UI, "ExitGameButton");
+	pExitButton->GetComponent<CSprite3DRenderer>()->SetKey("ExitGameButton");
+	pExitButton->SetPos(DirectX::XMFLOAT3(0.0f, -15.0f, 0.0f));
+	pExitButton->SetSize(DirectX::XMFLOAT3(10.0f, 5.0f, 10.0f));
+	pExitButton->SetFunction([]()
+		{
+			// ゲームを終了
+			AppEnd();
+		});
+	m_pMenuObjectList.push_back(pExitButton);
+}
+
+/*****************************************//*
+	@brief　	| 終了処理
+*//*****************************************/
+void CSceneTitle::Uninit()
+{
+	// メニュー選択肢オブジェクトの解放
+	for (auto button : m_pMenuObjectList)
+	{
+		button = nullptr;
+	}
+	m_pMenuObjectList.clear();
+
+	// 基底クラスの終了処理
+	CScene::Uninit();
+}
+
+/*****************************************//*
+	@brief　	| 更新処理
+*//*****************************************/
+void CSceneTitle::Update()
+{
+	// 基底クラスの更新処理
+	CScene::Update();
+
+	// メニュー選択処理
+	if (IsKeyTrigger('W') || IsKeyTrigger(VK_UP))
+	{
+		m_nSelectIndex--;
+		if (m_nSelectIndex < 0)
+		{
+			m_nSelectIndex = 0;
+		}
+	}
+	if (IsKeyTrigger('S') || IsKeyTrigger(VK_DOWN))
+	{
+		m_nSelectIndex++;
+		if (m_nSelectIndex >= m_pMenuObjectList.size())
+		{
+			m_nSelectIndex = (m_pMenuObjectList.size() - 1);
+		}
+	}
+	if (IsKeyTrigger(VK_RETURN))
+	{
+		// 選択肢に応じた処理を実行
+		m_pMenuObjectList[m_nSelectIndex]->Execute();
+	}
+
+	// メニュー選択肢の拡大・縮小処理
+	for(auto button : m_pMenuObjectList)
+	{
+		// 選択されているボタンの拡大処理
+		if(button == m_pMenuObjectList[m_nSelectIndex])
+		{
+			DirectX::XMFLOAT3 scale = button->GetSize();
+			scale.x += 0.1f;
+			scale.y += 0.06f;
+			if (scale.x > 15.0f)scale.x = 15.0f;
+			if (scale.y > 8.0f)scale.y = 8.0f;
+			button->SetSize(scale);
+		}
+		else
+		{
+			// 選択されていないボタンの縮小処理
+			DirectX::XMFLOAT3 scale = button->GetSize();
+			scale.x -= 0.1f;
+			scale.y -= 0.06f;
+			if (scale.x < 10.0f)scale.x = 10.0f;
+			if (scale.y < 5.0f)scale.y = 5.0f;
+			button->SetSize(scale);
+		}
+	}
+}

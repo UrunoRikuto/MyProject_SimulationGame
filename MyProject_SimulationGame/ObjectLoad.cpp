@@ -15,6 +15,12 @@ void CObjectLoad::LoadAll()
 	// フェード用テクスチャのロード
     CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Fade.png"), "Fade");
 
+	// ゲーム開始ボタンのテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("GameStartButton.png"), "GameStartButton");
+
+	// ゲーム終了ボタンのテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("ExitGameButton.png"), "ExitGameButton");
+
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel");
 

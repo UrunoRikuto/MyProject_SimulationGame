@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Defines.h"
 #include "CameraDebug.h"
+#include "CameraTitle.h"
 #include "CameraGame.h"
 #include <new>
 
@@ -223,6 +224,9 @@ CCamera* CCamera::GetInstance()
 		// カメラの種類によってインスタンスを生成
 		switch (m_eCameraKind)
 		{
+		case CameraKind::CAM_TITLE:
+			m_pInstance[(int)m_eCameraKind] = new(std::nothrow) CCameraTitle();
+			break;
 		case CameraKind::CAM_DEBUG:
 			m_pInstance[(int)m_eCameraKind] = new(std::nothrow) CCameraDebug();
 			break;

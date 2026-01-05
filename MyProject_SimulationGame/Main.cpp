@@ -30,6 +30,9 @@ CameraKind g_ekind;
 // シーン切り替え中フラグ
 bool g_bSceneChanging = false;
 
+// Imgui有効フラグ
+bool g_bOnImgui = false;
+
 
 /****************************************//*
 	@brief　	| 初期化処理
@@ -67,8 +70,15 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	// 入力初期化
 	InitInput();
 
+	// カメラ種別初期化
+	g_ekind = CameraKind::CAM_TITLE;
+	// カメラ初期化
+	CCamera::GetInstance()->SetCameraKind(g_ekind);
+	// カメラの初期化処理
+	CCamera::GetInstance()->Init();
+
 	// 最初のシーンを設定
-	g_pScene = new CSceneGame();
+	g_pScene = new CSceneTitle();
 	g_pScene->Init();
 
 	// トランジション初期化
@@ -129,7 +139,7 @@ void Update()
 	UpdateInput();
 
 	// シーンの更新
-	if (CImguiSystem::GetInstance()->IsUpdate())
+	if (CImguiSystem::GetInstance()->IsUpdate() || !g_bOnImgui)
 	{
 		if (g_bSceneChanging)
 		{
@@ -156,7 +166,7 @@ void Update()
 	}
 
 	// Imguiの更新
-	CImguiSystem::GetInstance()->Update();
+	if(g_bOnImgui)CImguiSystem::GetInstance()->Update();
 }
 
 /****************************************//*
@@ -168,7 +178,7 @@ void Draw()
 
 	g_pScene->Draw();
 	g_pTransition->Draw();
-	CImguiSystem::GetInstance()->Draw();
+	if(g_bOnImgui)CImguiSystem::GetInstance()->Draw();
 
 	EndDrawDirectX();
 }
@@ -208,4 +218,13 @@ void FadeIn(std::function<void()> onFadeComplete)
 void FadeOut(std::function<void()> onFadeComplete)
 {
 	g_pTransition->FadeOut(50, onFadeComplete);
+}
+
+/****************************************//*
+	@brief　| セットImgui有効フラグ
+	@param　| bOnImgui：Imgui有効フラグ
+*//****************************************/
+void SetOnImgui(bool bOnImgui)
+{
+	g_bOnImgui = bOnImgui;
 }

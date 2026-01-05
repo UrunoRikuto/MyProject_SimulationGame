@@ -42,6 +42,9 @@ void FadeIn(std::function<void()> onFadeComplete);
 // @param onFadeComplete：フェードアウト完了時に呼ばれる関数
 void FadeOut(std::function<void()> onFadeComplete);
 
+// @brief セットImgui有効フラグ
+// @param bOnImgui：Imgui有効フラグ
+void SetOnImgui(bool bOnImgui);
 
 // @brief ウインドウハンドル取得
 // @return ウインドウハンドル

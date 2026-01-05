@@ -355,4 +355,5 @@ private:
 
 
 // 派生クラスのインクルード
+#include "SceneTitle.h"
 #include "SceneGame.h"

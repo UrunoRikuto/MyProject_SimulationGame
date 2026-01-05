@@ -58,9 +58,6 @@
     <Filter Include="コードファイル\GameObject">
       <UniqueIdentifier>{fa752cc7-e8ff-45d0-8ea8-933f6e8006ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="コードファイル\GameObject\TestObject">
-      <UniqueIdentifier>{0d24192c-6c33-408d-88df-ff774436cdf3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="コードファイル\Scene">
       <UniqueIdentifier>{e1202c01-80bb-40f7-9cd1-83000149f264}</UniqueIdentifier>
     </Filter>
@@ -160,6 +157,9 @@
     <Filter Include="コードファイル\GameObject\Entity\Base">
       <UniqueIdentifier>{9fb0855c-ad77-4550-bd31-6b5a9f249710}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\TitleObject">
+      <UniqueIdentifier>{c06d3a07-3355-4180-bbb8-da88fb1a84ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -245,9 +245,6 @@
     </ClInclude>
     <ClInclude Include="ModelRenderer.h">
       <Filter>コードファイル\Component\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObject.h">
-      <Filter>コードファイル\GameObject\TestObject</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
       <Filter>コードファイル\Imgui\System</Filter>
@@ -453,6 +450,15 @@
     <ClInclude Include="AnimalGenerator.h">
       <Filter>コードファイル\System\Generator</Filter>
     </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>コードファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleObject.h">
+      <Filter>コードファイル\GameObject\TitleObject</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraTitle.h">
+      <Filter>コードファイル\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -538,9 +544,6 @@
     </ClCompile>
     <ClCompile Include="ModelRenderer.cpp">
       <Filter>コードファイル\Component\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="TestObject.cpp">
-      <Filter>コードファイル\GameObject\TestObject</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
       <Filter>コードファイル\Imgui\System</Filter>
@@ -719,6 +722,15 @@
     <ClCompile Include="AnimalGenerator.cpp">
       <Filter>コードファイル\System\Generator</Filter>
     </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>コードファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleObject.cpp">
+      <Filter>コードファイル\GameObject\TitleObject</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraTitle.cpp">
+      <Filter>コードファイル\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">
@@ -742,8 +754,5 @@
     <FxCompile Include="PS_Sprite.hlsl">
       <Filter>シェーダー</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Assets\Text\作成予定動物.txt" />
   </ItemGroup>
 </Project>

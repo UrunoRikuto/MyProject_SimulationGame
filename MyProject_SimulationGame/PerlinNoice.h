@@ -12,7 +12,7 @@ class PerlinNoise
 public:
 	// @brief コンストラクタ
 	// @param seed：シード値
-    PerlinNoise(unsigned int seed = 2025);
+    PerlinNoise(unsigned int seed = 0000000000);
 
 	// @brief ノイズ値の取得
 	// @param x：X座標
