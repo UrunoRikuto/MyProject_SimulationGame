@@ -160,6 +160,9 @@
     <Filter Include="コードファイル\GameObject\TitleObject">
       <UniqueIdentifier>{c06d3a07-3355-4180-bbb8-da88fb1a84ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\GameObject\SpriteObject">
+      <UniqueIdentifier>{409a33ef-8308-42ca-ab3f-62501e653e78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -459,6 +462,10 @@
     <ClInclude Include="CameraTitle.h">
       <Filter>コードファイル\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteObject.h">
+      <Filter>コードファイル\GameObject\SpriteObject</Filter>
+    </ClInclude>
+    <ClInclude Include="FbmNoise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Startup.cpp">
@@ -731,6 +738,10 @@
     <ClCompile Include="Main.cpp">
       <Filter>コードファイル\App</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteObject.cpp">
+      <Filter>コードファイル\GameObject\SpriteObject</Filter>
+    </ClCompile>
+    <ClCompile Include="FbmNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Easing.inl">

@@ -162,6 +162,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Farmer_Job.h" />
     <ClInclude Include="FarmFacility.h" />
+    <ClInclude Include="FbmNoise.h" />
     <ClInclude Include="FieldGrid.h" />
     <ClInclude Include="CollectTarget.h" />
     <ClInclude Include="FieldCell.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Smith_Job.h" />
+    <ClInclude Include="SpriteObject.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="StoneGenerator.h" />
@@ -262,6 +264,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Farmer_Job.cpp" />
     <ClCompile Include="FarmFacility.cpp" />
+    <ClCompile Include="FbmNoise.cpp" />
     <ClCompile Include="FieldGrid.cpp" />
     <ClCompile Include="FieldCell.cpp" />
     <ClCompile Include="FieldGround.cpp" />
@@ -294,6 +297,7 @@
     <ClCompile Include="Skill.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Smith_Job.cpp" />
+    <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />

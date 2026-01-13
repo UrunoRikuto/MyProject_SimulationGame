@@ -779,6 +779,9 @@ void CImguiSystem::Release_DrawCivLevel()
 		u8"文明レベル: %s",
 		sLevel.c_str()
 	);
+
+	int fps = GetFPS();
+	ImGui::Text("FPS: %d", fps);
 #else
 	// 編集可能な文明レベルの表示
 	int level = pCivLevelManager->GetCivLevel();

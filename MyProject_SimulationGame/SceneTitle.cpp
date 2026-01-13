@@ -9,6 +9,7 @@
 #include "Main.h"
 #include "Sprite3DRenderer.h"
 #include "ImguiSystem.h"
+#include "SpriteObject.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -34,6 +35,14 @@ void CSceneTitle::Init()
 {
 	// 基底クラスの初期化処理
 	CScene::Init();
+
+	// 背景の生成
+	CSpriteObject* pBackground = AddGameObject<CSpriteObject>(Tag::GameObject, "TitleBackground");
+	pBackground->GetComponent<CSprite3DRenderer>()->SetKey("TitleBackGround");
+	pBackground->SetPos(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+	pBackground->SetSize(DirectX::XMFLOAT3(80.0f, 50.0f, 10.0f));
+	pBackground->SetColor(DirectX::XMFLOAT4(3.0f, 3.0f, 3.0f, 0.4f));
+
 
 	// ゲーム開始ボタンの生成
 	CTitleObject* pStartButton = AddGameObject<CTitleObject>(Tag::UI, "StartGameButton");

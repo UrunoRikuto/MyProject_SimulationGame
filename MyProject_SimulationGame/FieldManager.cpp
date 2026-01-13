@@ -5,7 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #include "FieldManager.h"
-#include "PerlinNoice.h"
+#include "FbmNoise.h"
 #include "GeneratorManager.h"
 #include <random>
 #include "Main.h"
@@ -142,8 +142,16 @@ void CFieldManager::CreateFieldType()
 		// シード値をImguiシステムに設定
 		pImGui->SetSeed(seed);
 	}
-	// パーリンノイズ生成クラスのインスタンス
-	PerlinNoise perlinNoise(seed);
+
+	// FBMノイズ生成クラスのインスタンス
+	FbmNoise fbm(seed);
+	FbmNoise::Params fbmParams;
+	fbmParams.octaves = 10;
+	fbmParams.lacunarity = 2.0f;
+	fbmParams.gain = 0.1f;
+	fbmParams.frequency = 1.0f;
+	fbmParams.amplitude = 1.0f;
+	fbmParams.normalize = true;
 
 	// フィールドセルの2次元配列を取得
 	auto fieldCells = m_pFieldGrid->GetFieldCells();
@@ -154,10 +162,10 @@ void CFieldManager::CreateFieldType()
 	{
 		for (int y = 0; y < fieldCells[x].size(); ++y)
 		{
-			// パーリンノイズの値を取得
-			float noiseValue = perlinNoise.noise(x * scale, y * scale);
+			// FBMノイズの値を取得
+			float noiseValue = fbm.noise(x * scale, y * scale, fbmParams);
 
-			// 正規化 0.0f ～ 1.0f に変換
+			// 正規化0.0f ～1.0f に変換
 			noiseValue = (noiseValue + 1.0f) / 2.0f;
 
 			// ノイズ値に基づいてセルタイプを決定

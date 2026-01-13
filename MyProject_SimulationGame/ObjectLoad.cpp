@@ -21,6 +21,9 @@ void CObjectLoad::LoadAll()
 	// ゲーム終了ボタンのテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("ExitGameButton.png"), "ExitGameButton");
 
+	// タイトル背景のテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("TitleBackGround.png"), "TitleBackGround");
+
 	// テスト用モデルのロード
 	CRendererComponent::Load(RendererKind::Model, MODEL_PATH("TestModel.obj"), "TestModel");
 
