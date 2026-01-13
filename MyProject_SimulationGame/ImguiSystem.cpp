@@ -40,6 +40,7 @@ CImguiSystem::CImguiSystem()
 	, m_pReleaseFont(nullptr)
 	, m_bOnlyHuman(false)
 	, m_nSeed(0)
+	, m_bSettingSeed(false)
 {
 }
 
@@ -48,7 +49,6 @@ CImguiSystem::CImguiSystem()
 *//****************************************/
 CImguiSystem::~CImguiSystem()
 {
-
 }
 
 /****************************************//*
@@ -291,7 +291,13 @@ void CImguiSystem::DrawSeedInputMode()
 *//****************************************/
 void CImguiSystem::DecideSettingSeed()
 {
-	m_nSeed = static_cast<unsigned int>(std::stoul(seedInput));
+	// シード値の設定
+
+	// 入力された文字がなかった場合
+	if (seedInput[0] == '\0') m_nSeed = 0;
+	else m_nSeed = static_cast<unsigned int>(std::stoul(seedInput));
+
+	// シード値設定完了フラグを立てる
 	m_bSettingSeed = true;
 }
 
