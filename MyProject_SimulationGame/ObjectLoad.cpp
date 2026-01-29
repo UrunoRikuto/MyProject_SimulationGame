@@ -15,6 +15,9 @@ void CObjectLoad::LoadAll()
 	// フェード用テクスチャのロード
     CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("Fade.png"), "Fade");
 
+	// タイトルロゴのテクスチャのロード
+	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("TitleLogo1.png"), "TitleLogo");
+
 	// ゲーム開始ボタンのテクスチャのロード
 	CRendererComponent::Load(RendererKind::Texture, TEXTURE_PATH("GameStartButton.png"), "GameStartButton");
 

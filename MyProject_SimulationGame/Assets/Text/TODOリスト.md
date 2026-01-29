@@ -36,15 +36,6 @@
 - 開拓には時間がかかる
 - 開拓した土地は建築職の人間が建物を建築できるようになる
 
-# [改良・検討]フィールドの配置でFBM(フラクタルブラウン運動)を利用してみる
-参考サイト
-https://thebookofshaders.com/13/?lan=jp
-https://qiita.com/edo_m18/items/e4d7a084cdbbfdc7863c
-https://ja.wikipedia.org/wiki/%E9%9D%9E%E6%95%B4%E6%95%B0%E3%83%96%E3%83%A9%E3%82%A6%E3%83%B3%E9%81%8B%E5%8B%95
-
-# [調査]プレイ動画
-= シミュレーションゲームのプレイ動画内容の構成を調べる
-
 ＝＝＝＝【実装済み】＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 # [実装]：リリースビルド時のImguiレイアウトを作成
@@ -124,3 +115,12 @@ https://ja.wikipedia.org/wiki/%E9%9D%9E%E6%95%B4%E6%95%B0%E3%83%96%E3%83%A9%E3%8
 # [実装]：狼(モデル・行動AI)
 = 動物を継承して作成
 - 集団攻撃型AIを使用
+
+# [改良・検討]フィールドの配置でFBM(フラクタルブラウン運動)を利用してみる
+参考サイト
+https://thebookofshaders.com/13/?lan=jp
+https://qiita.com/edo_m18/items/e4d7a084cdbbfdc7863c
+https://ja.wikipedia.org/wiki/%E9%9D%9E%E6%95%B4%E6%95%B0%E3%83%96%E3%83%A9%E3%82%A6%E3%83%B3%E9%81%8B%E5%8B%95
+
+# [調査]プレイ動画
+= シミュレーションゲームのプレイ動画内容の構成を調べる

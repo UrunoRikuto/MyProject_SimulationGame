@@ -259,7 +259,7 @@ void CImguiSystem::DrawSeedInputMode()
 	// フレーム境界線色の設定
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH / 2) - 300, 300));
+	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH / 2) - 300, 600));
 	ImGui::SetNextWindowSize(ImVec2(600, 80));
 
 	// フォントの設定

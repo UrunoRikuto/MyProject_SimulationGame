@@ -21,7 +21,7 @@ const int INITIAL_VILLAGE_SIZE_X = 5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y = 5;	// 初期村のYサイズ
 
 // 縄張り
-const int TERRITORY_COUNT = 40;			// 縄張りの数
+const int TERRITORY_COUNT = 100;			// 縄張りの数
 
 const int TERRITORY_MINSIZE_X = 2;		// 縄張りの最大Xサイズ
 const int TERRITORY_MAXSIZE_X = 3;		// 縄張りの最大Xサイズ

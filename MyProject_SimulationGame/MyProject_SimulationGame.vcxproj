@@ -200,7 +200,6 @@
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Smith_Job.h" />
-    <ClInclude Include="SpriteObject.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="StoneGatherer_Job.h" />
     <ClInclude Include="StoneGenerator.h" />
@@ -297,7 +296,6 @@
     <ClCompile Include="Skill.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Smith_Job.cpp" />
-    <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="StoneGatherer_Job.cpp" />
     <ClCompile Include="StoneGenerator.cpp" />
