@@ -141,6 +141,17 @@ public:
 	// @param inKey：ロードする際に同時に登録したキー
 	void SetKey(std::string inKey);
 
+	// @brief 登録キーを取得
+	std::string GetKey() const { return m_sKey; }
+
+	// @brief レンダーオブジェクトマップからキーでオブジェクト情報を取得（nullptrなら見つからない）
+	static const RendererObject* FindRendererObject(const std::string& key)
+	{
+		auto it = m_RendererObjectMap.find(key);
+		if (it == m_RendererObjectMap.end()) return nullptr;
+		return &it->second;
+	}
+
 protected:
 
 	// @brief レンダラーの統合パラメータ

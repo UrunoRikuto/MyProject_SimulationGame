@@ -10,6 +10,7 @@
 MeshBuffer::MeshBuffer()
 	: m_pVtxBuffer(NULL)
 	, m_pIdxBuffer(NULL)
+	, m_pInstanceBuffer(NULL)
 	, m_desc{}
 {
 }
@@ -21,8 +22,10 @@ MeshBuffer::~MeshBuffer()
 {
 	SAFE_DELETE_ARRAY(m_desc.pIdx);
 	SAFE_DELETE_ARRAY(m_desc.pVtx);
+	SAFE_DELETE_ARRAY(m_desc.pInstance);
 	SAFE_RELEASE(m_pIdxBuffer);
 	SAFE_RELEASE(m_pVtxBuffer);
+	SAFE_RELEASE(m_pInstanceBuffer);
 }
 
 /****************************************//*
@@ -44,6 +47,13 @@ HRESULT MeshBuffer::Create(const Description& desc)
 		if (FAILED(hr)) { return hr; }
 	}
 
+	// インスタンスバッファが指定されていれば作成
+	if (desc.pInstance && desc.instanceCount >0 && desc.instanceSize >0)
+	{
+		hr = CreateInstanceBuffer(desc.pInstance, desc.instanceSize, desc.instanceCount);
+		if (FAILED(hr)) { return hr; }
+	}
+
 	// バッファ情報のコピー
 	m_desc = desc;
 
@@ -58,6 +68,12 @@ HRESULT MeshBuffer::Create(const Description& desc)
 		memcpy_s(pIdx, idxMemSize, desc.pIdx, idxMemSize);
 		m_desc.pIdx = pIdx;
 	}
+	if (m_desc.pInstance) {
+		rsize_t instMemSize = desc.instanceSize * desc.instanceCount;
+		void* pInst = new char[instMemSize];
+		memcpy_s(pInst, instMemSize, desc.pInstance, instMemSize);
+		m_desc.pInstance = pInst;
+	}
 
 	return hr;
 }
@@ -66,19 +82,27 @@ HRESULT MeshBuffer::Create(const Description& desc)
 	@brief		| メッシュバッファの描画
 	@param		| count：描画する頂点数(0を指定した場合はバッファに設定されている頂点数)
 *//****************************************/
-void MeshBuffer::Draw(int count)
+void MeshBuffer::Draw(int count, int instanceCount)
 {
 	// バッファの設定
 	ID3D11DeviceContext* pContext = GetContext();
 	UINT stride = m_desc.vtxSize;
-	UINT offset = 0;
+	UINT offset =0;
 
 	// 頂点バッファ、インデックスバッファの設定
 	pContext->IASetPrimitiveTopology(m_desc.topology);
-	pContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &stride, &offset);
+	pContext->IASetVertexBuffers(0,1, &m_pVtxBuffer, &stride, &offset);
+
+	// インスタンスバッファがあればスロット1にセット
+	if (m_pInstanceBuffer)
+	{
+		UINT instStride = m_desc.instanceSize;
+		UINT instOffset =0;
+		pContext->IASetVertexBuffers(1,1, &m_pInstanceBuffer, &instStride, &instOffset);
+	}
 
 	// 描画
-	if (m_desc.idxCount > 0)
+	if (m_desc.idxCount >0)
 	{
 		DXGI_FORMAT format;
 		switch (m_desc.idxSize)
@@ -86,13 +110,27 @@ void MeshBuffer::Draw(int count)
 		case 4: format = DXGI_FORMAT_R32_UINT; break;
 		case 2: format = DXGI_FORMAT_R16_UINT; break;
 		}
-		pContext->IASetIndexBuffer(m_pIdxBuffer, format, 0);
-		pContext->DrawIndexed(count ? count : m_desc.idxCount, 0, 0);
+		pContext->IASetIndexBuffer(m_pIdxBuffer, format,0);
+		if (m_pInstanceBuffer)
+		{
+			pContext->DrawIndexedInstanced(count ? count : m_desc.idxCount, instanceCount ? instanceCount : m_desc.instanceCount,0,0,0);
+		}
+		else
+		{
+			pContext->DrawIndexed(count ? count : m_desc.idxCount,0,0);
+		}
 	}
 	else
 	{
 		// 頂点バッファのみで描画
-		pContext->Draw(count ? count : m_desc.vtxCount, 0);
+		if (m_pInstanceBuffer)
+		{
+			pContext->DrawInstanced(count ? count : m_desc.vtxCount, instanceCount ? instanceCount : m_desc.instanceCount,0,0);
+		}
+		else
+		{
+			pContext->Draw(count ? count : m_desc.vtxCount,0);
+		}
 	}
 
 }
@@ -198,4 +236,91 @@ HRESULT MeshBuffer::CreateIndexBuffer(const void* pIdx, UINT size, UINT count)
 	hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pIdxBuffer);
 
 	return hr;
+}
+
+/****************************************//*
+	@brief		| インスタンスバッファの作成
+	@param		| pInst：頂点データ
+	@param		| size：インスタンス1つあたりのサイズ
+	@param		| count：インスタンス数
+	@return		| 生成に成功したかどうか
+*//****************************************/
+HRESULT MeshBuffer::CreateInstanceBuffer(const void* pInst, UINT size, UINT count)
+{
+	if (!pInst || size ==0 || count ==0) return E_FAIL;
+
+	// release existing instance buffer and copied data
+	SAFE_RELEASE(m_pInstanceBuffer);
+	SAFE_DELETE_ARRAY(m_desc.pInstance);
+
+	D3D11_BUFFER_DESC bufDesc = {};
+	bufDesc.ByteWidth = size * count;
+	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA subResource = {};
+	subResource.pSysMem = pInst;
+
+	ID3D11Device* pDevice = GetDevice();
+	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
+	if (FAILED(hr)) return hr;
+
+	// copy instance data to local desc
+	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
+	m_desc.pInstance = new char[instMemSize];
+	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
+	m_desc.instanceSize = size;
+	m_desc.instanceCount = count;
+
+	return S_OK;
+}
+
+/****************************************//*
+	@brief		| インスタンスバッファの更新
+	@param		| pInst：頂点データ
+	@param		| size：インスタンス1つあたりのサイズ
+	@param		| count：インスタンス数
+	@return		| 更新に成功したかどうか
+*//****************************************/
+HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT count)
+{
+	if (!pInst || size ==0 || count ==0) return E_FAIL;
+
+	ID3D11Device* pDevice = GetDevice();
+	ID3D11DeviceContext* pContext = GetContext();
+
+	// If existing instance buffer exists and capacity >= requested, update via UpdateSubresource
+	if (m_pInstanceBuffer && m_desc.instanceSize == size && m_desc.instanceCount >= count)
+	{
+		pContext->UpdateSubresource(m_pInstanceBuffer,0, nullptr, pInst, size * count,0);
+		// update copied data
+		if (m_desc.pInstance)
+		{
+			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, pInst, static_cast<rsize_t>(size) * count);
+			m_desc.instanceCount = count;
+		}
+		return S_OK;
+	}
+
+	// Otherwise recreate instance buffer with exact size
+	SAFE_RELEASE(m_pInstanceBuffer);
+	SAFE_DELETE_ARRAY(m_desc.pInstance);
+
+	D3D11_BUFFER_DESC bufDesc = {};
+	bufDesc.ByteWidth = size * count;
+	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA subResource = {};
+	subResource.pSysMem = pInst;
+
+	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
+	if (FAILED(hr)) return hr;
+
+	// copy instance data to local desc
+	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
+	m_desc.pInstance = new char[instMemSize];
+	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
+	m_desc.instanceSize = size;
+	m_desc.instanceCount = count;
+
+	return S_OK;
 }

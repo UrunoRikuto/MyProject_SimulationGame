@@ -8,6 +8,7 @@
 #include "RendererComponent.h"
 #include "Model.h"
 #include "Shader.h"
+#include <unordered_map>
 
 // @brief モデル描画コンポーネントクラス
 class CModelRenderer : public CRendererComponent
@@ -20,7 +21,7 @@ public:
 	~CModelRenderer();
 
 	// 初期化処理
-    void Init() override;
+	void Init() override;
 
 	// 描画処理
 	void Draw() override;
@@ -41,6 +42,9 @@ public:
 	// @param pPS：ピクセルシェーダーのポインタ
 	void SetPixelShader(PixelShader* pPS) { m_pPS = pPS; }
 
+	// バッチをフラッシュしてインスタンシング描画する
+	static void FlushBatches();
+
 private:
 	// @brief 深度バッファを使用するかどうか
 	bool m_bIsDepth;
@@ -50,5 +54,16 @@ private:
 
 	// @brief ピクセルシェーダー
 	PixelShader* m_pPS;
+
+	// バッチ情報
+	struct Batch
+	{
+		std::vector<DirectX::XMFLOAT4X4> instances;
+		VertexShader* vs = nullptr;
+		PixelShader* ps = nullptr;
+	};
+
+	// キーはモデルキー + VSptr + PSptr
+	static std::unordered_map<std::string, Batch> s_batches;
 
 };

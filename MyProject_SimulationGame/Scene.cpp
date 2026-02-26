@@ -14,6 +14,7 @@
 
 #include "ImguiSystem.h"
 #include "FieldManager.h"
+#include "ModelRenderer.h"
 
 // @brief カリング距離
 constexpr float CULLING_DISTANCE = 100.0f;
@@ -203,6 +204,8 @@ void CScene::Draw()
     if (CImguiSystem::GetInstance()->IsFieldCellsDraw())
     {
         CFieldManager::GetInstance()->DebugDraw();
+		// フレーム終端でバッチをフラッシュしてインスタンシング描画を実行
+		CModelRenderer::FlushBatches();
         return;
     }
 
@@ -260,6 +263,9 @@ void CScene::Draw()
             obj->Draw();
         }
     }
+
+	// フレーム終端でバッチをフラッシュしてインスタンシング描画を実行
+	CModelRenderer::FlushBatches();
 }
 
 /****************************************//*

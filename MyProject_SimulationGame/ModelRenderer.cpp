@@ -7,6 +7,9 @@
 #include "ModelRenderer.h"
 #include "Camera.h"
 
+// static batch map
+std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
+
 /*****************************************//*
     @brief　	| デストラクタ
 *//****************************************/
@@ -85,25 +88,92 @@ void CModelRenderer::Draw()
 
 
     // モデルにシェーダーをセット
-    Model* pModel = std::get<ModelParam>(m_RendererObjectMap.find(m_sKey.c_str())->second.m_Data).m_pModel;
+    const RendererObject* pObj = CRendererComponent::FindRendererObject(m_sKey);
+    if (!pObj) return;
+    Model* pModel = std::get<ModelParam>(pObj->m_Data).m_pModel;
 
     pModel->SetVertexShader(m_pVS);
     pModel->SetPixelShader(m_pPS);
 
-    // モデルの描画
-    for (unsigned int i = 0; i < pModel->GetMeshNum(); i++)
+    //ここでバッチに追加（ワールド行列のみインスタンス化）
+    CModelRenderer::Batch& batch = s_batches[m_sKey];
+    batch.vs = m_pVS;
+    batch.ps = m_pPS;
+    DirectX::XMFLOAT4X4 worldMat;
+    DirectX::XMStoreFloat4x4(&worldMat, world);
+    batch.instances.push_back(worldMat);
+
+    // 注意: 実際のレンダリングはフレーム終端で一括して行うため外部から FlushBatches() を呼んでください
+}
+
+// バッチをフラッシュしてインスタンシングで描画
+void CModelRenderer::FlushBatches()
+{
+    CCamera* pCamera = CCamera::GetInstance();
+    for (auto& kv : s_batches)
     {
-        Model::Mesh Mesh = *pModel->GetMesh(i);
-        Model::Material material = *pModel->GetMaterial(Mesh.materialID);
+        const std::string& key = kv.first;
+        Batch& batch = kv.second;
+        if (batch.instances.empty()) continue;
 
-		m_pVS->SetTexture(0, material.pTexture);
-		m_pPS->SetTexture(0, material.pTexture);
+        const RendererObject* pObj = CRendererComponent::FindRendererObject(key);
+        if (!pObj) continue;
+        Model* pModel = std::get<ModelParam>(pObj->m_Data).m_pModel;
+        if (!pModel) continue;
 
-        if (pModel) pModel->Draw(i);
+        // 各メッシュごとにインスタンスデータを渡して描画
+        // インスタンスデータはワールド行列の配列（float[16]）
+        std::vector<float> instanceBuf;
+        instanceBuf.reserve(batch.instances.size() * 16);
+        for (auto& wm : batch.instances)
+        {
+            // transpose to match HLSL column-major expectation
+            DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&wm);
+            m = DirectX::XMMatrixTranspose(m);
+            DirectX::XMFLOAT4X4 tmp;
+            DirectX::XMStoreFloat4x4(&tmp, m);
+            const float* p = reinterpret_cast<const float*>(&tmp);
+            for (int i = 0; i < 16; ++i) instanceBuf.push_back(p[i]);
+        }
+
+        // シェーダーをセット
+        if (batch.vs) batch.vs->Bind();
+        if (batch.ps) batch.ps->Bind();
+
+        // Prepare constant buffer with view/proj and useInstance flag
+        struct CBWVP
+        {
+            DirectX::XMFLOAT4X4 world;
+            DirectX::XMFLOAT4X4 view;
+            DirectX::XMFLOAT4X4 proj;
+            float useInstance;
+            float pad[3];
+        } cb;
+        // world can be identity when using per-instance matrices
+        DirectX::XMStoreFloat4x4(&cb.world, DirectX::XMMatrixIdentity());
+        cb.view = pCamera->GetViewMatrix();
+        cb.proj = pCamera->GetProjectionMatrix();
+        cb.useInstance = 1.0f;
+
+        if (batch.vs) batch.vs->WriteBuffer(0, &cb);
+
+        for (unsigned int i = 0; i < pModel->GetMeshNum(); ++i)
+        {
+            Model::Mesh Mesh = *pModel->GetMesh(i);
+            Model::Material material = *pModel->GetMaterial(Mesh.materialID);
+
+            if (batch.vs) batch.vs->SetTexture(0, material.pTexture);
+            if (batch.ps) batch.ps->SetTexture(0, material.pTexture);
+
+            // インスタンスバッファを作成して描画
+            pModel->DrawInstanced(instanceBuf.data(), sizeof(DirectX::XMFLOAT4X4), static_cast<UINT>(batch.instances.size()), i);
+        }
+
+        batch.instances.clear();
     }
 }
 
-/*****************************************//*
+    /*****************************************//*
     @brief　	| Mesh情報を取得
     @return	| 読み込まれているモデルのメッシュ情報ベクター
 *//****************************************/

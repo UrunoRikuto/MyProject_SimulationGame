@@ -235,6 +235,12 @@ public:
 	* @param[in] meshNo 描画メッシュ番号(-1ですべて表示
 	*/
 	void Draw(int meshNo = -1);
+	// @brief インスタンシング描画
+	// @param pInstanceData インスタンスデータ配列（例：float4x4ワールド行列）
+	// @param instanceSize1インスタンスあたりのバイトサイズ
+	// @param instanceCount インスタンス数
+	// @param meshNo メッシュ番号（-1で全メッシュ）
+	void DrawInstanced(const void* pInstanceData, UINT instanceSize, UINT instanceCount, int meshNo = -1);
 
 
 	//========================================

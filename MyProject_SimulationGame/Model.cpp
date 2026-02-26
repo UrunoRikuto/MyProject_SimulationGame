@@ -206,6 +206,50 @@ void Model::Draw(int meshNo)
 	}
 }
 
+// インスタンシング描画の実装
+void Model::DrawInstanced(const void* pInstanceData, UINT instanceSize, UINT instanceCount, int meshNo)
+{
+	// シェーダーをセット
+	m_pVS->Bind();
+	m_pPS->Bind();
+
+	// テクスチャ自動セット
+	bool isAutoTexture = (meshNo == -1);
+
+	// 描画対象の範囲
+	size_t drawNum = m_meshes.size();
+	if (meshNo != -1)
+		drawNum = meshNo +1;
+	else
+		meshNo =0;
+
+	// 各メッシュ毎にインスタンスバッファを作成してインスタンス描画
+	for (UINT i = meshNo; i < drawNum; ++i)
+	{
+		if (isAutoTexture) {
+			m_pPS->SetTexture(0, m_materials[m_meshes[i].materialID].pTexture);
+		}
+		// インスタンスバッファの更新（既存バッファがあれば更新し、容量不足なら再作成）
+		if (pInstanceData && instanceSize >0 && instanceCount >0)
+		{
+			HRESULT hr = m_meshes[i].pMesh->UpdateInstanceBuffer(pInstanceData, instanceSize, instanceCount);
+			if (FAILED(hr))
+			{
+				// 更新に失敗していればフォールバックで通常描画
+				m_meshes[i].pMesh->Draw();
+				continue;
+			}
+			// インスタンス描画
+			m_meshes[i].pMesh->Draw(0, static_cast<int>(instanceCount));
+		}
+		else
+		{
+			// インスタンス情報がない場合は通常描画
+			m_meshes[i].pMesh->Draw();
+		}
+	}
+}
+
 /*************************//*
 @brief		|Assimpでの読み込み実行
 @param[in]	| file：読み込み先パス
