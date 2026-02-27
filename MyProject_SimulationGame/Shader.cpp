@@ -257,7 +257,7 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 	pReflection->GetDesc(&shaderDesc);
 	pInputDesc = new D3D11_INPUT_ELEMENT_DESC[shaderDesc.InputParameters];
 
-	// track offsets per input slot (vertex slot0, instance slot1)
+	// 入力スロットごとのオフセットを追跡（頂点スロット0、インスタンススロット1）
 	UINT offsetPerSlot[2] = {0,0};
 
 	for(UINT i =0; i < shaderDesc.InputParameters; ++ i)
@@ -284,9 +284,9 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 				break;
 		}
 
-		// Decide whether this element is per-vertex or per-instance based on semantic name prefix
-		// If semantic starts with "INSTANCE", treat as instance data and bind to slot1
+		// セマンティック名の接頭辞に基づいて、この要素が頂点単位かインスタンス単位かを判定
 		int inputSlot =0;
+		// セマンティックが "INSTANCE"で始まる場合はインスタンスデータとみなしスロット1にバインド
 		if (sigDesc.SemanticName && strncmp(sigDesc.SemanticName, "INSTANCE",8) ==0)
 		{
 			inputSlot =1;
@@ -294,11 +294,11 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 
 		pInputDesc[i].InputSlot = inputSlot;
 
-		// compute explicit aligned byte offset per slot to avoid cross-slot append issues
+		// スロットごとに明示的にバイトオフセットを計算し、スロット間の追加による問題を回避
 		pInputDesc[i].AlignedByteOffset = offsetPerSlot[inputSlot];
 
-		// size in bytes for this element
-		UINT elementSize =4 * elementCount; // each component is4 bytes (float/int)
+		// この要素のバイトサイズ
+		UINT elementSize =4 * elementCount; // 各成分は4バイト（float/int）
 		offsetPerSlot[inputSlot] += elementSize;
 
 		pInputDesc[i].InputSlotClass = (inputSlot ==1) ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;

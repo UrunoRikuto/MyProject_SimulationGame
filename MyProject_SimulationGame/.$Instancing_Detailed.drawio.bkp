@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-27T00:00:00.000Z" agent="GitHub Copilot" etag="" version="14.6.13" type="device">
+ <diagram id="instancing_detailed" name="インスタンシング詳細">
+ <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1">
+ <root>
+ <mxCell id="0"/>
+ <mxCell id="1" parent="0"/>
+
+ <mxCell id="start" value="フレーム開始" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" vertex="1" parent="1">
+ <mxGeometry x="40" y="20" width="160" height="40" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="scene" value="シーン描画: ビューとプロジェクション設定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" vertex="1" parent="1">
+ <mxGeometry x="40" y="80" width="240" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="loop" value="各オブジェクトを処理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9e7;strokeColor=#f39c12;" vertex="1" parent="1">
+ <mxGeometry x="320" y="80" width="160" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="cull" value="視錐台カリング" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#e67e22;" vertex="1" parent="1">
+ <mxGeometry x="520" y="80" width="120" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="addbatch" value="ワールド行列をバッチへ追加" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9e79f;strokeColor=#d4ac0d;" vertex="1" parent="1">
+ <mxGeometry x="680" y="60" width="220" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="afterloop" value="オブジェクトループ終了" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" vertex="1" parent="1">
+ <mxGeometry x="40" y="180" width="160" height="40" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="flush" value="バッチをフラッシュ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" vertex="1" parent="1">
+ <mxGeometry x="240" y="180" width="220" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="build" value="インスタンス配列を作成(転置)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5eef8;strokeColor=#8e44ad;" vertex="1" parent="1">
+ <mxGeometry x="520" y="180" width="220" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="capcheck" value="容量チェック" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#e67e22;" vertex="1" parent="1">
+ <mxGeometry x="760" y="180" width="160" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="update" value="既存バッファを更新" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4efdf;strokeColor=#1e8449;" vertex="1" parent="1">
+ <mxGeometry x="960" y="160" width="220" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="create" value="バッファを新規作成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#a04000;" vertex="1" parent="1">
+ <mxGeometry x="960" y="240" width="220" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="sets" value="シェーダ定数とテクスチャを設定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5eef8;strokeColor=#8e44ad;" vertex="1" parent="1">
+ <mxGeometry x="520" y="280" width="300" height="60" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="permesh" value="各メッシュを描画" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9e79f;strokeColor=#d4ac0d;" vertex="1" parent="1">
+ <mxGeometry x="520" y="360" width="360" height="100" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="clear" value="バッチをクリア" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" vertex="1" parent="1">
+ <mxGeometry x="520" y="480" width="160" height="40" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="end" value="フレーム終了" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" vertex="1" parent="1">
+ <mxGeometry x="520" y="540" width="160" height="40" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="start" target="scene" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="scene" target="loop" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="loop" target="cull" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="cull" target="addbatch" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" source="cull" target="loop" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="addbatch" target="afterloop" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="afterloop" target="flush" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="flush" target="build" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="build" target="capcheck" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+
+ <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="capcheck" target="update" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" source="capcheck" target="create" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="update" target="sets" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="create" target="sets" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="sets" target="permesh" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="permesh" target="clear" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+ <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" source="clear" target="end" parent="1">
+ <mxGeometry relative="1" as="geometry"/>
+ </mxCell>
+
+ </root>
+ </mxGraphModel>
+ </diagram>
+</mxfile>

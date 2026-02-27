@@ -193,14 +193,6 @@ void CScene::Draw()
     Geometory::SetView(pCamera->GetViewMatrix());
     Geometory::SetProjection(pCamera->GetProjectionMatrix());
 
-    //  for (auto list : m_pGameObject_List)
-    //  {
-    //      for (auto obj : list)
-    //      {
-    //          obj->Draw();
-	    	//}
-    //  }
-
     if (CImguiSystem::GetInstance()->IsFieldCellsDraw())
     {
         CFieldManager::GetInstance()->DebugDraw();

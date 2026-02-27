@@ -1,0 +1,121 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.6 Chrome/140.0.7339.249 Electron/38.8.0 Safari/537.36" version="29.3.6">
+  <diagram id="instancing_detailed" name="インスタンシング詳細">
+    <mxGraphModel dx="1281" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="start" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" value="フレーム開始" vertex="1">
+          <mxGeometry height="40" width="160" x="80" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="scene" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" value="シーン描画: ビューとプロジェクション設定" vertex="1">
+          <mxGeometry height="60" width="240" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="loop" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9e7;strokeColor=#f39c12;" value="各オブジェクトを処理" vertex="1">
+          <mxGeometry height="60" width="160" x="320" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cull" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#e67e22;" value="視錐台カリング" vertex="1">
+          <mxGeometry height="60" width="120" x="520" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="addbatch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9e79f;strokeColor=#d4ac0d;" value="ワールド行列をバッチへ追加" vertex="1">
+          <mxGeometry height="60" width="220" x="680" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="afterloop" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" value="オブジェクトループ終了" vertex="1">
+          <mxGeometry height="40" width="160" x="40" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="flush" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" value="バッチをフラッシュ" vertex="1">
+          <mxGeometry height="60" width="220" x="240" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="build" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5eef8;strokeColor=#8e44ad;" value="インスタンス配列を作成(転置)" vertex="1">
+          <mxGeometry height="60" width="220" x="520" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="capcheck" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#e67e22;" value="容量チェック" vertex="1">
+          <mxGeometry height="60" width="160" x="760" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="update" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4efdf;strokeColor=#1e8449;" value="既存バッファを更新" vertex="1">
+          <mxGeometry height="60" width="220" x="960" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="create" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdebd0;strokeColor=#a04000;" value="バッファを新規作成" vertex="1">
+          <mxGeometry height="60" width="220" x="960" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="sets" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5eef8;strokeColor=#8e44ad;" value="シェーダ定数とテクスチャを設定" vertex="1">
+          <mxGeometry height="60" width="300" x="520" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="permesh" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9e79f;strokeColor=#d4ac0d;" value="各メッシュを描画" vertex="1">
+          <mxGeometry height="100" width="360" x="490" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="clear" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#27ae60;" value="バッチをクリア" vertex="1">
+          <mxGeometry height="40" width="160" x="590" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2e86c1;" value="フレーム終了" vertex="1">
+          <mxGeometry height="40" width="160" x="590" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="scene">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="scene" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="loop">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="loop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="cull">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="cull" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="addbatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="cull" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="loop">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="addbatch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="afterloop">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="790" y="150" />
+              <mxPoint x="120" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="afterloop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="flush">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="flush" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="build">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="build" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="capcheck">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="capcheck" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="capcheck" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="create">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="916" y="210" />
+              <mxPoint x="916" y="260" />
+              <mxPoint x="1070" y="260" />
+            </Array>
+            <mxPoint x="909.9966666666666" y="210" as="sourcePoint" />
+            <mxPoint x="1070" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="update" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="sets">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="250" />
+              <mxPoint x="670" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="create" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="sets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="sets" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="permesh">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="permesh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="clear">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="clear" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
