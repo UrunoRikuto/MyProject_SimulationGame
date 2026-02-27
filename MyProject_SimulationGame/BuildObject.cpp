@@ -82,6 +82,11 @@ int CBuildObject::Inspecter()
 #else
 	// Œš’z•¨ƒŒƒxƒ‹‚Ì•\Ž¦‚Æ•ÒW
 	ImGui::InputInt(u8"Œš’z•¨ƒŒƒxƒ‹:", &m_nBuildLevel);
+
+	// Œš’z•¨ƒŒƒxƒ‹‚Ì”ÍˆÍ‚ð§ŒÀ
+	if(m_nBuildLevel > MAX_BUILD_LEVEL)m_nBuildLevel = MAX_BUILD_LEVEL;
+	else if (m_nBuildLevel < 1)m_nBuildLevel = 1;
+
 #endif // !_DEBUG
 
 

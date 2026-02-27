@@ -29,89 +29,89 @@ const int INITIAL_VILLAGE_SIZE_Y =5;	// 初期村のYサイズ
 const int TERRITORY_COUNT =100;
 
 const int TERRITORY_MINSIZE_X =2;
-const int TERRITORY_MINSIZE_Y =1;
-const int TERRITORY_MAXSIZE_X =3;
-const int TERRITORY_MAXSIZE_Y =3;
+const int TERRITORY_MINSIZE_Y =2;
+const int TERRITORY_MAXSIZE_X =4;
+const int TERRITORY_MAXSIZE_Y =4;
 
 
 // フィールドデバック表示サイズ
 constexpr int DEBUG_DRAW_SIZE =50; // DEBUG_DRAW_SIZE x DEBUG_DRAW_SIZE の範囲で表示
 
 /*****************************************//*
-	@brief 	 | コンストラクタ
+	@brief	 | コンストラクタ
  *//*****************************************/
 CFieldManager::CFieldManager()
 {
- 	// フィールドグリッドの生成
- 	m_pFieldGrid = new(std::nothrow) CFieldGrid({0.0f,0.0f,0.0f });
+	// フィールドグリッドの生成
+	m_pFieldGrid = new(std::nothrow) CFieldGrid({0.0f,0.0f,0.0f });
 }
 
 /*****************************************//*
-	@brief 	 | デストラクタ
+	@brief	 | デストラクタ
  *//*****************************************/
 CFieldManager::~CFieldManager()
 {
- 	// フィールドグリッドの解放
- 	delete m_pFieldGrid;
- 	m_pFieldGrid = nullptr;
+	// フィールドグリッドの解放
+	delete m_pFieldGrid;
+	m_pFieldGrid = nullptr;
 }
 
 /*****************************************//*
-	@brief 	 | フィールドセルのタイプ選出
+	@brief	 | フィールドセルのタイプ選出
  *//*****************************************/
 void CFieldManager::AssignFieldCellType()
 {
- 	// フィールドタイプの作成
- 	CreateFieldType();
+	// フィールドタイプの作成
+	CreateFieldType();
 
- 	// 縄張りの作成
- 	CreateTerritory();
+	// 縄張りの作成
+	CreateTerritory();
 
- 	// 初期村の配置
- 	CreateInitialVillage();
+	// 初期村の配置
+	CreateInitialVillage();
 
- 	//生成通知
- 	CGeneratorManager::GetInstance()->NotifyObservers();
+	//生成通知
+	CGeneratorManager::GetInstance()->NotifyObservers();
 }
 
 /*****************************************//*
-	@brief 	 | フィールドグリッドの表示
+	@brief	 | フィールドグリッドの表示
  *//*****************************************/
 void CFieldManager::DebugDraw()
 {
- 	// フィールドセルの2次元配列を取得（コピーを避ける）
- 	auto& fieldCells = m_pFieldGrid->GetFieldCells();
+	// フィールドセルの2次元配列を取得（コピーを避ける）
+	auto& fieldCells = m_pFieldGrid->GetFieldCells();
 
- 	int halfSizeX = (CFieldGrid::GridSizeX - DEBUG_DRAW_SIZE) /2;
- 	int halfSizeY = (CFieldGrid::GridSizeY - DEBUG_DRAW_SIZE) /2;
+	int halfSizeX = (CFieldGrid::GridSizeX - DEBUG_DRAW_SIZE) /2;
+	int halfSizeY = (CFieldGrid::GridSizeY - DEBUG_DRAW_SIZE) /2;
 
- 	DirectX::XMINT2 CenterPos = {0,0 };
+	DirectX::XMINT2 CenterPos = {0,0 };
 
- 	DirectX::XMFLOAT3 cameraPos = CCamera::GetInstance()->GetLook();
+	DirectX::XMFLOAT3 cameraPos = CCamera::GetInstance()->GetLook();
 
- 	// カメラ位置に最も近いフィールドセルを中心座標に設定
- 	float minDistanceSq = FLT_MAX; // 平方距離で比較して sqrt を避ける
- 	for(const auto& col : fieldCells)
- 	{
- 		for(const auto& cell : col)
- 		{
- 			// フィールドセルの中心座標を取得
- 			DirectX::XMFLOAT3 cellPos = cell->GetPos();
+	// カメラ位置に最も近いフィールドセルを中心座標に設定
+	float minDistanceSq = FLT_MAX; // 平方距離で比較して sqrt を避ける
+	for (const auto& col : fieldCells)
+	{
+		for (const auto& cell : col)
+		{
+			// フィールドセルの中心座標を取得
+			DirectX::XMFLOAT3 cellPos = cell->GetPos();
 
- 			// カメラ位置とフィールドセルの距離の平方を計算
- 			float dx = cameraPos.x - cellPos.x;
- 			float dz = cameraPos.z - cellPos.z;
- 			float distSq = dx * dx + dz * dz;
- 			if (distSq < minDistanceSq)
- 			{
- 				CenterPos.x = cell->GetIndex().x - CFieldGrid::GridSizeX /2;
- 				CenterPos.y = cell->GetIndex().y - CFieldGrid::GridSizeY /2;
- 				minDistanceSq = distSq;
- 			}
- 		}
- 	}
+			// カメラ位置とフィールドセルの距離の平方を計算
+			float dx = cameraPos.x - cellPos.x;
+			float dz = cameraPos.z - cellPos.z;
+			float distSq = dx * dx + dz * dz;
+			if (distSq < minDistanceSq)
+			{
+				CenterPos.x = cell->GetIndex().x - CFieldGrid::GridSizeX /2;
+				CenterPos.y = cell->GetIndex().y - CFieldGrid::GridSizeY /2;
+				minDistanceSq = distSq;
+			}
+		}
+	}
 
- 	//ループ範囲を安全にクリップして不要な境界チェックを減らす
+	//ループ範囲を安全にクリップして不要な境界チェックを減らす
 	int startX = (0 > (halfSizeX + CenterPos.x)) ?0 : (halfSizeX + CenterPos.x);
 	int startY = (0 > (halfSizeY + CenterPos.y)) ?0 : (halfSizeY + CenterPos.y);
 	int maxX = static_cast<int>(fieldCells.size());
@@ -120,9 +120,9 @@ void CFieldManager::DebugDraw()
 	int endY = (maxY < startY + DEBUG_DRAW_SIZE) ? maxY : startY + DEBUG_DRAW_SIZE;
 
 	// 各フィールドセルのデバック描画を実行
-	for(int x = startX; x < endX; ++x)
+	for (int x = startX; x < endX; ++x)
 	{
-		for(int y = startY; y < endY; ++y)
+		for (int y = startY; y < endY; ++y)
 		{
 			fieldCells[x][y]->DebugDraw(CImguiSystem::GetInstance()->GetFieldCellDisplayMode());
 		}
@@ -130,7 +130,7 @@ void CFieldManager::DebugDraw()
 }
 
 /*****************************************//*
-	@brief 	 | フィールドタイプの作成
+	@brief	 | フィールドタイプの作成
  *//*****************************************/
 void CFieldManager::CreateFieldType()
 {
@@ -226,9 +226,9 @@ void CFieldManager::CreateFieldType()
 }
 
 /*****************************************//*
-	@brief 	 | 初期村の作成
-	@note 	 | フィールドの中央付近に初期村を作成
-*//*****************************************/
+	@brief	 | 初期村の作成
+	@note	 | フィールドの中央付近に初期村を作成
+ *//*****************************************/
 void CFieldManager::CreateInitialVillage()
 {
 	// ハーフサイズを取得
@@ -239,9 +239,9 @@ void CFieldManager::CreateInitialVillage()
 	auto& fieldCells = m_pFieldGrid->GetFieldCells();
 
 	// フィールドの中央付近に初期村の建築可能地を設定
-	for(int i = -INITIAL_VILLAGE_SIZE_X /2; i <= INITIAL_VILLAGE_SIZE_X /2; ++i)
+	for (int i = -INITIAL_VILLAGE_SIZE_X /2; i <= INITIAL_VILLAGE_SIZE_X /2; ++i)
 	{
-		for(int j = -INITIAL_VILLAGE_SIZE_Y /2; j <= INITIAL_VILLAGE_SIZE_Y /2; ++j)
+		for (int j = -INITIAL_VILLAGE_SIZE_Y /2; j <= INITIAL_VILLAGE_SIZE_Y /2; ++j)
 		{
 			// フィールドセルのインデックスを計算
 			int cellX = halfSizeX + i;
@@ -278,8 +278,8 @@ void CFieldManager::CreateInitialVillage()
 }
 
 /*****************************************//*
-	@brief 	 | 縄張りの作成
-*//*****************************************/
+	@brief	 | 縄張りの作成
+ *//*****************************************/
 void CFieldManager::CreateTerritory()
 {
 	//生成する縄張りの数
@@ -354,7 +354,7 @@ void CFieldManager::CreateTerritory()
 			}
 
 
-			if(fieldCells[randX][randY]->GetTerritoryType() != CFieldCell::TerritoryType::NONE)
+			if (fieldCells[randX][randY]->GetTerritoryType() != CFieldCell::TerritoryType::NONE)
 			{
 				//すでに縄張りが設定されている場合はスキップ
 				--n;
@@ -378,7 +378,7 @@ void CFieldManager::CreateTerritory()
 						continue;
 					}
 					int randFlag = rand() %10; //0～9の範囲でランダムに決定
-					if(randFlag >=5) continue;
+					if (randFlag >=5) continue;
 					// フィールドセルの縄張りタイプを設定
 					fieldCells[cellX][cellY]->SetTerritoryType(territoryType);
 				}
@@ -388,11 +388,11 @@ void CFieldManager::CreateTerritory()
 }
 
 /*****************************************//*
-	@brief 		| 建造物を生成して配置するヘルパー
+	@brief		| 建造物を生成して配置するヘルパー
 	@param		| cells 建築可能セルのリスト（配置後は該当セルを削除）
 	@param		| factory シーンを渡して生成するオブジェクトのファクトリ（CBuildObject*を返す）
 	@return		|生成して配置した建造物のポインタ（失敗した場合はnullptr）
-*//*****************************************/
+ *//*****************************************/
 CBuildObject* CFieldManager::CreateAndPlaceBuilding(std::vector<CFieldCell*>& cells, std::function<CBuildObject* (CScene*)> factory)
 {
 	if (cells.empty()) return nullptr;

@@ -1,7 +1,7 @@
 /**************************************************//*
 	@file	| FieldCell.h
-	@brief	| フィールドセルクラスのhファイル
-	@note	| フィールドを構成するセルの情報を管理
+	@brief	| フィールドセルクラスのヘッダファイル
+	@note	| フィールドセルの情報（位置、種類、使用有無、所属オブジェクト等）を定義
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
@@ -13,29 +13,29 @@
 class CFieldCell
 {
 public:
-	// @brief セルタイプ(オブジェクト)
+	// @brief セルタイプ（見た目）
 	enum class CellType
 	{
-		EMPTY,		// 空地
+		EMPTY,		// 空
 		TREE,		// 木
 		ROCK,		// 岩
-		GRASS,		// 草地
+		GRASS,		// 草
 		Build,		// 建築可能地
-		MAX			// セルタイプの最大数
+		MAX		// セルタイプの最大数
 	};
 
-	// @brief セルタイプ(エンティティの縄張り)
+	// @brief 縄張りタイプ（所有者等）
 	enum class TerritoryType
 	{
 		Human,		// 人間
-		Wolf,		// オオカミ
-		Deer,		// シカ
-		MAX,		// セルタイプの最大数
-		NONE		// なし
+		Wolf,		// 狼
+		Deer,		// 鹿
+		MAX,		// タイプの最大数
+		NONE		// 無し
 	};
 
-	// @brief セルのサイズ
-	constexpr static DirectX::XMFLOAT3 CELL_SIZE = { 2.0f, 2.0f, 2.0f };
+	// @brief セルのサイズ（幅・高さ・奥行き）
+	constexpr static DirectX::XMFLOAT3 CELL_SIZE = {2.0f,2.0f,2.0f };
 
 public:
 	// @brief コンストラクタ
@@ -44,8 +44,8 @@ public:
 	// @brief デストラクタ
 	~CFieldCell();
 
-	// @brief デバック描画
-	// @param nMode：描画モード(0:セルタイプ, 1:縄張りタイプ)
+	// @brief デバッグ描画
+	// @param nMode: 描画モード(0: セルタイプ表示,1: 縄張りタイプ表示)
 	void DebugDraw(int nMode);
 
 	// @brief セルタイプの取得
@@ -54,25 +54,22 @@ public:
 	// @brief セルタイプの設定
 	void SetCellType(const CellType In_eType);
 
-	// @brief セルの縄張りタイプの取得
+	// @brief 縄張りタイプの取得
 	const TerritoryType GetTerritoryType() { return m_eTerritoryType; }
 
-	// @brief セルの縄張りタイプの設定
+	// @brief 縄張りタイプの設定
 	void SetTerritoryType(const TerritoryType In_eType) { m_eTerritoryType = In_eType; }
 
-	// @brief セルを使用しているかどうかの取得
-	// @return true:使用している false:使用していない
+	// @brief 使用中フラグの取得（オブジェクトが配置されているか）
 	const bool IsUse() { return m_bUse; }
 
-	// @brief セルを使用しているかどうかの設定
+	// @brief 使用中フラグの設定
 	void SetUse(const bool In_bUse) { m_bUse = In_bUse; }
 
-	// @brief セルの中心座標の取得
-	// @return セルの中心座標
+	// @brief セルの中心位置の取得
 	const DirectX::XMFLOAT3 GetPos() { return m_vPos; }
 
-	// @brief セルのインデックスの取得
-	// @return セルのインデックス
+	// @brief セルのインデックス取得
 	DirectX::XMINT2 GetIndex() { return m_n2Index; }
 
 	// @brief 配置されているオブジェクトの取得
@@ -83,22 +80,22 @@ public:
 
 private:
 
-	// @brief セルの中心座標
+	// @brief セル中心位置
 	DirectX::XMFLOAT3 m_vPos;
 
-	// @brief 自身のインデックス
+	// @brief グリッド座標（インデックス）
 	DirectX::XMINT2 m_n2Index;
 
 	// @brief セルタイプ
 	CellType m_eCellType;
 
-	// @brief セルの縄張りタイプ
+	// @brief 縄張りタイプ
 	TerritoryType m_eTerritoryType;
 
-	// @brief セルを使用しているかどうか
+	// @brief 使用中フラグ
 	bool m_bUse;
 
-	// @brief 配置されているオブジェクトのアドレス
+	// @brief 配置されているゲームオブジェクトへのポインタ
 	CGameObject* m_pObject;
 };
 

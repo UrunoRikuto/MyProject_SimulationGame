@@ -1,11 +1,12 @@
 /**********************************************************************************//*
 	@file		| MeshBuffer.cpp
-	@brief		| メッシュバッファのcpp
+	@brief		| メッシュバッファの実装
+	@note		| 頂点・インデックス・インスタンスバッファの作成／更新／描画を行う
 *//***********************************************************************************/
 #include "MeshBuffer.h"
 
 /****************************************//*
-	@brief　	| コンストラクタ
+	@brief	| コンストラクタ
 *//****************************************/
 MeshBuffer::MeshBuffer()
 	: m_pVtxBuffer(NULL)
@@ -16,7 +17,7 @@ MeshBuffer::MeshBuffer()
 }
 
 /****************************************//*
-	@brief　	| デストラクタ
+	@brief	| デストラクタ
 *//****************************************/
 MeshBuffer::~MeshBuffer()
 {
@@ -29,9 +30,9 @@ MeshBuffer::~MeshBuffer()
 }
 
 /****************************************//*
-	@brief		| メッシュバッファの作成
-	@param		| desc：メッシュバッファの情報
-	@return		| 生成に成功したかどうか
+	@brief	| メッシュバッファの作成
+	@param	| desc：メッシュバッファの設定（頂点/インデックス/インスタンス情報）
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::Create(const Description& desc)
 {
@@ -41,7 +42,7 @@ HRESULT MeshBuffer::Create(const Description& desc)
 	hr = CreateVertexBuffer(desc.pVtx, desc.vtxSize, desc.vtxCount, desc.isWrite);
 	if (FAILED(hr)) { return hr; }
 
-	// インデックスバッファ作成
+	// インデックスバッファ作成（指定があれば）
 	if (desc.pIdx) {
 		hr = CreateIndexBuffer(desc.pIdx, desc.idxSize, desc.idxCount);
 		if (FAILED(hr)) { return hr; }
@@ -54,10 +55,10 @@ HRESULT MeshBuffer::Create(const Description& desc)
 		if (FAILED(hr)) { return hr; }
 	}
 
-	// バッファ情報のコピー
+	// 設定情報を内部にコピー
 	m_desc = desc;
 
-	// 頂点、インデックスの情報をコピー
+	// 頂点/インデックス/インスタンスのデータをローカルにコピーして保持
 	rsize_t vtxMemSize = desc.vtxSize * desc.vtxCount;
 	void* pVtx = new char[vtxMemSize];
 	memcpy_s(pVtx, vtxMemSize, desc.pVtx, vtxMemSize);
@@ -79,17 +80,18 @@ HRESULT MeshBuffer::Create(const Description& desc)
 }
 
 /****************************************//*
-	@brief		| メッシュバッファの描画
-	@param		| count：描画する頂点数(0を指定した場合はバッファに設定されている頂点数)
+	@brief	| メッシュバッファの描画
+	@param	| count：描画する頂点/インデックス数（0の場合は内部のカウントを使用）
+	@param	| instanceCount：インスタンス数（0の場合は内部のインスタンス数を使用）
 *//****************************************/
 void MeshBuffer::Draw(int count, int instanceCount)
 {
-	// バッファの設定
+	// デバイスコンテキスト取得
 	ID3D11DeviceContext* pContext = GetContext();
 	UINT stride = m_desc.vtxSize;
 	UINT offset =0;
 
-	// 頂点バッファ、インデックスバッファの設定
+	// プリミティブトポロジーと頂点バッファをセット
 	pContext->IASetPrimitiveTopology(m_desc.topology);
 	pContext->IASetVertexBuffers(0,1, &m_pVtxBuffer, &stride, &offset);
 
@@ -101,7 +103,7 @@ void MeshBuffer::Draw(int count, int instanceCount)
 		pContext->IASetVertexBuffers(1,1, &m_pInstanceBuffer, &instStride, &instOffset);
 	}
 
-	// 描画
+	// インデックスバッファありの場合はインデックス描画
 	if (m_desc.idxCount >0)
 	{
 		DXGI_FORMAT format;
@@ -109,6 +111,7 @@ void MeshBuffer::Draw(int count, int instanceCount)
 		{
 		case 4: format = DXGI_FORMAT_R32_UINT; break;
 		case 2: format = DXGI_FORMAT_R16_UINT; break;
+		default: format = DXGI_FORMAT_R16_UINT; break;
 		}
 		pContext->IASetIndexBuffer(m_pIdxBuffer, format,0);
 		if (m_pInstanceBuffer)
@@ -122,7 +125,7 @@ void MeshBuffer::Draw(int count, int instanceCount)
 	}
 	else
 	{
-		// 頂点バッファのみで描画
+		// インデックスなし：頂点描画
 		if (m_pInstanceBuffer)
 		{
 			pContext->DrawInstanced(count ? count : m_desc.vtxCount, instanceCount ? instanceCount : m_desc.instanceCount,0,0);
@@ -136,9 +139,9 @@ void MeshBuffer::Draw(int count, int instanceCount)
 }
 
 /****************************************//*
-	@brief		| 頂点バッファの書き込み
-	@param		| pVtx：頂点データ
-	@return		| 書き込みに成功したかどうか
+	@brief	| 頂点バッファへの書き込み（動的バッファ用）
+	@param	| pVtx：頂点データへのポインタ
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::Write(void* pVtx)
 {
@@ -149,20 +152,20 @@ HRESULT MeshBuffer::Write(void* pVtx)
 	ID3D11DeviceContext* pContext = GetContext();
 	D3D11_MAPPED_SUBRESOURCE mapResource;
 
-	// データコピー
-	hr = pContext->Map(m_pVtxBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
+	// バッファをマップしてデータをコピー
+	hr = pContext->Map(m_pVtxBuffer,0, D3D11_MAP_WRITE_DISCARD,0, &mapResource);
 	if (SUCCEEDED(hr))
 	{
 		rsize_t size = m_desc.vtxCount * m_desc.vtxSize;
 		memcpy_s(mapResource.pData, size, pVtx, size);
-		pContext->Unmap(m_pVtxBuffer, 0);
+		pContext->Unmap(m_pVtxBuffer,0);
 	}
 	return hr;
 }
 
 /****************************************//*
-	@brief		| バッファ情報の取得
-	@return		| バッファ情報
+	@brief	| バッファ情報の取得
+	@return	| 内部に保持している Description のコピー
 *//****************************************/
 MeshBuffer::Description MeshBuffer::GetDesc()
 {
@@ -170,16 +173,16 @@ MeshBuffer::Description MeshBuffer::GetDesc()
 }
 
 /****************************************//*
-	@brief		| 頂点バッファの作成
-	@param		| pVtx：頂点データ
-	@param		| size：頂点1つあたりのサイズ
-	@param		| count：頂点数
-	@param		| isWrite：書き込み可能かどうか
-	@return		| 生成に成功したかどうか
+	@brief	| 頂点バッファの内部作成
+	@param	| pVtx：頂点データ
+	@param	| size：頂点1つあたりのサイズ（バイト）
+	@param	| count：頂点数
+	@param	| isWrite：書き込み可能にするか（動的バッファにする）
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, bool isWrite)
 {
-	//--- 作成するバッファの情報
+	// バッファ記述を設定
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.ByteWidth = size * count;
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -190,11 +193,11 @@ HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, 
 		bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	}
 
-	//--- バッファの初期値を設定
+	// 初期データ
 	D3D11_SUBRESOURCE_DATA subResource = {};
 	subResource.pSysMem = pVtx;
 
-	//--- 頂点バッファの作成
+	// バッファ作成
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 	hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pVtxBuffer);
@@ -203,11 +206,11 @@ HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, 
 }
 
 /****************************************//*
-	@brief		| インデックスバッファの作成
-	@param		| pIdx：頂点データ
-	@param		| size：インデックス1つあたりのサイズ
-	@param		| count：インデックス数
-	@return		| 生成に成功したかどうか
+	@brief	| インデックスバッファの作成
+	@param	| pIdx：インデックスデータ
+	@param	| size：インデックス1つあたりのサイズ（バイト：2または4）
+	@param	| count：インデックス数
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::CreateIndexBuffer(const void* pIdx, UINT size, UINT count)
 {
@@ -221,16 +224,16 @@ HRESULT MeshBuffer::CreateIndexBuffer(const void* pIdx, UINT size, UINT count)
 		break;
 	}
 
-	// バッファの情報を設定
+	// バッファ記述
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.ByteWidth = size * count;
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	// バッファの初期データ
+	// 初期データ
 	D3D11_SUBRESOURCE_DATA subResource = {};
 	subResource.pSysMem = pIdx;
 
-	// インデックスバッファ生成
+	// バッファ生成
 	ID3D11Device* pDevice = GetDevice();
 	HRESULT hr;
 	hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pIdxBuffer);
@@ -239,17 +242,17 @@ HRESULT MeshBuffer::CreateIndexBuffer(const void* pIdx, UINT size, UINT count)
 }
 
 /****************************************//*
-	@brief		| インスタンスバッファの作成
-	@param		| pInst：頂点データ
-	@param		| size：インスタンス1つあたりのサイズ
-	@param		| count：インスタンス数
-	@return		| 生成に成功したかどうか
+	@brief	| インスタンスバッファの作成
+	@param	| pInst：インスタンスデータ
+	@param	| size：1インスタンスあたりのサイズ（バイト）
+	@param	| count：インスタンス数
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::CreateInstanceBuffer(const void* pInst, UINT size, UINT count)
 {
 	if (!pInst || size ==0 || count ==0) return E_FAIL;
 
-	// release existing instance buffer and copied data
+	//既存のインスタンスバッファ/コピーデータを解放
 	SAFE_RELEASE(m_pInstanceBuffer);
 	SAFE_DELETE_ARRAY(m_desc.pInstance);
 
@@ -264,7 +267,7 @@ HRESULT MeshBuffer::CreateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
 	if (FAILED(hr)) return hr;
 
-	// copy instance data to local desc
+	// インスタンスデータを内部にコピーして保持
 	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
 	m_desc.pInstance = new char[instMemSize];
 	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
@@ -275,11 +278,11 @@ HRESULT MeshBuffer::CreateInstanceBuffer(const void* pInst, UINT size, UINT coun
 }
 
 /****************************************//*
-	@brief		| インスタンスバッファの更新
-	@param		| pInst：頂点データ
-	@param		| size：インスタンス1つあたりのサイズ
-	@param		| count：インスタンス数
-	@return		| 更新に成功したかどうか
+	@brief	| インスタンスバッファの更新
+	@param	| pInst：インスタンスデータ
+	@param	| size：1インスタンスあたりのサイズ（バイト）
+	@param	| count：インスタンス数
+	@return	| HRESULT（成功:S_OK、失敗:エラーコード）
 *//****************************************/
 HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT count)
 {
@@ -288,11 +291,11 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pContext = GetContext();
 
-	// If existing instance buffer exists and capacity >= requested, update via UpdateSubresource
+	//既存のインスタンスバッファがあり、容量が十分なら UpdateSubresourceで更新
 	if (m_pInstanceBuffer && m_desc.instanceSize == size && m_desc.instanceCount >= count)
 	{
 		pContext->UpdateSubresource(m_pInstanceBuffer,0, nullptr, pInst, size * count,0);
-		// update copied data
+		// 内部コピーも更新
 		if (m_desc.pInstance)
 		{
 			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, pInst, static_cast<rsize_t>(size) * count);
@@ -301,7 +304,7 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 		return S_OK;
 	}
 
-	// Otherwise recreate instance buffer with exact size
+	//それ以外はバッファを再作成してコピー
 	SAFE_RELEASE(m_pInstanceBuffer);
 	SAFE_DELETE_ARRAY(m_desc.pInstance);
 
@@ -315,7 +318,7 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
 	if (FAILED(hr)) return hr;
 
-	// copy instance data to local desc
+	// 内部コピーを作成
 	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
 	m_desc.pInstance = new char[instMemSize];
 	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);

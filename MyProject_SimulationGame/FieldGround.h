@@ -1,13 +1,12 @@
 /**************************************************//*
 	@file	| FieldGround.h
-	@brief	| 地面クラスのhファイル
-	@note	| 地面の処理を定義
-			| CGameObjectを継承
+	@brief	| フィールド地面クラスのヘッダファイル
+	@note	| 地面オブジェクト（シーンに配置されるCGameObjectの派生）
 *//**************************************************/
 #pragma once
 #include "GameObject.h"
 
-// @brief 地面クラス
+// @brief フィールド地面オブジェクト
 class CFieldGround : public CGameObject
 {
 public:

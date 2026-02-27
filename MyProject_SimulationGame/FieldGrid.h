@@ -1,10 +1,11 @@
 /**************************************************//*
 	@file	| FieldGrid.h
-	@brief	| フィールドグリッドクラスのhファイル
+	@brief	| フィールドグリッドクラスのヘッダファイル
 	@note	| フィールドをグリッド状に管理
 *//**************************************************/
 #pragma once
 #include "FieldCell.h"
+#include <vector>
 
 
 
@@ -12,8 +13,8 @@
 class CFieldGrid
 {
 public:
-	static const int GridSizeX = 100;	// グリッドのXサイズ
-	static const int GridSizeY = 100;	// グリッドのYサイズ
+	static const int GridSizeX =100;	// グリッドのXサイズ
+	static const int GridSizeY =100;	// グリッドのYサイズ
 
 public:
 	// @brief コンストラクタ
@@ -41,7 +42,10 @@ public:
 	std::vector<CFieldCell*> GetFieldCells(CFieldCell::CellType In_Type, bool In_Use);
 
 private:
-	// @brief フィールドセルの2次元配列
+	// @brief フィールドセルの2次元配列（ポインタ配列、実体は m_cellsStorage に連続格納）
 	std::vector<std::vector<CFieldCell*>> m_pFieldCells;
+
+	// @brief セル実体を一括格納して単一のアロケーションにすることで大量の new/delete を回避する
+	std::vector<CFieldCell> m_cellsStorage;
 };
 

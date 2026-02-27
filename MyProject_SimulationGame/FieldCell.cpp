@@ -1,15 +1,16 @@
 /**************************************************//*
 	@file	| FieldCell.cpp
 	@brief	| フィールドセルクラスのcppファイル
-	@note	| フィールドを構成するセルの情報を管理
+	@note	| フィールドセルの挙動（コンストラクタ、デストラクタ、デバッグ描画等）を実装
 *//**************************************************/
 #include "FieldCell.h"
 #include "Geometory.h"
 #include "Camera.h"
 
 /****************************************//*
-	@brief　	| コンストラクタ
-	@param		| In_eType	セルタイプ
+	@brief	| コンストラクタ
+	@param	| In_vPos セルの中心位置
+	@param	| In_vIndex セルのグリッドインデックス
 *//****************************************/
 CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In_vIndex)
 	: m_eCellType(CellType::EMPTY)
@@ -22,19 +23,19 @@ CFieldCell::CFieldCell(const DirectX::XMFLOAT3 In_vPos, const DirectX::XMINT2 In
 }
 
 /****************************************//*
-	@brief　	| デストラクタ
+	@brief	| デストラクタ
 *//****************************************/
 CFieldCell::~CFieldCell()
 {
 }
 
 /****************************************//*
-	@brief　	| デバック描画
-	@param		| nMode：描画モード(0:セルタイプ, 1:縄張りタイプ)
+	@brief	| デバッグ描画
+	@param	| nMode: 描画モード (0: セルタイプ表示,1: 縄張りタイプ表示)
 *//****************************************/
 void CFieldCell::DebugDraw(int nMode)
 {
-	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,0.0f);
 
 	switch (nMode)
 	{
@@ -42,24 +43,24 @@ void CFieldCell::DebugDraw(int nMode)
 		switch (m_eCellType)
 		{
 		case CFieldCell::CellType::EMPTY:
-			// 白
-			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			// 空
+			color = DirectX::XMFLOAT4(1.0f,1.0f,1.0f,1.0f);
 			break;
 		case CFieldCell::CellType::TREE:
-			// 緑
-			color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			// 木
+			color = DirectX::XMFLOAT4(0.0f,1.0f,0.0f,1.0f);
 			break;
 		case CFieldCell::CellType::ROCK:
-			// 青
-			color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			// 岩
+			color = DirectX::XMFLOAT4(0.0f,0.0f,1.0f,1.0f);
 			break;
 		case CFieldCell::CellType::GRASS:
-			// 赤
-			color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			// 草
+			color = DirectX::XMFLOAT4(1.0f,0.0f,0.0f,1.0f);
 			break;
 		case CFieldCell::CellType::Build:
-			// 黄
-			color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+			// 建築可能地
+			color = DirectX::XMFLOAT4(1.0f,1.0f,0.0f,1.0f);
 			break;
 		}
 		break;
@@ -67,31 +68,33 @@ void CFieldCell::DebugDraw(int nMode)
 		switch (m_eTerritoryType)
 		{
 		case CFieldCell::TerritoryType::NONE:
-			// 白
-			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			// 無し
+			color = DirectX::XMFLOAT4(1.0f,1.0f,1.0f,1.0f);
 			break;
 		case CFieldCell::TerritoryType::Human:
-			// 黄
-			color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+			// 人間
+			color = DirectX::XMFLOAT4(1.0f,1.0f,0.0f,1.0f);
 			break;
 		case CFieldCell::TerritoryType::Wolf:
-			// 赤
-			color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			// 狼
+			color = DirectX::XMFLOAT4(1.0f,0.0f,0.0f,1.0f);
 			break;
 		case CFieldCell::TerritoryType::Deer:
-			// 茶
-			color = DirectX::XMFLOAT4(0.6f, 0.3f, 0.0f, 1.0f);
+			// 鹿
+			color = DirectX::XMFLOAT4(0.6f,0.3f,0.0f,1.0f);
 			break;
 		}
 		break;
+	default:
+		break;
 	}
 
-	Geometory::DrawPlane(m_vPos, CELL_SIZE, DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f), color);
+	Geometory::DrawPlane(m_vPos, CELL_SIZE, DirectX::XMFLOAT3(0.0f,1.0f,0.0f), color);
 }
 
 /****************************************//*
-	@brief　	| セルタイプの設定
-	@param		| In_eType	セルタイプ
+	@brief	| セルタイプの設定
+	@param	| In_eType セルタイプ
 *//****************************************/
 void CFieldCell::SetCellType(const CellType In_eType)
 {
