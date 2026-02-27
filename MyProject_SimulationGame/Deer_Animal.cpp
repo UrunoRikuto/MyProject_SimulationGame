@@ -52,7 +52,7 @@ CDeer_Animal::~CDeer_Animal()
 
 /*****************************************//*
 	@brief　	| 0..1の乱数取得
-	@return		| 乱数(0.0f～1.0f)
+	@return		| 乱數(0.0f～1.0f)
 	@note		| 線形合同法で乱数生成
 *//*****************************************/
 float CDeer_Animal::Rand01()
@@ -116,6 +116,9 @@ void CDeer_Animal::Init()
 		pEscapeAI->SetEscapeAlignmentScale(0.4f);
 		pEscapeAI->SetFleeParams(1.8f, 22.0f);
 	}
+
+	// 脅威チェックタイマー初期化
+	m_fThreatCheckTimer =0.0f;
 }
 
 /*****************************************//*
@@ -126,8 +129,20 @@ void CDeer_Animal::Update()
 	// 親クラス更新
 	CHerbivorousAnimal::Update();
 
-	// 群れで脅威共有
-	SetThreat();
+	// 脅威チェック用タイマーを進める
+	m_fThreatCheckTimer += fDeltaTime;
+
+	// 逃避AIの場合、脅威がないときは一定間隔で脅威の有無をチェックして更新する
+	{
+		auto* pEscapeAI = dynamic_cast<CFlockEscapeAI*>(m_pActionAI);
+		bool currentlyHasThreat = (pEscapeAI != nullptr) ? pEscapeAI->HasThreat() : false;
+		if (currentlyHasThreat || m_fThreatCheckTimer >= m_fThreatCheckInterval)
+		{
+			// タイマーリセット
+			m_fThreatCheckTimer =0.0f;
+			SetThreat();
+		}
+	}
 
 	// 位置と速度取得
 	DirectX::XMFLOAT3 pos = m_tParam.m_f3Pos;

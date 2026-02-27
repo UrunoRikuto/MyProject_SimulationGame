@@ -60,4 +60,9 @@ private:
 	// @brief 乱数シード
 	unsigned int m_uRandSeed =0;
 
+	// @brief 威嚇チェックのためのタイマー（SetThreatの呼び出しを間引く）
+	float m_fThreatCheckTimer =0.0f;
+	// @brief 威嚇チェック間隔（秒）。脅威がないときはこの間隔でチェックする。
+	float m_fThreatCheckInterval =0.25f;
+
 };

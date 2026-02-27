@@ -16,8 +16,10 @@
 #include "FieldManager.h"
 #include "ModelRenderer.h"
 
-// @brief カリング距離
-constexpr float CULLING_DISTANCE = 100.0f;
+// @brief カリング距離(描画)
+constexpr float Draw_CULLING_DISTANCE = 100.0f;
+// @brief カリング距離(更新)
+constexpr float Update_CULLING_DISTANCE = 150.0f;
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -145,7 +147,7 @@ void CScene::Update()
 	DirectX::XMFLOAT3 camPos = CCamera::GetInstance()->GetPos(); // カメラに GetPosition() を用意している前提
 
 	// カリング距離（チューニング可能）
-	const float globalCullDistance = CULLING_DISTANCE;
+	const float globalCullDistance = Update_CULLING_DISTANCE;
     const float globalCullDistSq = globalCullDistance * globalCullDistance;
 
     for (auto& list : m_pGameObject_List)
@@ -214,7 +216,7 @@ void CScene::Draw()
     DirectX::XMFLOAT3 camPos = pCamera->GetPos(); // カメラに GetPosition() を用意している前提
 
     // カリング距離（チューニング可能）
-    const float globalCullDistance = CULLING_DISTANCE;
+    const float globalCullDistance = Draw_CULLING_DISTANCE;
     const float globalCullDistSq = globalCullDistance * globalCullDistance;
 
     for (auto& list : m_pGameObject_List)
