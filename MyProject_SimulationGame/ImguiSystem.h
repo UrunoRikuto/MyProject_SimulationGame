@@ -10,6 +10,7 @@
 #include "BuildObject.h"
 #include "imgui.h"
 #include "Generator.h"
+#include <string>
 
 
 
@@ -203,7 +204,7 @@ private:
 	bool m_bStoragehouseDisplay;
 
 	// @brief シード値
-	char seedInput[50] = "";
+	std::string m_seedInput;
 	unsigned int m_nSeed;
 	// @brief シード値設定フラグ
 	bool m_bSettingSeed = true;

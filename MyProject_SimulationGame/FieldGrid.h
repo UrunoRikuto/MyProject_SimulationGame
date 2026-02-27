@@ -31,8 +31,9 @@ public:
 	// @brief グリッドの解放
 	void Uninit();
 
-	// @brief フィールドセルの取得
-	std::vector<std::vector<CFieldCell*>> GetFieldCells() { return m_pFieldCells; }
+	// @brief フィールドセルの取得（参照を返してコピーを回避）
+	std::vector<std::vector<CFieldCell*>>& GetFieldCells() { return m_pFieldCells; }
+	const std::vector<std::vector<CFieldCell*>>& GetFieldCells() const { return m_pFieldCells; }
 
 	// @brief フィールドセルの取得
 	// @param In_Type セルタイプ

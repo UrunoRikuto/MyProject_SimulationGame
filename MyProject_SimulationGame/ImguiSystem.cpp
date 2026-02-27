@@ -20,10 +20,11 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <string>
 
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
-constexpr float ce_fCharaSize = 30.0f;
+constexpr float ce_fCharaSize =30.0f;
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -42,6 +43,7 @@ CImguiSystem::CImguiSystem()
 	, m_nSeed(0)
 	, m_bSettingSeed(false)
 {
+ m_seedInput.clear();
 }
 
 /****************************************//*
@@ -253,27 +255,33 @@ void CImguiSystem::DrawSeedInputMode()
 	ImGui::NewFrame();
 
 	// ウィンドウ背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f,0.1f,0.1f,1.0f));
 	// フレーム背景色の設定
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f,0.0f,0.0f,0.0f));
 	// フレーム境界線色の設定
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f,0.0f,0.0f,0.0f));
 
-	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH / 2) - 300, 600));
-	ImGui::SetNextWindowSize(ImVec2(600, 80));
+	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH /2) -300,600));
+	ImGui::SetNextWindowSize(ImVec2(600,80));
 
 	// フォントの設定
 	ImGui::PushFont(m_pReleaseFont);
 	ImGui::Begin("Seed Input Mode", nullptr,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar );
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(500, 60), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(500,60), ImGuiWindowFlags_NoTitleBar);
 
 	// シード値入力欄
 	ImGui::Separator();
 	ImGui::Text(u8"シード値を入力:");
 	ImGui::SameLine();
-	ImGui::InputText(" ", seedInput, IM_ARRAYSIZE(seedInput));
+	// use InputText with std::string via c_str-backed buffer - use InputText with flags to allow long input
+	static char buf[512] = {0};
+	if (!m_seedInput.empty()) {
+		strncpy_s(buf, m_seedInput.c_str(), sizeof(buf)-1);
+	}
+	if (ImGui::InputText("##seed_input", buf, sizeof(buf))) {
+		m_seedInput = std::string(buf);
+	}
 	ImGui::Separator();
-
 
 	ImGui::EndChild();
 	ImGui::End();
@@ -291,11 +299,22 @@ void CImguiSystem::DrawSeedInputMode()
 *//****************************************/
 void CImguiSystem::DecideSettingSeed()
 {
-	// シード値の設定
-
 	// 入力された文字がなかった場合
-	if (seedInput[0] == '\0') m_nSeed = 0;
-	else m_nSeed = static_cast<unsigned int>(std::stoul(seedInput));
+	if (m_seedInput.empty()) {
+		m_nSeed =0u;
+	} else {
+		// try to hash string to unsigned int if it is not numeric or too long
+		try {
+			// attempt to parse as unsigned long long, then narrow
+			unsigned long long val = std::stoull(m_seedInput);
+			m_nSeed = static_cast<unsigned int>(val &0xFFFFFFFFu);
+		} catch (...) {
+			// fallback: use std::hash to convert arbitrary string to seed
+			std::hash<std::string> hasher;
+			size_t h = hasher(m_seedInput);
+			m_nSeed = static_cast<unsigned int>(h &0xFFFFFFFFu);
+		}
+	}
 
 	// シード値設定完了フラグを立てる
 	m_bSettingSeed = true;

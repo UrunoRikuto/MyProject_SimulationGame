@@ -7,6 +7,9 @@
 #pragma once
 #include "Singleton.h"
 #include "FieldGrid.h"
+#include <functional>
+#include "BuildObject.h"
+#include "Scene.h"
 
 // @brief フィールド管理クラス
 class CFieldManager : public ISingleton<CFieldManager>
@@ -41,6 +44,13 @@ private:
 
 	// @brief 縄張りの作成
 	void CreateTerritory();
+
+
+	// @brief 建築物の作成と配置
+	// @param cells：建築物を配置するフィールドセルのリスト
+	// @param factory：建築物を生成するためのファクトリー関数
+	// @return 配置した建築物のポインタ
+	CBuildObject* CreateAndPlaceBuilding(std::vector<CFieldCell*>& cells, std::function<CBuildObject* (CScene*)> factory);
 
 private:
 	
