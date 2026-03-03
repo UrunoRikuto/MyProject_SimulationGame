@@ -4,6 +4,7 @@
 	@note		| 頂点・インデックス・インスタンスバッファの作成／更新／描画を行う
 *//***********************************************************************************/
 #include "MeshBuffer.h"
+#include <vector>
 
 /****************************************//*
 	@brief	| コンストラクタ
@@ -60,19 +61,33 @@ HRESULT MeshBuffer::Create(const Description& desc)
 
 	// 頂点/インデックス/インスタンスのデータをローカルにコピーして保持
 	rsize_t vtxMemSize = desc.vtxSize * desc.vtxCount;
+	// 内部コピーを作成
 	void* pVtx = new char[vtxMemSize];
+	// 外部から渡された頂点データを内部コピーに安全にコピー
 	memcpy_s(pVtx, vtxMemSize, desc.pVtx, vtxMemSize);
+	// 内部の記述情報の頂点データポインタをローカルコピーに設定
 	m_desc.pVtx = pVtx;
+
+	// インデックスデータがあれば同様にコピー
 	if (m_desc.pIdx) {
+		// インデックスのメモリサイズを計算
 		rsize_t idxMemSize = desc.idxSize * desc.idxCount;
+		// 内部コピーを作成
 		void* pIdx = new char[idxMemSize];
+		// 外部から渡されたインデックスデータを内部コピーに安全にコピー
 		memcpy_s(pIdx, idxMemSize, desc.pIdx, idxMemSize);
+		// 内部の記述情報のインデックスデータポインタをローカルコピーに設定
 		m_desc.pIdx = pIdx;
 	}
+	// インスタンスデータがあれば同様にコピー
 	if (m_desc.pInstance) {
+		// インスタンスのメモリサイズを計算
 		rsize_t instMemSize = desc.instanceSize * desc.instanceCount;
+		// 内部コピーを作成
 		void* pInst = new char[instMemSize];
+		// 外部から渡されたインスタンスデータを内部コピーに安全にコピー
 		memcpy_s(pInst, instMemSize, desc.pInstance, instMemSize);
+		// 内部の記述情報のインスタンスデータポインタをローカルコピーに設定
 		m_desc.pInstance = pInst;
 	}
 
@@ -147,6 +162,7 @@ HRESULT MeshBuffer::Write(void* pVtx)
 {
 	if (!m_desc.isWrite) { return E_FAIL; }
 
+	// デバイスコンテキストとマップ用構造体の宣言
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pContext = GetContext();
@@ -154,12 +170,18 @@ HRESULT MeshBuffer::Write(void* pVtx)
 
 	// バッファをマップしてデータをコピー
 	hr = pContext->Map(m_pVtxBuffer,0, D3D11_MAP_WRITE_DISCARD,0, &mapResource);
+
+	// マップ成功したらデータをコピーしてアンマップ
 	if (SUCCEEDED(hr))
 	{
+		// コピーするサイズは頂点数×頂点1つあたりのサイズ
 		rsize_t size = m_desc.vtxCount * m_desc.vtxSize;
+		// マップしたバッファに頂点データをコピー
 		memcpy_s(mapResource.pData, size, pVtx, size);
+		// コピー後はアンマップしてGPUにデータを反映
 		pContext->Unmap(m_pVtxBuffer,0);
 	}
+
 	return hr;
 }
 
@@ -184,9 +206,14 @@ HRESULT MeshBuffer::CreateVertexBuffer(const void* pVtx, UINT size, UINT count, 
 {
 	// バッファ記述を設定
 	D3D11_BUFFER_DESC bufDesc = {};
+	// 頂点バッファのサイズは頂点数×頂点1つあたりのサイズ
 	bufDesc.ByteWidth = size * count;
+	// 書き込み可能にする場合は動的バッファとして作成
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	// 頂点バッファは頂点バッファとしてバインド
 	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	// 書き込み可能にする場合は動的バッファとして作成し、CPUアクセスフラグを設定
 	if (isWrite)
 	{
 		bufDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -256,21 +283,31 @@ HRESULT MeshBuffer::CreateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	SAFE_RELEASE(m_pInstanceBuffer);
 	SAFE_DELETE_ARRAY(m_desc.pInstance);
 
+	// バッファ記述
 	D3D11_BUFFER_DESC bufDesc = {};
+	// インスタンスバッファは頂点バッファと同様に扱う（スロット1にセットする想定）
 	bufDesc.ByteWidth = size * count;
+	// インスタンスバッファは通常の頂点バッファと同じ使用方法で作成（動的にするかは用途次第）
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	// インスタンスバッファは頂点バッファとしてバインド
 	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	// 初期データ
 	D3D11_SUBRESOURCE_DATA subResource = {};
+	// インスタンスデータを初期データとして渡す
 	subResource.pSysMem = pInst;
 
+	// バッファ生成
 	ID3D11Device* pDevice = GetDevice();
 	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
 	if (FAILED(hr)) return hr;
 
 	// インスタンスデータを内部にコピーして保持
 	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
+	// 内部コピーを作成
 	m_desc.pInstance = new char[instMemSize];
+	// 外部から渡されたデータを内部コピーに保存
 	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
+	// インスタンスサイズと数を記録
 	m_desc.instanceSize = size;
 	m_desc.instanceCount = count;
 
@@ -290,15 +327,22 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pContext = GetContext();
+	if (!pContext) return E_FAIL;
 
-	//既存のインスタンスバッファがあり、容量が十分なら UpdateSubresourceで更新
+	// 既存バッファがあり容量が十分な場合は UpdateSubresource で更新
 	if (m_pInstanceBuffer && m_desc.instanceSize == size && m_desc.instanceCount >= count)
 	{
-		pContext->UpdateSubresource(m_pInstanceBuffer,0, nullptr, pInst, size * count,0);
-		// 内部コピーも更新
+		// 防御的にコピーを作る（呼び出し元のメモリが一時領域や無効になっている可能性に備える）
+		size_t bytes = static_cast<size_t>(size) * count;
+		std::vector<char> tmp;
+		try { tmp.resize(bytes); }
+		catch (...) { return E_OUTOFMEMORY; }
+		memcpy(tmp.data(), pInst, bytes);
+
+		pContext->UpdateSubresource(m_pInstanceBuffer, 0, nullptr, tmp.data(), static_cast<UINT>(bytes), 0);
 		if (m_desc.pInstance)
 		{
-			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, pInst, static_cast<rsize_t>(size) * count);
+			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, tmp.data(), static_cast<rsize_t>(size) * count);
 			m_desc.instanceCount = count;
 		}
 		return S_OK;
@@ -308,20 +352,30 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	SAFE_RELEASE(m_pInstanceBuffer);
 	SAFE_DELETE_ARRAY(m_desc.pInstance);
 
+	// バッファ記述
 	D3D11_BUFFER_DESC bufDesc = {};
+	// インスタンスバッファは頂点バッファと同様に扱う（スロット1にセットする想定）
 	bufDesc.ByteWidth = size * count;
+	// インスタンスバッファは通常の頂点バッファと同じ使用方法で作成（動的にするかは用途次第）
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	// インスタンスバッファは頂点バッファとしてバインド
 	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	// 初期データ
 	D3D11_SUBRESOURCE_DATA subResource = {};
+	// インスタンスデータを初期データとして渡す
 	subResource.pSysMem = pInst;
 
+	// バッファ生成
 	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
 	if (FAILED(hr)) return hr;
 
 	// 内部コピーを作成
 	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
+	// 外部から渡されたデータを内部コピーに保存
 	m_desc.pInstance = new char[instMemSize];
+	// 内部コピーに新しいデータを保存
 	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
+	// インスタンスサイズと数を記録
 	m_desc.instanceSize = size;
 	m_desc.instanceCount = count;
 
