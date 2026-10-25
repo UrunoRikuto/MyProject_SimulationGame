@@ -295,9 +295,9 @@ DirectX::XMFLOAT3 CGameObject::GetUp()
 
 /****************************************//*
     @brief　	| ワールド行列の取得
-    @return     | (DirectX::XMFLOAT4X4*)ワールド行列
+    @return     | (DirectX::XMFLOAT4X4)ワールド行列
 *//****************************************/
-DirectX::XMFLOAT4X4* CGameObject::GetWorld()
+DirectX::XMFLOAT4X4 CGameObject::GetWorld()
 {
     DirectX::XMFLOAT4X4 world;
 
@@ -305,7 +305,7 @@ DirectX::XMFLOAT4X4* CGameObject::GetWorld()
         DirectX::XMMatrixRotationRollPitchYaw(m_tParam.m_f3Rotate.x, m_tParam.m_f3Rotate.y, m_tParam.m_f3Rotate.z) *
         DirectX::XMMatrixTranslation(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z));
 
-    return &world;
+    return world;
 }
 
 /****************************************//*

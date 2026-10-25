@@ -226,8 +226,8 @@ public:
     const ObjectID& GetID() const { return m_tID; }
     
 	// @brief オブジェクトのワールド行列を取得
-	// @return (DirectX::XMFLOAT4X4*)オブジェクトのワールド行列参照
-    DirectX::XMFLOAT4X4* GetWorld();
+	// @return (DirectX::XMFLOAT4X4)オブジェクトのワールド行列
+    DirectX::XMFLOAT4X4 GetWorld();
 
 	// @brief オブジェクトの境界半径を取得
 	// @return (float)オブジェクトの境界半径
