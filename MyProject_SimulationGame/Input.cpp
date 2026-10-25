@@ -54,7 +54,7 @@ bool IsKeyRepeat(BYTE key)
 }
 
 // マウス座標取得
-POINT* GetMousePosition(bool CenterIsZero)
+POINT GetMousePosition(bool CenterIsZero)
 {
     POINT pt = g_Mouse;
     if (CenterIsZero)
@@ -62,7 +62,7 @@ POINT* GetMousePosition(bool CenterIsZero)
         pt.x -= SCREEN_WIDTH / 2;
         pt.y -= SCREEN_HEIGHT / 2;
     }
-    return &pt;
+    return pt;
 }
 
 void SetMousePosition(POINT inPos, bool CenterIsZero)
@@ -104,7 +104,7 @@ bool IsMouseButtonRelease(DWORD dwBtnID)
 
 bool IsMouseHover(DirectX::XMFLOAT2 inPos, DirectX::XMFLOAT2 inSize)
 {
-    POINT pt = *GetMousePosition();
+    POINT pt = GetMousePosition();
     if (inPos.x - inSize.x * 0.5f <= pt.x && inPos.x + inSize.x * 0.5f >= pt.x)
     {
         if (inPos.y - inSize.y * 0.5f <= pt.y && inPos.y + inSize.y * 0.5f >= pt.y)

@@ -20,7 +20,7 @@ bool IsKeyPress(BYTE key);
 bool IsKeyTrigger(BYTE key);
 bool IsKeyRelease(BYTE key);
 bool IsKeyRepeat(BYTE key);
-POINT* GetMousePosition(bool CenterIsZero = true);
+POINT GetMousePosition(bool CenterIsZero = true);
 void SetMousePosition(POINT inPos, bool CenterIsZero = true);
 bool IsMouseButtonPress(DWORD dwBtnID);
 bool IsMouseButtonTrigger(DWORD dwBtnID);
