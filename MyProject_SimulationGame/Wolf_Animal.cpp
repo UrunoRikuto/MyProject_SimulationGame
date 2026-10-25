@@ -12,12 +12,18 @@
 #include "GameTimeManager.h"
 #include <algorithm>
 
+// @brief 近隣の同種動物として扱う距離
+constexpr float Wolf_Flock_Radius = 20.0f;
+
 /****************************************//*
 	@brief	| コンストラクタ
 *//****************************************/
 CWolf_Animal::CWolf_Animal()
 	: CCarnivorousAnimal()
 {
+	// 群れ情報の更新用に、生成されたオオカミを全体のリストへ登録する
+	s_AllWolves.push_back(this);
+
 	BoidsParams params;
 
 	// --- 視野半径と分離半径 ---
@@ -48,6 +54,8 @@ CWolf_Animal::CWolf_Animal()
 *//****************************************/
 CWolf_Animal::~CWolf_Animal()
 {
+	// 全体のリストから登録を外す
+	s_AllWolves.erase(std::remove(s_AllWolves.begin(), s_AllWolves.end(), this), s_AllWolves.end());
 }
 
 /****************************************//*
@@ -77,6 +85,12 @@ void CWolf_Animal::Update()
 	{
 		m_fAttackCooldown -= fDeltaTime;
 		if (m_fAttackCooldown < 0.0f) m_fAttackCooldown = 0.0f;
+	}
+
+	// 群れの情報(近隣の同種動物の位置・速度・標的)を最新の状態にする
+	if (CAnimal::s_bRefreshFlockInfo)
+	{
+		RefreshFlock();
 	}
 
 	// この更新で標的に設定した草食動物(後の標的取得で再検索せずに済むよう保持する)
@@ -265,8 +279,9 @@ CHerbivorousAnimal* CWolf_Animal::SetTarget()
 	// 群れの誰かがターゲットを持っていたら共有
 	for (const BoidsNeighbor& Animal : m_SameAnimalNeighbors)
 	{
-		// ターゲットが設定されていなければスキップ
-		if (!Animal.bSetTarget) continue;
+		// ターゲットが設定されていない、または自分が既にターゲットを持っている場合はスキップ
+		// (持っている間も共有すると、群れ全員が互いの古いターゲット位置を写し合い続けてしまう)
+		if (!Animal.bSetTarget || pFlockAI->HasTarget()) continue;
 		// ターゲット位置共有
 		pFlockAI->SetTargetPosition(Animal.pTargetPos);
 		return nullptr;
@@ -285,9 +300,11 @@ CHerbivorousAnimal* CWolf_Animal::SetTarget()
 }
 
 /****************************************//*
-	@brief	| 群れ登録
+	@brief	| 近隣の同種動物の情報を作り直す
+	@param	| In_Wolfs：オオカミリスト
+	@param	| fRadius：近隣として扱う距離
 *//****************************************/
-void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
+void CWolf_Animal::RefreshNeighbors(const std::vector<CWolf_Animal*>& In_Wolfs, float fRadius)
 {
 	// 同種動物リストクリア
 	m_SameAnimalNeighbors.clear();
@@ -296,11 +313,11 @@ void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 	for (CWolf_Animal* wolf : In_Wolfs)
 	{
 		// 自分自身はスキップ
-		if (wolf == this) continue;
+		if (wolf == this || wolf->IsDestroy() || wolf->IsDead()) continue;
 
 		// 一定距離以上離れていたらスキップ
 		float dist = StructMath::Distance(GetPos(), wolf->GetPos());
-		if (dist >20.0f) continue;
+		if (dist > fRadius) continue;
 
 		// 群れの動物の行動AI取得
 		auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(wolf->m_pActionAI);
@@ -319,6 +336,16 @@ void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 		// リストに追加
 		m_SameAnimalNeighbors.push_back(neighbor);
 	}
+}
+
+/****************************************//*
+	@brief	| 群れ登録
+	@param	| In_Wolfs：オオカミリスト
+*//****************************************/
+void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
+{
+	// 生成時点の近隣情報を登録
+	RefreshNeighbors(In_Wolfs, Wolf_Flock_Radius);
 
 	// 自身のホームポジション設定
 	if (auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI))
@@ -326,4 +353,13 @@ void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 		// ホームポジション設定
 		pFlockAI->SetHomePosition(GetPos());
 	}
+}
+
+/****************************************//*
+	@brief	| 群れの情報を最新の状態に更新
+	@note	| 生成されている全てのオオカミから、近隣の位置・速度・標的を作り直す
+*//****************************************/
+void CWolf_Animal::RefreshFlock()
+{
+	RefreshNeighbors(s_AllWolves, Wolf_Flock_Radius);
 }

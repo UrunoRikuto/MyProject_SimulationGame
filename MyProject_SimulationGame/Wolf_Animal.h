@@ -36,7 +36,18 @@ public:
 	// @param In_Wolfs：オオカミリスト
 	void RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs);
 
+	// @brief 群れの情報(近隣の同種動物の位置・速度・標的)を最新の状態に更新
+	void RefreshFlock();
+
 private:
+	// @brief 近隣の同種動物の情報を作り直す
+	// @param In_Wolfs：オオカミリスト
+	// @param fRadius：近隣として扱う距離
+	void RefreshNeighbors(const std::vector<CWolf_Animal*>& In_Wolfs, float fRadius);
+
+	// @brief 生成されている全てのオオカミ(群れ情報の更新用)
+	inline static std::vector<CWolf_Animal*> s_AllWolves;
+
 	// @brief 攻撃クールダウン（秒）
 	float m_fAttackCooldown =0.0f;
 };
