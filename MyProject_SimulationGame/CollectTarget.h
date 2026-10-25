@@ -48,6 +48,9 @@ public:
 	// @brief ターゲット標的に指定してきているゲームオブジェクトのIDを設定
 	void SetTargetingID(const ObjectID& id) { m_TargetingID = id; }
 
+	// @brief 連携しているフィールドセルのインデックスを取得
+	DirectX::XMINT2 GetLinkedCellIndex() const { return m_LinkedCellIndex; }
+
 	// @brief 耐久地を減らす
 	// @param damage：減らす耐久値
 	void DecreaseHp(const float damage);

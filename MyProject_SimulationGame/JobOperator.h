@@ -27,6 +27,8 @@
 #include "StoneGatherer_Job.h"
 //-草
 #include "GrassGatherer_Job.h"
+//-狩猟
+#include "Hunter_Job.h"
 
 /*********************//*
 	加工職
@@ -39,6 +41,8 @@
 #include "Cook_Job.h"
 //-農業
 #include "Farmer_Job.h"
+//-開拓
+#include "Pioneer_Job.h"
 
 // @brief 職業ストラテジーを名前から生成するファクトリ関数
 // @param name：生成する職業の名前

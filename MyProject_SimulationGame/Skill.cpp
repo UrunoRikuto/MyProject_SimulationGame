@@ -45,6 +45,8 @@ CSkill::CSkill()
 	case CSkill::SkillTarget::Builder:
 	case CSkill::SkillTarget::Cook:
 	case CSkill::SkillTarget::Smith:
+	case CSkill::SkillTarget::Hunter:
+	case CSkill::SkillTarget::Pioneer:
 		randomEffects.push_back(SkillEffect::Multiplier_1_5);
 		break;
 	default:
@@ -133,6 +135,14 @@ void CSkill::ApplySkillBuff(float& Out_WorkPower, IJob_Strategy* In_Job)
 		// 鍛冶職かどうか確認
 		if (dynamic_cast<CSmith_Job*>(In_Job) != nullptr)IsTargetJob = true;
 		break;
+	case CSkill::SkillTarget::Hunter:
+		// 狩猟職かどうか確認
+		if (dynamic_cast<CHunter_Job*>(In_Job) != nullptr)IsTargetJob = true;
+		break;
+	case CSkill::SkillTarget::Pioneer:
+		// 開拓職かどうか確認
+		if (dynamic_cast<CPioneer_Job*>(In_Job) != nullptr)IsTargetJob = true;
+		break;
 	}
 
 	// スキル対象でなければ処理終了
@@ -191,6 +201,12 @@ void CSkill::DrawSkillImGui()
 		break;
 	case CSkill::SkillTarget::Smith:
 		skillTargetStr = JobName::Smith;
+		break;
+	case CSkill::SkillTarget::Hunter:
+		skillTargetStr = JobName::Hunter;
+		break;
+	case CSkill::SkillTarget::Pioneer:
+		skillTargetStr = JobName::Pioneer;
 		break;
 	case CSkill::SkillTarget::None:
 		skillTargetStr = u8"なし";

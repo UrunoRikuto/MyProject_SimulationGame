@@ -23,6 +23,8 @@ public:
 		Builder,		// Œš’zE
 		Cook,			// —¿—E
 		Smith,			// ’b–èE
+		Hunter,			// ë—ÂE
+		Pioneer,		// ŠJ‘ñE
 
 		MAX,
 		None			// ƒXƒLƒ‹‘ÎÛ‚È‚µ

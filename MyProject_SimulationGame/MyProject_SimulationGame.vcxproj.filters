@@ -82,6 +82,9 @@
     <Filter Include="コードファイル\System\Job\Collect\Gatherer">
       <UniqueIdentifier>{9ea2c148-e701-4b13-b0f3-4e5d2e81998e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="コードファイル\System\Job\Collect\Hunter">
+      <UniqueIdentifier>{4f29cc99-6246-4a55-b6c0-6c1b68cb118d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="コードファイル\System\Generator">
       <UniqueIdentifier>{67ec8cb8-bb32-4110-8ddf-a400bc6ddcf9}</UniqueIdentifier>
     </Filter>
@@ -378,6 +381,12 @@
     <ClInclude Include="Builder_Job.h">
       <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
+    <ClInclude Include="Pioneer_Job.h">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClInclude>
+    <ClInclude Include="Hunter_Job.h">
+      <Filter>コードファイル\System\Job\Collect\Hunter</Filter>
+    </ClInclude>
     <ClInclude Include="Smith_Job.h">
       <Filter>コードファイル\System\Job\Crafter</Filter>
     </ClInclude>
@@ -655,6 +664,12 @@
     </ClCompile>
     <ClCompile Include="Builder_Job.cpp">
       <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClCompile>
+    <ClCompile Include="Pioneer_Job.cpp">
+      <Filter>コードファイル\System\Job\Crafter</Filter>
+    </ClCompile>
+    <ClCompile Include="Hunter_Job.cpp">
+      <Filter>コードファイル\System\Job\Collect\Hunter</Filter>
     </ClCompile>
     <ClCompile Include="Smith_Job.cpp">
       <Filter>コードファイル\System\Job\Crafter</Filter>

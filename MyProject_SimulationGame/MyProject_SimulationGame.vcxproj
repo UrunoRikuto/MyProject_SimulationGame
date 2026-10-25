@@ -148,6 +148,8 @@
     <ClInclude Include="BlackSmith.h" />
     <ClInclude Include="BoidsSteering.h" />
     <ClInclude Include="Builder_Job.h" />
+    <ClInclude Include="Hunter_Job.h" />
+    <ClInclude Include="Pioneer_Job.h" />
     <ClInclude Include="BuildManager.h" />
     <ClInclude Include="BuildObject.h" />
     <ClInclude Include="Camera.h" />
@@ -249,6 +251,8 @@
     <ClCompile Include="BlackSmith.cpp" />
     <ClCompile Include="BoidsSteering.cpp" />
     <ClCompile Include="Builder_Job.cpp" />
+    <ClCompile Include="Hunter_Job.cpp" />
+    <ClCompile Include="Pioneer_Job.cpp" />
     <ClCompile Include="BuildManager.cpp" />
     <ClCompile Include="BuildObject.cpp" />
     <ClCompile Include="Camera.cpp" />

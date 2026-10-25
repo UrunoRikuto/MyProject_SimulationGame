@@ -47,6 +47,14 @@ std::unique_ptr<IJob_Strategy> CreateJobByName(const std::string& name, CHuman& 
 	{
 		pJob = std::make_unique<CGrassGatherer_Job>();
 	}
+	else if (name == JobName::Hunter)
+	{
+		pJob = std::make_unique<CHunter_Job>();
+	}
+	else if (name == JobName::Pioneer)
+	{
+		pJob = std::make_unique<CPioneer_Job>();
+	}
 
 	// E‹Æ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡A–³E‚ğİ’è
 	if (pJob == nullptr)

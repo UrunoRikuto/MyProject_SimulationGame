@@ -72,7 +72,9 @@ std::vector<std::string> CCivLevelManager::GetUnlockJobNames()
 	if (m_nCivLevel >=  1)pUnlockJobNames.push_back(JobName::WoodGatherer);		// –ØŞûWE‹Æ
 	if (m_nCivLevel >=  1)pUnlockJobNames.push_back(JobName::StoneGatherer);	// ÎûWE‹Æ
 	if (m_nCivLevel >=  3)pUnlockJobNames.push_back(JobName::Builder);			// Œš’zE‹Æ
+	if (m_nCivLevel >=  4)pUnlockJobNames.push_back(JobName::Pioneer);			// ŠJ‘ñE‹Æ
 	if (m_nCivLevel >=  5)pUnlockJobNames.push_back(JobName::Cook);				// —¿—E‹Æ
+	if (m_nCivLevel >=  6)pUnlockJobNames.push_back(JobName::Hunter);			// ë—ÂE‹Æ
 	if (m_nCivLevel >=  8)pUnlockJobNames.push_back(JobName::GrassGatherer);	// ‘ûWE‹Æ
 	if (m_nCivLevel >= 10)pUnlockJobNames.push_back(JobName::Farmer);			// ”_‹ÆE‹Æ
 	if (m_nCivLevel >= 12)pUnlockJobNames.push_back(JobName::Smith);			// ’b–èE‹Æ
