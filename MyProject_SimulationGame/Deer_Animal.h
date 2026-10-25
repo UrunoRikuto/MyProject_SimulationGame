@@ -30,7 +30,18 @@ public:
 	// @param In_Deers：鹿リスト
 	void RegisterToFlock(std::vector<CDeer_Animal*> In_Deers);
 
+	// @brief 群れの情報(近隣の同種動物の位置・速度・脅威)を最新の状態に更新
+	void RefreshFlock();
+
 private:
+
+	// @brief 近隣の同種動物の情報を作り直す
+	// @param In_Deers：鹿リスト
+	// @param fRadius：近隣として扱う距離
+	void RefreshNeighbors(const std::vector<CDeer_Animal*>& In_Deers, float fRadius);
+
+	// @brief 生成されている全ての鹿(群れ情報の更新用)
+	inline static std::vector<CDeer_Animal*> s_AllDeer;
 
 	// @brief 0..1の乱数取得
 	float Rand01();

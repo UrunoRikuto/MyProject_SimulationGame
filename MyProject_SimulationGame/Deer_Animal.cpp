@@ -11,6 +11,10 @@
 #include "Oparation.h"
 #include <cstdint>
 #include <algorithm>
+#include <cfloat>
+
+// @brief 近隣の同種動物として扱う距離(生成時の登録は距離を問わない)
+constexpr float Deer_Flock_Radius = 30.0f;
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -18,6 +22,9 @@
 CDeer_Animal::CDeer_Animal()
 	: CHerbivorousAnimal()
 {
+	// 群れ情報の更新用に、生成された鹿を全体のリストへ登録する
+	s_AllDeer.push_back(this);
+
 	// Boidsパラメータ設定
 	BoidsParams params;
 
@@ -48,6 +55,8 @@ CDeer_Animal::CDeer_Animal()
 *//*****************************************/
 CDeer_Animal::~CDeer_Animal()
 {
+	// 全体のリストから登録を外す
+	s_AllDeer.erase(std::remove(s_AllDeer.begin(), s_AllDeer.end(), this), s_AllDeer.end());
 }
 
 /*****************************************//*
@@ -128,6 +137,12 @@ void CDeer_Animal::Update()
 {
 	// 親クラス更新
 	CHerbivorousAnimal::Update();
+
+	// 群れの情報(近隣の同種動物の位置・速度・脅威)を最新の状態にする
+	if (CAnimal::s_bRefreshFlockInfo)
+	{
+		RefreshFlock();
+	}
 
 	// 脅威チェック用タイマーを進める
 	m_fThreatCheckTimer += fDeltaTime;
@@ -403,10 +418,11 @@ void CDeer_Animal::SetThreat()
 }
 
 /*****************************************//*
-	@brief　	| 群れの登録
+	@brief　	| 近隣の同種動物の情報を作り直す
 	@param　	| In_Deers：同種の動物リスト
+	@param	| fRadius：近隣として扱う距離
 *//*****************************************/
-void CDeer_Animal::RegisterToFlock(std::vector<CDeer_Animal*> In_Deers)
+void CDeer_Animal::RefreshNeighbors(const std::vector<CDeer_Animal*>& In_Deers, float fRadius)
 {
 	// 既存データクリア
 	m_SameAnimalNeighbors.clear();
@@ -415,7 +431,10 @@ void CDeer_Animal::RegisterToFlock(std::vector<CDeer_Animal*> In_Deers)
 	for (CDeer_Animal* deer : In_Deers)
 	{
 		// 自分自身はスキップ
-		if (deer == this) continue;
+		if (deer == this || deer->IsDestroy() || deer->IsDead()) continue;
+
+		// 近隣として扱う距離より離れていたらスキップ
+		if (StructMath::Distance(GetPos(), deer->GetPos()) > fRadius) continue;
 
 		// 逃避AI取得
 		auto* pEscapeAI = dynamic_cast<CFlockEscapeAI*>(deer->m_pActionAI);
@@ -434,4 +453,23 @@ void CDeer_Animal::RegisterToFlock(std::vector<CDeer_Animal*> In_Deers)
 		// リストに追加
 		m_SameAnimalNeighbors.push_back(neighbor);
 	}
+}
+
+/*****************************************//*
+	@brief	| 群れの登録
+	@param	| In_Deers：同種の動物リスト
+*//*****************************************/
+void CDeer_Animal::RegisterToFlock(std::vector<CDeer_Animal*> In_Deers)
+{
+	// 生成時点の近隣情報を登録(距離は問わない)
+	RefreshNeighbors(In_Deers, FLT_MAX);
+}
+
+/*****************************************//*
+	@brief	| 群れの情報を最新の状態に更新
+	@note	| 生成されている全ての鹿から、近隣の位置・速度・脅威を作り直す
+*//*****************************************/
+void CDeer_Animal::RefreshFlock()
+{
+	RefreshNeighbors(s_AllDeer, Deer_Flock_Radius);
 }
