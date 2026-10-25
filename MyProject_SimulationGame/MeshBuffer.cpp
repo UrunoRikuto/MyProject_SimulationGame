@@ -339,7 +339,17 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 		catch (...) { return E_OUTOFMEMORY; }
 		memcpy(tmp.data(), pInst, bytes);
 
-		pContext->UpdateSubresource(m_pInstanceBuffer, 0, nullptr, tmp.data(), static_cast<UINT>(bytes), 0);
+		// pDstBox に nullptr を渡すとバッファ全体（確保時の旧サイズ）を上書き対象として扱われ、
+		// tmp（新しい小さいサイズ）の範囲外を読み取ってしまう（GPUドライバ内でのアクセス違反の原因）。
+		// 更新範囲を実際に書き込むバイト数だけに限定する。
+		D3D11_BOX box = {};
+		box.left = 0;
+		box.right = static_cast<UINT>(bytes);
+		box.top = 0;
+		box.bottom = 1;
+		box.front = 0;
+		box.back = 1;
+		pContext->UpdateSubresource(m_pInstanceBuffer, 0, &box, tmp.data(), 0, 0);
 		if (m_desc.pInstance)
 		{
 			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, tmp.data(), static_cast<rsize_t>(size) * count);
