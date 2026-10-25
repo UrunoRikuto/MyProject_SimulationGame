@@ -155,6 +155,10 @@ void CFieldManager::CreateFieldType()
 		pImGui->SetSeed(seed);
 	}
 
+	// 地形以外（縄張り・初期建物の配置・スキル付与など）の rand() も
+	// 同じシード値で再現できるよう、シード確定後に初期化し直す
+	srand(seed);
+
 	// FBMノイズパラメータ
 	FbmNoise::Params fbmParams;
 	fbmParams.octaves =10;
