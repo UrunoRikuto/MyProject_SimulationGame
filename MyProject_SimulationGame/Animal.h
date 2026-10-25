@@ -22,6 +22,10 @@ public:
 	// @brief セルの登録
 	void RegisterToCell(DirectX::XMINT2 In_n2Cell) { m_n2BornCellIndex = In_n2Cell; }
 
+	// @brief 群れの情報(近隣の位置・速度・標的)を毎フレーム最新に更新するかどうか
+	// @note デバッグ用。falseにすると、生成時にコピーした情報のままで動作する(従来の動作)
+	inline static bool s_bRefreshFlockInfo = true;
+
 protected:
 	// @brief 生誕した場所のセルインデックス
 	DirectX::XMINT2 m_n2BornCellIndex;
