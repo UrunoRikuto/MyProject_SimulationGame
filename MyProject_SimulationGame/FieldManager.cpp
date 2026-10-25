@@ -90,25 +90,20 @@ void CFieldManager::DebugDraw()
 	DirectX::XMFLOAT3 cameraPos = CCamera::GetInstance()->GetLook();
 
 	// カメラ位置に最も近いフィールドセルを中心座標に設定
-	float minDistanceSq = FLT_MAX; // 平方距離で比較して sqrt を避ける
-	for (const auto& col : fieldCells)
+	// (セルは等間隔に並んでいるため、全セルを走査せずカメラ位置からインデックスを直接求める)
+	if (!fieldCells.empty() && !fieldCells[0].empty())
 	{
-		for (const auto& cell : col)
-		{
-			// フィールドセルの中心座標を取得
-			DirectX::XMFLOAT3 cellPos = cell->GetPos();
+		// 先頭セルの位置を基準に、カメラ位置をセルのインデックスに変換
+		const DirectX::XMFLOAT3 originPos = fieldCells[0][0]->GetPos();
+		int nearX = static_cast<int>(floorf((cameraPos.x - originPos.x) / CFieldCell::CELL_SIZE.x + 0.5f));
+		int nearY = static_cast<int>(floorf((cameraPos.z - originPos.z) / CFieldCell::CELL_SIZE.z + 0.5f));
 
-			// カメラ位置とフィールドセルの距離の平方を計算
-			float dx = cameraPos.x - cellPos.x;
-			float dz = cameraPos.z - cellPos.z;
-			float distSq = dx * dx + dz * dz;
-			if (distSq < minDistanceSq)
-			{
-				CenterPos.x = cell->GetIndex().x - CFieldGrid::GridSizeX /2;
-				CenterPos.y = cell->GetIndex().y - CFieldGrid::GridSizeY /2;
-				minDistanceSq = distSq;
-			}
-		}
+		// グリッドの範囲内に収める
+		nearX = std::clamp(nearX, 0, static_cast<int>(fieldCells.size()) - 1);
+		nearY = std::clamp(nearY, 0, static_cast<int>(fieldCells[0].size()) - 1);
+
+		CenterPos.x = nearX - CFieldGrid::GridSizeX / 2;
+		CenterPos.y = nearY - CFieldGrid::GridSizeY / 2;
 	}
 
 	//ループ範囲を安全にクリップして不要な境界チェックを減らす
