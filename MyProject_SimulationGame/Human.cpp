@@ -599,36 +599,37 @@ void CHuman::GoEatFood()
 			pFoodItem = pStorageHouse->TakeOutItem(CItem::ITEM_CATEGORY::UnCookedFood);
 		}
 
-		// 食料アイテムがあれば
-		if (pFoodItem)
-		{
-			// 食料アイテムのカテゴリーによって空腹度回復量を変える
-			switch (pFoodItem->GetItemCategory())
-			{
-				// 未調理食料アイテム
-			case CItem::ITEM_CATEGORY::UnCookedFood:
-				// 食料アイテムを食べる(0.5倍)
-				m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType()) * Human_UnCookedFood_Hunger_Recovery_Multiplier;
-				break;
-				// 調理済み食料アイテム
-			case CItem::ITEM_CATEGORY::CookedFood:
-				// 食料アイテムを食べる(等倍)
-				m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType());
-				break;
-			}
-			// 空腹度が最大値を超えないように補正
-			if (m_fHunger > Max_Hunger)
-			{
-				m_fHunger = Max_Hunger;
-			}
-		}
 		// 食料が見つからなかった場合は仕事状態に移行
-		else
+		if (pFoodItem == nullptr)
 		{
 			m_eState = CHuman::HUMAN_STATE::Working;
+			return;
 		}
 	}
-	
+
+	// 食料アイテムのカテゴリーによって空腹度回復量を変える
+	// (所持品から食べた場合も貯蔵庫から食べた場合も同じ回復量になる)
+	switch (pFoodItem->GetItemCategory())
+	{
+		// 未調理食料アイテム
+	case CItem::ITEM_CATEGORY::UnCookedFood:
+		// 食料アイテムを食べる(0.5倍)
+		m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType()) * Human_UnCookedFood_Hunger_Recovery_Multiplier;
+		break;
+		// 調理済み食料アイテム
+	case CItem::ITEM_CATEGORY::CookedFood:
+		// 食料アイテムを食べる(等倍)
+		m_fHunger += CItem::GetHungerRecoveryValue(pFoodItem->GetItemType());
+		break;
+	}
+	// 空腹度が最大値を超えないように補正
+	if (m_fHunger > Max_Hunger)
+	{
+		m_fHunger = Max_Hunger;
+	}
+
+	// 食べた食料アイテムは取り出した時点で自分だけが持っているため破棄する
+	delete pFoodItem;
 }
 
 /****************************************//*
