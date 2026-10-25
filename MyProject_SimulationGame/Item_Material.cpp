@@ -15,6 +15,8 @@ std::vector<CItem::Material> ToolMaterials::GetToolMaterials(CItem::ITEM_TYPE eT
 {
 	switch (eType)
 	{
+	case CItem::ITEM_TYPE::Spear:
+		return Spear;
 	case CItem::ITEM_TYPE::Pickaxe:
 		return Pickaxe;
 	case CItem::ITEM_TYPE::Axe:

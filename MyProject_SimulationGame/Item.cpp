@@ -34,6 +34,8 @@ float CItem::GetHungerRecoveryValue(CItem::ITEM_TYPE eType)
 {
 	switch (eType)
 	{
+	case CItem::ITEM_TYPE::Meat:
+		return 40.0f; // “÷‚Ì‹ó• ‰ñ•œ’l
 	case CItem::ITEM_TYPE::Apple:
 		return 20.0f; // ƒŠƒ“ƒS‚Ì‹ó• ‰ñ•œ’l
 	case CItem::ITEM_TYPE::ApplePie:

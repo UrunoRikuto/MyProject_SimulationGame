@@ -31,9 +31,13 @@ public:
 		Axe,
 		// 鎌
 		Sickle,
+		// 槍
+		Spear,
 
 		// リンゴ
 		Apple,
+		// 肉
+		Meat,
 		// 砂糖
 		Sugar,
 		// アップルパイ
@@ -59,7 +63,9 @@ public:
 		case ITEM_TYPE::Pickaxe:	return u8"つるはし";
 		case ITEM_TYPE::Axe:		return u8"斧";
 		case ITEM_TYPE::Sickle:		return u8"鎌";
+		case ITEM_TYPE::Spear:		return u8"槍";
 		case ITEM_TYPE::Apple:		return u8"リンゴ";
+		case ITEM_TYPE::Meat:		return u8"肉";
 		case ITEM_TYPE::Sugar:		return u8"砂糖";
 		case ITEM_TYPE::ApplePie:	return u8"アップルパイ";
 		case ITEM_TYPE::Wheat:		return u8"麦";
@@ -112,6 +118,7 @@ public:
 		case ITEM_TYPE::Wheat:
 			return ITEM_CATEGORY::Material;
 		case ITEM_TYPE::Apple:
+		case ITEM_TYPE::Meat:
 			return ITEM_CATEGORY::UnCookedFood;
 		case ITEM_TYPE::ApplePie:
 		case ITEM_TYPE::Bread:
@@ -119,6 +126,7 @@ public:
 		case ITEM_TYPE::Pickaxe:
 		case ITEM_TYPE::Axe:
 		case ITEM_TYPE::Sickle:
+		case ITEM_TYPE::Spear:
 			return ITEM_CATEGORY::Tool;
 		case ITEM_TYPE::WheatSeed:
 			return ITEM_CATEGORY::Seed;

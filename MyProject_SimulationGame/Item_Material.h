@@ -30,6 +30,12 @@ namespace ToolMaterials
 		{ CItem::ITEM_TYPE::Iron,  2 }
 	};
 
+	// @brief 槍の素材リスト
+	const std::vector<CItem::Material> Spear = {
+		{ CItem::ITEM_TYPE::Wood,  4 },
+		{ CItem::ITEM_TYPE::Iron,  3 }
+	};
+
 	// @brief 指定された道具タイプの素材リストを取得
 	std::vector<CItem::Material> GetToolMaterials(CItem::ITEM_TYPE eType);
 }
