@@ -10,6 +10,7 @@
 #include "Main.h"
 #include "Camera.h"
 #include "Human.h"
+#include "Animal.h"
 #include "BuildManager.h"
 #include "GameTimeManager.h"
 #include "CivLevelManager.h"
@@ -519,6 +520,9 @@ void CImguiSystem::DrawUpdateTick()
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(ce_f2InspecterSize), ImGuiWindowFlags_NoTitleBar);
 	ImGui::Checkbox(u8"更新処理を行う", &m_bUpdate);
 	ImGui::EndChild();
+
+	// 群れ(狼・鹿)の近隣情報を毎フレーム更新するか(オフにすると従来の動作で見比べられる)
+	ImGui::Checkbox(u8"群れ情報を毎フレーム更新", &CAnimal::s_bRefreshFlockInfo);
 
 	if (!m_bUpdate)
 	{
