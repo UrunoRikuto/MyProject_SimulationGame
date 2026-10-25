@@ -223,7 +223,7 @@ public:
     
 	// @brief オブジェクトの識別用IDを取得
 	// @return (ObjectID)オブジェクトの識別用ID
-    ObjectID GetID() { return m_tID; }
+    const ObjectID& GetID() const { return m_tID; }
     
 	// @brief オブジェクトのワールド行列を取得
 	// @return (DirectX::XMFLOAT4X4*)オブジェクトのワールド行列参照
