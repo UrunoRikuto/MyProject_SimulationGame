@@ -7,6 +7,9 @@
 #pragma once
 #include "CarnivorousAnimal.h"
 
+// 前方宣言
+class CHerbivorousAnimal;
+
 
 // 狼クラス
 class CWolf_Animal final: public CCarnivorousAnimal
@@ -25,7 +28,9 @@ public:
 	void Update() override;
 
 	// @brief 標的の設定
-	void SetTarget();
+	// @return 標的に設定した草食動物(標的を設定しなかった場合はnullptr)
+	// @note 戻り値のポインタは、この関数を呼んだ同じフレーム内でのみ有効
+	CHerbivorousAnimal* SetTarget();
 
 	// @brief 群れの登録
 	// @param In_Wolfs：オオカミリスト

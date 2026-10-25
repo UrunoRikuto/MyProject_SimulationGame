@@ -79,13 +79,16 @@ void CWolf_Animal::Update()
 		if (m_fAttackCooldown < 0.0f) m_fAttackCooldown = 0.0f;
 	}
 
+	// この更新で標的に設定した草食動物(後の標的取得で再検索せずに済むよう保持する)
+	CHerbivorousAnimal* pSetTarget = nullptr;
+
 	// 時間帯による標的設定/解除
 	switch (CGameTimeManager::GetInstance()->GetCurrentDayTime())
 	{
 	case CGameTimeManager::DAY_TIME::EVENING:
 	case CGameTimeManager::DAY_TIME::NIGHT:
 		// 夕方～夜は標的設定
-		SetTarget();
+		pSetTarget = SetTarget();
 		break;
 	default:
 		// その他は標的解除
@@ -149,7 +152,18 @@ void CWolf_Animal::Update()
 			// 標的の位置取得
 			DirectX::XMFLOAT3 targetPos = pFlockAI->GetTargetPosition();
 			// 標的の動物取得
-			pTarget = GetScene()->GetGameObject<CHerbivorousAnimal>(targetPos);
+			// この更新で標的に設定した動物が標的位置にいる場合は、再検索せずにそのまま使う
+			if (pSetTarget != nullptr &&
+				pSetTarget->GetPos().x == targetPos.x &&
+				pSetTarget->GetPos().y == targetPos.y &&
+				pSetTarget->GetPos().z == targetPos.z)
+			{
+				pTarget = pSetTarget;
+			}
+			else
+			{
+				pTarget = GetScene()->GetGameObject<CHerbivorousAnimal>(targetPos);
+			}
 
 			// 標的が存在する場合
 			if (pTarget)
@@ -239,13 +253,14 @@ void CWolf_Animal::Update()
 
 /****************************************//*
 	@brief	| ターゲット設定
+	@return	| 標的に設定した草食動物のポインタ(標的を設定しなかった場合はnullptr)
 *//****************************************/
-void CWolf_Animal::SetTarget()
+CHerbivorousAnimal* CWolf_Animal::SetTarget()
 {
 	// 攻撃AI取得
 	auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI);
 	// 攻撃AI無ければ終了
-	if (!pFlockAI) return;
+	if (!pFlockAI) return nullptr;
 
 	// 群れの誰かがターゲットを持っていたら共有
 	for (const BoidsNeighbor& Animal : m_SameAnimalNeighbors)
@@ -254,16 +269,19 @@ void CWolf_Animal::SetTarget()
 		if (!Animal.bSetTarget) continue;
 		// ターゲット位置共有
 		pFlockAI->SetTargetPosition(Animal.pTargetPos);
-		return;
+		return nullptr;
 	}
 
 	// 自身のターゲット設定
 	CHerbivorousAnimal* pTargetAnimal = GetScene()->GetGameObject<CHerbivorousAnimal>(m_tParam.m_f3Pos);
 	// ターゲットが存在しなければ終了
-	if (!pTargetAnimal) return;
+	if (!pTargetAnimal) return nullptr;
 
 	// ターゲット位置設定
 	pFlockAI->SetTargetPosition(pTargetAnimal->GetPos());
+
+	// 標的に設定した草食動物を返す
+	return pTargetAnimal;
 }
 
 /****************************************//*
