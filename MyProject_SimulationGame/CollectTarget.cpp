@@ -81,7 +81,7 @@ void CCollectTarget::SetCreatePos(CFieldCell* cell)
 void CCollectTarget::OnDestroy()
 {
 	// 連携しているフィールドセルの使用状態を解除
-	CFieldCell* cell = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[(int)m_LinkedCellIndex.y][(int)m_LinkedCellIndex.x];
+	CFieldCell* cell = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[(int)m_LinkedCellIndex.x][(int)m_LinkedCellIndex.y];
 	cell->SetUse(false);
 
 	// 基底クラスのオブジェクト破棄時の処理
