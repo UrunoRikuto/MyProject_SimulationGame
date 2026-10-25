@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include <array>
 #include <list>
+#include <unordered_map>
+#include <typeinfo>
 
 // @brief シーンベースクラス
 class CScene
@@ -83,13 +85,13 @@ public:
 	T* GetGameObject()
 	{
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-        for (auto list : m_pGameObject_List)
+        for (const auto& list : m_pGameObject_List)
         {
 			// T*型のゲームオブジェクトが見つかった場合はその値を返す
             for (auto obj : list)
             {
 				// T*型にキャストを試みる
-                T* ret = dynamic_cast<T*>(obj);
+                T* ret = CastCached<T>(obj);
 
 				// 見つかった場合はそのポインタを返す
                 if (ret != nullptr) return ret;
@@ -106,16 +108,16 @@ public:
 	CGameObject* GetGameObject(ObjectID inID)
 	{
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-        for (auto list : m_pGameObject_List)
+        for (const auto& list : m_pGameObject_List)
         {
 			// IDが一致するゲームオブジェクトが見つかった場合はその値を返す
             for (auto obj : list)
             {
 				// オブジェクトのIDを取得
-                ObjectID id = obj->GetID();
+                const ObjectID& id = obj->GetID();
 				// IDが一致するか確認
-                if (id.m_sName == inID.m_sName &&
-                    id.m_nSameCount == inID.m_nSameCount)
+                if (id.m_nSameCount == inID.m_nSameCount &&
+                    id.m_sName == inID.m_sName)
                 {
 					// 見つかった場合はそのポインタを返す
                     return obj;
@@ -139,13 +141,13 @@ public:
 		T* pNearObject = nullptr;
 
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (auto list : m_pGameObject_List)
+		for (const auto& list : m_pGameObject_List)
 		{
 			// T*型のゲームオブジェクトが見つかった場合はその値を返す
 			for (auto obj : list)
 			{
 				// T*型にキャストを試みる
-				T* ret = dynamic_cast<T*>(obj);
+				T* ret = CastCached<T>(obj);
 				// 見つかった場合は距離を計算
 				if (ret != nullptr)
 				{
@@ -153,11 +155,10 @@ public:
 					DirectX::XMFLOAT3 objPos = ret->GetPos();
 
 					// 距離を計算
-					float distance = sqrtf(
-						powf(inPos.x - objPos.x, 2) +
-						powf(inPos.y - objPos.y, 2) +
-						powf(inPos.z - objPos.z, 2)
-					);
+					float dx = inPos.x - objPos.x;
+					float dy = inPos.y - objPos.y;
+					float dz = inPos.z - objPos.z;
+					float distance = dx * dx + dy * dy + dz * dz;
 					// 最小距離よりも小さい場合は更新
 					if (distance < minDistance)
 					{
@@ -177,7 +178,7 @@ public:
 	// @param inPos：基準位置
 	// @param inNoFindID：除外するオブジェクトIDリスト
 	template<typename T = CGameObject>
-	T* GetGameObject(const DirectX::XMFLOAT3 inPos, std::vector<ObjectID> inNoFindID)
+	T* GetGameObject(const DirectX::XMFLOAT3 inPos, const std::vector<ObjectID>& inNoFindID)
 	{
 		// 最小距離の初期化
 		float minDistance = FLT_MAX;
@@ -185,23 +186,23 @@ public:
 		T* pNearObject = nullptr;
 
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (auto list : m_pGameObject_List)
+		for (const auto& list : m_pGameObject_List)
 		{
 			// T*型のゲームオブジェクトが見つかった場合はその値を返す
 			for (auto obj : list)
 			{
 				bool isSkip = false;
 				// T*型にキャストを試みる
-				T* ret = dynamic_cast<T*>(obj);
+				T* ret = CastCached<T>(obj);
 				// 見つかった場合は距離を計算
 				if (ret != nullptr)
 				{
 					for(int i = 0; i < inNoFindID.size(); i++)
 					{
 						// 除外するオブジェクトIDと一致する場合はスキップ
-						ObjectID id = ret->GetID();
-						if (id.m_sName == inNoFindID[i].m_sName &&
-							id.m_nSameCount == inNoFindID[i].m_nSameCount)
+						const ObjectID& id = ret->GetID();
+						if (id.m_nSameCount == inNoFindID[i].m_nSameCount &&
+							id.m_sName == inNoFindID[i].m_sName)
 						{
 							isSkip = true;
 							break;
@@ -215,11 +216,10 @@ public:
 					DirectX::XMFLOAT3 objPos = ret->GetPos();
 
 					// 距離を計算
-					float distance = sqrtf(
-						powf(inPos.x - objPos.x, 2) +
-						powf(inPos.y - objPos.y, 2) +
-						powf(inPos.z - objPos.z, 2)
-					);
+					float dx = inPos.x - objPos.x;
+					float dy = inPos.y - objPos.y;
+					float dz = inPos.z - objPos.z;
+					float distance = dx * dx + dy * dy + dz * dz;
 					// 最小距離よりも小さい場合は更新
 					if (distance < minDistance)
 					{
@@ -240,13 +240,13 @@ public:
     CGameObject* GetGameObject(std::string inName)
 	{
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-        for (auto list : m_pGameObject_List)
+        for (const auto& list : m_pGameObject_List)
         {
 			// 名前が一致するゲームオブジェクトが見つかった場合はその値を返す
             for (auto obj : list)
             {
 				// オブジェクトのIDを取得
-                ObjectID id = obj->GetID();
+                const ObjectID& id = obj->GetID();
 
 				// 名前が一致するか確認
                 if (id.m_sName == inName)
@@ -275,13 +275,13 @@ public:
 		gameObjectList.clear();
 
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (auto list : m_pGameObject_List)
+		for (const auto& list : m_pGameObject_List)
 		{
 			// T*型のゲームオブジェクトが見つかった場合はその値をリストに追加
 			for (auto obj : list)
 			{
 				// T*型にキャストを試みる
-				T* ret = dynamic_cast<T*>(obj);
+				T* ret = CastCached<T>(obj);
 				// 見つかった場合はリストに追加
 				if (ret != nullptr)
 				{
@@ -304,13 +304,13 @@ public:
 		gameObjectList.clear();
 		float distanceSq = distance * distance;
 		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (auto list : m_pGameObject_List)
+		for (const auto& list : m_pGameObject_List)
 		{
 			// T*型のゲームオブジェクトが見つかった場合はその値をリストに追加
 			for (auto obj : list)
 			{
 				// T*型にキャストを試みる
-				T* ret = dynamic_cast<T*>(obj);
+				T* ret = CastCached<T>(obj);
 				// 見つかった場合は距離を計算
 				if (ret != nullptr)
 				{
@@ -347,6 +347,27 @@ protected:
 private:
 	// @brief シーン内の全てのオブジェクトIDリスト
     std::vector<ObjectID> m_tIDVec;
+
+	// @brief オブジェクトをT型として取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param obj：対象のオブジェクト
+	// @return T型のポインタ、T型として扱えない場合はnullptr
+	// @note オブジェクトの実際の型ごとに「T型として扱えるか」を記憶し、
+	//       T型ではないオブジェクトに対するdynamic_castを省いて検索を高速化する
+	template<typename T>
+	static T* CastCached(CGameObject* obj)
+	{
+		static std::unordered_map<const std::type_info*, bool> s_IsKindOf;
+
+		const std::type_info* pType = &typeid(*obj);
+		auto it = s_IsKindOf.find(pType);
+		if (it == s_IsKindOf.end())
+		{
+			it = s_IsKindOf.emplace(pType, dynamic_cast<T*>(obj) != nullptr).first;
+		}
+
+		return it->second ? dynamic_cast<T*>(obj) : nullptr;
+	}
 
 	// @brief フェード中かどうかのフラグ
     bool m_bFade = false;
