@@ -18,6 +18,8 @@ struct VS_OUT
     float2 uv : TEXCOORD0;
     float4 color : COLOR0;
     float4 wPos : POSITION0;
+    // オブジェクトごとの乱数(0～1)。季節による色の変化のばらつきに使用
+    float objectRand : TEXCOORD1;
 };
 cbuffer WVP : register(b0)
 {
@@ -42,6 +44,8 @@ VS_OUT main(VS_IN vin)
     vout.pos = float4(vin.pos,1.0f);
     vout.pos = mul(vout.pos, wMat);
     vout.wPos = vout.pos;
+    // オブジェクトの中心の位置から乱数を作る(頂点ごとに計算しても、同じオブジェクトなら全頂点で同じ値になる)
+    vout.objectRand = frac(sin(dot(wMat[3].xz, float2(12.9898f, 78.233f))) * 43758.5453f);
     vout.pos = mul(vout.pos, view);
     vout.pos = mul(vout.pos, proj);
     vout.normal = mul(vin.normal, (float3x3) wMat);

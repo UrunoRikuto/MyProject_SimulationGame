@@ -112,6 +112,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		float fSeconds = 0.0f;
 		int nSpeed = 1;
 		int nHumans = 0;
+		int nStartDay = -1;
 		char jobKey[32] = "";
 		if (lpCmdLine != nullptr)
 		{
@@ -119,9 +120,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if ((pArg = strstr(lpCmdLine, "--profile=")) != nullptr) fSeconds = static_cast<float>(atof(pArg + 10));
 			if ((pArg = strstr(lpCmdLine, "--speed=")) != nullptr) nSpeed = atoi(pArg + 8);
 			if ((pArg = strstr(lpCmdLine, "--humans=")) != nullptr) nHumans = atoi(pArg + 9);
+			if ((pArg = strstr(lpCmdLine, "--day=")) != nullptr) nStartDay = atoi(pArg + 6);
 			if ((pArg = strstr(lpCmdLine, "--job=")) != nullptr) sscanf_s(pArg + 6, "%31[a-z]", jobKey, (unsigned)sizeof(jobKey));
 		}
-		if (fSeconds > 0.0f) SetAutoProfile(fSeconds, nSpeed, nHumans, jobKey);
+		if (fSeconds > 0.0f) SetAutoProfile(fSeconds, nSpeed, nHumans, jobKey, nStartDay);
 	}
 
 	if (FAILED(Init(myHWnd, SCREEN_WIDTH, SCREEN_HEIGHT)))

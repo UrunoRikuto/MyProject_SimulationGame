@@ -7,6 +7,7 @@
 #include "ModelRenderer.h"
 #include "Camera.h"
 #include "Profiler.h"
+#include "SeasonManager.h"
 
 // static batch map
 std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
@@ -134,6 +135,13 @@ void CModelRenderer::FlushBatches()
         cb.useInstance = 1.0f;
 
         if (batch.vs) batch.vs->WriteBuffer(0, &cb);
+
+        // 季節による色の変化(木・草・地面だけが対象。他のモデルは変化なしの情報を渡す)
+        if (batch.ps)
+        {
+            CSeasonManager::ShaderParam seasonParam = CSeasonManager::GetShaderParam(CSeasonManager::GetTargetKind(key));
+            batch.ps->WriteBuffer(1, &seasonParam);
+        }
 
         for (unsigned int i = 0; i < pModel->GetMeshNum(); ++i)
         {

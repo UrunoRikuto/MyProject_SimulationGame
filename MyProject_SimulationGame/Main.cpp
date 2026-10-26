@@ -53,6 +53,8 @@ bool g_bOnImgui = false;
 float g_fAutoProfileSeconds = 0.0f;
 int g_nAutoProfileGameSpeed = 1;
 int g_nAutoProfileExtraHumans = 0;
+// 自動計測の開始時に進めておくゲーム内の日数(0未満の場合は進めない)
+int g_nAutoProfileStartDay = -1;
 // 無職の人間に割り当てる職業を固定する場合の職業(空の場合は全ての職業を順番に割り当てる)
 std::string g_sAutoProfileJob;
 // 自動計測用の準備(人間の追加など)が済んだかどうか
@@ -68,8 +70,9 @@ int g_nAutoProfileJobTimer = 0;
 	@param　	| nGameSpeed：計測中のゲーム速度(倍速)
 	@param　	| nExtraHumans：計測用に追加する人間の数
 *//****************************************/
-void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char* pJobKey)
+void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char* pJobKey, int nStartDay)
 {
+	g_nAutoProfileStartDay = nStartDay;
 	g_sAutoProfileJob = pJobKey != nullptr ? pJobKey : "";
 	g_fAutoProfileSeconds = fSeconds;
 	g_nAutoProfileGameSpeed = nGameSpeed;
@@ -177,6 +180,12 @@ static void UpdateAutoProfile()
 	{
 		g_bAutoProfileReady = true;
 		CCivLevelManager::GetInstance()->SetCivLevel(12);
+
+		// 指定された日数まで、ゲーム内の時間を進めておく(1日は120秒。日の中の時間は朝の30秒にする)
+		if (g_nAutoProfileStartDay >= 0)
+		{
+			CGameTimeManager::GetInstance()->SetGameTime(static_cast<float>(g_nAutoProfileStartDay) * 120.0f + 30.0f);
+		}
 		const std::list<CHuman*> humans = g_pScene->GetGameObjects<CHuman>();
 		if (!humans.empty())
 		{

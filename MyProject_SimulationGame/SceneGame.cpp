@@ -15,6 +15,7 @@
 #include "ImguiSystem.h"
 #include "Animal.h"
 #include "Profiler.h"
+#include "SeasonManager.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -29,6 +30,9 @@ CSceneGame::CSceneGame()
 *//****************************************/
 CSceneGame::~CSceneGame()
 {
+	// 季節による色の変化は、ゲームシーンの間だけ有効にする
+	CSeasonManager::SetActive(false);
+
 	CGameTimeManager::ReleaseInstance();
 	CFieldManager::ReleaseInstance();
 	CGeneratorManager::ReleaseInstance();
@@ -42,6 +46,9 @@ void CSceneGame::Init()
 {
 	// 基底クラスの初期化処理
 	CScene::Init();
+
+	// 季節による色の変化を有効にする
+	CSeasonManager::SetActive(true);
 
 	// カメラの種類をゲーム用カメラに設定
 	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_GAME);

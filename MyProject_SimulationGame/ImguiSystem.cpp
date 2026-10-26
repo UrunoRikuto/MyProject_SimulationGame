@@ -10,6 +10,7 @@
 #include "Main.h"
 #include "Camera.h"
 #include "Input.h"
+#include "SeasonManager.h"
 #include "Human.h"
 #include "Animal.h"
 #include "BuildManager.h"
@@ -890,6 +891,9 @@ void CImguiSystem::Release_DrawGameTime()
 
 	// 現在の日数の表示
 	ImGui::Text(std::string(u8"経過日数:" + std::to_string(day)).c_str());
+
+	// 現在の季節の表示
+	ImGui::Text(u8"季節: %s (%d/%d日目)", CSeasonManager::GetSeasonName(), CSeasonManager::GetDayInSeason() + 1, CSeasonManager::Season_Length_Days);
 
 	// 現在の時間の表示
 	ImGui::Text(u8"現在時刻: %.2f", time);
