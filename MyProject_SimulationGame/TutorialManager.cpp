@@ -55,11 +55,11 @@ const std::vector<CTutorialManager::Step>& CTutorialManager::GetSteps()
 		  Condition::CameraMoved, Area::None },
 
 		{ u8"人間を選ぼう",
-		  u8"画面右上の「人間選択」から、人間を1人選んでください。",
+		  u8"画面右上の「人間選択」か、その左の「人間一覧」から、人間を1人選んでください。\n人間が増えたら、一覧から名前を押して選ぶと便利です。",
 		  Condition::HumanSelected, Area::HumanSelect },
 
 		{ u8"職業を割り当てよう",
-		  u8"選んだ人間の「職業」を、「木の採取職」などに変更しましょう。\n職業を持つ人間は、自分で資源を集めに行きます。",
+		  u8"選んだ人間の「職業」を、「木の採取職」などに変更しましょう。\n職業を持つ人間は、自分で資源を集めに行きます。\n「人間一覧」の職業欄からも変更でき、職業ごとの+/-ボタンで人数をまとめて増減できます。",
 		  Condition::JobAssigned, Area::HumanWindow },
 
 		{ u8"資源は貯蔵庫へ",
