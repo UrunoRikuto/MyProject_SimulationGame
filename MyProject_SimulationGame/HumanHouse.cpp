@@ -55,15 +55,7 @@ void CHumanHouse::Update()
 	// 親クラスの更新処理を呼び出す
 	CBuildObject::Update();
 
-	// 居住者数に飽きがある場合
-	if (m_Residents.size() < GetMaxResidents())
-	{
-		// 生成システムに居住者の生成リクエストを送る
-		CGeneratorManager::GetInstance()->AddGenerateRequest({
-				CGeneratorManager::GenerateType::Human,
-				Human_Regenerate_Wait_Time
-		});
-	}
+	// 居住者の空き枠に対する生成リクエストは、CHumanGeneratorが全ての家の空き枠をまとめて確認して追加する
 }
 
 /*****************************************//*

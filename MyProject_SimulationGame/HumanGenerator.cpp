@@ -9,6 +9,11 @@
 #include "Main.h"
 #include "ImguiSystem.h"
 #include "HumanHouse.h"
+#include "GeneratorManager.h"
+
+// @brief 家の空き枠を確認する間隔(秒)
+constexpr float Human_Vacancy_Check_Interval = 1.0f;
+
 
 /*****************************************
 	@brief　	| 生成処理
@@ -53,4 +58,34 @@ void CHumanGenerator::Generate()
 	// 生成した人間と家を紐付ける
 	targetHouse->AddResident(pHuman);
 	pHuman->SetLivingHouse(targetHouse);
+}
+
+/*****************************************
+	@brief　	| 更新処理
+	@note		| 全ての家の空き枠を確認し、待機中の生成リクエストでは足りない分だけリクエストを追加する
+*//*****************************************/
+void CHumanGenerator::Update()
+{
+	// 空き枠の確認は負荷軽減のため一定間隔で行う
+	m_fCheckTimer -= 1.0f / fFPS;
+	if (m_fCheckTimer > 0.0f) return;
+	m_fCheckTimer = Human_Vacancy_Check_Interval;
+
+	// 全ての家の空き枠の合計を数える
+	int nVacancy = 0;
+	for (CHumanHouse* pHouse : GetScene()->GetGameObjects<CHumanHouse>())
+	{
+		if (pHouse->IsDestroy()) continue;
+
+		const int nRest = pHouse->GetMaxResidents() - pHouse->GetResidentCount();
+		if (nRest > 0) nVacancy += nRest;
+	}
+
+	// 待機中のリクエスト数が空き枠に足りない分だけ追加する
+	CGeneratorManager* pGeneratorManager = CGeneratorManager::GetInstance();
+	const int nPending = pGeneratorManager->CountRequests(CGeneratorManager::GenerateType::Human);
+	for (int i = nPending; i < nVacancy; ++i)
+	{
+		pGeneratorManager->AddGenerateRequest({ CGeneratorManager::GenerateType::Human, Human_Regenerate_Wait_Time });
+	}
 }
