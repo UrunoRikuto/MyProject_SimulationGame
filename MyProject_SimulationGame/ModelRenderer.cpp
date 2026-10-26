@@ -11,7 +11,6 @@
 
 // static batch map
 std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
-std::unordered_map<PixelShader*, DirectX::XMFLOAT4> CModelRenderer::s_pendingPSColors;
 
 /*****************************************//*
     @brief　	| デストラクタ
@@ -65,13 +64,12 @@ void CModelRenderer::Draw()
         DirectX::XMMatrixRotationRollPitchYaw(m_tParam.m_f3Rotate.x, m_tParam.m_f3Rotate.y, m_tParam.m_f3Rotate.z) *
         DirectX::XMMatrixTranslation(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z);
 
-    // ピクセルシェーダーの色は、描画のたびに書き込まず、最後に設定された色をフラッシュ時に書き込む
+    // ピクセルシェーダーの色は、描画のたびに書き込まず、バッチごとに最後に設定された色をフラッシュ時に書き込む
+    // (ピクセルシェーダーごとにまとめると、他のモデルの色で上書きされ、スカイボックスの色合いなどが反映されなくなるため)
     // (頂点シェーダーの行列は、フラッシュ時にバッチごとに書き込むためここでは不要)
-    switch (m_pPS->m_eType)
+    if (m_pPS->m_eType == PSType::TexColor)
     {
-    case PSType::TexColor:
-        s_pendingPSColors[m_pPS] = m_tParam.m_f4Color;
-        break;
+        batch.color = m_tParam.m_f4Color;
     }
 
     //ここでバッチに追加（ワールド行列のみインスタンス化）
@@ -90,12 +88,6 @@ void CModelRenderer::FlushBatches()
     PROFILE_SCOPE("Draw: ModelRenderer::FlushBatches");
     CCamera* pCamera = CCamera::GetInstance();
 
-    // フレーム内で最後に設定されたピクセルシェーダーの色を書き込む
-    for (auto& kv : s_pendingPSColors)
-    {
-        kv.first->WriteBuffer(0, &kv.second);
-    }
-    s_pendingPSColors.clear();
     for (auto& kv : s_batches)
     {
         const std::string& key = kv.first;
@@ -139,6 +131,9 @@ void CModelRenderer::FlushBatches()
         // 季節による色の変化(木・草・地面だけが対象。他のモデルは変化なしの情報を渡す)
         if (batch.ps)
         {
+            // バッチごとの色
+            if (batch.ps->m_eType == PSType::TexColor) batch.ps->WriteBuffer(0, &batch.color);
+
             CSeasonManager::ShaderParam seasonParam = CSeasonManager::GetShaderParam(CSeasonManager::GetTargetKind(key));
             batch.ps->WriteBuffer(1, &seasonParam);
         }

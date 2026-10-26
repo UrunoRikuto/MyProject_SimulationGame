@@ -63,12 +63,11 @@ private:
 		PixelShader* ps = nullptr;
 		// モデルのポインタ(キーから一度探したものを使い回す)
 		Model* pModel = nullptr;
+		// ピクセルシェーダーに渡す色(このバッチで最後に描画されたものの色。スカイボックスの時間帯別の色合いなどに使用)
+		DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	};
 
 	// キーはモデルキー + VSptr + PSptr
 	static std::unordered_map<std::string, Batch> s_batches;
-
-	// フレーム内で最後に設定されたピクセルシェーダーの色(フラッシュ時にまとめて書き込む)
-	static std::unordered_map<PixelShader*, DirectX::XMFLOAT4> s_pendingPSColors;
 
 };
