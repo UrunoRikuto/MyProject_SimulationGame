@@ -108,6 +108,12 @@ public:
 	// @return 選択している人間(選択していない場合はnullptr)
 	CHuman* GetSelectedHuman() const { return m_pHumanObject; }
 
+	// @brief 本文用の小さいフォントの取得(一覧や説明などの文字)
+	ImFont* GetTextFont() const { return m_pTextFont; }
+
+	// @brief さらに小さいフォントの取得(目標の表示などの文字)
+	ImFont* GetSmallFont() const { return m_pSmallFont; }
+
 	// @brief 選択しているゲームオブジェクトの解除
 	// @note 選択しているゲームオブジェクトが破棄された場合に呼び出す
 	void ClearSelectedGameObject() { m_pGameObject = nullptr; }
@@ -201,6 +207,10 @@ private:
 	ImFont* m_pReleaseFont;
 	// @brief デバッグ時のフォントサイズ
 	ImFont* m_pDebugFont;
+
+	// @brief 小さい文字用のフォント(30ピクセルのフォントを縮小すると、文字がつぶれるため、小さいサイズで作る)
+	ImFont* m_pTextFont;
+	ImFont* m_pSmallFont;
 
 	// @brief デバッグログ表示用バッファ
 	std::vector<DebugLogInfo> m_DebugLog;

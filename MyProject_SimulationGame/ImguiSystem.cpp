@@ -48,6 +48,8 @@ CImguiSystem::CImguiSystem()
 	, m_nCellDisplayMode(0)
 	, m_pDebugFont(nullptr)
 	, m_pReleaseFont(nullptr)
+	, m_pTextFont(nullptr)
+	, m_pSmallFont(nullptr)
 	, m_bOnlyHuman(false)
 	, m_nSeed(0)
 	, m_bSettingSeed(false)
@@ -119,6 +121,16 @@ void CImguiSystem::Init()
 	// フォントサイズは既存のまま
 	m_pReleaseFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"),30.0f, &cfg, jpRanges);
 	m_pDebugFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"),15.0f, &cfg, jpRanges);
+
+	// 小さい文字用のフォント(縮小せず、そのサイズで描くことで、文字がつぶれないようにする)
+	// 太さは大きいフォントほど強調せず、細かい文字が潰れないようにする
+	ImFontConfig smallCfg;
+	smallCfg.OversampleH = 2;
+	smallCfg.OversampleV = 2;
+	smallCfg.PixelSnapH = true;
+	smallCfg.RasterizerMultiply = 1.25f;
+	m_pTextFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 21.0f, &smallCfg, jpRanges);
+	m_pSmallFont = io.Fonts->AddFontFromFileTTF(FONT_PATH("NotoSansJP-VariableFont_wght.ttf"), 17.0f, &smallCfg, jpRanges);
 
 #ifdef _DEBUG
 	// サイズ調整不可
@@ -1200,7 +1212,7 @@ void CImguiSystem::Release_DrawHumanList()
 	// 高さは内容(人数)に合わせて決まる
 	ImGui::SetNextWindowSizeConstraints(ImVec2(List_Width, 0.0f), ImVec2(List_Width, List_Max_Height));
 
-	ImGui::PushFont(m_pReleaseFont);
+	ImGui::PushFont(m_pTextFont);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.07f, 0.12f, 0.88f));
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.15f, 0.20f, 0.40f, 0.95f));
 	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.20f, 0.28f, 0.55f, 0.95f));
@@ -1211,7 +1223,6 @@ void CImguiSystem::Release_DrawHumanList()
 
 	if (ImGui::Begin(u8"人間一覧", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::SetWindowFontScale(0.7f);
 
 		// 破棄されていない人間を集める
 		std::vector<CHuman*> Humans;
@@ -1474,7 +1485,7 @@ void CImguiSystem::Release_DrawBuildObject()
 		ImGui::SetNextWindowPos(ImVec2(Build_Window_Width + 10.0f, SCREEN_HEIGHT - 400.0f));
 		ImGui::SetNextWindowSizeConstraints(ImVec2(Description_Width, 0.0f), ImVec2(Description_Width, 10000.0f));
 
-		ImGui::PushFont(m_pReleaseFont);
+		ImGui::PushFont(m_pTextFont);
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.07f, 0.12f, 0.92f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.15f, 0.20f, 0.40f, 0.95f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.20f, 0.28f, 0.55f, 0.95f));
@@ -1485,7 +1496,6 @@ void CImguiSystem::Release_DrawBuildObject()
 		const std::string title = id.m_sName + u8"の説明";
 		if (ImGui::Begin(title.c_str(), &s_bShowDescription, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar))
 		{
-			ImGui::SetWindowFontScale(0.75f);
 			ImGui::PushTextWrapPos(Description_Width - 20.0f);
 			ImGui::TextUnformatted(m_pBuildObject->GetDescription().c_str());
 
