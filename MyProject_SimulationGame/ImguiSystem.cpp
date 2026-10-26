@@ -1443,12 +1443,59 @@ void CImguiSystem::Release_DrawBuildObject()
 
 	ImGui::Text(selectedObjectName.c_str());
 
+	// 名前の横に、施設の説明を開閉するボタンを表示
+	static bool s_bShowDescription = false;
+	if (m_pBuildObject != nullptr)
+	{
+		ImGui::SameLine();
+		if (ImGui::SmallButton(s_bShowDescription ? u8"説明を閉じる" : u8"説明"))
+		{
+			s_bShowDescription = !s_bShowDescription;
+		}
+	}
+
 	ImGui::Separator();
 
 	if (m_pBuildObject)m_pBuildObject->Inspecter();
 
 	ImGui::End();
 	ImGui::PopFont();
+
+	// 施設の説明ウィンドウ(建築物ウィンドウの右隣)
+	if (m_pBuildObject != nullptr && s_bShowDescription)
+	{
+		const float Description_Width = 380.0f;
+		const float Build_Window_Width = 400.0f;
+
+		ImGui::SetNextWindowPos(ImVec2(Build_Window_Width + 10.0f, SCREEN_HEIGHT - 400.0f));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(Description_Width, 0.0f), ImVec2(Description_Width, 10000.0f));
+
+		ImGui::PushFont(m_pReleaseFont);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.07f, 0.12f, 0.92f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.15f, 0.20f, 0.40f, 0.95f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.20f, 0.28f, 0.55f, 0.95f));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.45f, 0.55f, 0.90f, 0.90f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+
+		ObjectID id = m_pBuildObject->GetID();
+		const std::string title = id.m_sName + u8"の説明";
+		if (ImGui::Begin(title.c_str(), &s_bShowDescription, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar))
+		{
+			ImGui::SetWindowFontScale(0.75f);
+			ImGui::PushTextWrapPos(Description_Width - 20.0f);
+			ImGui::TextUnformatted(m_pBuildObject->GetDescription().c_str());
+
+			ImGui::Separator();
+			ImGui::Text(u8"現在のレベル: %d / %d", m_pBuildObject->GetBuildLevel(), CBuildObject::MAX_BUILD_LEVEL);
+			ImGui::TextUnformatted(u8"建築職の人間が、建築と強化(レベルアップ)を行います。");
+			ImGui::PopTextWrapPos();
+		}
+		ImGui::End();
+
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(4);
+		ImGui::PopFont();
+	}
 }
 
 /****************************************//*
