@@ -299,8 +299,9 @@ void CGoalManager::DrawHud()
 {
 	ImGui::SetNextWindowPos(ImVec2(Hud_Pos_X, 0.0f));
 	ImGui::SetNextWindowSizeConstraints(ImVec2(Hud_Width, 0.0f), ImVec2(Hud_Width, 300.0f));
+	// 小さい文字用のフォントで描く(30ピクセルのフォントを縮小すると、文字がつぶれるため)
+	ImGui::PushFont(CImguiSystem::GetInstance()->GetSmallFont());
 	ImGui::Begin("Goal", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
-	ImGui::SetWindowFontScale(0.58f);
 
 	const ImVec4 colorTitle(1.0f, 0.9f, 0.4f, 1.0f);
 	const ImVec4 colorAlert(1.0f, 0.45f, 0.4f, 1.0f);
@@ -334,6 +335,7 @@ void CGoalManager::DrawHud()
 	}
 
 	ImGui::End();
+	ImGui::PopFont();
 }
 
 /*****************************************//*
@@ -360,11 +362,13 @@ void CGoalManager::DrawNotice()
 	ImGui::Begin("GoalNotice", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs);
 	ImGui::SetWindowFontScale(0.85f);
 	ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.4f, 1.0f), "%s", s_sNoticeTitle.c_str());
-	ImGui::SetWindowFontScale(0.65f);
+	ImGui::SetWindowFontScale(1.0f);
 	ImGui::Separator();
+	ImGui::PushFont(CImguiSystem::GetInstance()->GetTextFont());
 	ImGui::PushTextWrapPos(400.0f);
 	ImGui::TextUnformatted(s_sNoticeBody.c_str());
 	ImGui::PopTextWrapPos();
+	ImGui::PopFont();
 	ImGui::End();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleVar();
@@ -402,7 +406,8 @@ void CGoalManager::DrawResult()
 	if (bCleared) ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.3f, 1.0f), u8"大飢餓を乗り越えた!");
 	else ImGui::TextColored(ImVec4(1.0f, 0.45f, 0.4f, 1.0f), u8"文明は大飢餓に耐えられなかった…");
 
-	ImGui::SetWindowFontScale(0.7f);
+	ImGui::SetWindowFontScale(1.0f);
+	ImGui::PushFont(CImguiSystem::GetInstance()->GetTextFont());
 	ImGui::Separator();
 	ImGui::PushTextWrapPos(Result_Width - 24.0f);
 	if (bCleared)
@@ -462,6 +467,7 @@ void CGoalManager::DrawResult()
 		SetOnImgui(false);
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 	ImGui::PopStyleVar();
 	ImGui::PopStyleColor();

@@ -294,7 +294,8 @@ void CTutorialManager::Draw(ImFont* pFont)
 {
 	if (!s_bEnabled || !IsGameScene()) return;
 
-	ImGui::PushFont(pFont);
+	// 小さい文字用のフォントで描く(30ピクセルのフォントを縮小すると、文字がつぶれるため)
+	ImGui::PushFont(CImguiSystem::GetInstance()->GetTextFont());
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.08f, 0.10f, 0.24f, 0.93f));
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.55f, 0.65f, 1.0f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.35f, 0.75f, 1.0f));
@@ -307,7 +308,6 @@ void CTutorialManager::Draw(ImFont* pFont)
 		// チュートリアルの外では、画面下に見直すためのボタンだけを表示する
 		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10.0f), ImGuiCond_Always, ImVec2(0.5f, 1.0f));
 		ImGui::Begin("TutorialButton", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove);
-		ImGui::SetWindowFontScale(0.7f);
 		if (ImGui::Button(u8"チュートリアル")) Start();
 		ImGui::End();
 	}
@@ -338,7 +338,6 @@ void CTutorialManager::Draw(ImFont* pFont)
 		ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10.0f), ImGuiCond_Always, ImVec2(0.5f, 1.0f));
 		ImGui::SetNextWindowSizeConstraints(ImVec2(Window_Width, 0.0f), ImVec2(Window_Width, 10000.0f));
 		ImGui::Begin("Tutorial", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::SetWindowFontScale(0.72f);
 
 		// 見出しと、手順の番号
 		ImGui::TextColored(ImVec4(1.0f, 0.9f, 0.4f, 1.0f), u8"%s", step.pTitle);
