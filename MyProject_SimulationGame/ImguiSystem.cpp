@@ -9,6 +9,7 @@
 #include "imgui_impl_win32.h"
 #include "Main.h"
 #include "Camera.h"
+#include "Input.h"
 #include "Human.h"
 #include "Animal.h"
 #include "BuildManager.h"
@@ -26,6 +27,10 @@
 //-- 静的メンバ変数の初期化 --//
 CImguiSystem* CImguiSystem::m_pInstance = nullptr;
 constexpr float ce_fCharaSize =30.0f;
+
+// @brief 選択できるゲーム速度(倍速)
+constexpr int ce_nGameSpeedSteps[] = { 1, 2, 4, 8 };
+constexpr int ce_nGameSpeedStepCount = static_cast<int>(sizeof(ce_nGameSpeedSteps) / sizeof(ce_nGameSpeedSteps[0]));
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -145,6 +150,18 @@ void CImguiSystem::Update()
 {
 	// 更新処理を止めている場合カメラの更新を行う
 	if(!m_bUpdate)CCamera::GetInstance()->Update();
+
+	// ゲームシーンでは、数字キー1から4でゲーム速度(倍速)を切り替える(文字入力中は無効)
+	if (dynamic_cast<CSceneGame*>(GetScene()) != nullptr && !ImGui::GetIO().WantTextInput)
+	{
+		for (int i = 0; i < ce_nGameSpeedStepCount; ++i)
+		{
+			if (IsKeyTrigger(static_cast<BYTE>('1' + i)))
+			{
+				SetGameSpeed(ce_nGameSpeedSteps[i]);
+			}
+		}
+	}
 }
 
 /****************************************//*
@@ -170,6 +187,8 @@ void CImguiSystem::Draw()
 	Release_DrawCivLevel();
 	// ゲーム内時間表示
 	Release_DrawGameTime();
+	// ゲーム速度表示
+	Release_DrawGameSpeed();
 	// 人間の職業設定表示
 	Release_DrawHuman();
 	// 倉庫の資源表示
@@ -1232,6 +1251,70 @@ void CImguiSystem::Release_DrawBuildObject()
 	ImGui::Separator();
 
 	if (m_pBuildObject)m_pBuildObject->Inspecter();
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| ゲーム速度(倍速)の設定
+	@param　	| nSpeed：1フレームに行うゲームの更新回数
+*//****************************************/
+void CImguiSystem::SetGameSpeed(int nSpeed)
+{
+	// 選択できる最大倍率の範囲に収める
+	const int nMaxSpeed = ce_nGameSpeedSteps[ce_nGameSpeedStepCount - 1];
+	if (nSpeed < 1) nSpeed = 1;
+	if (nSpeed > nMaxSpeed) nSpeed = nMaxSpeed;
+
+	m_nGameSpeed = nSpeed;
+}
+
+/****************************************//*
+	@brief　	| 実際に行えたゲームの更新回数の通知
+	@param　	| nUpdateCount：直前のフレームで実際に行った更新回数
+*//****************************************/
+void CImguiSystem::SetAppliedGameSpeed(int nUpdateCount)
+{
+	// 値の細かな揺れを抑えるため、移動平均にする
+	m_fAppliedGameSpeed += (static_cast<float>(nUpdateCount) - m_fAppliedGameSpeed) * 0.1f;
+}
+
+/****************************************//*
+	@brief　	| ゲーム速度表示
+	@note		| クリックで 等速 → 2倍 → 4倍 → 8倍 → 等速 と切り替わる
+*//****************************************/
+void CImguiSystem::Release_DrawGameSpeed()
+{
+	// ゲームシーン以外では表示しない
+	if (dynamic_cast<CSceneGame*>(GetScene()) == nullptr) return;
+
+	// ウィンドウの位置設定(画面上部の中央)
+	ImGui::SetNextWindowPos(ImVec2((SCREEN_WIDTH / 2) - 150.0f, 0.0f));
+	// 幅は固定し、高さは内容に合わせる
+	ImGui::SetNextWindowSizeConstraints(ImVec2(300.0f, 0.0f), ImVec2(300.0f, 200.0f));
+	// フォントの設定
+	ImGui::PushFont(m_pReleaseFont);
+	ImGui::Begin(u8"ゲーム速度", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize);
+
+	// 現在の速度を表示するボタン(押すと次の速度に切り替わる)
+	const std::string label = std::string(u8"ゲーム速度 x") + std::to_string(m_nGameSpeed);
+	if (ImGui::Button(label.c_str(), ImVec2(-1.0f, 0.0f)))
+	{
+		// 現在の速度の位置を探し、次の速度へ切り替える(最後の次は等速に戻る)
+		int nIndex = 0;
+		for (int i = 0; i < ce_nGameSpeedStepCount; ++i)
+		{
+			if (ce_nGameSpeedSteps[i] == m_nGameSpeed) nIndex = i;
+		}
+		SetGameSpeed(ce_nGameSpeedSteps[(nIndex + 1) % ce_nGameSpeedStepCount]);
+	}
+
+	// 処理が追いつかず、設定した倍速を実現できていない場合は、実効倍率を表示する
+	if (m_nGameSpeed > 1 && m_fAppliedGameSpeed < static_cast<float>(m_nGameSpeed) - 0.2f)
+	{
+		ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), u8"処理が追いつかず x%.1f", m_fAppliedGameSpeed);
+	}
 
 	ImGui::End();
 	ImGui::PopFont();

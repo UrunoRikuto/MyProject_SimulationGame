@@ -113,6 +113,19 @@ public:
 	// @param clear：true:描画後に削除 false:常に残り続ける
 	void AddDebugLog(const std::string& log, bool clear = true);
 
+	// @brief ゲーム速度(倍速)の取得
+	// @return 1フレームに行うゲームの更新回数
+	int GetGameSpeed() const { return m_nGameSpeed; }
+
+	// @brief ゲーム速度(倍速)の設定
+	// @param nSpeed：1フレームに行うゲームの更新回数(1以上、選択できる最大倍率以下に収められる)
+	void SetGameSpeed(int nSpeed);
+
+	// @brief 実際に行えたゲームの更新回数の通知
+	// @param nUpdateCount：直前のフレームで実際に行った更新回数
+	// @note 処理が追いつかず倍速を実現できていない場合の、実効倍率の表示に使用する
+	void SetAppliedGameSpeed(int nUpdateCount);
+
 
 private: //-- デバックモード --//
 
@@ -159,6 +172,9 @@ private: //-- リリースモード --//
 
 	// @brief ゲーム内時間表示
 	void Release_DrawGameTime();
+
+	// @brief ゲーム速度表示
+	void Release_DrawGameSpeed();
 
 	// @brief 人間の表示
 	void Release_DrawHuman();
@@ -208,5 +224,11 @@ private:
 	unsigned int m_nSeed;
 	// @brief シード値設定フラグ
 	bool m_bSettingSeed = true;
+
+	// @brief ゲーム速度(1フレームに行うゲームの更新回数)
+	int m_nGameSpeed = 1;
+
+	// @brief 実際に行えたゲームの更新回数の移動平均
+	float m_fAppliedGameSpeed = 1.0f;
 };
 

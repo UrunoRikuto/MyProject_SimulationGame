@@ -12,6 +12,11 @@
 #include "ObjectLoad.h"
 #include "ImguiSystem.h"
 #include "ShaderManager.h"
+#include <chrono>
+
+// @brief 倍速時に、1フレームでゲームの更新に使ってよい時間(ミリ秒)
+// @note これを超えた場合は、描画が止まらないよう残りの更新を打ち切る
+constexpr float Max_Update_Time_Per_Frame_Ms = 12.0f;
 
 
 // 現在のシーンポインタ
@@ -152,7 +157,25 @@ void Update()
 
 		CCamera* pCamera = CCamera::GetInstance();
 		pCamera->Update();
-		g_pScene->Update();
+
+		// ゲームシーンのみ、倍速の設定の回数だけ更新を行う(1フレーム=固定の時間刻みで動いているため、更新回数がそのまま倍率になる)
+		// 更新内で押した瞬間の入力を読むタイトルシーンなどは、同じ入力を何度も受け取らないよう倍速にしない
+		CImguiSystem* pImguiSystem = CImguiSystem::GetInstance();
+		const int nGameSpeed = (dynamic_cast<CSceneGame*>(g_pScene) != nullptr) ? pImguiSystem->GetGameSpeed() : 1;
+
+		int nUpdateCount = 0;
+		const auto updateStartTime = std::chrono::steady_clock::now();
+		for (int i = 0; i < nGameSpeed; ++i)
+		{
+			g_pScene->Update();
+			nUpdateCount++;
+
+			// 処理に時間がかかり過ぎている場合は、描画が止まらないよう残りの更新を打ち切る
+			const float fElapsedMs = std::chrono::duration<float, std::milli>(std::chrono::steady_clock::now() - updateStartTime).count();
+			if (fElapsedMs > Max_Update_Time_Per_Frame_Ms) break;
+		}
+		pImguiSystem->SetAppliedGameSpeed(nUpdateCount);
+
 		g_pTransition->Update();
 	}
 
