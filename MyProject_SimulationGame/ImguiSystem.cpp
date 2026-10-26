@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "SeasonManager.h"
 #include "TutorialManager.h"
+#include "GoalManager.h"
 #include "Human.h"
 #include "Animal.h"
 #include "BuildManager.h"
@@ -209,6 +210,9 @@ void CImguiSystem::Draw()
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
+
+	// 目標の表示(大飢餓までの日数、お知らせ、結果の画面)
+	CGoalManager::Draw(m_pReleaseFont);
 
 	// チュートリアル表示(他のウィンドウの上に重ねる)
 	CTutorialManager::Draw(m_pReleaseFont);

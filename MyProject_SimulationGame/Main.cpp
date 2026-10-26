@@ -15,6 +15,7 @@
 #include <chrono>
 #include "Profiler.h"
 #include "TutorialManager.h"
+#include "GoalManager.h"
 #include "Human.h"
 #include "JobOperator.h"
 #include "CivLevelManager.h"
@@ -77,6 +78,9 @@ void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char
 
 	// 自動計測中は、チュートリアルを出さない
 	CTutorialManager::SetEnabled(false);
+
+	// 自動計測中は、目標の結果の画面を出さず、ゲームも止めない(結果はファイルに書き出す)
+	CGoalManager::SetHeadless(true);
 	g_sAutoProfileJob = pJobKey != nullptr ? pJobKey : "";
 	g_fAutoProfileSeconds = fSeconds;
 	g_nAutoProfileGameSpeed = nGameSpeed;
@@ -374,7 +378,8 @@ void Update()
 		// ゲームシーンのみ、倍速の設定の回数だけ更新を行う(1フレーム=固定の時間刻みで動いているため、更新回数がそのまま倍率になる)
 		// 更新内で押した瞬間の入力を読むタイトルシーンなどは、同じ入力を何度も受け取らないよう倍速にしない
 		CImguiSystem* pImguiSystem = CImguiSystem::GetInstance();
-		const int nGameSpeed = (dynamic_cast<CSceneGame*>(g_pScene) != nullptr) ? pImguiSystem->GetGameSpeed() : 1;
+		// 目標の結果の画面を出している間は、ゲームの進行を止める
+		const int nGameSpeed = (dynamic_cast<CSceneGame*>(g_pScene) != nullptr) ? (CGoalManager::IsPaused() ? 0 : pImguiSystem->GetGameSpeed()) : 1;
 
 		int nUpdateCount = 0;
 		const auto updateStartTime = std::chrono::steady_clock::now();

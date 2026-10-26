@@ -4,6 +4,7 @@
 *//***********************************************************************************/
 #pragma warning(disable: 4819)
 #include <windows.h>
+#include "GoalManager.h"
 #include "Main.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -124,6 +125,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if ((pArg = strstr(lpCmdLine, "--job=")) != nullptr) sscanf_s(pArg + 6, "%31[a-z]", jobKey, (unsigned)sizeof(jobKey));
 		}
 		if (fSeconds > 0.0f) SetAutoProfile(fSeconds, nSpeed, nHumans, jobKey, nStartDay);
+
+		// 自動計測中でも、目標の表示と結果の画面を出す(目標の画面の確認用。例: --profile=600 --day=65 --goalui)
+		if (fSeconds > 0.0f && lpCmdLine != nullptr && strstr(lpCmdLine, "--goalui") != nullptr) CGoalManager::SetHeadless(false);
 	}
 
 	if (FAILED(Init(myHWnd, SCREEN_WIDTH, SCREEN_HEIGHT)))

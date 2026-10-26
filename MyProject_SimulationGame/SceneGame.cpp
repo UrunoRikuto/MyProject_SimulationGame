@@ -17,6 +17,7 @@
 #include "Profiler.h"
 #include "SeasonManager.h"
 #include "Terrain.h"
+#include "GoalManager.h"
 #include "CivLevelManager.h"
 #include "Pioneer_Job.h"
 
@@ -54,6 +55,9 @@ void CSceneGame::Init()
 {
 	// 基底クラスの初期化処理
 	CScene::Init();
+
+	// 目標(大飢餓)の進行を最初からにする
+	CGoalManager::Start();
 
 	// 前のゲームの開拓の予約と、カメラの位置を引き継がないようにする
 	CPioneer_Job::ResetClaims();
@@ -110,6 +114,12 @@ void CSceneGame::Update()
 	{
 		PROFILE_SCOPE("Update: GameTime");
 		CGameTimeManager::GetInstance()->UpdateGameTime();
+	}
+
+	// 目標(大飢餓)の進行
+	{
+		PROFILE_SCOPE("Update: GoalManager");
+		CGoalManager::Update();
 	}
 
 	// クールタイム処理
