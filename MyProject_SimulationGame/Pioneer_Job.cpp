@@ -481,3 +481,11 @@ const char* CPioneer_Job::GetStateName() const
 	default:					return "Unknown";
 	}
 }
+
+/*****************************************//*
+	@brief	| ŠJ‘ñ—\’è‚Ì“y’n‚Ì—\–ñ‚ğ‘S‚Ä‰ğœ‚·‚é
+*//*****************************************/
+void CPioneer_Job::ResetClaims()
+{
+	s_ClaimedCells.clear();
+}

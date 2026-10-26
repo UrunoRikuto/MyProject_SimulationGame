@@ -62,6 +62,9 @@ public:
 	// @return E‹Æ–¼‚Ì•¶š—ñ
 	std::string GetJobName() const override { return JobName::Pioneer; }
 
+	// @brief ŠJ‘ñ—\’è‚Ì“y’n‚Ì—\–ñ‚ğ‘S‚Ä‰ğœ‚·‚é(V‚µ‚¢ƒQ[ƒ€‚ğn‚ß‚é‚Æ‚«‚ÉŒÄ‚Ô)
+	static void ResetClaims();
+
 private:
 	// @brief ŠJ‘ñ‚·‚é“y’n‚ğ’T‚·ˆ—
 	void SearchingAction();

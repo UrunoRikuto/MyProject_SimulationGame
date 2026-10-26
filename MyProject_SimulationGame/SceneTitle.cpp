@@ -9,6 +9,7 @@
 #include "Main.h"
 #include "Sprite3DRenderer.h"
 #include "ImguiSystem.h"
+#include "Camera.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -34,6 +35,11 @@ void CSceneTitle::Init()
 {
 	// 基底クラスの初期化処理
 	CScene::Init();
+
+	// ゲームから戻ってきたときのために、タイトル用のカメラを作り直す
+	CCamera::GetInstance()->ReleaseInstance();
+	CCamera::GetInstance()->SetCameraKind(CameraKind::CAM_TITLE);
+	CCamera::GetInstance()->Init();
 
 	// 背景の生成
 	CGameObject* pBackground = AddGameObject<CGameObject>(Tag::GameObject, "TitleBackground");

@@ -17,6 +17,8 @@
 #include "Profiler.h"
 #include "SeasonManager.h"
 #include "Terrain.h"
+#include "CivLevelManager.h"
+#include "Pioneer_Job.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -41,6 +43,8 @@ CSceneGame::~CSceneGame()
 	CFieldManager::ReleaseInstance();
 	CGeneratorManager::ReleaseInstance();
 	CBuildManager::ReleaseInstance();
+	// 文明レベルも、次のゲームに引き継がないように解放する
+	CCivLevelManager::ReleaseInstance();
 }
 
 /****************************************//*
@@ -50,6 +54,10 @@ void CSceneGame::Init()
 {
 	// 基底クラスの初期化処理
 	CScene::Init();
+
+	// 前のゲームの開拓の予約と、カメラの位置を引き継がないようにする
+	CPioneer_Job::ResetClaims();
+	CCamera::GetInstance()->ReleaseInstance();
 
 	// 季節による色の変化を有効にする
 	CSeasonManager::SetActive(true);
