@@ -51,6 +51,9 @@ float4 main(PS_IN pin) : SV_TARGET
         texColor.rgb = lerp(c, target, mask * strength * pick);
     }
 
+    // 頂点の色(地面の起伏の陰影など。色を持たないモデルは白なので変化しない)
+    texColor.rgb *= pin.color.rgb;
+
     texColor.rgba *= color;
 
     return texColor;
