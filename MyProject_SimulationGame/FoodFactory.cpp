@@ -13,6 +13,49 @@
 #include "ImguiSystem.h"
 #include "BuildManager.h"
 
+namespace
+{
+	// @brief 調理で使っても、人間が食べるために必ず残しておく、リンゴの数
+	// @note リンゴを砂糖やアップルパイに使い切ってしまうと、食べる分がなくなってしまうため
+	constexpr int Apple_Reserve_For_Eating = 20;
+
+	// @brief 貯蔵庫にあるアイテムの数を数える
+	// @param pStorage：貯蔵庫
+	// @param eType：数えるアイテムタイプ
+	int CountStoredItems(const CStorageHouse* pStorage, CItem::ITEM_TYPE eType)
+	{
+		int nCount = 0;
+		for (const CItem* pItem : pStorage->GetStoredItems())
+		{
+			if (pItem->GetItemType() == eType) nCount++;
+		}
+		return nCount;
+	}
+
+	// @brief 料理の在庫の上限(これ以上は作らない)
+	// @param eMealType：料理のアイテムタイプ
+	int GetMealStockLimit(CItem::ITEM_TYPE eMealType)
+	{
+		switch (eMealType)
+		{
+		case CItem::ITEM_TYPE::Bread:		return 30;
+		case CItem::ITEM_TYPE::ApplePie:	return 10;
+		case CItem::ITEM_TYPE::Sugar:		return 2;
+		default:							return 5;
+		}
+	}
+
+	// @brief 貯蔵庫に、1回分の必要材料が揃っているかどうか
+	// @param pStorage：貯蔵庫
+	// @param material：必要な材料(アイテムタイプと必要数)
+	bool HasEnoughMaterial(const CStorageHouse* pStorage, const CItem::Material& material)
+	{
+		// リンゴは、人間が食べる分を残した上で、必要数が揃っている場合だけ使う
+		const int nReserve = (material.eItemType == CItem::ITEM_TYPE::Apple) ? Apple_Reserve_For_Eating : 0;
+		return CountStoredItems(pStorage, material.eItemType) >= material.nRequiredAmount + nReserve;
+	}
+}
+
 /*****************************************//*
 	@brief　	| コンストラクタ
 *//*****************************************/
@@ -278,13 +321,16 @@ CItem::ITEM_TYPE CFoodFactory::FindProducibleMealType()
 		// 料理の必要材料リストを取得
 		auto reqests = CookMaterials::GetCookMaterials(mealType);
 
+		// 既に十分な量がある料理は作らない(作り過ぎると、材料を無駄に使うため)
+		if (CountStoredItems(pStorageHouse, mealType) >= GetMealStockLimit(mealType)) continue;
+
 		bool bCanCook = true;
 
 		// 必要材料が全て揃っているか確認
 		for (const auto& request : reqests)
 		{
 			// 貯蔵庫に必要材料が足りない場合は調理不可とする
-			if (!pStorageHouse->HasItemType(request.eItemType))
+			if (!HasEnoughMaterial(pStorageHouse, request))
 			{
 				bCanCook = false;
 				break;

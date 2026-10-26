@@ -39,7 +39,7 @@ float CItem::GetHungerRecoveryValue(CItem::ITEM_TYPE eType)
 	case CItem::ITEM_TYPE::Apple:
 		return 30.0f; // リンゴの空腹回復値
 	case CItem::ITEM_TYPE::ApplePie:
-		return 40.0f; // アップルパイの空腹回復値
+		return 100.0f; // アップルパイの空腹回復値(材料のリンゴ3個分より高くして、調理する価値を持たせる)
 	case CItem::ITEM_TYPE::Bread:
 		return 50.0f; // パンの空腹回復値
 	default:

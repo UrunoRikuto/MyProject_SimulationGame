@@ -110,6 +110,16 @@ bool CFarmFacility::CanAddCrop() const
 }
 
 /*****************************************//*
+	@brief　	| 農作物を追加できる空きの数を取得
+	@return		| 空きの数
+*//*****************************************/
+int CFarmFacility::GetFreeCropSlotCount() const
+{
+	const int nFree = static_cast<int>(MAX_CROP_FARM[m_nBuildLevel - 1]) - static_cast<int>(m_pCropList.size());
+	return nFree > 0 ? nFree : 0;
+}
+
+/*****************************************//*
 	@brief　	| 農作物を追加
 	@param 		| eCropType：農作物のアイテムタイプ
 *//*****************************************/

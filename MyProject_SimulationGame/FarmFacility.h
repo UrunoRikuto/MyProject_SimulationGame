@@ -67,6 +67,10 @@ public:
 	// @param eCropType：農作物のアイテムタイプ
 	void AddCrop(CItem::ITEM_TYPE eCropType);
 
+	// @brief 農作物を追加できる空きの数を取得
+	// @return 現在の建築レベルの最大農作物数から、育てている農作物の数を引いた数
+	int GetFreeCropSlotCount() const;
+
 	// @brief 完成した農作物があるかどうかを取得
 	// @return true:完成した農作物がある false:完成した農作物がない
 	bool HasCompletedCrops() const;

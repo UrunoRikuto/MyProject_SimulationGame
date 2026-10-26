@@ -246,10 +246,10 @@ void CCook_Job::GatheringMaterialsAction()
 	// 全ての素材が集まった場合は次の状態に移行
 	if (bAllMaterialsGathered)
 	{
-		// 持っているアイテムを全て手放す
+		// 持っているアイテムを全て調理に使う(使った材料は解放する)
 		while (m_pOwner->HasItem())
 		{
-			m_pOwner->TakeOutItem();
+			delete m_pOwner->TakeOutItem();
 		}
 
 		// 仕事状態を製作中に変更

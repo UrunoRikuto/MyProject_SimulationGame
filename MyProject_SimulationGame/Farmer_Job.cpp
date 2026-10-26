@@ -9,6 +9,51 @@
 #include "Main.h"
 #include "BuildManager.h"
 #include "StorageHouse.h"
+#include "Human.h"
+
+namespace
+{
+	// @brief 麦の在庫の上限(これ以上は種を植えない)
+	// @note 麦はパンにしか使えず、調理には時間がかかる。使い切れない量まで作ると、種が無駄になるため
+	constexpr int Wheat_Stock_Limit = 30;
+
+	// @brief 貯蔵庫の麦の在庫が上限に達しているかどうか
+	bool IsWheatStockFull(const CStorageHouse* pStorage)
+	{
+		if (pStorage == nullptr) return false;
+
+		int nWheat = 0;
+		for (const CItem* pItem : pStorage->GetStoredItems())
+		{
+			if (pItem->GetItemType() == CItem::ITEM_TYPE::Wheat) nWheat++;
+		}
+		return nWheat >= Wheat_Stock_Limit;
+	}
+
+	// @brief 農作施設に植えられる種の数から、所持している種の数を引いた、あと必要な種の数を求める
+	// @param facilities：農作施設のリスト
+	// @param pOwner：農夫
+	// @return あと必要な種の数(足りている場合は0以下)
+	int CountNeededSeeds(const std::list<CFarmFacility*>& facilities, CHuman* pOwner, const CStorageHouse* pStorage)
+	{
+		// 麦の在庫が十分にある間は、これ以上種を植えない
+		if (IsWheatStockFull(pStorage)) return 0;
+
+		int nFree = 0;
+		for (const CFarmFacility* pFacility : facilities)
+		{
+			nFree += pFacility->GetFreeCropSlotCount();
+		}
+
+		int nHeld = 0;
+		for (const CItem* pItem : pOwner->GetItemList())
+		{
+			if (pItem->GetItemCategory() == CItem::ITEM_CATEGORY::Seed) nHeld++;
+		}
+
+		return nFree - nHeld;
+	}
+}
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -171,8 +216,15 @@ void CFarmer_Job::TendingCropsAction()
 		}
 	}
 
-	// 貯蔵庫に種カテゴリーのアイテムがある場合
-	if (storageHouse->HasItemCategory(CItem::ITEM_CATEGORY::Seed))
+	// 麦の在庫が十分にある場合は、所持している種も植えない
+	if (IsWheatStockFull(storageHouse))
+	{
+		hasSeedItems.clear();
+	}
+
+	// 貯蔵庫に種カテゴリーのアイテムがあり、植える種が足りない場合
+	// (植えきれない分の種まで取っていくと、貯蔵庫の種がなくなってしまうため、植える分だけ取りに行く)
+	if (storageHouse->HasItemCategory(CItem::ITEM_CATEGORY::Seed) && CountNeededSeeds(FarmFacilities, m_pOwner, storageHouse) > 0)
 	{
 
 		// 所持している種アイテムがない場合は処理を抜ける
@@ -232,8 +284,8 @@ void CFarmer_Job::TendingCropsAction()
 				m_eCurrentState = WorkState::Resting;
 			}
 
-			// 所持アイテムリストから種アイテムを削除
-			m_pOwner->TakeOutItem(pSeedItem->GetItemType());
+			// 所持アイテムリストから種アイテムを削除して、植えた種を解放する
+			delete m_pOwner->TakeOutItem(pSeedItem->GetItemType());
 
 			// 目標農作施設が作物を追加できない場合
 			if (!m_pTargetFarmFacility->CanAddCrop())
@@ -258,6 +310,14 @@ void CFarmer_Job::TendingCropsAction()
 *//*****************************************/
 void CFarmer_Job::RetrievingSeedsAction()
 {
+	// 植える分の種を持っている場合は、貯蔵庫の種を取り尽くさずに作物の世話に戻る
+	if (CountNeededSeeds(GetScene()->GetGameObjects<CFarmFacility>(), m_pOwner, GetScene()->GetGameObject<CStorageHouse>()) <= 0)
+	{
+		m_ePrevState = m_eCurrentState;
+		m_eCurrentState = WorkState::TendingCrops;
+		return;
+	}
+
 	// 貯蔵庫を探す
 	CStorageHouse* storageHouse = GetScene()->GetGameObject<CStorageHouse>();
 
