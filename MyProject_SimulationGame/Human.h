@@ -30,6 +30,10 @@ constexpr float Human_UnCookedFood_Hunger_Recovery_Multiplier = 0.5f;
 // @brief 仕事による空腹減少値(マイフレーム)
 constexpr float Work_Hunger_Decrease = 0.5f;
 
+// @brief 食事に向かい始める空腹度
+// @note 貯蔵庫から遠くで働いている間に、食事に戻る途中で餓死しないよう、警告値(Warning_Hunger)より高めに設定する
+constexpr float Human_Seek_Food_Hunger = 40.0f;
+
 // @brief 人間オブジェクトクラス
 class CHuman final : public CEntity
 {

@@ -169,8 +169,8 @@ void CHuman::Update()
 	// 食料がある場合の処理
 	if(HasFood() || pStorageHouse->HasFood())
 	{
-		// 空腹度が警告値を下回ったら食事状態に移行
-		if (m_fHunger < Warning_Hunger)
+		// 空腹度が食事に向かい始める値を下回ったら食事状態に移行
+		if (m_fHunger < Human_Seek_Food_Hunger)
 		{
 			m_eState = CHuman::HUMAN_STATE::Eating;
 			m_isEating = true;
