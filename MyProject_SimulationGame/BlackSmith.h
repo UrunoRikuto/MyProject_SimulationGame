@@ -53,6 +53,9 @@ public:
 	// @return 表示した項目数
 	virtual int Inspecter() override;
 
+	// @brief 施設の説明文を取得
+	virtual std::string GetDescription() const override;
+
 	// @brief 生産依頼を追加可能かどうかを取得
 	// @return true:追加可能 false:追加不可
 	bool CanAddRequest() const;

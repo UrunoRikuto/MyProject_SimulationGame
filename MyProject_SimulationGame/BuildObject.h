@@ -7,6 +7,8 @@
 #pragma once
 #include "GameObject.h"
 #include "BillboardRenderer.h"
+#include <sstream>
+#include <string>
 
 // @brief 建築オブジェクトクラス
 class CBuildObject : public CGameObject
@@ -33,6 +35,10 @@ public:
 
 	// @brief インスペクター表示処理
 	virtual int Inspecter();
+
+	// @brief 施設の説明文を取得
+	// @return 施設の役割と、レベルを上げたときの効果の説明(改行区切り)
+	virtual std::string GetDescription() const { return std::string(); }
 
 	// @brief 建築物レベルが最大かどうかを取得
 	bool IsMaxBuildLevel() const { return m_nBuildLevel >= MAX_BUILD_LEVEL; }
@@ -61,6 +67,24 @@ public:
 
 	// @brief 建築完成度を初期化
 	void InitializeBuildProgress() { m_fBuildProgress = 0.0f; }
+
+protected:
+	// @brief レベルごとの値を「1 / 2 / 3」のように並べた文字列にする(説明文用)
+	// @param values：レベルごとの値の配列(Lv1から順に)
+	// @param fDivisor：値をこの数で割って表示する(Lv1の値を1倍とした倍率で表示したいときに使う)
+	// @param pUnit：末尾に付ける単位
+	template<typename T, size_t N>
+	static std::string FormatLevelValues(const T(&values)[N], float fDivisor, const char* pUnit)
+	{
+		std::ostringstream stream;
+		for (size_t i = 0; i < N; ++i)
+		{
+			if (i > 0) stream << " / ";
+			stream << static_cast<float>(values[i]) / fDivisor;
+		}
+		stream << pUnit;
+		return stream.str();
+	}
 
 protected:
 	// @brief 建築完成度

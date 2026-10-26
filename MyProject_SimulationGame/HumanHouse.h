@@ -36,6 +36,9 @@ public:
 	// @param isEndFtrue:ImGui‚ÌEnd()‚ğŒÄ‚Ô false:ŒÄ‚Î‚È‚¢
 	virtual int Inspecter()override;
 
+	// @brief {İ‚Ìà–¾•¶‚ğæ“¾
+	virtual std::string GetDescription() const override;
+
 	// @brief Å‘å‹ZÒ”‚Ìæ“¾
 	// @return Å‘å‹ZÒ”
 	int GetMaxResidents() const;

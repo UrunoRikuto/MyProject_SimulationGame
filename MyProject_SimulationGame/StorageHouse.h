@@ -26,6 +26,9 @@ public:
 	// @param isEnd：true:ImGuiのEnd()を呼ぶ false:呼ばない
 	virtual int Inspecter()override;
 
+	// @brief 施設の説明文を取得
+	virtual std::string GetDescription() const override;
+
 	// @brief アイテムの収納
 	// @param pItem：収納するアイテムポインタ
 	void StoreItem(CItem* pItem);

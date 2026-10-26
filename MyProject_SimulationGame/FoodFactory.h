@@ -58,6 +58,9 @@ public:
 	// @brief インスペクター表示処理
 	virtual int Inspecter() override;
 
+	// @brief 施設の説明文を取得
+	virtual std::string GetDescription() const override;
+
 	// @brief 調理依頼を受ける
 	// @return 調理依頼構造体のポインタ、なければnullptr
 	CookRequest* TakeRequest();

@@ -228,3 +228,16 @@ CItem* CBlackSmith::ProgressRequest(ToolRequest* pRequest, float fAmount)
 
 	return nullptr;
 }
+
+/*****************************************//*
+	@brief　	| 施設の説明文を取得
+	@return		| 鍛冶屋の役割と、レベルを上げたときの効果の説明
+*//*****************************************/
+std::string CBlackSmith::GetDescription() const
+{
+	return std::string(u8"採取や狩猟に使う道具(つるはし・斧・鎌・槍)を作る施設です。\n")
+		+ u8"道具が必要な人間が依頼を出すと、鍛冶師が作ります。\n"
+		+ u8"レベルを上げると、同時に受けられる依頼数と作る速さが上がります。\n"
+		+ u8"・同時に受けられる依頼数: " + FormatLevelValues(MAX_REQUEST_TOOL, 1.0f, u8"件") + u8"\n"
+		+ u8"・作る速さ: " + FormatLevelValues(TOOL_PRODUCTION_PROGRESS_AMOUNT, TOOL_PRODUCTION_PROGRESS_AMOUNT[0], u8"倍");
+}

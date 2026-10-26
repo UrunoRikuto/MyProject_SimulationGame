@@ -99,3 +99,14 @@ void CHumanHouse::RemoveResident(CHuman* pHuman)
 {
 	m_Residents.remove(pHuman);
 }
+
+/*****************************************//*
+	@brief　	| 施設の説明文を取得
+	@return		| 人間の家の役割と、レベルを上げたときの効果の説明
+*//*****************************************/
+std::string CHumanHouse::GetDescription() const
+{
+	return std::string(u8"人間が住む家です。\n")
+		+ u8"レベルを上げると住める人数が増え、空きができると新しい人間が増えます。\n"
+		+ u8"・住める人数: " + FormatLevelValues(MAX_RESIDENTS, 1.0f, u8"人");
+}

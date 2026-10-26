@@ -375,3 +375,16 @@ std::list<CItem::ITEM_TYPE> CFoodFactory::GetProducibleMealTypes()
 	// 製作可能な料理のアイテムタイプリストを返す
 	return vCanCookItems;
 }
+
+/*****************************************//*
+	@brief　	| 施設の説明文を取得
+	@return		| 食料加工施設の役割と、レベルを上げたときの効果の説明
+*//*****************************************/
+std::string CFoodFactory::GetDescription() const
+{
+	return std::string(u8"貯蔵庫の食材から、パン・アップルパイ・砂糖を作る施設です。料理人が調理します。\n")
+		+ u8"作り置きが十分にあるときは作りません。\n"
+		+ u8"レベルを上げると、同時に調理できる数と調理の速さが上がります。\n"
+		+ u8"・同時に調理できる数: " + FormatLevelValues(MAX_COOK_REQUESTS, 1.0f, u8"個") + u8"\n"
+		+ u8"・調理の速さ: " + FormatLevelValues(COOK_PRODUCTION_PROGRESS_AMOUNT, COOK_PRODUCTION_PROGRESS_AMOUNT[0], u8"倍");
+}

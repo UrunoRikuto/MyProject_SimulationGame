@@ -125,3 +125,15 @@ void CRefreshFacility::ReleaseRefreshFacility(CHuman& pHuman)
 	// 使用中の人間リストから削除
 	m_pUsingHumans.erase(std::remove(m_pUsingHumans.begin(), m_pUsingHumans.end(), &pHuman), m_pUsingHumans.end());
 }
+
+/*****************************************//*
+	@brief　	| 施設の説明文を取得
+	@return		| 休憩施設の役割と、レベルを上げたときの効果の説明
+*//*****************************************/
+std::string CRefreshFacility::GetDescription() const
+{
+	return std::string(u8"人間のスタミナを回復する施設です。\n")
+		+ u8"レベルを上げると、同時に使える人数と回復の速さが上がります。\n"
+		+ u8"・同時に使える人数: " + FormatLevelValues(MAX_USING_HUMANS, 1.0f, u8"人") + u8"\n"
+		+ u8"・回復の速さ: " + FormatLevelValues(REFRESH_STAMINA_AMOUNT, REFRESH_STAMINA_AMOUNT[0], u8"倍");
+}

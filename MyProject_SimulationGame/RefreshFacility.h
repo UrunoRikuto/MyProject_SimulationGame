@@ -45,6 +45,9 @@ public:
 	// @brief インスペクター表示処理
 	virtual int Inspecter()override;
 
+	// @brief 施設の説明文を取得
+	virtual std::string GetDescription() const override;
+
 	// @brief 休憩施設を使用可能かどうか
 	// @return true:使用可能 false:使用不可
 	bool CanUseRefreshFacility() const;

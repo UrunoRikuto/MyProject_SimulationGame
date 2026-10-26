@@ -226,3 +226,16 @@ void CFarmFacility::ProgressCrops()
 		crop.fGrowthProgress += fGrowthAmount;
 	}
 }
+
+/*****************************************//*
+	@brief　	| 施設の説明文を取得
+	@return		| 農作施設の役割と、レベルを上げたときの効果の説明
+*//*****************************************/
+std::string CFarmFacility::GetDescription() const
+{
+	return std::string(u8"麦の種を植えて育て、麦を収穫する施設です。農夫が種を植えて収穫します。\n")
+		+ u8"麦の種は、草を採取すると手に入ります。\n"
+		+ u8"レベルを上げると、同時に育てられる数と成長の速さが上がります。\n"
+		+ u8"・同時に育てられる数: " + FormatLevelValues(MAX_CROP_FARM, 1.0f, u8"個") + u8"\n"
+		+ u8"・成長の速さ: " + FormatLevelValues(CROP_GROWTH_PROGRESS_AMOUNT, CROP_GROWTH_PROGRESS_AMOUNT[0], u8"倍");
+}
