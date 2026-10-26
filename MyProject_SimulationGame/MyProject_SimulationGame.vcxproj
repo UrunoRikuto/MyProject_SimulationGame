@@ -176,6 +176,7 @@
     <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="SeasonManager.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="GoalManager.h" />
     <ClInclude Include="TutorialManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="GameTimeManager.cpp" />
     <ClCompile Include="SeasonManager.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="GoalManager.cpp" />
     <ClCompile Include="TutorialManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />

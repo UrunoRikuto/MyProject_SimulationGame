@@ -348,6 +348,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="GoalManager.h">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClInclude>
     <ClInclude Include="TutorialManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
@@ -645,6 +648,9 @@
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
     <ClCompile Include="TutorialManager.cpp">
