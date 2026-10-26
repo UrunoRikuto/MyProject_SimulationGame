@@ -26,7 +26,8 @@ const int INITIAL_VILLAGE_SIZE_X =5;	// 初期村のXサイズ
 const int INITIAL_VILLAGE_SIZE_Y =5;	// 初期村のYサイズ
 
 // 縄張り
-const int TERRITORY_COUNT =100;
+// (フィールドの広さに比例して増やし、動物の密度が変わらないようにする。100x100のときに100個)
+const int TERRITORY_COUNT =100 * (CFieldGrid::GridSizeX * CFieldGrid::GridSizeY) / (100 * 100);
 
 const int TERRITORY_MINSIZE_X =2;
 const int TERRITORY_MINSIZE_Y =2;
@@ -292,35 +293,15 @@ void CFieldManager::CreateTerritory()
 		Max
 	};
 
-	// 残りの縄張り数
-	int remainingTerritory = TERRITORY_COUNT /2;
-	// ランダムに分割
-	for (int i =0; i < TerritoryType::Max; ++i)
-	{
-		// 最後の要素の場合は残りをすべて割り当てる
-		if (i == TerritoryType::Max -1)
-		{
-			territoryNum.push_back(remainingTerritory);
-			break;
-		}
-
-		// ランダムに縄張り数を決定
-		int randNum = rand() % (remainingTerritory +1);
-
-		// 縄張り数を格納
-		territoryNum.push_back(randNum);
-
-		// 残りの縄張り数を更新
-		remainingTerritory -= randNum;
-	}
-
-	// 半分は要素数で等分して割り当てる
-	int halfTerritory = TERRITORY_COUNT /2;
-	int equalNum = halfTerritory / TerritoryType::Max;
-	for (int i =0; i < TerritoryType::Max; ++i)
-	{
-		territoryNum[i] += equalNum;
-	}
+	// 鹿と狼の縄張り数を決める
+	// (狼が多すぎると鹿が増えられず、少なすぎると鹿が増えすぎるため、鹿の割合は一定の範囲内でランダムに決める)
+	constexpr float Deer_Territory_Rate_Min = 0.65f;
+	constexpr float Deer_Territory_Rate_Range = 0.15f;
+	const float fDeerRate = Deer_Territory_Rate_Min + Deer_Territory_Rate_Range * static_cast<float>(rand() % 101) / 100.0f;
+	const int nDeerTerritory = static_cast<int>(TERRITORY_COUNT * fDeerRate);
+	// 縄張りタイプの並び順(Deer, Wolf)に合わせて格納する
+	territoryNum.push_back(nDeerTerritory);
+	territoryNum.push_back(TERRITORY_COUNT - nDeerTerritory);
 
 	// フィールドセルの2次元配列を取得（コピーを避ける）
 	auto& fieldCells = m_pFieldGrid->GetFieldCells();

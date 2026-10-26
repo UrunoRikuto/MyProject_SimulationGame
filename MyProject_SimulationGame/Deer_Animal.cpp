@@ -350,6 +350,9 @@ void CDeer_Animal::Update()
 	// 位置更新
 	m_tParam.m_f3Pos += m_f3Velocity * fDeltaTime;
 
+	// フィールドの外に出ないようにする
+	KeepInsideField();
+
 	// Y座標は地面に固定
 	m_tParam.m_f3Pos.y = 0.0f;
 

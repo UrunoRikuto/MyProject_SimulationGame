@@ -7,6 +7,7 @@
 #include "GrassGenerator.h"
 #include "Grass.h"
 #include "Main.h"
+#include "GeneratorManager.h"
 #include "ImguiSystem.h"
 
 #undef min
@@ -26,13 +27,13 @@ void CGrassGenerator::Generate()
 	int createNum = 0;
 	for(auto cell : cells)
 	{
-		// 草オブジェクトを生成し、選出したセルに配置
-		GetScene()->AddGameObject<CGrass>(Tag::GameObject, u8"草")->SetCreatePos(cell);
+		// 生成を予約する(まとめて生成すると処理が止まるため、毎フレーム少しずつ生成される)
+		CGeneratorManager::GetInstance()->ReserveInitialSpawn(CGeneratorManager::GenerateType::Grass, cell->GetIndex());
 		createNum++;
 	}
 
 	// デバッグログの追加
-	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"草を") + std::to_string(createNum) + std::string(u8"個生成しました"), false);
+	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"草を") + std::to_string(createNum) + std::string(u8"個の生成を予約しました(順次生成します)"), false);
 }
 
 /*****************************************//*

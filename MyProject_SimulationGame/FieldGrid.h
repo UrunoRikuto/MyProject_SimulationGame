@@ -13,8 +13,16 @@
 class CFieldGrid
 {
 public:
-	static const int GridSizeX =100;	// グリッドのXサイズ
-	static const int GridSizeY =100;	// グリッドのYサイズ
+	static const int GridSizeX = 200;	// グリッドのXサイズ
+	static const int GridSizeY = 200;	// グリッドのYサイズ
+
+	// @brief フィールド全体の半分の幅(中心から端までの距離)の取得
+	// @return X方向の距離
+	static float GetHalfExtentX() { return GridSizeX * CFieldCell::CELL_SIZE.x * 0.5f; }
+
+	// @brief フィールド全体の半分の奥行(中心から端までの距離)の取得
+	// @return Z方向の距離
+	static float GetHalfExtentZ() { return GridSizeY * CFieldCell::CELL_SIZE.z * 0.5f; }
 
 public:
 	// @brief コンストラクタ

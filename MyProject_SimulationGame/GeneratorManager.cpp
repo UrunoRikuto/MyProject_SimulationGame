@@ -6,8 +6,20 @@
 *//**************************************************/
 #include "GeneratorManager.h"
 #include "Main.h"
+#include "FieldManager.h"
+#include <algorithm>
+#include <chrono>
 #include <cstdlib>
 #include <vector>
+
+namespace
+{
+	// @brief 1回の更新で、予約されている生成に使ってよい時間(ミリ秒)
+	constexpr float Reserved_Spawn_Budget_Ms = 1.5f;
+
+	// @brief 何個生成するごとに経過時間を確認するか
+	constexpr int Reserved_Spawn_Check_Interval = 8;
+}
 
 /*****************************************
 	@brief　	| デストラクタ
@@ -72,6 +84,9 @@ void CGeneratorManager::GenerateAtCell(const DirectX::XMINT2& n2Cell)
 *//*****************************************/
 void CGeneratorManager::Update()
 {
+	// 予約されている初期生成を、制限時間内で少しずつ行う
+	ProcessReservedSpawns();
+
 	// 各ジェネレーターの更新処理(動物の補充や人間の空き枠の確認など)
 	for (IObserver* observer : m_Observers)
 	{
@@ -198,4 +213,65 @@ int CGeneratorManager::CountRequests(GenerateType eType) const
 		}
 	}
 	return nCount;
+}
+
+/*****************************************
+	@brief　	| 初期生成の予約処理
+	@param　	| eType：生成するタイプ
+	@param　	| n2Cell：生成先のセルのインデックス
+*//*****************************************/
+void CGeneratorManager::ReserveInitialSpawn(GenerateType eType, const DirectX::XMINT2& n2Cell)
+{
+	// フィールドの中心(原点)からの距離を求める
+	const DirectX::XMFLOAT3 cellPos = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[n2Cell.x][n2Cell.y]->GetPos();
+	m_ReservedSpawns.push_back({ eType, n2Cell, cellPos.x * cellPos.x + cellPos.z * cellPos.z });
+	m_bReservedSorted = false;
+}
+
+/*****************************************
+	@brief　	| 予約されている生成の処理
+	@note		| 1回の更新で使ってよい時間を超えたら、残りは次の更新に回す
+				| 初期の村に近いものから生成するため、最初に見える範囲は早く揃う
+*//*****************************************/
+void CGeneratorManager::ProcessReservedSpawns()
+{
+	if (m_ReservedSpawns.empty()) return;
+
+	// 中心から遠い順に並べる(末尾から取り出すことで、近いものから生成する)
+	if (!m_bReservedSorted)
+	{
+		std::sort(m_ReservedSpawns.begin(), m_ReservedSpawns.end(),
+			[](const ReservedSpawn& a, const ReservedSpawn& b) { return a.m_fDistanceSq > b.m_fDistanceSq; });
+		m_bReservedSorted = true;
+	}
+
+	const auto startTime = std::chrono::steady_clock::now();
+	int nSpawned = 0;
+	while (!m_ReservedSpawns.empty())
+	{
+		const ReservedSpawn spawn = m_ReservedSpawns.back();
+		m_ReservedSpawns.pop_back();
+
+		switch (spawn.m_GenerateType)
+		{
+		case GenerateType::Wood:
+			GenerateAtCell<CWoodGenerator>(spawn.m_n2CellIndex);
+			break;
+		case GenerateType::Stone:
+			GenerateAtCell<CStoneGenerator>(spawn.m_n2CellIndex);
+			break;
+		case GenerateType::Grass:
+			GenerateAtCell<CGrassGenerator>(spawn.m_n2CellIndex);
+			break;
+		default:
+			break;
+		}
+
+		// 一定数ごとに経過時間を確認し、制限時間を超えていたら残りは次の更新で行う
+		if (++nSpawned % Reserved_Spawn_Check_Interval == 0)
+		{
+			const float fElapsedMs = std::chrono::duration<float, std::milli>(std::chrono::steady_clock::now() - startTime).count();
+			if (fElapsedMs > Reserved_Spawn_Budget_Ms) break;
+		}
+	}
 }

@@ -286,6 +286,9 @@ void CWolf_Animal::Update()
 	m_tParam.m_f3Rotate.y = atan2f(m_f3Velocity.x, m_f3Velocity.z);
 	// 位置更新
 	m_tParam.m_f3Pos += m_f3Velocity * fDeltaTime;
+
+	// フィールドの外に出ないようにする
+	KeepInsideField();
 }
 
 /****************************************//*

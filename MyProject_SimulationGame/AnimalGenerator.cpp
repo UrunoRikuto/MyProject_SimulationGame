@@ -6,6 +6,7 @@
 *//**************************************************/
 #include "AnimalGenerator.h"
 #include "FieldManager.h"
+#include "FieldGrid.h"
 #include "Main.h"
 #include "Human.h"
 #include "ImguiSystem.h"
@@ -19,6 +20,11 @@ namespace
 {
 	// @brief “®•¨‚Ì•â[‚ğŠm”F‚·‚éŠÔŠu(•b)
 	constexpr float Animal_Respawn_Interval = 10.0f;
+
+	// @brief 1‰ñ‚Ì•â[‚ÌŠm”F‚Å•â[‚·‚é“ª”
+	// @note ƒtƒB[ƒ‹ƒh‚ªL‚¢‚Ù‚Ç“®•¨‚Ì”‚ª‘½‚­Aë‚ç‚ê‚é”‚à‘‚¦‚é‚½‚ßAL‚³‚É”ä—á‚µ‚Ä‘‚â‚·(100x100‚Ì‚Æ‚«‚É1“ª)
+	constexpr int Animal_Respawn_Batch = (CFieldGrid::GridSizeX * CFieldGrid::GridSizeY) / (100 * 100);
+
 
 	// @brief lŠÔ‚©‚ç‚±‚Ì‹——£ˆÈ“à‚É‚Í“®•¨‚ğ•â[‚µ‚È‚¢
 	constexpr float Animal_Spawn_Safe_Distance = 30.0f;
@@ -60,7 +66,7 @@ void CAnimalGenerator::Generate()
 		for (CFieldCell* cell : cells)
 		{
 			// ƒIƒIƒJƒ~
-			if (cell->GetTerritoryType() == CFieldCell::TerritoryType::Wolf && !cell->IsUse())
+			if (cell->GetTerritoryType() == CFieldCell::TerritoryType::Wolf && !cell->IsUse() && cell->GetCellType() == CFieldCell::CellType::EMPTY)
 			{
 				CWolf_Animal* pWolf = GetScene()->AddGameObject<CWolf_Animal>(Tag::GameObject, u8"˜T");
 				pWolf->SetPos(cell->GetPos());
@@ -69,7 +75,7 @@ void CAnimalGenerator::Generate()
 				cell->SetUse(true);
 			}
 			// ­
-			else if (cell->GetTerritoryType() == CFieldCell::TerritoryType::Deer && !cell->IsUse())
+			else if (cell->GetTerritoryType() == CFieldCell::TerritoryType::Deer && !cell->IsUse() && cell->GetCellType() == CFieldCell::CellType::EMPTY)
 			{
 				CDeer_Animal* pDeer = GetScene()->AddGameObject<CDeer_Animal>(Tag::GameObject, u8"­");
 				pDeer->SetPos(cell->GetPos());
@@ -115,15 +121,15 @@ void CAnimalGenerator::Update()
 	const int nWolfCount = static_cast<int>(GetAliveAnimals<CWolf_Animal>().size());
 
 	// ­‚Í–Ú•W”‚É–‚½‚È‚¯‚ê‚Î•â[‚·‚é
-	if (nDeerCount < m_nTargetDeer)
+	for (int i = 0; i < Animal_Respawn_Batch && nDeerCount + i < m_nTargetDeer; ++i)
 	{
 		RespawnDeer();
 	}
 
 	// ˜T‚Í–Ú•W”‚É–‚½‚¸A‚©‚Â­‚É‘Î‚·‚é”ä—¦‚ÌãŒÀ‚ğ’´‚¦‚È‚¢ê‡‚¾‚¯•â[‚·‚é
 	// (­‚ª­‚È‚¢ó‘Ô‚Å˜T‚¾‚¯‘‚¦‚ÄA­‚ªŒÍŠ‰‚µ‚Ä‚µ‚Ü‚¤‚Ì‚ğ–h‚®)
-	if (nWolfCount < m_nTargetWolf &&
-		static_cast<float>(nWolfCount + 1) <= Wolf_Respawn_Max_Deer_Ratio * static_cast<float>(nDeerCount))
+	for (int i = 0; i < Animal_Respawn_Batch && nWolfCount + i < m_nTargetWolf &&
+		static_cast<float>(nWolfCount + i + 1) <= Wolf_Respawn_Max_Deer_Ratio * static_cast<float>(nDeerCount); ++i)
 	{
 		RespawnWolf();
 	}

@@ -55,21 +55,11 @@ public:
 		m_pGameObject_List[(int)inTag].push_back(gameObject);
 		NotifyMembershipChanged();
 
-		// オブジェクトIDの設定
-        ObjectID id{};
-		// 同じ名前のオブジェクトがいくつあるかカウント
-        for (auto itr : m_tIDVec)
-        {
-			// もし同じ名前のオブジェクトがいたらカウントを増やす
-            if (itr.m_sName == inName)
-            {
-				// 同じ名前のオブジェクト数をカウントアップ
-                id.m_nSameCount++;
-            }
-        }
-		// オブジェクトIDの名前と同じ名前のオブジェクト数を設定
-        id.m_sName = inName;
-        m_tIDVec.push_back(id);
+		// オブジェクトIDの設定(同じ名前のオブジェクトが既にいくつあるかは、名前ごとのカウンタで数える)
+		ObjectID id{};
+		id.m_sName = inName;
+		id.m_nSameCount = m_NameCounts[inName]++;
+		m_tIDVec.push_back(id);
 		// ゲームオブジェクトにIDを設定
         gameObject->SetID(id);
 
@@ -282,6 +272,19 @@ public:
 		return std::list<T*>(items.begin(), items.end());
 	}
 
+	// @brief T型として扱えるゲームオブジェクト全てに対して、順に処理を行う
+	// @tparam T：対象のCGameObject型のゲームオブジェクトクラス
+	// @param func：各オブジェクト(T*)に対して呼び出す処理
+	// @note 一覧のコピーを作らないため、GetGameObjects<T>()より軽い。処理の中でオブジェクトの追加・破棄は行わないこと
+	template<typename T, typename F>
+	void ForEachGameObject(F&& func)
+	{
+		for (T* pObj : GetKindOf<T>())
+		{
+			func(pObj);
+		}
+	}
+
 	// @brief 指定した位置から一定距離内にあるゲームオブジェクトを取得する
 	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
 	// @param In_Center：基準位置
@@ -387,6 +390,9 @@ private:
 
 	// @brief シーン内の全てのオブジェクトIDリスト
     std::vector<ObjectID> m_tIDVec;
+
+	// @brief 名前ごとに追加したオブジェクトの数(オブジェクトIDの同名の通し番号の計算用)
+	std::unordered_map<std::string, int> m_NameCounts;
 
 	// @brief オブジェクトをT型として取得する
 	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス

@@ -27,6 +27,10 @@ public:
 	inline static bool s_bRefreshFlockInfo = true;
 
 protected:
+	// @brief フィールドの外に出ないように位置と速度を補正する
+	// @note 端の少し内側までを行動範囲とし、端に着いた場合は跳ね返らせる
+	void KeepInsideField();
+
 	// @brief 生誕した場所のセルインデックス
 	DirectX::XMINT2 m_n2BornCellIndex;
 

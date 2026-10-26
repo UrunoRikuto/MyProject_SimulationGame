@@ -54,3 +54,41 @@ CAnimal::~CAnimal()
 	// 登録しているセルの使用フラグを解除
 	CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[m_n2BornCellIndex.x][m_n2BornCellIndex.y]->SetUse(false);
 }
+
+/****************************************//*
+	@brief	| フィールドの外に出ないように位置と速度を補正する
+	@note	| 端の少し内側までを行動範囲とし、端に着いた場合は外向きの速度を内向きに跳ね返らせる
+*//****************************************/
+void CAnimal::KeepInsideField()
+{
+	// 端から、この距離の内側までを行動範囲にする
+	constexpr float Field_Edge_Margin = 4.0f;
+	// 端で跳ね返る時の、速度の残り具合
+	constexpr float Bounce_Rate = 0.5f;
+
+	const float fLimitX = CFieldGrid::GetHalfExtentX() - Field_Edge_Margin;
+	const float fLimitZ = CFieldGrid::GetHalfExtentZ() - Field_Edge_Margin;
+
+	DirectX::XMFLOAT3& pos = m_tParam.m_f3Pos;
+	if (pos.x > fLimitX)
+	{
+		pos.x = fLimitX;
+		if (m_f3Velocity.x > 0.0f) m_f3Velocity.x = -m_f3Velocity.x * Bounce_Rate;
+	}
+	else if (pos.x < -fLimitX)
+	{
+		pos.x = -fLimitX;
+		if (m_f3Velocity.x < 0.0f) m_f3Velocity.x = -m_f3Velocity.x * Bounce_Rate;
+	}
+
+	if (pos.z > fLimitZ)
+	{
+		pos.z = fLimitZ;
+		if (m_f3Velocity.z > 0.0f) m_f3Velocity.z = -m_f3Velocity.z * Bounce_Rate;
+	}
+	else if (pos.z < -fLimitZ)
+	{
+		pos.z = -fLimitZ;
+		if (m_f3Velocity.z < 0.0f) m_f3Velocity.z = -m_f3Velocity.z * Bounce_Rate;
+	}
+}
