@@ -165,13 +165,15 @@ void CSceneTitle::Update()
 	// 削除可能なオブジェクトの削除処理
 	for (auto& Objectlist : m_pGameObject_List)
 	{
-		Objectlist.remove_if([](CGameObject* pObj)
+		Objectlist.remove_if([this](CGameObject* pObj)
 			{
 				if (pObj->IsDestroy())
 				{
+					NotifyMembershipChanged();
 					pObj->Uninit();
 					pObj->OnDestroy();
 					SAFE_DELETE(pObj);
+					NotifyMembershipChanged();
 					return true;
 				}
 				return false;

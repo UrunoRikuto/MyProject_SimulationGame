@@ -97,13 +97,15 @@ void CSceneGame::Update()
 	PROFILE_SCOPE("Update: RemoveDestroyed");
 	for (auto& Objectlist : m_pGameObject_List)
 	{
-		Objectlist.remove_if([](CGameObject* pObj)
+		Objectlist.remove_if([this](CGameObject* pObj)
 		{
 			if (pObj->IsDestroy())
 			{
+				NotifyMembershipChanged();
 				pObj->Uninit();
 				pObj->OnDestroy();
 				SAFE_DELETE(pObj);
+				NotifyMembershipChanged();
 				return true;
 			}
 			return false;

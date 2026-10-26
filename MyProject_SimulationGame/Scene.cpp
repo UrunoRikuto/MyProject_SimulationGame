@@ -128,6 +128,7 @@ void CScene::Uninit()
 
 	// リストのクリア
 	m_tIDVec.clear();
+	NotifyMembershipChanged();
 }
 
 /****************************************//*

@@ -483,7 +483,7 @@ CAnimal* CHunter_Job::ResolvePrey()
 	if (!m_bHasPrey) return nullptr;
 
 	// Šl•¨‚Í‘¼‚Ì“®•¨‚É“|‚³‚ê‚Ä”jŠü‚³‚ê‚é‚±‚Æ‚ª‚ ‚é‚½‚ßAID‚©‚ç–ˆ‰ñ’T‚µ’¼‚·
-	CAnimal* pPrey = dynamic_cast<CAnimal*>(GetScene()->GetGameObject(m_PreyID));
+	CAnimal* pPrey = GetScene()->FindGameObjectByID<CAnimal>(m_PreyID);
 	if (pPrey == nullptr || pPrey->IsDestroy() || pPrey->IsDead()) return nullptr;
 
 	return pPrey;

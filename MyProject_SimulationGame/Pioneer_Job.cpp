@@ -411,7 +411,7 @@ CCollectTarget* CPioneer_Job::ResolveOccupant() const
 	if (!m_bHasOccupant) return nullptr;
 
 	// ÌæE‚Éæ‚ÉÌæ‚³‚ê‚Ä”jŠü‚³‚ê‚é‚±‚Æ‚ª‚ ‚é‚½‚ßAID‚©‚ç–ˆ‰ñ’T‚µ’¼‚·
-	CCollectTarget* pOccupant = dynamic_cast<CCollectTarget*>(GetScene()->GetGameObject(m_OccupantID));
+	CCollectTarget* pOccupant = GetScene()->FindGameObjectByID<CCollectTarget>(m_OccupantID);
 	if (pOccupant == nullptr || pOccupant->IsDestroy()) return nullptr;
 
 	return pOccupant;

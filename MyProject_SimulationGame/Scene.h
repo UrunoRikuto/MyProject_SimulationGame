@@ -9,6 +9,10 @@
 #include <list>
 #include <unordered_map>
 #include <typeinfo>
+#include <typeindex>
+#include <vector>
+#include <memory>
+#include <cfloat>
 
 // @brief シーンベースクラス
 class CScene
@@ -49,6 +53,7 @@ public:
 		}
 		// ゲームオブジェクトリストに追加
 		m_pGameObject_List[(int)inTag].push_back(gameObject);
+		NotifyMembershipChanged();
 
 		// オブジェクトIDの設定
         ObjectID id{};
@@ -84,22 +89,9 @@ public:
 	template<typename T = CGameObject>
 	T* GetGameObject()
 	{
-		// 自身を紐付けている全てのゲームオブジェクトを探索
-        for (const auto& list : m_pGameObject_List)
-        {
-			// T*型のゲームオブジェクトが見つかった場合はその値を返す
-            for (auto obj : list)
-            {
-				// T*型にキャストを試みる
-                T* ret = CastCached<T>(obj);
-
-				// 見つかった場合はそのポインタを返す
-                if (ret != nullptr) return ret;
-            }
-        }
-
-		// 見つからなかった場合はnullptrを返す
-		return nullptr;
+		// 型別のキャッシュの先頭(最初に見つかったもの)を返す
+		const std::vector<T*>& items = GetKindOf<T>();
+		return items.empty() ? nullptr : items.front();
 	}
 
 	// @brief ゲームオブジェクトをIDで取得する
@@ -129,6 +121,25 @@ public:
 		return nullptr;
 	}
 
+	// @brief ゲームオブジェクトをIDで取得する(型指定版)
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param inID：オブジェクトID
+	// @return 一致したT*型のポインタ、見つからなかった場合はnullptr
+	// @note T型のオブジェクトだけを探索するため、全オブジェクトを探索するGetGameObject(ObjectID)より高速
+	template<typename T>
+	T* FindGameObjectByID(const ObjectID& inID)
+	{
+		for (T* ret : GetKindOf<T>())
+		{
+			const ObjectID& id = ret->GetID();
+			if (id.m_nSameCount == inID.m_nSameCount && id.m_sName == inID.m_sName)
+			{
+				return ret;
+			}
+		}
+		return nullptr;
+	}
+
 	// @brief 近い位置にあるゲームオブジェクトを取得する
 	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
 	// @param inPos：基準位置
@@ -140,32 +151,22 @@ public:
 		// 近いオブジェクトのポインタ
 		T* pNearObject = nullptr;
 
-		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (const auto& list : m_pGameObject_List)
+		// T*型のゲームオブジェクトだけを探索
+		for (T* ret : GetKindOf<T>())
 		{
-			// T*型のゲームオブジェクトが見つかった場合はその値を返す
-			for (auto obj : list)
-			{
-				// T*型にキャストを試みる
-				T* ret = CastCached<T>(obj);
-				// 見つかった場合は距離を計算
-				if (ret != nullptr)
-				{
-					// オブジェクトの位置を取得
-					DirectX::XMFLOAT3 objPos = ret->GetPos();
+			// オブジェクトの位置を取得
+			DirectX::XMFLOAT3 objPos = ret->GetPos();
 
-					// 距離を計算
-					float dx = inPos.x - objPos.x;
-					float dy = inPos.y - objPos.y;
-					float dz = inPos.z - objPos.z;
-					float distance = dx * dx + dy * dy + dz * dz;
-					// 最小距離よりも小さい場合は更新
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						pNearObject = ret;
-					}
-				}
+			// 距離を計算
+			float dx = inPos.x - objPos.x;
+			float dy = inPos.y - objPos.y;
+			float dz = inPos.z - objPos.z;
+			float distance = dx * dx + dy * dy + dz * dz;
+			// 最小距離よりも小さい場合は更新
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				pNearObject = ret;
 			}
 		}
 
@@ -185,48 +186,38 @@ public:
 		// 近いオブジェクトのポインタ
 		T* pNearObject = nullptr;
 
-		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (const auto& list : m_pGameObject_List)
+		// T*型のゲームオブジェクトだけを探索
+		for (T* ret : GetKindOf<T>())
 		{
-			// T*型のゲームオブジェクトが見つかった場合はその値を返す
-			for (auto obj : list)
+			bool isSkip = false;
+			const ObjectID& id = ret->GetID();
+			for (size_t i = 0; i < inNoFindID.size(); i++)
 			{
-				bool isSkip = false;
-				// T*型にキャストを試みる
-				T* ret = CastCached<T>(obj);
-				// 見つかった場合は距離を計算
-				if (ret != nullptr)
+				// 除外するオブジェクトIDと一致する場合はスキップ
+				if (id.m_nSameCount == inNoFindID[i].m_nSameCount &&
+					id.m_sName == inNoFindID[i].m_sName)
 				{
-					for(int i = 0; i < inNoFindID.size(); i++)
-					{
-						// 除外するオブジェクトIDと一致する場合はスキップ
-						const ObjectID& id = ret->GetID();
-						if (id.m_nSameCount == inNoFindID[i].m_nSameCount &&
-							id.m_sName == inNoFindID[i].m_sName)
-						{
-							isSkip = true;
-							break;
-						}
-					}
-
-					// 除外するオブジェクトIDと一致した場合はスキップ
-					if (isSkip)continue;
-
-					// オブジェクトの位置を取得
-					DirectX::XMFLOAT3 objPos = ret->GetPos();
-
-					// 距離を計算
-					float dx = inPos.x - objPos.x;
-					float dy = inPos.y - objPos.y;
-					float dz = inPos.z - objPos.z;
-					float distance = dx * dx + dy * dy + dz * dz;
-					// 最小距離よりも小さい場合は更新
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						pNearObject = ret;
-					}
+					isSkip = true;
+					break;
 				}
+			}
+
+			// 除外するオブジェクトIDと一致した場合はスキップ
+			if (isSkip)continue;
+
+			// オブジェクトの位置を取得
+			DirectX::XMFLOAT3 objPos = ret->GetPos();
+
+			// 距離を計算
+			float dx = inPos.x - objPos.x;
+			float dy = inPos.y - objPos.y;
+			float dz = inPos.z - objPos.z;
+			float distance = dx * dx + dy * dy + dz * dz;
+			// 最小距離よりも小さい場合は更新
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				pNearObject = ret;
 			}
 		}
 
@@ -271,25 +262,9 @@ public:
 	template<typename T = CGameObject>
 	std::list<T*> GetGameObjects()
 	{
-		std::list<T*> gameObjectList;
-		gameObjectList.clear();
-
-		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (const auto& list : m_pGameObject_List)
-		{
-			// T*型のゲームオブジェクトが見つかった場合はその値をリストに追加
-			for (auto obj : list)
-			{
-				// T*型にキャストを試みる
-				T* ret = CastCached<T>(obj);
-				// 見つかった場合はリストに追加
-				if (ret != nullptr)
-				{
-					gameObjectList.push_back(ret);
-				}
-			}
-		}
-		return gameObjectList;
+		// 型別のキャッシュから、呼び出し側が自由に扱えるようにコピーして返す
+		const std::vector<T*>& items = GetKindOf<T>();
+		return std::list<T*>(items.begin(), items.end());
 	}
 
 	// @brief 指定した位置から一定距離内にあるゲームオブジェクトを取得する
@@ -301,32 +276,22 @@ public:
 	std::list<T*> GetGameObjects(DirectX::XMFLOAT3 In_Center, float distance)
 	{
 		std::list<T*> gameObjectList;
-		gameObjectList.clear();
 		float distanceSq = distance * distance;
-		// 自身を紐付けている全てのゲームオブジェクトを探索
-		for (const auto& list : m_pGameObject_List)
+
+		// T*型のゲームオブジェクトだけを探索
+		for (T* ret : GetKindOf<T>())
 		{
-			// T*型のゲームオブジェクトが見つかった場合はその値をリストに追加
-			for (auto obj : list)
+			// オブジェクトの位置を取得
+			DirectX::XMFLOAT3 objPos = ret->GetPos();
+			// 距離の二乗を計算
+			float dx = In_Center.x - objPos.x;
+			float dy = In_Center.y - objPos.y;
+			float dz = In_Center.z - objPos.z;
+			float distSq = dx * dx + dy * dy + dz * dz;
+			// 指定した距離内にある場合はリストに追加
+			if (distSq <= distanceSq)
 			{
-				// T*型にキャストを試みる
-				T* ret = CastCached<T>(obj);
-				// 見つかった場合は距離を計算
-				if (ret != nullptr)
-				{
-					// オブジェクトの位置を取得
-					DirectX::XMFLOAT3 objPos = ret->GetPos();
-					// 距離の二乗を計算
-					float distSq = 
-						powf(In_Center.x - objPos.x, 2) +
-						powf(In_Center.y - objPos.y, 2) +
-						powf(In_Center.z - objPos.z, 2);
-					// 指定した距離内にある場合はリストに追加
-					if (distSq <= distanceSq)
-					{
-						gameObjectList.push_back(ret);
-					}
-				}
+				gameObjectList.push_back(ret);
 			}
 		}
 		return gameObjectList;
@@ -341,10 +306,70 @@ public:
     bool GetIsFade() { return m_bFade; }
 
 protected:
+	// @brief ゲームオブジェクトの増減があったことを記録する
+	// @note 型別の検索結果のキャッシュを無効にする。リストへの追加・削除・解放を行った場合は必ず呼ぶこと
+	void NotifyMembershipChanged() { ++m_nMembershipVersion; }
+
 	// @brief シーン内のゲームオブジェクトリスト
     std::array<std::list<CGameObject*>,(int)Tag::Max> m_pGameObject_List;
 
 private:
+	// @brief 型別の検索結果のキャッシュの基底
+	struct IKindCache
+	{
+		virtual ~IKindCache() = default;
+		// @brief 作成した時点のオブジェクトの増減の版数
+		unsigned int m_nVersion = 0xFFFFFFFFu;
+	};
+
+	// @brief T型として扱えるオブジェクトの一覧
+	template<typename T>
+	struct KindCache : IKindCache
+	{
+		std::vector<T*> m_Items;
+	};
+
+	// @brief T型として扱えるオブジェクトの一覧を取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @return T型のオブジェクトの一覧(リスト内の並び順は全体を探索した場合と同じ)
+	// @note オブジェクトの増減があるまでは使い回すため、検索のたびに全オブジェクトを調べずに済む
+	//       返す参照は次にこの関数を呼ぶまでの間だけ有効(呼び出し側は検索中にシーンを操作しないこと)
+	template<typename T>
+	const std::vector<T*>& GetKindOf()
+	{
+		std::unique_ptr<IKindCache>& slot = m_KindCaches[std::type_index(typeid(T))];
+		if (!slot)
+		{
+			slot = std::make_unique<KindCache<T>>();
+		}
+		KindCache<T>* pCache = static_cast<KindCache<T>*>(slot.get());
+
+		// オブジェクトの増減があった場合だけ作り直す
+		if (pCache->m_nVersion != m_nMembershipVersion)
+		{
+			pCache->m_Items.clear();
+			for (const auto& list : m_pGameObject_List)
+			{
+				for (auto obj : list)
+				{
+					T* ret = CastCached<T>(obj);
+					if (ret != nullptr)
+					{
+						pCache->m_Items.push_back(ret);
+					}
+				}
+			}
+			pCache->m_nVersion = m_nMembershipVersion;
+		}
+		return pCache->m_Items;
+	}
+
+	// @brief オブジェクトの増減の版数
+	unsigned int m_nMembershipVersion = 0;
+
+	// @brief 型別の検索結果のキャッシュ
+	std::unordered_map<std::type_index, std::unique_ptr<IKindCache>> m_KindCaches;
+
 	// @brief シーン内の全てのオブジェクトIDリスト
     std::vector<ObjectID> m_tIDVec;
 
