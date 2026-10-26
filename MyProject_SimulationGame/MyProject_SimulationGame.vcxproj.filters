@@ -345,6 +345,9 @@
     <ClInclude Include="SeasonManager.h">
       <Filter>コードファイル\System\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="TutorialManager.h">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClInclude>
     <ClInclude Include="Item_Material.h">
       <Filter>コードファイル\System\Item</Filter>
     </ClInclude>
@@ -636,6 +639,9 @@
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
     <ClCompile Include="SeasonManager.cpp">
+      <Filter>コードファイル\System\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TutorialManager.cpp">
       <Filter>コードファイル\System\Manager</Filter>
     </ClCompile>
     <ClCompile Include="BlackSmith.cpp">
