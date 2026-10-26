@@ -104,6 +104,10 @@ public:
 	// @return 選択しているゲームオブジェクトのポインタ
 	CGameObject* GetSelectedGameObject() { return m_pGameObject; }
 
+	// @brief 選択している人間の取得
+	// @return 選択している人間(選択していない場合はnullptr)
+	CHuman* GetSelectedHuman() const { return m_pHumanObject; }
+
 	// @brief 選択しているゲームオブジェクトの解除
 	// @note 選択しているゲームオブジェクトが破棄された場合に呼び出す
 	void ClearSelectedGameObject() { m_pGameObject = nullptr; }
