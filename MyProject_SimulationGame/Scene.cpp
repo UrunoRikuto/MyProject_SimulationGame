@@ -229,7 +229,8 @@ void CScene::Draw()
         for (auto obj : list)
         {
             // タグやフラグで無条件描画が必要かチェック
-            if (obj->GetTag() == Tag::UI || obj->GetTag() == Tag::SkyBox)
+            // (フィールドの地面は、1つのオブジェクトでフィールド全体を描画するため、位置と大きさでは視錐台や距離の判定ができない)
+            if (obj->GetTag() == Tag::UI || obj->GetTag() == Tag::SkyBox || obj->GetTag() == Tag::Field)
             {
                 ProfileObject(true, obj, [&]() { obj->Draw(); });
                 continue;
