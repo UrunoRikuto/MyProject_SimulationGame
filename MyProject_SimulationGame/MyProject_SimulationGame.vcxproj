@@ -175,6 +175,7 @@
     <ClInclude Include="FlockEscapeAI.h" />
     <ClInclude Include="GameTimeManager.h" />
     <ClInclude Include="SeasonManager.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="TutorialManager.h" />
     <ClInclude Include="Gatherer_Strategy.h" />
     <ClInclude Include="Collect_Strategy.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="FlockEscapeAI.cpp" />
     <ClCompile Include="GameTimeManager.cpp" />
     <ClCompile Include="SeasonManager.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TutorialManager.cpp" />
     <ClCompile Include="Gatherer_Strategy.cpp" />
     <ClCompile Include="Component.cpp" />
