@@ -699,3 +699,51 @@ void Model::MakeMaterial(const void* ptr, std::string directory)
 		SetErrorMessage("Not find texture. [" + fullPath + "]");
 	}
 }
+
+/*************************//*
+@brief		| メッシュの頂点とインデックスの差し替え
+@param[in]	| meshNo：差し替えるメッシュの番号
+@param[in]	| vertices：頂点
+@param[in]	| indices：インデックス
+*//*************************/
+void Model::SetMeshData(unsigned int meshNo, const Vertices& vertices, const Indices& indices)
+{
+	if (meshNo >= m_meshes.size()) { return; }
+	Mesh& mesh = m_meshes[meshNo];
+
+	// 描画のたびにメッシュの情報がコピーされるため、大きな頂点データはMeshには持たせない(描画用のバッファだけに持たせる)
+	mesh.vertices.clear();
+	mesh.indices.clear();
+
+	MeshBuffer::Description desc = {};
+	desc.pVtx = vertices.data();
+	desc.vtxSize = sizeof(Vertex);
+	desc.vtxCount = static_cast<UINT>(vertices.size());
+	desc.isWrite = true;
+	desc.pIdx = indices.data();
+	desc.idxSize = sizeof(unsigned long);
+	desc.idxCount = static_cast<UINT>(indices.size());
+	desc.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	MeshBuffer* pNewMesh = new MeshBuffer();
+	if (FAILED(pNewMesh->Create(desc)))
+	{
+		delete pNewMesh;
+		return;
+	}
+
+	delete mesh.pMesh;
+	mesh.pMesh = pNewMesh;
+}
+
+/*************************//*
+@brief		| メッシュの頂点の書き換え
+@param[in]	| meshNo：書き換えるメッシュの番号
+@param[in]	| vertices：頂点
+*//*************************/
+void Model::WriteMeshVertices(unsigned int meshNo, const Vertices& vertices)
+{
+	if (meshNo >= m_meshes.size() || m_meshes[meshNo].pMesh == nullptr) { return; }
+	if (m_meshes[meshNo].pMesh->GetDesc().vtxCount != vertices.size()) { return; }
+	m_meshes[meshNo].pMesh->Write(const_cast<Vertex*>(vertices.data()));
+}

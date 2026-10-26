@@ -358,6 +358,22 @@ public:
 	const Mesh* GetMesh(unsigned int index);
 
 	/*
+	* @brief メッシュの頂点とインデックスを差し替える(地形のように、実行中に形が変わるメッシュ用)
+	* @note 頂点バッファは書き込み可能になり、WriteMeshVerticesで頂点だけを書き換えられる
+	* @param[in] meshNo 差し替えるメッシュの番号
+	* @param[in] vertices 頂点
+	* @param[in] indices インデックス
+	*/
+	void SetMeshData(unsigned int meshNo, const Vertices& vertices, const Indices& indices);
+
+	/*
+	* @brief SetMeshDataで差し替えたメッシュの頂点を書き換える(頂点の数は変えられない)
+	* @param[in] meshNo 書き換えるメッシュの番号
+	* @param[in] vertices 頂点
+	*/
+	void WriteMeshVertices(unsigned int meshNo, const Vertices& vertices);
+
+	/*
 	* @brief マテリアル数を取得
 	* @return マテリアル数
 	*/
