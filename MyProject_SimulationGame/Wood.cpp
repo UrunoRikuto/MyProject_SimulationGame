@@ -5,6 +5,7 @@
 *//**************************************************/
 #include "Wood.h"
 #include "SeasonManager.h"
+#include "GoalManager.h"
 #include "ModelRenderer.h"
 #include "BillboardRenderer.h"
 #include "Oparation.h"
@@ -76,15 +77,19 @@ void CWood::Init()
 
 /*****************************************//*
 	@brief　	| ドロップアイテムを、その時の状況に合わせて取捨選択する処理
-	@note		| 冬は木の実(リンゴ)が取れないため、ドロップアイテムからリンゴを除く
+	@note		| 冬と大飢餓の間は木の実(リンゴ)が取れないため、ドロップアイテムからリンゴを除く
 *//*****************************************/
 void CWood::FilterDropItems()
 {
-	if (CSeasonManager::GetSeason() != CSeasonManager::Season::Winter) return;
+	// (大飢餓の間は、季節に関係なく木の実が取れにくくなる)
+	const bool bWinter = (CSeasonManager::GetSeason() == CSeasonManager::Season::Winter);
+	if (!bWinter && !CGoalManager::IsFamine()) return;
 
 	for (auto it = m_Status.m_DropItems.begin(); it != m_Status.m_DropItems.end();)
 	{
-		if ((*it)->GetItemType() == CItem::ITEM_TYPE::Apple)
+		// 冬は全て取れない。大飢餓の間は、供給の割合の分だけ取れる
+		const bool bLost = bWinter || (static_cast<float>(rand() % 100) >= CGoalManager::GetSupplyRate() * 100.0f);
+		if ((*it)->GetItemType() == CItem::ITEM_TYPE::Apple && bLost)
 		{
 			delete* it;
 			it = m_Status.m_DropItems.erase(it);
