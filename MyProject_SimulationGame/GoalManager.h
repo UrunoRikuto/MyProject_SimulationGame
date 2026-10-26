@@ -28,7 +28,7 @@ public:
 	static constexpr int Required_Survivors = 20;
 
 	// @brief ‘å‹Q‰ì‚ÌŠÔ‚ÉA–Ø‚ÌÀ(ƒŠƒ“ƒS)‚ªæ‚ê‚éŠm—¦(%)
-	static constexpr int Famine_Supply_Percent = 40;
+	static constexpr int Famine_Supply_Percent = 10;
 
 	// @brief ‘å‹Q‰ì‚ÌŠÔ‚ÌA”_ì•¨‚ªˆç‚Â‘¬‚³‚ÌŠ„‡(%)
 	static constexpr int Famine_Crop_Growth_Percent = 50;
