@@ -50,7 +50,8 @@ void SetOnImgui(bool bOnImgui);
 // @param fSeconds：計測する秒数(0以下の場合は通常の起動)
 // @param nGameSpeed：計測中のゲーム速度(倍速)
 // @param nExtraHumans：計測用に追加する人間の数
-void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans);
+// @param pJobKey：全員に割り当てる職業の指定(nullptrの場合は全ての職業を順番に割り当てる)
+void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char* pJobKey);
 
 // @brief ウインドウハンドル取得
 // @return ウインドウハンドル

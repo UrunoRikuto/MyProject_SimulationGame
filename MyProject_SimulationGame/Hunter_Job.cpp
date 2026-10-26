@@ -27,8 +27,9 @@ namespace
 	constexpr float Hunt_Danger_Radius = 15.0f;
 	// @brief Šl•¨‚ð’Ç‚¤Žž‚ÌˆÚ“®‘¬“x‚Ì”{—¦
 	constexpr float Hunt_Chase_Speed_Rate = 2.5f;
-	// @brief Šl•¨‚ð’Ç‚¤Žž‚ÌƒXƒ^ƒ~ƒiŒ¸­’l(–ˆƒtƒŒ[ƒ€)
-	constexpr float Hunt_Chase_Stamina_Decrease = 0.05f;
+	// @brief Šl•¨‚ð1•C“|‚µI‚¦‚½Žž‚ÉŒ¸­‚·‚éƒXƒ^ƒ~ƒi’l
+	// @note ’Ç‚Á‚Ä‚¢‚éŠÔ‚âUŒ‚‚Ì‚½‚Ñ‚É‚ÍÁ”ï‚µ‚È‚¢(“r’†‚ÅƒXƒ^ƒ~ƒi‚ªØ‚ê‚ÄŽë‚è‚ð’†’f‚·‚é‚±‚Æ‚ª‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß)
+	constexpr float Hunt_Complete_Stamina_Decrease = 30.0f;
 	// @brief UŒ‚‚ÌŠÔŠu(•b)
 	constexpr float Hunt_Attack_Interval = 0.6f;
 	// @brief Šl•¨‚ð’ú‚ß‚é‚Ü‚Å‚Ì’ÇÕŽžŠÔ(•b)
@@ -190,6 +191,7 @@ void CHunter_Job::SearchPreyAction()
 	if (pPrey == nullptr) return;
 
 	// Šl•¨‚ðÝ’è‚µ‚ÄŽë‚è‚ðŠJŽn‚·‚é
+	s_Stats.nStarted++;
 	SetPrey(pPrey);
 	m_fChaseTime = 0.0f;
 	ChangeState(WorkState::Hunting);
@@ -204,6 +206,7 @@ void CHunter_Job::HuntingAction()
 	CAnimal* pPrey = ResolvePrey();
 	if (pPrey == nullptr)
 	{
+		s_Stats.nPreyLost++;
 		ClearPrey();
 		ChangeState(WorkState::SearchPrey);
 		return;
@@ -217,23 +220,15 @@ void CHunter_Job::HuntingAction()
 	const float fDistance = StructMath::Distance(m_pOwner->GetPos(), pPrey->GetPos());
 	if (m_fChaseTime > Hunt_Chase_Limit_Time || fDistance > Hunt_Search_Radius * 1.5f)
 	{
+		if (m_fChaseTime > Hunt_Chase_Limit_Time) s_Stats.nGiveUpTime++;
+		else s_Stats.nGiveUpFar++;
 		ClearPrey();
 		ChangeState(WorkState::SearchPrey);
 		return;
 	}
 
 	// Šl•¨‚ÉŒü‚©‚Á‚Ä‹ì‚¯Šñ‚é
-	if (!m_pOwner->MoveToTarget(pPrey, Human_Move_Speed * Hunt_Chase_Speed_Rate))
-	{
-		// ‘–‚Á‚Ä‚¢‚éŠÔ‚ÍƒXƒ^ƒ~ƒi‚ðÁ”ï‚·‚é
-		m_pOwner->DecreaseStamina(Hunt_Chase_Stamina_Decrease);
-		if (m_pOwner->IsZeroStamina())
-		{
-			ClearPrey();
-			ChangeState(WorkState::Resting);
-		}
-		return;
-	}
+	if (!m_pOwner->MoveToTarget(pPrey, Human_Move_Speed * Hunt_Chase_Speed_Rate)) return;
 
 	// UŒ‚‚ÌŠÔŠu‚ª‹ó‚¢‚Ä‚¢‚È‚¢ê‡‚Í‘Ò‚Â
 	if (m_fAttackCooldown > 0.0f) return;
@@ -243,9 +238,8 @@ void CHunter_Job::HuntingAction()
 	pPrey->TakeDamage(fDamage);
 	m_fAttackCooldown = Hunt_Attack_Interval;
 
-	// ‹ó• “x‚ÆƒXƒ^ƒ~ƒi‚ðŒ¸­‚³‚¹‚é
+	// ‹ó• “x‚ðŒ¸­‚³‚¹‚é
 	m_pOwner->DecreaseHunger(Work_Hunger_Decrease);
-	m_pOwner->DecreaseStamina(Job_Work_Stamina_Decrease);
 
 	// Šl•¨‚ð“|‚µ‚½ê‡
 	if (pPrey->IsDead())
@@ -259,17 +253,14 @@ void CHunter_Job::HuntingAction()
 		// •¶–¾ŒoŒ±’l‚ð‰ÁŽZ
 		CCivLevelManager::GetInstance()->AddExp(CCivLevelManager::ExpType::Gathering);
 
+		// Žë‚è‚ðI‚¦‚½”æ˜J‚Æ‚µ‚ÄAƒXƒ^ƒ~ƒi‚ð‚Ü‚Æ‚ß‚ÄÁ”ï‚·‚é(ƒXƒ^ƒ~ƒi‚ª‚È‚¯‚ê‚ÎA“÷‚ð—a‚¯‚½Œã‚É‹xŒe‚·‚é)
+		m_pOwner->DecreaseStamina(Hunt_Complete_Stamina_Decrease);
+
 		// Šl•¨‚ÌÝ’è‚ð‰ðœ‚µ‚Ä“÷‚ð‰^‚Ô
+		s_Stats.nKill++;
 		ClearPrey();
 		ChangeState(WorkState::Transporting);
 		return;
-	}
-
-	// ƒXƒ^ƒ~ƒi‚ª0‚É‚È‚Á‚½‚ç‹xŒe‚·‚é
-	if (m_pOwner->IsZeroStamina())
-	{
-		ClearPrey();
-		ChangeState(WorkState::Resting);
 	}
 }
 
@@ -402,11 +393,14 @@ CAnimal* CHunter_Job::SelectPrey()
 
 	CAnimal* pBestPrey = nullptr;
 	float fBestDistance = FLT_MAX;
+	int nCandidates = 0;
+	s_Stats.nSearch++;
 
 	for (CHerbivorousAnimal* pCandidate : GetScene()->GetGameObjects<CHerbivorousAnimal>(f3MyPos, Hunt_Search_Radius))
 	{
 		// “|‚³‚ê‚Ä‚¢‚éŠl•¨‚Í‘ÎÛŠO
 		if (pCandidate->IsDestroy() || pCandidate->IsDead()) continue;
+		nCandidates++;
 
 		// Šl•¨‚ÌŽüˆÍ‚ÌŠëŒ¯“x‚ªW’c‚Ìí—Í‚ðã‰ñ‚éê‡‚ÍP‚í‚È‚¢
 		if (CalcDanger(pCandidate) > fGroupPower) continue;
@@ -418,6 +412,12 @@ CAnimal* CHunter_Job::SelectPrey()
 			fBestDistance = fDistance;
 			pBestPrey = pCandidate;
 		}
+	}
+
+	if (pBestPrey == nullptr)
+	{
+		if (nCandidates == 0) s_Stats.nNoHerbivore++;
+		else s_Stats.nTooDangerous++;
 	}
 
 	return pBestPrey;

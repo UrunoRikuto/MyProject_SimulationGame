@@ -63,6 +63,30 @@ public:
 	// @return true:持っている false:持っていない
 	virtual bool HasCollectTool() override;
 
+	// @brief 狩りの結果の集計(バランス確認用)
+	struct HuntStats
+	{
+		// 獲物を探した回数
+		int nSearch = 0;
+		// 探索範囲内に草食動物がいなかった回数
+		int nNoHerbivore = 0;
+		// 草食動物はいたが、周囲が危険で襲えなかった回数
+		int nTooDangerous = 0;
+		// 狩りを始めた回数
+		int nStarted = 0;
+		// 獲物を倒した回数
+		int nKill = 0;
+		// 追跡時間が長すぎて諦めた回数
+		int nGiveUpTime = 0;
+		// 獲物が遠くへ離れすぎて諦めた回数
+		int nGiveUpFar = 0;
+		// 獲物が他の動物に倒されるなどして、いなくなった回数
+		int nPreyLost = 0;
+	};
+
+	// @brief 狩りの結果の集計の取得
+	static const HuntStats& GetStats() { return s_Stats; }
+
 	// @brief 自身が必要な収集ツールのアイテムタイプを取得するオーバーライド関数
 	// @return 槍のアイテムタイプ
 	CItem::ITEM_TYPE GetRequiredCollectToolType() const override { return CItem::ITEM_TYPE::Spear; }
@@ -117,6 +141,9 @@ private:
 	const char* GetStateName() const;
 
 private:
+	// @brief 狩りの結果の集計
+	inline static HuntStats s_Stats;
+
 	// @brief 現在の仕事状態
 	WorkState m_eCurrentState = WorkState::SearchPrey;
 	// @brief 前の仕事状態

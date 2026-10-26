@@ -51,6 +51,8 @@ bool g_bOnImgui = false;
 float g_fAutoProfileSeconds = 0.0f;
 int g_nAutoProfileGameSpeed = 1;
 int g_nAutoProfileExtraHumans = 0;
+// 無職の人間に割り当てる職業を固定する場合の職業(空の場合は全ての職業を順番に割り当てる)
+std::string g_sAutoProfileJob;
 // 自動計測用の準備(人間の追加など)が済んだかどうか
 bool g_bAutoProfileReady = false;
 // 次に無職の人間へ割り当てる職業の番号
@@ -64,8 +66,9 @@ int g_nAutoProfileJobTimer = 0;
 	@param　	| nGameSpeed：計測中のゲーム速度(倍速)
 	@param　	| nExtraHumans：計測用に追加する人間の数
 *//****************************************/
-void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans)
+void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char* pJobKey)
 {
+	g_sAutoProfileJob = pJobKey != nullptr ? pJobKey : "";
 	g_fAutoProfileSeconds = fSeconds;
 	g_nAutoProfileGameSpeed = nGameSpeed;
 	g_nAutoProfileExtraHumans = nExtraHumans;
@@ -177,12 +180,21 @@ static void UpdateAutoProfile()
 		JobName::Hunter, JobName::GrassGatherer, JobName::Farmer, JobName::Smith
 	};
 	const int nJobCount = static_cast<int>(sizeof(jobNames) / sizeof(jobNames[0]));
+
+	// 職業を固定する指定がある場合は、その職業だけを割り当てる(wood, stone, builder, pioneer, cook, hunter, grass, farmer, smith)
+	const char* jobKeys[] = { "wood", "stone", "builder", "pioneer", "cook", "hunter", "grass", "farmer", "smith" };
+	int nFixedJob = -1;
+	for (int i = 0; i < nJobCount; ++i)
+	{
+		if (g_sAutoProfileJob == jobKeys[i]) nFixedJob = i;
+	}
 	for (CHuman* pHuman : g_pScene->GetGameObjects<CHuman>())
 	{
 		if (pHuman->IsDestroy()) continue;
 		if (pHuman->GetHumanJob()->GetJobName() != JobName::Neet) continue;
 
-		pHuman->SetHumanJob(CreateJobByName(jobNames[g_nAutoProfileJobIndex % nJobCount], *pHuman));
+		const int nJob = (nFixedJob >= 0) ? nFixedJob : (g_nAutoProfileJobIndex % nJobCount);
+		pHuman->SetHumanJob(CreateJobByName(jobNames[nJob], *pHuman));
 		g_nAutoProfileJobIndex++;
 	}
 }
