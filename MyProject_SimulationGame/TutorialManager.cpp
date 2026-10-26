@@ -47,7 +47,7 @@ const std::vector<CTutorialManager::Step>& CTutorialManager::GetSteps()
 	static const std::vector<Step> steps =
 	{
 		{ u8"ようこそ",
-		  u8"人間たちに職業を割り当てて、文明を発展させるゲームです。\n目標は、文明レベルを上げて、全ての職業(レベル12)を解放すること。\nまずは基本の操作を覚えましょう。",
+		  u8"人間たちに職業を割り当てて、文明を発展させるゲームです。\n目標は、1年(40日)後に訪れる「大飢餓」を、人間20人以上で生き残ること。\nまずは基本の操作を覚えましょう。",
 		  Condition::Manual, Area::None },
 
 		{ u8"カメラを動かそう",
@@ -87,7 +87,7 @@ const std::vector<CTutorialManager::Step>& CTutorialManager::GetSteps()
 		  Condition::Manual, Area::GameTime },
 
 		{ u8"準備完了!",
-		  u8"基本は以上です。目標は、1年(40日)後に訪れる「大飢餓」を、人間20人以上で生き残ることです。\n画面上部の目標の表示で、大飢餓までの日数と人口を確認できます。食料をためて、人口を増やして備えましょう。\nチュートリアルは、画面下のボタンからいつでも見直せます。",
+		  u8"基本は以上です。大飢餓に備えて、食料をためて、人口を増やしましょう。\n画面上部の目標の表示で、大飢餓までの日数と人口、食料の備蓄を確認できます。\nチュートリアルは、画面下のボタンからいつでも見直せます。",
 		  Condition::Manual, Area::None },
 	};
 	return steps;
