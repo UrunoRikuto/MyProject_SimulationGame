@@ -62,6 +62,16 @@ public:
 	// @return ドロップしたアイテムのベクター
 	std::vector<CItem*> DropItem() { return m_Status.m_DropItems; }
 
+	// @brief ドロップアイテムの取り出し
+	// @return ドロップしたアイテムのベクター(呼び出し側に所有権が移り、対象のドロップアイテムは空になる)
+	// @note 同じフレームに別の人が採取し終えた場合に、同じアイテムを二重に受け取らないために使う
+	std::vector<CItem*> TakeDropItems()
+	{
+		std::vector<CItem*> items;
+		items.swap(m_Status.m_DropItems);
+		return items;
+	}
+
 protected:
 	// @brief ターゲット標的に指定してきているゲームオブジェクトのID
 	ObjectID m_TargetingID;

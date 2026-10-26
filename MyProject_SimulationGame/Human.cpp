@@ -18,6 +18,10 @@
 #include "Main.h"
 #include "Item.h"
 #include "StorageHouse.h"
+#include "Wood.h"
+
+// @brief 食料の確保中に、木へ与える1フレームあたりのダメージ(採取職の素手の労働力と同じ)
+constexpr float Forage_Work_Power = 10.0f;
 #include "Profiler.h"
 
 /****************************************//*
@@ -150,6 +154,10 @@ void CHuman::Update()
 		// 食べ物を食べに行く
 		GoEatFood();
 		break;
+	case CHuman::HUMAN_STATE::Foraging:
+		// 木の実を探しに行く
+		ForageFood();
+		break;
 	}
 
 	// 貯蔵庫の取得
@@ -191,8 +199,13 @@ void CHuman::Update()
 	// 食料がない場合の処理
 	else
 	{
+		// 空腹になっても食料がどこにもない場合は、飢え死にしないよう昼夜を問わず自分で木の実を探しに行く
+		if (m_fHunger < Warning_Hunger)
+		{
+			m_eState = CHuman::HUMAN_STATE::Foraging;
+		}
 		// 夜になったら家に帰って休む
-		if (CGameTimeManager::GetInstance()->GetCurrentDayTime() == CGameTimeManager::DAY_TIME::NIGHT)
+		else if (CGameTimeManager::GetInstance()->GetCurrentDayTime() == CGameTimeManager::DAY_TIME::NIGHT)
 		{
 			// 夜になったら家に帰って休む
 			m_eState = CHuman::HUMAN_STATE::Resting;
@@ -202,6 +215,12 @@ void CHuman::Update()
 			// 昼間は仕事状態に移行
 			m_eState = CHuman::HUMAN_STATE::Working;
 		}
+	}
+
+	// 食料の確保をやめた場合は、狙っていた木の予約を解除する
+	if (m_eState != CHuman::HUMAN_STATE::Foraging && m_bHasForageTarget)
+	{
+		ReleaseForageTarget();
 	}
 
 	// 空腹度の減少処理
@@ -261,6 +280,9 @@ void CHuman::Draw()
 *//****************************************/
 void CHuman::OnDestroy()
 {
+	// 狙っていた木の予約を解除
+	ReleaseForageTarget();
+
 	// 人間の生成依頼を作成
 	CGeneratorManager::GetInstance()->AddGenerateRequest({
 			CGeneratorManager::GenerateType::Human,
@@ -681,4 +703,94 @@ CItem* CHuman::TakeOutToolItem()
 
 	// ツールアイテムを所持していなかった場合はnullptrを返す
 	return nullptr;
+}
+
+/****************************************//*
+	@brief　	| 食料を自分で確保する処理
+	@note		| 空腹で、所持品にも貯蔵庫にも食料がない場合に、一番近い木から木の実(リンゴ)を探して採る
+				| 他の人が採取のために狙っている木は避け、狙った木には自分のIDを書き込んで取り合いを防ぐ
+*//****************************************/
+void CHuman::ForageFood()
+{
+	CScene* pScene = GetScene();
+
+	// 狙っている木を取得(他の人に採られて無くなっている場合はnullptr)
+	CWood* pTree = nullptr;
+	if (m_bHasForageTarget)
+	{
+		pTree = pScene->FindGameObjectByID<CWood>(m_ForageTargetID);
+		if (pTree == nullptr || pTree->IsDestroy() || pTree->IsDead())
+		{
+			m_bHasForageTarget = false;
+			pTree = nullptr;
+		}
+	}
+
+	// 狙っている木がない場合は、誰も狙っていない一番近い木を探す
+	if (pTree == nullptr)
+	{
+		float fBestDistance = FLT_MAX;
+		for (CWood* pCandidate : pScene->GetGameObjects<CWood>())
+		{
+			if (pCandidate->IsDestroy() || pCandidate->IsDead()) continue;
+			if (pCandidate->GetTargetingID().m_nSameCount != -1) continue;
+
+			const float fDistance = StructMath::Distance(m_tParam.m_f3Pos, pCandidate->GetPos());
+			if (fDistance < fBestDistance)
+			{
+				fBestDistance = fDistance;
+				pTree = pCandidate;
+			}
+		}
+
+		// 木がない場合は何もできない
+		if (pTree == nullptr) return;
+
+		// 他の人に採られないよう、自分のIDを書き込む
+		pTree->SetTargetingID(GetID());
+		m_ForageTargetID = pTree->GetID();
+		m_bHasForageTarget = true;
+	}
+
+	// 木の近くまで移動する
+	if (!MoveToTarget(pTree, Human_Move_Speed)) return;
+
+	// 木を伐って、木の実を採る
+	pTree->DecreaseHp(Forage_Work_Power);
+	if (!pTree->IsDead()) return;
+
+	for (CItem* pItem : pTree->TakeDropItems())
+	{
+		// 持ちきれない分は捨てる
+		if (GetItemCount() >= MaxHoldItem)
+		{
+			delete pItem;
+			continue;
+		}
+		HoldItem(pItem);
+	}
+	pTree->Destroy();
+	m_bHasForageTarget = false;
+}
+
+/****************************************//*
+	@brief　	| 食料の確保のために狙っている木の予約を解除する処理
+*//****************************************/
+void CHuman::ReleaseForageTarget()
+{
+	if (!m_bHasForageTarget) return;
+	m_bHasForageTarget = false;
+
+	// 木がまだ残っている場合は、他の人が狙えるように自分のIDを消す
+	CScene* pScene = GetScene();
+	if (pScene == nullptr) return;
+	CWood* pTree = pScene->FindGameObjectByID<CWood>(m_ForageTargetID);
+	if (pTree != nullptr && !pTree->IsDestroy())
+	{
+		const ObjectID targeting = pTree->GetTargetingID();
+		if (targeting.m_nSameCount == GetID().m_nSameCount && targeting.m_sName == GetID().m_sName)
+		{
+			pTree->SetTargetingID(ObjectID{ "", -1 });
+		}
+	}
 }

@@ -45,6 +45,9 @@ public:
 
 		// 食事中
 		Eating,
+
+		// 食料の確保中(空腹で、食料がどこにもない場合に自分で木の実を探しに行く)
+		Foraging,
 	};
 
 public:
@@ -140,9 +143,22 @@ private:
 	// @brief 食べ物を食べに行く処理
 	void GoEatFood();
 
+	// @brief 食料を自分で確保する処理
+	// @note 空腹で、所持品にも貯蔵庫にも食料がない場合に、一番近い木から木の実(リンゴ)を探して採る
+	void ForageFood();
+
+	// @brief 食料の確保のために狙っている木の予約を解除する処理
+	void ReleaseForageTarget();
+
 private:
 	// @brief 人間の状態
 	HUMAN_STATE m_eState;
+
+	// @brief 食料の確保のために狙っている木のID
+	ObjectID m_ForageTargetID{ "", -1 };
+
+	// @brief 食料の確保のために狙っている木があるかどうか
+	bool m_bHasForageTarget = false;
 
 	// @brief 職業ストラテジーポインタ
 	std::unique_ptr<IJob_Strategy> m_pJob;
