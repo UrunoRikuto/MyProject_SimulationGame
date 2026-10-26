@@ -10,6 +10,7 @@
 #include "Main.h"
 #include "Human.h"
 #include "ImguiSystem.h"
+#include "GoalManager.h"
 
 #include "Wolf_Animal.h"
 #include "Deer_Animal.h"
@@ -122,15 +123,15 @@ void CAnimalGenerator::Update()
 	const int nDeerCount = static_cast<int>(GetAliveAnimals<CDeer_Animal>().size());
 	const int nWolfCount = static_cast<int>(GetAliveAnimals<CWolf_Animal>().size());
 
-	// ­‚Í–Ú•W”‚É–‚½‚È‚¯‚ê‚Î•â[‚·‚é
-	for (int i = 0; i < Animal_Respawn_Batch && nDeerCount + i < m_nTargetDeer; ++i)
+	// ­‚Í–Ú•W”‚É–‚½‚È‚¯‚ê‚Î•â[‚·‚é(‘å‹Q‰ì‚ÌŠÔ‚ÍAŠl•¨‚ª–ß‚Á‚Ä‚±‚È‚¢)
+	for (int i = 0; i < Animal_Respawn_Batch && nDeerCount + i < m_nTargetDeer && !CGoalManager::IsFamine(); ++i)
 	{
 		RespawnDeer();
 	}
 
-	// ˜T‚Í–Ú•W”‚É–‚½‚¸A‚©‚Â­‚É‘Î‚·‚é”ä—¦‚ÌãŒÀ‚ğ’´‚¦‚È‚¢ê‡‚¾‚¯•â[‚·‚é
+	// ˜T‚Í–Ú•W”‚É–‚½‚¸A‚©‚Â­‚É‘Î‚·‚é”ä—¦‚ÌãŒÀ‚ğ’´‚¦‚È‚¢ê‡‚¾‚¯•â[‚·‚é(‘å‹Q‰ì‚ÌŠÔ‚Í•â[‚µ‚È‚¢)
 	// (­‚ª­‚È‚¢ó‘Ô‚Å˜T‚¾‚¯‘‚¦‚ÄA­‚ªŒÍŠ‰‚µ‚Ä‚µ‚Ü‚¤‚Ì‚ğ–h‚®)
-	for (int i = 0; i < Animal_Respawn_Batch && nWolfCount + i < m_nTargetWolf &&
+	for (int i = 0; i < Animal_Respawn_Batch && nWolfCount + i < m_nTargetWolf && !CGoalManager::IsFamine() &&
 		static_cast<float>(nWolfCount + i + 1) <= Wolf_Respawn_Max_Deer_Ratio * static_cast<float>(nDeerCount); ++i)
 	{
 		RespawnWolf();
