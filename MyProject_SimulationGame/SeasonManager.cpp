@@ -5,6 +5,7 @@
 *//**************************************************/
 #include "SeasonManager.h"
 #include "GameTimeManager.h"
+#include "GoalManager.h"
 #include <algorithm>
 #include <cmath>
 
@@ -53,6 +54,12 @@ namespace
 		{ { 0.00f, 0.00f, 0.00f }, 0.0f, 1.0f },	// HF—Î(‚»‚Ì‚Ü‚Ü)
 		{ { 1.05f, 1.05f, 1.10f }, 1.0f, 1.0f },	// “~F”’
 	};
+
+	// @brief ‘å‹Q‰ì‚Ì‚Æ‚«‚ÌAr”p‚µ‚½Œ©‚½–Ú‚ÌF‚ÌŽw’è(–Ø‚Ì—tE‘E’n–Ê)
+	// @note •Ï‰»‚Ì‹­‚³‚Í1‚É‹ß‚¢‚Ù‚ÇA‹Gß‚ÌF‚ð‘Å‚¿Á‚µ‚Är”p‚µ‚½F‚É‚È‚é
+	const SeasonStyle Famine_Tree_Style = { { 0.34f, 0.25f, 0.18f }, 1.0f, 1.0f };	// ŒÍ‚ê–ØFˆÃ‚¢ŠDŠŒF
+	const SeasonStyle Famine_Grass_Style = { { 0.62f, 0.48f, 0.24f }, 0.95f, 1.0f };	// ŒÍ‚ê‘F‚­‚·‚ñ‚¾˜mF
+	const SeasonStyle Famine_Ground_Style = { { 0.42f, 0.33f, 0.24f }, 1.0f, 1.0f };	// ‘‰‚¹‚½“yFŠ£‚¢‚½ŠŒF
 
 	// @brief ŠŠ‚ç‚©‚È•âŠÔ(0`1)
 	float SmoothStep(float fEdge0, float fEdge1, float fX)
@@ -173,7 +180,28 @@ CSeasonManager::ShaderParam CSeasonManager::GetShaderParam(TargetKind eKind)
 		color.z = (now.color.z * wNow + next.color.z * wNext) / fSum;
 	}
 
+	float fFinalStrength = fStrength;
+	float fFinalRatio = fRatio;
+
+	// ‘å‹Q‰ì‚ª‹ß‚Ã‚­‚ÆA‹Gß‚ÌF‚©‚çr”p‚µ‚½F‚ÖŠñ‚¹‚Ä‚¢‚­
+	const float fFamine = CGoalManager::GetFamineVisualRate();
+	if (fFamine > 0.001f)
+	{
+		const SeasonStyle& famine = (eKind == TargetKind::Tree) ? Famine_Tree_Style : (eKind == TargetKind::Grass) ? Famine_Grass_Style : Famine_Ground_Style;
+		const float wSeason = fStrength * (1.0f - fFamine);
+		const float wFamine = famine.fStrength * fFamine;
+		const float fMix = wSeason + wFamine;
+		if (fMix > 0.0001f)
+		{
+			color.x = (color.x * wSeason + famine.color.x * wFamine) / fMix;
+			color.y = (color.y * wSeason + famine.color.y * wFamine) / fMix;
+			color.z = (color.z * wSeason + famine.color.z * wFamine) / fMix;
+		}
+		fFinalStrength = fStrength + (famine.fStrength - fStrength) * fFamine;
+		fFinalRatio = fRatio + (famine.fRatio - fRatio) * fFamine;
+	}
+
 	result.color = DirectX::XMFLOAT4(color.x, color.y, color.z, 0.0f);
-	result.param = DirectX::XMFLOAT4(fStrength, fRatio, fMaskMode, 0.0f);
+	result.param = DirectX::XMFLOAT4(fFinalStrength, fFinalRatio, fMaskMode, 0.0f);
 	return result;
 }
