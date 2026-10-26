@@ -746,8 +746,19 @@ void CImguiSystem::DrawGenerateRequestList()
 	// 生成マネージャーのインスタンス取得
 	CGeneratorManager* pGeneratorManager = CGeneratorManager::GetInstance();
 
+	// 件数が多い場合は先頭の一部だけ表示する
+	constexpr int Max_Display_Count = 30;
+	int nDisplayCount = 0;
+
 	for(auto& request : pGeneratorManager->GetGenerateRequestList())
 	{
+		if (nDisplayCount >= Max_Display_Count)
+		{
+			ImGui::Text(u8"他 %d 件", static_cast<int>(pGeneratorManager->GetGenerateRequestList().size()) - nDisplayCount);
+			break;
+		}
+		nDisplayCount++;
+
 		ImGui::BeginChild(ImGui::GetID((void*)&request), ImVec2(280, 80), ImGuiWindowFlags_NoTitleBar);
 
 		std::string strType = "タイプ:";
@@ -759,6 +770,9 @@ void CImguiSystem::DrawGenerateRequestList()
 		case CGeneratorManager::GenerateType::Stone:
 			strType += "石";
 			break;
+		case CGeneratorManager::GenerateType::Grass:
+			strType += "草";
+			break;
 		case CGeneratorManager::GenerateType::Human:
 			strType += "人間";
 			break;
@@ -766,6 +780,10 @@ void CImguiSystem::DrawGenerateRequestList()
 		ImGui::Text(strType.c_str());
 
 		ImGui::Text(u8"生成するまでの時間: %.2f", request.m_fGenerateTime);
+		if (request.m_n2CellIndex.x >= 0)
+		{
+			ImGui::Text(u8"生成先セル: (%d, %d)", request.m_n2CellIndex.x, request.m_n2CellIndex.y);
+		}
 
 		ImGui::EndChild();
 	}

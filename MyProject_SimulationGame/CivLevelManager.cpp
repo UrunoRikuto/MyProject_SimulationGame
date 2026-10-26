@@ -51,9 +51,6 @@ void CCivLevelManager::AddExp(ExpType In_eType)
 		// 文明レベルを1上げる
 		m_nCivLevel++;
 
-		// ジェネレーターマネージャーに通知してオブジェクトを生成させる
-		CGeneratorManager::GetInstance()->NotifyObservers();
-
 		// ビルドマネージャーに通知して建築依頼の更新を促す
 		CBuildManager::GetInstance()->AddBuildRequest(CBuildManager::BuildType::HumanHouse);
 	}
