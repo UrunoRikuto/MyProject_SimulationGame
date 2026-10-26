@@ -161,9 +161,21 @@ public:
 
 	// @brief アイテムカテゴリーを取得する関数
 	const ITEM_CATEGORY GetItemCategory() const { return m_eItemCategory; }
+
+	// @brief これまでに生成されたアイテムの数の取得(バランス確認用)
+	// @param eType：アイテムタイプ
+	static int GetCreatedCount(ITEM_TYPE eType) { return s_nCreated[static_cast<int>(eType)]; }
+
+	// @brief これまでに破棄されたアイテムの数の取得(バランス確認用)
+	// @param eType：アイテムタイプ
+	static int GetDestroyedCount(ITEM_TYPE eType) { return s_nDestroyed[static_cast<int>(eType)]; }
 			
 
 private:
+
+	// @brief アイテムタイプごとの、生成された数と破棄された数(バランス確認用)
+	inline static int s_nCreated[static_cast<int>(ITEM_TYPE::MAX)] = {};
+	inline static int s_nDestroyed[static_cast<int>(ITEM_TYPE::MAX)] = {};
 
 	// @brief アイテムカテゴリー
 	ITEM_CATEGORY m_eItemCategory;

@@ -16,6 +16,9 @@ CItem::CItem(ITEM_TYPE In_eType)
 {
 	// アイテムカテゴリーの設定
 	m_eItemCategory = GetItemCategoryFromType(In_eType);
+
+	// 生成数を数える
+	s_nCreated[static_cast<int>(In_eType)]++;
 }
 
 /****************************************//*
@@ -23,6 +26,8 @@ CItem::CItem(ITEM_TYPE In_eType)
 *//****************************************/
 CItem::~CItem()
 {
+	// 破棄数を数える
+	s_nDestroyed[static_cast<int>(m_eItemType)]++;
 }
 
 /****************************************//*

@@ -19,6 +19,7 @@
 #include "CivLevelManager.h"
 #include "GameTimeManager.h"
 #include "StorageHouse.h"
+#include "Hunter_Job.h"
 #include "HerbivorousAnimal.h"
 #include "CarnivorousAnimal.h"
 #include <map>
@@ -108,7 +109,7 @@ static void WriteBalanceLog()
 	}
 
 	// 貯蔵庫の食料の集計
-	int nApple = 0, nMeat = 0, nBread = 0, nPie = 0;
+	int nApple = 0, nMeat = 0, nBread = 0, nPie = 0, nSeed = 0, nWheat = 0, nSugar = 0;
 	if (CStorageHouse* pStorage = g_pScene->GetGameObject<CStorageHouse>())
 	{
 		for (const CItem* pItem : pStorage->GetStoredItems())
@@ -119,6 +120,9 @@ static void WriteBalanceLog()
 			case CItem::ITEM_TYPE::Meat: nMeat++; break;
 			case CItem::ITEM_TYPE::Bread: nBread++; break;
 			case CItem::ITEM_TYPE::ApplePie: nPie++; break;
+			case CItem::ITEM_TYPE::WheatSeed: nSeed++; break;
+			case CItem::ITEM_TYPE::Wheat: nWheat++; break;
+			case CItem::ITEM_TYPE::Sugar: nSugar++; break;
 			default: break;
 			}
 		}
@@ -127,17 +131,33 @@ static void WriteBalanceLog()
 	int nDeer = static_cast<int>(g_pScene->GetGameObjects<CHerbivorousAnimal>().size());
 	int nWolf = static_cast<int>(g_pScene->GetGameObjects<CCarnivorousAnimal>().size());
 
+	// 動物がフィールドの中心から最も離れている距離(フィールドの外に出ていないかの確認用)
+	float fAnimalMaxExtent = 0.0f;
+	g_pScene->ForEachGameObject<CAnimal>([&](CAnimal* pAnimal)
+	{
+		const DirectX::XMFLOAT3 animalPos = pAnimal->GetPos();
+		fAnimalMaxExtent = (std::max)(fAnimalMaxExtent, (std::max)(fabsf(animalPos.x), fabsf(animalPos.z)));
+	});
+
 	FILE* pFile = nullptr;
 	static bool s_bHeader = false;
 	fopen_s(&pFile, "balance_log.csv", s_bHeader ? "a" : "w");
 	if (pFile == nullptr) return;
 	if (!s_bHeader)
 	{
-		fprintf(pFile, "gameSec,day,humans,deaths,avgHunger,hungry,eating,resting,foraging,carriedFood,apple,meat,bread,pie,deer,wolf,jobs\n");
+		fprintf(pFile, "gameSec,day,humans,deaths,avgHunger,hungry,eating,resting,foraging,carriedFood,apple,meat,bread,pie,deer,wolf,animalMaxExtent,huntSearch,noHerbivore,tooDangerous,huntStart,huntKill,giveUpTime,giveUpFar,preyLost,seedStored,wheatStored,sugarStored,seedMade,seedLost,wheatMade,wheatLost,breadMade,breadLost,appleMade,appleLost,sugarMade,sugarLost,pieMade,pieLost,meatMade,meatLost,jobs\n");
 		s_bHeader = true;
 	}
-	fprintf(pFile, "%d,%d,%d,%d,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,", nTotalSeconds, pTime->GetGameDays(), nHumans, CHuman::GetDeathCount(),
-		nHumans > 0 ? fHungerSum / static_cast<float>(nHumans) : 0.0f, nHungry, nEating, nResting, nForaging, nCarriedFood, nApple, nMeat, nBread, nPie, nDeer, nWolf);
+	fprintf(pFile, "%d,%d,%d,%d,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.1f,", nTotalSeconds, pTime->GetGameDays(), nHumans, CHuman::GetDeathCount(),
+		nHumans > 0 ? fHungerSum / static_cast<float>(nHumans) : 0.0f, nHungry, nEating, nResting, nForaging, nCarriedFood, nApple, nMeat, nBread, nPie, nDeer, nWolf, fAnimalMaxExtent);
+	const CHunter_Job::HuntStats& hunt = CHunter_Job::GetStats();
+	fprintf(pFile, "%d,%d,%d,%d,%d,%d,%d,%d,", hunt.nSearch, hunt.nNoHerbivore, hunt.nTooDangerous, hunt.nStarted, hunt.nKill, hunt.nGiveUpTime, hunt.nGiveUpFar, hunt.nPreyLost);
+	fprintf(pFile, "%d,%d,%d,", nSeed, nWheat, nSugar);
+	const CItem::ITEM_TYPE ledgerTypes[] = { CItem::ITEM_TYPE::WheatSeed, CItem::ITEM_TYPE::Wheat, CItem::ITEM_TYPE::Bread, CItem::ITEM_TYPE::Apple, CItem::ITEM_TYPE::Sugar, CItem::ITEM_TYPE::ApplePie, CItem::ITEM_TYPE::Meat };
+	for (CItem::ITEM_TYPE eType : ledgerTypes)
+	{
+		fprintf(pFile, "%d,%d,", CItem::GetCreatedCount(eType), CItem::GetDestroyedCount(eType));
+	}
 	for (const auto& kv : jobCount) fprintf(pFile, "%d ", kv.second);
 	fprintf(pFile, "\n");
 	fclose(pFile);
