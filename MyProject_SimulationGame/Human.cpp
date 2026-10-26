@@ -19,6 +19,7 @@
 #include "Item.h"
 #include "StorageHouse.h"
 #include "Wood.h"
+#include "SeasonManager.h"
 
 // @brief 食料の確保中に、木へ与える1フレームあたりのダメージ(採取職の素手の労働力と同じ)
 constexpr float Forage_Work_Power = 10.0f;
@@ -200,7 +201,8 @@ void CHuman::Update()
 	else
 	{
 		// 空腹になっても食料がどこにもない場合は、飢え死にしないよう昼夜を問わず自分で木の実を探しに行く
-		if (m_fHunger < Warning_Hunger)
+		// (冬は木の実が取れないため、探しに行かない)
+		if (m_fHunger < Warning_Hunger && CSeasonManager::GetSeason() != CSeasonManager::Season::Winter)
 		{
 			m_eState = CHuman::HUMAN_STATE::Foraging;
 		}
