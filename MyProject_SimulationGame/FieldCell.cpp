@@ -4,6 +4,7 @@
 	@note	| フィールドセルの挙動（コンストラクタ、デストラクタ、デバッグ描画等）を実装
 *//**************************************************/
 #include "FieldCell.h"
+#include "Terrain.h"
 #include "Geometory.h"
 #include "Camera.h"
 
@@ -99,4 +100,10 @@ void CFieldCell::DebugDraw(int nMode)
 void CFieldCell::SetCellType(const CellType In_eType)
 {
 	m_eCellType = In_eType;
+
+	// 建築可能な土地になったら、その周りの地形を平らにする
+	if (In_eType == CellType::Build)
+	{
+		CTerrain::MarkCellFlat(m_n2Index.x, m_n2Index.y);
+	}
 }

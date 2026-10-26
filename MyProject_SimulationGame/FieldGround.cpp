@@ -35,7 +35,8 @@ void CFieldGround::Init()
 	CGameObject::Init();
 
 	// サイズの設定
-	m_tParam.m_f3Size = DirectX::XMFLOAT3(1000.0f, 1.0f, 1000.0f);
+	// (地面のメッシュは、起伏のある地形としてワールド座標の大きさで作られる)
+	m_tParam.m_f3Size = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 
 	// モデルレンダラーコンポーネントの設定
 	CModelRenderer* pModelRenderer = GetComponent<CModelRenderer>();

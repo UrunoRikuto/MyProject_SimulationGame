@@ -16,6 +16,7 @@
 #include "Animal.h"
 #include "Profiler.h"
 #include "SeasonManager.h"
+#include "Terrain.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -32,6 +33,9 @@ CSceneGame::~CSceneGame()
 {
 	// 季節による色の変化は、ゲームシーンの間だけ有効にする
 	CSeasonManager::SetActive(false);
+
+	// 地形は、ゲームシーンの間だけ使う
+	CTerrain::Clear();
 
 	CGameTimeManager::ReleaseInstance();
 	CFieldManager::ReleaseInstance();
@@ -84,6 +88,9 @@ void CSceneGame::Update()
 		PROFILE_SCOPE("Update: Scene objects");
 		CScene::Update();
 	}
+
+	// 地形の更新(建築可能な土地が増えていれば、その周りを平らに作り直す)
+	CTerrain::Update();
 
 	// 生成管理システムの更新処理
 	{

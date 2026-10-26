@@ -6,6 +6,7 @@
 *//**************************************************/
 #include "FieldManager.h"
 #include "FbmNoise.h"
+#include "Terrain.h"
 #include "GeneratorManager.h"
 #include <random>
 #include "Main.h"
@@ -62,8 +63,14 @@ CFieldManager::~CFieldManager()
  *//*****************************************/
 void CFieldManager::AssignFieldCellType()
 {
+	// 地形(起伏)の状態を初期化する
+	CTerrain::Reset();
+
 	// フィールドタイプの作成
 	CreateFieldType();
+
+	// 地形の作成(シード値は、フィールドタイプの作成で確定する)
+	CTerrain::Generate(CImguiSystem::GetInstance()->GetSeed());
 
 	// 縄張りの作成
 	CreateTerritory();
