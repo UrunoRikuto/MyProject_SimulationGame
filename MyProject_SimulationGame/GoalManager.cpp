@@ -254,7 +254,7 @@ void CGoalManager::Update()
 	switch (eNext)
 	{
 	case Phase::Warning:
-		ShowNotice(u8"凶兆", u8"遠くで不吉な気配がする…。\n約10日後(1年後)に、大飢餓が訪れる。\n食料を蓄え、人口を増やして備えよう。");
+		ShowNotice(u8"凶兆", u8"遠くで不吉な気配がする。\n約10日後(1年後)に、大飢餓が訪れる。\n食料を蓄え、人口を増やして備えよう。");
 		break;
 	case Phase::Famine:
 		ShowNotice(u8"大飢餓が始まった!", u8"木の実は実りにくく、麦は育ちにくく、木も獲物も増えなくなる。\n蓄えを守り、20人以上で生き残れ。");
@@ -404,7 +404,7 @@ void CGoalManager::DrawResult()
 	// 見出し
 	ImGui::SetWindowFontScale(1.1f);
 	if (bCleared) ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.3f, 1.0f), u8"大飢餓を乗り越えた!");
-	else ImGui::TextColored(ImVec4(1.0f, 0.45f, 0.4f, 1.0f), u8"文明は大飢餓に耐えられなかった…");
+	else ImGui::TextColored(ImVec4(1.0f, 0.45f, 0.4f, 1.0f), u8"文明は大飢餓に耐えられなかった");
 
 	ImGui::SetWindowFontScale(1.0f);
 	ImGui::PushFont(CImguiSystem::GetInstance()->GetTextFont());
