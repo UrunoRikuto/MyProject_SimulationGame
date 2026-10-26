@@ -61,9 +61,14 @@ private:
 		std::vector<DirectX::XMFLOAT4X4> instances;
 		VertexShader* vs = nullptr;
 		PixelShader* ps = nullptr;
+		// モデルのポインタ(キーから一度探したものを使い回す)
+		Model* pModel = nullptr;
 	};
 
 	// キーはモデルキー + VSptr + PSptr
 	static std::unordered_map<std::string, Batch> s_batches;
+
+	// フレーム内で最後に設定されたピクセルシェーダーの色(フラッシュ時にまとめて書き込む)
+	static std::unordered_map<PixelShader*, DirectX::XMFLOAT4> s_pendingPSColors;
 
 };

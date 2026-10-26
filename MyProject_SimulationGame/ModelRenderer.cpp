@@ -10,6 +10,7 @@
 
 // static batch map
 std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
+std::unordered_map<PixelShader*, DirectX::XMFLOAT4> CModelRenderer::s_pendingPSColors;
 
 /*****************************************//*
     @brief　	| デストラクタ
@@ -47,57 +48,32 @@ void CModelRenderer::Draw()
     // カリングのセットアップ用
     SetCullingMode(m_tParam.m_eCulling);
 
-    // カメラ情報の取得
-    CCamera* pCamera = CCamera::GetInstance();
-
-    // 行列計算
-    DirectX::XMFLOAT4X4 wvp[3];
+    // バッチの取得(モデルのポインタは最初の1回だけキーから探す)
+    CModelRenderer::Batch& batch = s_batches[m_sKey];
+    if (batch.pModel == nullptr)
+    {
+        const RendererObject* pObj = CRendererComponent::FindRendererObject(m_sKey);
+        if (!pObj) return;
+        batch.pModel = std::get<ModelParam>(pObj->m_Data).m_pModel;
+        if (batch.pModel == nullptr) return;
+    }
 
     // ワールド行列
     DirectX::XMMATRIX world =
         DirectX::XMMatrixScaling(m_tParam.m_f3Size.x, m_tParam.m_f3Size.y, m_tParam.m_f3Size.z) *
         DirectX::XMMatrixRotationRollPitchYaw(m_tParam.m_f3Rotate.x, m_tParam.m_f3Rotate.y, m_tParam.m_f3Rotate.z) *
         DirectX::XMMatrixTranslation(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z);
-    world = DirectX::XMMatrixTranspose(world);
-    DirectX::XMStoreFloat4x4(&wvp[0], world);
 
-    // 頂点シェーダーに情報を渡す
-    switch (m_pVS->m_eType)
-    {
-    case VSType::Object:
-    {
-        // ビュー行列
-        wvp[1] = pCamera->GetViewMatrix();
-
-        // プロジェクション行列
-        wvp[2] = pCamera->GetProjectionMatrix();
-
-        m_pVS->WriteBuffer(0, wvp);
-    }
-    break;
-    }
-
-	// ピクセルシェーダーに情報を渡す
+    // ピクセルシェーダーの色は、描画のたびに書き込まず、最後に設定された色をフラッシュ時に書き込む
+    // (頂点シェーダーの行列は、フラッシュ時にバッチごとに書き込むためここでは不要)
     switch (m_pPS->m_eType)
     {
     case PSType::TexColor:
-    {
-		m_pPS->WriteBuffer(0, &m_tParam.m_f4Color);
+        s_pendingPSColors[m_pPS] = m_tParam.m_f4Color;
+        break;
     }
-    break;
-    }
-
-
-    // モデルにシェーダーをセット
-    const RendererObject* pObj = CRendererComponent::FindRendererObject(m_sKey);
-    if (!pObj) return;
-    Model* pModel = std::get<ModelParam>(pObj->m_Data).m_pModel;
-
-    pModel->SetVertexShader(m_pVS);
-    pModel->SetPixelShader(m_pPS);
 
     //ここでバッチに追加（ワールド行列のみインスタンス化）
-    CModelRenderer::Batch& batch = s_batches[m_sKey];
     batch.vs = m_pVS;
     batch.ps = m_pPS;
     DirectX::XMFLOAT4X4 worldMat;
@@ -112,6 +88,13 @@ void CModelRenderer::FlushBatches()
 {
     PROFILE_SCOPE("Draw: ModelRenderer::FlushBatches");
     CCamera* pCamera = CCamera::GetInstance();
+
+    // フレーム内で最後に設定されたピクセルシェーダーの色を書き込む
+    for (auto& kv : s_pendingPSColors)
+    {
+        kv.first->WriteBuffer(0, &kv.second);
+    }
+    s_pendingPSColors.clear();
     for (auto& kv : s_batches)
     {
         const std::string& key = kv.first;
@@ -124,19 +107,12 @@ void CModelRenderer::FlushBatches()
         if (!pModel) continue;
 
         // 各メッシュごとにインスタンスデータを渡して描画
-        // インスタンスデータはワールド行列の配列（float[16]）
-        std::vector<float> instanceBuf;
-        instanceBuf.reserve(batch.instances.size() * 16);
-        for (auto& wm : batch.instances)
-        {
-            // transpose to match HLSL column-major expectation
-            DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&wm);
-            m = DirectX::XMMatrixTranspose(m);
-            DirectX::XMFLOAT4X4 tmp;
-            DirectX::XMStoreFloat4x4(&tmp, m);
-            const float* p = reinterpret_cast<const float*>(&tmp);
-            for (int i = 0; i < 16; ++i) instanceBuf.push_back(p[i]);
-        }
+        // インスタンスデータはワールド行列の配列（float[16]）で、そのまま渡せる
+        const float* pInstanceData = reinterpret_cast<const float*>(batch.instances.data());
+
+        // モデルにシェーダーをセット
+        if (batch.vs) pModel->SetVertexShader(batch.vs);
+        if (batch.ps) pModel->SetPixelShader(batch.ps);
 
         // シェーダーをセット
         if (batch.vs) batch.vs->Bind();
@@ -168,7 +144,7 @@ void CModelRenderer::FlushBatches()
             if (batch.ps) batch.ps->SetTexture(0, material.pTexture);
 
             // インスタンスバッファを作成して描画
-            pModel->DrawInstanced(instanceBuf.data(), sizeof(DirectX::XMFLOAT4X4), static_cast<UINT>(batch.instances.size()), i);
+            pModel->DrawInstanced(pInstanceData, sizeof(DirectX::XMFLOAT4X4), static_cast<UINT>(batch.instances.size()), i);
         }
 
         batch.instances.clear();

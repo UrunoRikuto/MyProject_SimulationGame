@@ -5,6 +5,7 @@
 #include "DirectX.h"
 #include "Texture.h"
 #include "Profiler.h"
+#include <algorithm>
 
 //--- グローバル変数
 ID3D11Device* g_pDevice;
@@ -19,6 +20,21 @@ ID3D11SamplerState* g_pSamplerState[SAMPLER_MAX];
 //--- GPUの処理時間の計測用(プロファイラが有効な間だけ使用する)
 namespace
 {
+	// @brief 直前に設定したレンダーターゲット・ビューポートの記録(同じ設定の再呼び出しを省くため)
+	struct RenderTargetState
+	{
+		bool m_bValid = false;
+		UINT m_nNum = 0;
+		ID3D11RenderTargetView* m_pRtvs[4] = {};
+		ID3D11DepthStencilView* m_pDsv = nullptr;
+		float m_fWidth = 0.0f;
+		float m_fHeight = 0.0f;
+	};
+	RenderTargetState g_tRenderTargetState;
+
+	// @brief 直前に設定したカリングモード(未設定の場合は-1)
+	int g_nCullingState = -1;
+
 	// @brief 計測用クエリのリングバッファのサイズ
 	constexpr int GPU_QUERY_RING_SIZE = 4;
 
@@ -191,7 +207,10 @@ HRESULT InitDirectX(HWND hWnd, UINT width, UINT height, bool fullscreen)
 	UINT numDriverTypes = ARRAYSIZE(driverTypes);
 
 	UINT createDeviceFlags = 0;
+#if defined(_DEBUG)
+	// デバッグレイヤーは描画の呼び出しが重くなるため、デバッグビルドのみ有効にする
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 	// 機能レベル
 	D3D_FEATURE_LEVEL featureLevels[] =
@@ -212,19 +231,26 @@ HRESULT InitDirectX(HWND hWnd, UINT width, UINT height, bool fullscreen)
 	for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; ++driverTypeIndex)
 	{
 		driverType = driverTypes[driverTypeIndex];
-		hr = D3D11CreateDeviceAndSwapChain(
-			NULL,					// ディスプレイデバイスのアダプタ（NULLの場合最初に見つかったアダプタ）
-			driverType,				// デバイスドライバのタイプ
-			NULL,					// ソフトウェアラスタライザを使用する場合に指定する
-			createDeviceFlags,		// デバイスフラグ
-			featureLevels,			// 機能レベル
-			numFeatureLevels,		// 機能レベル数
-			D3D11_SDK_VERSION,		// 
-			&sd,					// スワップチェインの設定
-			&g_pSwapChain,			// IDXGIDwapChainインタフェース	
-			&g_pDevice,				// ID3D11Deviceインタフェース
-			&featureLevel,		// サポートされている機能レベル
-			&g_pContext);		// デバイスコンテキスト
+		// デバッグレイヤーが使えない環境(グラフィックスツール未導入など)では、デバッグレイヤーなしで作り直す
+		UINT deviceFlags = createDeviceFlags;
+		for (int nTry = 0; nTry < 2; ++nTry)
+		{
+			hr = D3D11CreateDeviceAndSwapChain(
+				NULL,					// ディスプレイデバイスのアダプタ（NULLの場合最初に見つかったアダプタ）
+				driverType,				// デバイスドライバのタイプ
+				NULL,					// ソフトウェアラスタライザを使用する場合に指定する
+				deviceFlags,		// デバイスフラグ
+				featureLevels,			// 機能レベル
+				numFeatureLevels,		// 機能レベル数
+				D3D11_SDK_VERSION,		// 
+				&sd,					// スワップチェインの設定
+				&g_pSwapChain,			// IDXGIDwapChainインタフェース	
+				&g_pDevice,				// ID3D11Deviceインタフェース
+				&featureLevel,		// サポートされている機能レベル
+				&g_pContext);		// デバイスコンテキスト
+			if (SUCCEEDED(hr) || !(deviceFlags & D3D11_CREATE_DEVICE_DEBUG)) break;
+			deviceFlags &= ~static_cast<UINT>(D3D11_CREATE_DEVICE_DEBUG);
+		}
 		if (SUCCEEDED(hr)) {
 			break;
 		}
@@ -341,6 +367,11 @@ void UninitDirectX()
 void BeginDrawDirectX()
 {
 	BeginGpuTimer();
+
+	// 他の処理で変更されている可能性があるため、フレームの最初は必ず設定し直す
+	g_tRenderTargetState.m_bValid = false;
+	g_nCullingState = -1;
+
 	float color[4] = { 0.8f, 0.9f, 1.0f, 1.0f };
 	g_pRTV->Clear(color);
 	g_pDSV->Clear();
@@ -368,14 +399,33 @@ void SetRenderTargets(UINT num, RenderTarget** ppViews, DepthStencil* pView)
 	if (num > 4) num = 4;
 	for (UINT i = 0; i < num; ++i)
 		rtvs[i] = ppViews[i]->GetView();
-	g_pContext->OMSetRenderTargets(num, rtvs, pView ? pView->GetView() : nullptr);
+	ID3D11DepthStencilView* pDsv = pView ? pView->GetView() : nullptr;
+	const float fWidth = (float)ppViews[0]->GetWidth();
+	const float fHeight = (float)ppViews[0]->GetHeight();
+
+	// 直前と同じ設定の場合は、描画のたびに同じ設定を繰り返さないよう省く
+	RenderTargetState& state = g_tRenderTargetState;
+	if (state.m_bValid && state.m_nNum == num && state.m_pDsv == pDsv &&
+		state.m_fWidth == fWidth && state.m_fHeight == fHeight &&
+		std::equal(rtvs, rtvs + num, state.m_pRtvs))
+	{
+		return;
+	}
+	state.m_bValid = true;
+	state.m_nNum = num;
+	std::copy(rtvs, rtvs + num, state.m_pRtvs);
+	state.m_pDsv = pDsv;
+	state.m_fWidth = fWidth;
+	state.m_fHeight = fHeight;
+
+	g_pContext->OMSetRenderTargets(num, rtvs, pDsv);
 
 	// ビューポートの設定
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
-	vp.Width = (float)ppViews[0]->GetWidth();
-	vp.Height = (float)ppViews[0]->GetHeight();
+	vp.Width = fWidth;
+	vp.Height = fHeight;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	g_pContext->RSSetViewports(1, &vp);
@@ -387,6 +437,10 @@ void SetRenderTargets(UINT num, RenderTarget** ppViews, DepthStencil* pView)
 *//*************************/
 void SetCullingMode(D3D11_CULL_MODE cull)
 {
+	// 直前と同じ設定の場合は省く
+	if (g_nCullingState == (int)cull) return;
+	g_nCullingState = (int)cull;
+
 	switch (cull)
 	{
 	case D3D11_CULL_NONE: g_pContext->RSSetState(g_pRasterizerState[0]); break;
