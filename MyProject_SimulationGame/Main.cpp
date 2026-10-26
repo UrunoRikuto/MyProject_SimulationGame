@@ -14,6 +14,7 @@
 #include "ShaderManager.h"
 #include <chrono>
 #include "Profiler.h"
+#include "TutorialManager.h"
 #include "Human.h"
 #include "JobOperator.h"
 #include "CivLevelManager.h"
@@ -73,6 +74,9 @@ int g_nAutoProfileJobTimer = 0;
 void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans, const char* pJobKey, int nStartDay)
 {
 	g_nAutoProfileStartDay = nStartDay;
+
+	// 自動計測中は、チュートリアルを出さない
+	CTutorialManager::SetEnabled(false);
 	g_sAutoProfileJob = pJobKey != nullptr ? pJobKey : "";
 	g_fAutoProfileSeconds = fSeconds;
 	g_nAutoProfileGameSpeed = nGameSpeed;
