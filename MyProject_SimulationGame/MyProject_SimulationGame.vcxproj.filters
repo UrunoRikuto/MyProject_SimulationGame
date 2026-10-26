@@ -219,6 +219,9 @@
     <ClInclude Include="Oparation.h">
       <Filter>コードファイル\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler.h">
+      <Filter>コードファイル\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>コードファイル\Component</Filter>
     </ClInclude>
@@ -751,6 +754,9 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>コードファイル\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp">
+      <Filter>コードファイル\Utility</Filter>
     </ClCompile>
     <ClCompile Include="FbmNoise.cpp">
       <Filter>コードファイル\System\FbmNoise</Filter>

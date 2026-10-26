@@ -18,6 +18,7 @@
 #include "Main.h"
 #include "Item.h"
 #include "StorageHouse.h"
+#include "Profiler.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -135,7 +136,11 @@ void CHuman::Update()
 	{
 	case CHuman::HUMAN_STATE::Working:
 		// 仕事処理
-		if (m_pJob)m_pJob->DoWork();
+		if (m_pJob)
+		{
+			PROFILE_SCOPE("Human: Job DoWork");
+			ProfileObject(false, m_pJob.get(), [&]() { m_pJob->DoWork(); });
+		}
 		break;
 	case CHuman::HUMAN_STATE::Resting:
 		// 家に帰って休む
@@ -148,7 +153,11 @@ void CHuman::Update()
 	}
 
 	// 貯蔵庫の取得
-	CStorageHouse* pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+	CStorageHouse* pStorageHouse = nullptr;
+	{
+		PROFILE_SCOPE("Human: Find StorageHouse");
+		pStorageHouse = GetScene()->GetGameObject<CStorageHouse>();
+	}
 	// 食料がある場合の処理
 	if(HasFood() || pStorageHouse->HasFood())
 	{

@@ -4,6 +4,7 @@
 *//***********************************************************************************/
 #include "DirectX.h"
 #include "Texture.h"
+#include "Profiler.h"
 
 //--- グローバル変数
 ID3D11Device* g_pDevice;
@@ -14,6 +15,106 @@ DepthStencil* g_pDSV;
 ID3D11RasterizerState* g_pRasterizerState[3];
 ID3D11BlendState* g_pBlendState[BLEND_MAX];
 ID3D11SamplerState* g_pSamplerState[SAMPLER_MAX];
+
+//--- GPUの処理時間の計測用(プロファイラが有効な間だけ使用する)
+namespace
+{
+	// @brief 計測用クエリのリングバッファのサイズ
+	constexpr int GPU_QUERY_RING_SIZE = 4;
+
+	ID3D11Query* g_pQueryDisjoint[GPU_QUERY_RING_SIZE] = {};
+	ID3D11Query* g_pQueryStart[GPU_QUERY_RING_SIZE] = {};
+	ID3D11Query* g_pQueryEnd[GPU_QUERY_RING_SIZE] = {};
+	int g_nQueryWrite = 0;
+	int g_nQueryRead = 0;
+	int g_nQueryPending = 0;
+	bool g_bQueryInFrame = false;
+	bool g_bQueryFailed = false;
+
+	// @brief 計測用クエリの解放
+	void ReleaseGpuQueries()
+	{
+		for (int i = 0; i < GPU_QUERY_RING_SIZE; ++i)
+		{
+			SAFE_RELEASE(g_pQueryDisjoint[i]);
+			SAFE_RELEASE(g_pQueryStart[i]);
+			SAFE_RELEASE(g_pQueryEnd[i]);
+		}
+	}
+
+	// @brief 計測用クエリの作成
+	// @return true:使用できる false:作成できなかった
+	bool CreateGpuQueries()
+	{
+		if (g_bQueryFailed) return false;
+		if (g_pQueryDisjoint[0] != nullptr) return true;
+
+		D3D11_QUERY_DESC desc = {};
+		for (int i = 0; i < GPU_QUERY_RING_SIZE; ++i)
+		{
+			desc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+			HRESULT hr1 = g_pDevice->CreateQuery(&desc, &g_pQueryDisjoint[i]);
+			desc.Query = D3D11_QUERY_TIMESTAMP;
+			HRESULT hr2 = g_pDevice->CreateQuery(&desc, &g_pQueryStart[i]);
+			HRESULT hr3 = g_pDevice->CreateQuery(&desc, &g_pQueryEnd[i]);
+			if (FAILED(hr1) || FAILED(hr2) || FAILED(hr3))
+			{
+				ReleaseGpuQueries();
+				g_bQueryFailed = true;
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// @brief GPUの計測の開始(フレームの描画の最初に呼ぶ)
+	void BeginGpuTimer()
+	{
+		g_bQueryInFrame = false;
+		if (!CProfiler::IsEnabled() || !CreateGpuQueries()) return;
+
+		g_pContext->Begin(g_pQueryDisjoint[g_nQueryWrite]);
+		g_pContext->End(g_pQueryStart[g_nQueryWrite]);
+		g_bQueryInFrame = true;
+	}
+
+	// @brief GPUの計測の終了と、結果の読み取り(フレームの描画の最後に呼ぶ)
+	void EndGpuTimer()
+	{
+		if (!g_bQueryInFrame) return;
+
+		g_pContext->End(g_pQueryEnd[g_nQueryWrite]);
+		g_pContext->End(g_pQueryDisjoint[g_nQueryWrite]);
+		g_nQueryWrite = (g_nQueryWrite + 1) % GPU_QUERY_RING_SIZE;
+		g_nQueryPending++;
+
+		// リングバッファが一杯の場合は、最も古い結果を捨てる
+		if (g_nQueryPending > GPU_QUERY_RING_SIZE)
+		{
+			g_nQueryRead = (g_nQueryRead + 1) % GPU_QUERY_RING_SIZE;
+			g_nQueryPending--;
+		}
+
+		// 結果が出ているものを読み取る(まだの場合は待たずに、次のフレームで読む)
+		while (g_nQueryPending > 0)
+		{
+			D3D11_QUERY_DATA_TIMESTAMP_DISJOINT disjoint = {};
+			if (g_pContext->GetData(g_pQueryDisjoint[g_nQueryRead], &disjoint, sizeof(disjoint), D3D11_ASYNC_GETDATA_DONOTFLUSH) != S_OK) break;
+
+			UINT64 start = 0;
+			UINT64 end = 0;
+			if (g_pContext->GetData(g_pQueryStart[g_nQueryRead], &start, sizeof(start), D3D11_ASYNC_GETDATA_DONOTFLUSH) != S_OK) break;
+			if (g_pContext->GetData(g_pQueryEnd[g_nQueryRead], &end, sizeof(end), D3D11_ASYNC_GETDATA_DONOTFLUSH) != S_OK) break;
+			if (!disjoint.Disjoint && disjoint.Frequency > 0)
+			{
+				CProfiler::GetInstance()->SetGpuFrameTime(static_cast<double>(end - start) * 1000.0 / static_cast<double>(disjoint.Frequency));
+			}
+
+			g_nQueryRead = (g_nQueryRead + 1) % GPU_QUERY_RING_SIZE;
+			g_nQueryPending--;
+		}
+	}
+}
 
 /*************************//*
 @brief  | デバイスの取得
@@ -224,6 +325,7 @@ void UninitDirectX()
 		SAFE_RELEASE(g_pBlendState[i]);
 	for (int i = 0; i < 3; ++i)
 		SAFE_RELEASE(g_pRasterizerState[i]);
+	ReleaseGpuQueries();
 	if (g_pContext)
 		g_pContext->ClearState();
 	SAFE_RELEASE(g_pContext);
@@ -238,6 +340,7 @@ void UninitDirectX()
 *//*************************/
 void BeginDrawDirectX()
 {
+	BeginGpuTimer();
 	float color[4] = { 0.8f, 0.9f, 1.0f, 1.0f };
 	g_pRTV->Clear(color);
 	g_pDSV->Clear();
@@ -248,6 +351,7 @@ void BeginDrawDirectX()
 *//*************************/
 void EndDrawDirectX()
 {
+	EndGpuTimer();
 	g_pSwapChain->Present(0, 0);
 }
 

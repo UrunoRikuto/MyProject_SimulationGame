@@ -46,6 +46,12 @@ void FadeOut(std::function<void()> onFadeComplete);
 // @param bOnImgui：Imgui有効フラグ
 void SetOnImgui(bool bOnImgui);
 
+// @brief 自動計測モードの設定(起動引数 --profile=秒数 で指定される)
+// @param fSeconds：計測する秒数(0以下の場合は通常の起動)
+// @param nGameSpeed：計測中のゲーム速度(倍速)
+// @param nExtraHumans：計測用に追加する人間の数
+void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans);
+
 // @brief ウインドウハンドル取得
 // @return ウインドウハンドル
 HWND GetMyWindow();

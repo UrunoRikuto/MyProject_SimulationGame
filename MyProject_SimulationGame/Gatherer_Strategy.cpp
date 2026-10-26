@@ -16,6 +16,7 @@
 #include "CivLevelManager.h"
 #include "BlackSmith.h"
 #include "BuildManager.h"
+#include "Profiler.h"
 
 /****************************************//*
 	@brief　	|　仕事処理
@@ -204,7 +205,10 @@ void CGatherer_Strategy::SearchAndMoveAction()
 		while (1)
 		{
 			// オブジェクトを探す処理を実装
-			m_pTarget = SearchTarget(vNotTargetIDs);
+			{
+				PROFILE_SCOPE("Gatherer: SearchTarget");
+				m_pTarget = SearchTarget(vNotTargetIDs);
+			}
 
 			// 木オブジェクトが見つからなかった場合はループを抜ける
 			if (m_pTarget == nullptr)return;

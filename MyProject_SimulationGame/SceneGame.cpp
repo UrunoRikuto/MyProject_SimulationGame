@@ -14,6 +14,7 @@
 #include "SkyBox.h"
 #include "ImguiSystem.h"
 #include "Animal.h"
+#include "Profiler.h"
 
 /****************************************//*
 	@brief　	| コンストラクタ
@@ -69,18 +70,31 @@ void CSceneGame::Init()
 void CSceneGame::Update()
 {
 	// 基底クラスの更新処理
-	CScene::Update();
+	{
+		PROFILE_SCOPE("Update: Scene objects");
+		CScene::Update();
+	}
 
 	// 生成管理システムの更新処理
-	CGeneratorManager::GetInstance()->Update();
+	{
+		PROFILE_SCOPE("Update: GeneratorManager");
+		CGeneratorManager::GetInstance()->Update();
+	}
 
 	// ゲーム内時間の更新
-	CGameTimeManager::GetInstance()->UpdateGameTime();
+	{
+		PROFILE_SCOPE("Update: GameTime");
+		CGameTimeManager::GetInstance()->UpdateGameTime();
+	}
 
 	// クールタイム処理
-	CBuildManager::GetInstance()->CoolTimeUpdate();
+	{
+		PROFILE_SCOPE("Update: BuildManager");
+		CBuildManager::GetInstance()->CoolTimeUpdate();
+	}
 
 	// 削除可能なオブジェクトの削除処理
+	PROFILE_SCOPE("Update: RemoveDestroyed");
 	for (auto& Objectlist : m_pGameObject_List)
 	{
 		Objectlist.remove_if([](CGameObject* pObj)

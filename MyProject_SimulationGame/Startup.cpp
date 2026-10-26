@@ -6,6 +6,8 @@
 #include <windows.h>
 #include "Main.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <crtdbg.h>
 #include "Defines.h"
 #include "imgui_impl_win32.h"
@@ -84,6 +86,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWindowText(myHWnd, APP_TITLE);
 
 	// 初期化処理
+	// 起動引数による自動計測モード(例: --profile=60 --speed=8 --humans=20)
+	{
+		float fSeconds = 0.0f;
+		int nSpeed = 1;
+		int nHumans = 0;
+		if (lpCmdLine != nullptr)
+		{
+			const char* pArg = nullptr;
+			if ((pArg = strstr(lpCmdLine, "--profile=")) != nullptr) fSeconds = static_cast<float>(atof(pArg + 10));
+			if ((pArg = strstr(lpCmdLine, "--speed=")) != nullptr) nSpeed = atoi(pArg + 8);
+			if ((pArg = strstr(lpCmdLine, "--humans=")) != nullptr) nHumans = atoi(pArg + 9);
+		}
+		if (fSeconds > 0.0f) SetAutoProfile(fSeconds, nSpeed, nHumans);
+	}
+
 	if (FAILED(Init(myHWnd, SCREEN_WIDTH, SCREEN_HEIGHT)))
 	{
 		Uninit();

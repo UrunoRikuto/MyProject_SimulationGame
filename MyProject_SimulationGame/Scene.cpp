@@ -15,6 +15,7 @@
 #include "ImguiSystem.h"
 #include "FieldManager.h"
 #include "ModelRenderer.h"
+#include "Profiler.h"
 
 // @brief カリング距離(描画)
 constexpr float Draw_CULLING_DISTANCE = 100.0f;
@@ -157,7 +158,7 @@ void CScene::Update()
             // GameObject以外ははカリング対象外
             if (obj->GetTag() != Tag::GameObject)
             {
-                obj->Update();
+                ProfileObject(false, obj, [&]() { obj->Update(); });
                 continue;
             }
             
@@ -181,7 +182,7 @@ void CScene::Update()
                 // カリング：更新をスキップ
                 continue;
             }
-            obj->Update();
+            ProfileObject(false, obj, [&]() { obj->Update(); });
         }
 	}
 }
@@ -226,7 +227,7 @@ void CScene::Draw()
             // タグやフラグで無条件描画が必要かチェック
             if (obj->GetTag() == Tag::UI || obj->GetTag() == Tag::SkyBox)
             {
-                obj->Draw();
+                ProfileObject(true, obj, [&]() { obj->Draw(); });
                 continue;
             }
 
@@ -254,7 +255,7 @@ void CScene::Draw()
                 continue;
             }
 
-            obj->Draw();
+            ProfileObject(true, obj, [&]() { obj->Draw(); });
         }
     }
 

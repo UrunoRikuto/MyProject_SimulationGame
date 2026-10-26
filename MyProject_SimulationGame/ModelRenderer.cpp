@@ -6,6 +6,7 @@
 *//**************************************************/
 #include "ModelRenderer.h"
 #include "Camera.h"
+#include "Profiler.h"
 
 // static batch map
 std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
@@ -109,6 +110,7 @@ void CModelRenderer::Draw()
 // バッチをフラッシュしてインスタンシングで描画
 void CModelRenderer::FlushBatches()
 {
+    PROFILE_SCOPE("Draw: ModelRenderer::FlushBatches");
     CCamera* pCamera = CCamera::GetInstance();
     for (auto& kv : s_batches)
     {

@@ -13,6 +13,10 @@
 #include "ImguiSystem.h"
 #include "ShaderManager.h"
 #include <chrono>
+#include "Profiler.h"
+#include "Human.h"
+#include "JobOperator.h"
+#include "CivLevelManager.h"
 
 // @brief 倍速時に、1フレームでゲームの更新に使ってよい時間(ミリ秒)
 // @note これを超えた場合は、描画が止まらないよう残りの更新を打ち切る
@@ -37,6 +41,75 @@ bool g_bSceneChanging = false;
 
 // Imgui有効フラグ
 bool g_bOnImgui = false;
+
+// 自動計測モード(起動引数 --profile=秒数)の設定
+float g_fAutoProfileSeconds = 0.0f;
+int g_nAutoProfileGameSpeed = 1;
+int g_nAutoProfileExtraHumans = 0;
+// 自動計測用の準備(人間の追加など)が済んだかどうか
+bool g_bAutoProfileReady = false;
+// 次に無職の人間へ割り当てる職業の番号
+int g_nAutoProfileJobIndex = 0;
+// 無職の人間を確認するまでのフレーム数のカウンタ
+int g_nAutoProfileJobTimer = 0;
+
+/****************************************//*
+	@brief　	| 自動計測モードの設定
+	@param　	| fSeconds：計測する秒数
+	@param　	| nGameSpeed：計測中のゲーム速度(倍速)
+	@param　	| nExtraHumans：計測用に追加する人間の数
+*//****************************************/
+void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans)
+{
+	g_fAutoProfileSeconds = fSeconds;
+	g_nAutoProfileGameSpeed = nGameSpeed;
+	g_nAutoProfileExtraHumans = nExtraHumans;
+}
+
+/****************************************//*
+	@brief　	| 自動計測用の処理
+	@note		| ゲームシーンの開始後に、人間の追加と、無職の人間への職業の割り当てを行う
+*//****************************************/
+static void UpdateAutoProfile()
+{
+	if (g_fAutoProfileSeconds <= 0.0f) return;
+	if (dynamic_cast<CSceneGame*>(g_pScene) == nullptr) return;
+
+	// 最初の1回だけ、全ての職業を解放して人間を追加する
+	if (!g_bAutoProfileReady)
+	{
+		g_bAutoProfileReady = true;
+		CCivLevelManager::GetInstance()->SetCivLevel(12);
+		const std::list<CHuman*> humans = g_pScene->GetGameObjects<CHuman>();
+		if (!humans.empty())
+		{
+			const DirectX::XMFLOAT3 basePos = humans.front()->GetPos();
+			for (int i = 0; i < g_nAutoProfileExtraHumans; ++i)
+			{
+				CHuman* pHuman = g_pScene->AddGameObject<CHuman>(Tag::GameObject, "Human");
+				if (pHuman != nullptr) pHuman->SetPos(basePos);
+			}
+		}
+	}
+
+	// 一定間隔で、無職の人間に職業を割り当てる
+	if (++g_nAutoProfileJobTimer < 60) return;
+	g_nAutoProfileJobTimer = 0;
+
+	const std::string jobNames[] = {
+		JobName::WoodGatherer, JobName::StoneGatherer, JobName::Builder, JobName::Pioneer, JobName::Cook,
+		JobName::Hunter, JobName::GrassGatherer, JobName::Farmer, JobName::Smith
+	};
+	const int nJobCount = static_cast<int>(sizeof(jobNames) / sizeof(jobNames[0]));
+	for (CHuman* pHuman : g_pScene->GetGameObjects<CHuman>())
+	{
+		if (pHuman->IsDestroy()) continue;
+		if (pHuman->GetHumanJob()->GetJobName() != JobName::Neet) continue;
+
+		pHuman->SetHumanJob(CreateJobByName(jobNames[g_nAutoProfileJobIndex % nJobCount], *pHuman));
+		g_nAutoProfileJobIndex++;
+	}
+}
 
 
 /****************************************//*
@@ -93,6 +166,16 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	// 最初はフェードイン
 	FadeIn(nullptr);
 
+	// 自動計測モードの場合は、計測を開始して、タイトル画面を飛ばしてゲームを開始する
+	if (g_fAutoProfileSeconds > 0.0f)
+	{
+		CProfiler::GetInstance()->StartAutoRun(g_fAutoProfileSeconds, "profile_report.txt");
+		CImguiSystem::GetInstance()->DecideSettingSeed();
+		CImguiSystem::GetInstance()->SetGameSpeed(g_nAutoProfileGameSpeed);
+		ChangeScene(new CSceneGame());
+		SetOnImgui(true);
+	}
+
 
 	return hr;
 }
@@ -140,6 +223,8 @@ void Uninit()
 *//****************************************/
 void Update()
 {
+	PROFILE_SCOPE("Main::Update");
+
 	// 入力の更新
 	UpdateInput();
 
@@ -155,8 +240,13 @@ void Update()
 			g_bSceneChanging = false;
 		}
 
+		UpdateAutoProfile();
+
 		CCamera* pCamera = CCamera::GetInstance();
-		pCamera->Update();
+		{
+			PROFILE_SCOPE("Update: Camera");
+			pCamera->Update();
+		}
 
 		// ゲームシーンのみ、倍速の設定の回数だけ更新を行う(1フレーム=固定の時間刻みで動いているため、更新回数がそのまま倍率になる)
 		// 更新内で押した瞬間の入力を読むタイトルシーンなどは、同じ入力を何度も受け取らないよう倍速にしない
@@ -167,7 +257,10 @@ void Update()
 		const auto updateStartTime = std::chrono::steady_clock::now();
 		for (int i = 0; i < nGameSpeed; ++i)
 		{
-			g_pScene->Update();
+			{
+				PROFILE_SCOPE("Update: Scene::Update");
+				g_pScene->Update();
+			}
 			nUpdateCount++;
 
 			// 処理に時間がかかり過ぎている場合は、描画が止まらないよう残りの更新を打ち切る
@@ -176,7 +269,10 @@ void Update()
 		}
 		pImguiSystem->SetAppliedGameSpeed(nUpdateCount);
 
-		g_pTransition->Update();
+		{
+			PROFILE_SCOPE("Update: Transition");
+			g_pTransition->Update();
+		}
 	}
 
 	// 終了コマンド
@@ -189,7 +285,13 @@ void Update()
 	}
 
 	// Imguiの更新
-	if(g_bOnImgui)CImguiSystem::GetInstance()->Update();
+	{
+		PROFILE_SCOPE("Update: ImguiSystem");
+		if(g_bOnImgui)CImguiSystem::GetInstance()->Update();
+	}
+
+	// 自動計測の時間が終わったら、レポートを出力してアプリケーションを終了する
+	if (CProfiler::GetInstance()->UpdateAutoRun()) AppEnd();
 }
 
 /****************************************//*
@@ -197,13 +299,33 @@ void Update()
 *//****************************************/
 void Draw()
 {
-	BeginDrawDirectX();
+	{
+		PROFILE_SCOPE("Main::Draw");
 
-	g_pScene->Draw();
-	g_pTransition->Draw();
-	if(g_bOnImgui)CImguiSystem::GetInstance()->Draw();
+		{
+			PROFILE_SCOPE("Draw: BeginDraw(Clear)");
+			BeginDrawDirectX();
+		}
+		{
+			PROFILE_SCOPE("Draw: Scene::Draw");
+			g_pScene->Draw();
+		}
+		{
+			PROFILE_SCOPE("Draw: Transition");
+			g_pTransition->Draw();
+		}
+		{
+			PROFILE_SCOPE("Draw: ImGui");
+			if(g_bOnImgui)CImguiSystem::GetInstance()->Draw();
+		}
+		{
+			PROFILE_SCOPE("Draw: EndDraw(Present)");
+			EndDrawDirectX();
+		}
+	}
 
-	EndDrawDirectX();
+	// プロファイラのフレームの区切り
+	if (CProfiler::IsEnabled()) CProfiler::GetInstance()->EndFrame();
 }
 
 /****************************************//*
