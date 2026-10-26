@@ -74,11 +74,24 @@ public:
 	// @note 画面外で動きや空腹が止まってしまうと困る、人間や動物などの行動するオブジェクトで使用する
 	virtual bool IsAlwaysUpdate() const { return false; }
 
+	// @brief 更新する処理を持たない静的なオブジェクトかどうかを取得
+	// @return true:更新処理を行わない false:通常通り更新する
+	// @note 木・岩・草のように数が多く、動かないオブジェクトで使用する(毎フレームのカリング判定も省ける)
+	virtual bool IsStaticObject() const { return false; }
+
 	// @brief オブジェクトが破棄された時の処理
     virtual void OnDestroy();
 
 	// @brief オブジェクトを破棄する
     virtual void Destroy();
+
+	// @brief 破棄の要求があったオブジェクトの数の取得
+	// @note 破棄されたオブジェクトの削除処理が必要かどうかの判定に使用する(毎ステップ全オブジェクトを調べずに済む)
+	static int GetDestroyRequestCount() { return s_nDestroyRequestCount; }
+
+	// @brief 破棄の要求があったオブジェクトの数を0に戻す
+	// @note 破棄されたオブジェクトの削除処理を始める時に呼ぶ
+	static void ResetDestroyRequestCount() { s_nDestroyRequestCount = 0; }
 
 	// @brief オブジェクトが破棄予定かどうかを取得
 	// @return true:破棄予定 false:破棄されていない
@@ -258,6 +271,9 @@ protected:
 
     // @brief オブジェクトが破棄されているかのフラグ
     bool m_bDestroy;
+
+	// @brief 破棄の要求があったオブジェクトの数(削除処理を始める時に0に戻る)
+	inline static int s_nDestroyRequestCount = 0;
 
     // @brief オブジェクトのタグ
     Tag m_eTag;

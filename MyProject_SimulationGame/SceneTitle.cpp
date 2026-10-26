@@ -163,17 +163,20 @@ void CSceneTitle::Update()
 	}
 
 	// 削除可能なオブジェクトの削除処理
+	// 破棄が要求されたオブジェクトがない場合は、全オブジェクトを調べる必要がない
+	if (CGameObject::GetDestroyRequestCount() == 0) return;
+	CGameObject::ResetDestroyRequestCount();
+
 	for (auto& Objectlist : m_pGameObject_List)
 	{
 		Objectlist.remove_if([this](CGameObject* pObj)
 			{
 				if (pObj->IsDestroy())
 				{
-					NotifyMembershipChanged();
 					pObj->Uninit();
 					pObj->OnDestroy();
+					NotifyObjectRemoving(pObj);
 					SAFE_DELETE(pObj);
-					NotifyMembershipChanged();
 					return true;
 				}
 				return false;

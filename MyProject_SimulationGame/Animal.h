@@ -26,6 +26,17 @@ public:
 	// @note デバッグ用。falseにすると、生成時にコピーした情報のままで動作する(従来の動作)
 	inline static bool s_bRefreshFlockInfo = true;
 
+	// @brief 更新の1ステップの開始を通知する(ゲームシーンの更新の最初に呼ぶ)
+	// @note 群れの近隣検索用の空間分割を、1ステップに1回だけ作り直すために使う
+	static void BeginUpdateStep() { ++s_nUpdateStep; }
+
+	// @brief 更新のステップ数の取得
+	static unsigned int GetUpdateStep() { return s_nUpdateStep; }
+
+private:
+	// @brief 更新のステップ数
+	inline static unsigned int s_nUpdateStep = 1;
+
 protected:
 	// @brief フィールドの外に出ないように位置と速度を補正する
 	// @note 端の少し内側までを行動範囲とし、端に着いた場合は跳ね返らせる

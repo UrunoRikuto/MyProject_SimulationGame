@@ -36,6 +36,10 @@ public:
 	// @brief 描画処理
 	void Draw() override;
 
+	// @brief 更新する処理を持たない静的なオブジェクトかどうかを取得
+	// @return 常にtrue(木・岩・草は動かず、更新する処理もない)
+	bool IsStaticObject() const override { return true; }
+
 	// @brief 生成位置設定
 	void SetCreatePos(CFieldCell* cell);
 
@@ -47,6 +51,10 @@ public:
 
 	// @brief ターゲット標的に指定してきているゲームオブジェクトのIDを設定
 	void SetTargetingID(const ObjectID& id) { m_TargetingID = id; }
+
+	// @brief 誰かの標的に指定されているかどうかを取得
+	// @return true:標的に指定されている false:指定されていない
+	bool IsTargeted() const { return m_TargetingID.m_nSameCount != -1; }
 
 	// @brief 連携しているフィールドセルのインデックスを取得
 	DirectX::XMINT2 GetLinkedCellIndex() const { return m_LinkedCellIndex; }

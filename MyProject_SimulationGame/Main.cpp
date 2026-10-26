@@ -24,8 +24,9 @@
 #include <map>
 
 // @brief 倍速時に、1フレームでゲームの更新に使ってよい時間(ミリ秒)
-// @note これを超えた場合は、描画が止まらないよう残りの更新を打ち切る
-constexpr float Max_Update_Time_Per_Frame_Ms = 12.0f;
+// @note 処理が重い環境では、描画のフレームレートが下がっても倍速を優先する(30FPS程度まで)
+//       これを超えた場合は、描画が止まらないよう残りの更新を打ち切る
+constexpr float Max_Update_Time_Per_Frame_Ms = 33.0f;
 
 
 // 現在のシーンポインタ

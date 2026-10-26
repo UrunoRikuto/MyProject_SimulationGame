@@ -12,6 +12,7 @@
 #include <typeindex>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include <cfloat>
 
 // @brief シーンベースクラス
@@ -53,7 +54,7 @@ public:
 		}
 		// ゲームオブジェクトリストに追加
 		m_pGameObject_List[(int)inTag].push_back(gameObject);
-		NotifyMembershipChanged();
+		NotifyObjectAdded(gameObject);
 
 		// オブジェクトIDの設定(同じ名前のオブジェクトが既にいくつあるかは、名前ごとのカウンタで数える)
 		ObjectID id{};
@@ -272,6 +273,34 @@ public:
 		return std::list<T*>(items.begin(), items.end());
 	}
 
+	// @brief 条件に合う、一番近い位置にあるゲームオブジェクトを取得する
+	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
+	// @param inPos：基準位置
+	// @param pred：候補にするかどうかを判定する処理(T*を受け取り、候補にする場合はtrueを返す)
+	// @return 条件に合う最も近いT*型のポインタ、無ければnullptr
+	template<typename T, typename Pred>
+	T* GetNearestGameObjectIf(const DirectX::XMFLOAT3& inPos, Pred&& pred)
+	{
+		float minDistance = FLT_MAX;
+		T* pNearObject = nullptr;
+		for (T* ret : GetKindOf<T>())
+		{
+			if (!pred(ret)) continue;
+
+			const DirectX::XMFLOAT3 objPos = ret->GetPos();
+			const float dx = inPos.x - objPos.x;
+			const float dy = inPos.y - objPos.y;
+			const float dz = inPos.z - objPos.z;
+			const float distance = dx * dx + dy * dy + dz * dz;
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				pNearObject = ret;
+			}
+		}
+		return pNearObject;
+	}
+
 	// @brief T型として扱えるゲームオブジェクト全てに対して、順に処理を行う
 	// @tparam T：対象のCGameObject型のゲームオブジェクトクラス
 	// @param func：各オブジェクト(T*)に対して呼び出す処理
@@ -324,9 +353,40 @@ public:
     bool GetIsFade() { return m_bFade; }
 
 protected:
-	// @brief ゲームオブジェクトの増減があったことを記録する
-	// @note 型別の検索結果のキャッシュを無効にする。リストへの追加・削除・解放を行った場合は必ず呼ぶこと
-	void NotifyMembershipChanged() { ++m_nMembershipVersion; }
+	// @brief ゲームオブジェクトを追加したことを、型別の検索結果のキャッシュと更新の対象の一覧に反映する
+	void NotifyObjectAdded(CGameObject* pObj)
+	{
+		for (auto& kv : m_KindCaches)
+		{
+			kv.second->OnAdded(pObj);
+		}
+		if (!pObj->IsStaticObject())
+		{
+			m_UpdateList.push_back(pObj);
+		}
+	}
+
+	// @brief ゲームオブジェクトを解放する前に、型別の検索結果のキャッシュと更新の対象の一覧から外す
+	// @note リストから削除・解放する直前に必ず呼ぶこと(解放済みのポインタが一覧に残らないようにするため)
+	void NotifyObjectRemoving(CGameObject* pObj)
+	{
+		for (auto& kv : m_KindCaches)
+		{
+			kv.second->OnRemoved(pObj);
+		}
+		auto it = std::find(m_UpdateList.begin(), m_UpdateList.end(), pObj);
+		if (it != m_UpdateList.end())
+		{
+			m_UpdateList.erase(it);
+		}
+	}
+
+	// @brief 型別の検索結果のキャッシュと更新の対象の一覧を、全て破棄する
+	void ClearObjectCaches()
+	{
+		m_KindCaches.clear();
+		m_UpdateList.clear();
+	}
 
 	// @brief シーン内のゲームオブジェクトリスト
     std::array<std::list<CGameObject*>,(int)Tag::Max> m_pGameObject_List;
@@ -336,8 +396,12 @@ private:
 	struct IKindCache
 	{
 		virtual ~IKindCache() = default;
-		// @brief 作成した時点のオブジェクトの増減の版数
-		unsigned int m_nVersion = 0xFFFFFFFFu;
+
+		// @brief オブジェクトが追加された時に、一覧へ反映する
+		virtual void OnAdded(CGameObject* pObj) = 0;
+
+		// @brief オブジェクトが解放される前に、一覧から外す
+		virtual void OnRemoved(CGameObject* pObj) = 0;
 	};
 
 	// @brief T型として扱えるオブジェクトの一覧
@@ -345,27 +409,41 @@ private:
 	struct KindCache : IKindCache
 	{
 		std::vector<T*> m_Items;
+
+		void OnAdded(CGameObject* pObj) override
+		{
+			if (T* p = dynamic_cast<T*>(pObj))
+			{
+				m_Items.push_back(p);
+			}
+		}
+
+		void OnRemoved(CGameObject* pObj) override
+		{
+			if (T* p = dynamic_cast<T*>(pObj))
+			{
+				auto it = std::find(m_Items.begin(), m_Items.end(), p);
+				if (it != m_Items.end())
+				{
+					m_Items.erase(it);
+				}
+			}
+		}
 	};
 
 	// @brief T型として扱えるオブジェクトの一覧を取得する
 	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
-	// @return T型のオブジェクトの一覧(リスト内の並び順は全体を探索した場合と同じ)
-	// @note オブジェクトの増減があるまでは使い回すため、検索のたびに全オブジェクトを調べずに済む
-	//       返す参照は次にこの関数を呼ぶまでの間だけ有効(呼び出し側は検索中にシーンを操作しないこと)
+	// @return T型のオブジェクトの一覧
+	// @note 最初の1回だけ全オブジェクトを調べて作り、以降はオブジェクトの追加・解放のたびに更新する
+	//       (増減のたびに作り直すと、オブジェクトが多いほど、増減の直後の検索が重くなってカクつくため)
+	//       返す参照は、シーンにオブジェクトを追加・解放するまでの間だけ有効(呼び出し側は検索中にシーンを操作しないこと)
 	template<typename T>
 	const std::vector<T*>& GetKindOf()
 	{
 		std::unique_ptr<IKindCache>& slot = m_KindCaches[std::type_index(typeid(T))];
 		if (!slot)
 		{
-			slot = std::make_unique<KindCache<T>>();
-		}
-		KindCache<T>* pCache = static_cast<KindCache<T>*>(slot.get());
-
-		// オブジェクトの増減があった場合だけ作り直す
-		if (pCache->m_nVersion != m_nMembershipVersion)
-		{
-			pCache->m_Items.clear();
+			auto pNewCache = std::make_unique<KindCache<T>>();
 			for (const auto& list : m_pGameObject_List)
 			{
 				for (auto obj : list)
@@ -373,23 +451,24 @@ private:
 					T* ret = CastCached<T>(obj);
 					if (ret != nullptr)
 					{
-						pCache->m_Items.push_back(ret);
+						pNewCache->m_Items.push_back(ret);
 					}
 				}
 			}
-			pCache->m_nVersion = m_nMembershipVersion;
+			slot = std::move(pNewCache);
 		}
-		return pCache->m_Items;
+		return static_cast<KindCache<T>*>(slot.get())->m_Items;
 	}
-
-	// @brief オブジェクトの増減の版数
-	unsigned int m_nMembershipVersion = 0;
 
 	// @brief 型別の検索結果のキャッシュ
 	std::unordered_map<std::type_index, std::unique_ptr<IKindCache>> m_KindCaches;
 
 	// @brief シーン内の全てのオブジェクトIDリスト
     std::vector<ObjectID> m_tIDVec;
+
+	// @brief 更新の対象になるオブジェクトの一覧(静的なオブジェクトを除く。追加・解放のたびに更新する)
+	std::vector<CGameObject*> m_UpdateList;
+
 
 	// @brief 名前ごとに追加したオブジェクトの数(オブジェクトIDの同名の通し番号の計算用)
 	std::unordered_map<std::string, int> m_NameCounts;

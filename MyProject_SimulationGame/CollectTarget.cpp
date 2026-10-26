@@ -85,6 +85,12 @@ void CCollectTarget::OnDestroy()
 	CFieldCell* cell = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[(int)m_LinkedCellIndex.x][(int)m_LinkedCellIndex.y];
 	cell->SetUse(false);
 
+	// セルに配置されているオブジェクトが自分の場合は、解放後に参照されないよう外す
+	if (cell->GetObject() == this)
+	{
+		cell->SetObject(nullptr);
+	}
+
 	// 採取対象があったセルが、まだ木・岩・草の土地であれば、一定時間後の再生成を依頼する
 	// (開拓で建築可能な土地に変わったセルは再生成しない)
 	switch (cell->GetCellType())

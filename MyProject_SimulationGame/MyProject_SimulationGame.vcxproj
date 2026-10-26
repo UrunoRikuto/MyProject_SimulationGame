@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animal.h" />
+    <ClInclude Include="SpatialGrid.h" />
     <ClInclude Include="AnimalAI.h" />
     <ClInclude Include="AnimalGenerator.h" />
     <ClInclude Include="BillboardRenderer.h" />

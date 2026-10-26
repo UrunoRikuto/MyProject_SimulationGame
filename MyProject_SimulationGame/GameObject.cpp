@@ -109,7 +109,12 @@ void CGameObject::OnDestroy()
 *//****************************************/
 void CGameObject::Destroy()
 {
-	m_bDestroy = true;
+	// 初めて破棄が要求された時だけ数える
+	if (!m_bDestroy)
+	{
+		m_bDestroy = true;
+		s_nDestroyRequestCount++;
+	}
 }
 
 /****************************************//*

@@ -129,7 +129,7 @@ void CScene::Uninit()
 	// リストのクリア
 	m_tIDVec.clear();
 	m_NameCounts.clear();
-	NotifyMembershipChanged();
+	ClearObjectCaches();
 }
 
 /****************************************//*
@@ -153,10 +153,12 @@ void CScene::Update()
 	const float globalCullDistance = Update_CULLING_DISTANCE;
     const float globalCullDistSq = globalCullDistance * globalCullDistance;
 
-    for (auto& list : m_pGameObject_List)
+    // 更新の対象の一覧は、オブジェクトの追加・解放のたびに更新されている
+    // (更新中に追加されたオブジェクトも対象にするため、位置で参照する)
     {
-        for (auto obj : list)
+        for (size_t nIndex = 0; nIndex < m_UpdateList.size(); ++nIndex)
         {
+            CGameObject* obj = m_UpdateList[nIndex];
             // GameObject以外と、画面外でも行動を続けるオブジェクトはカリング対象外
             if (obj->GetTag() != Tag::GameObject || obj->IsAlwaysUpdate())
             {

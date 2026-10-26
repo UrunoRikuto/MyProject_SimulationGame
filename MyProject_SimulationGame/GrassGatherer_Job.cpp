@@ -25,7 +25,11 @@ CGrassGatherer_Job::CGrassGatherer_Job()
 CCollectTarget* CGrassGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTargetIDs)
 {
 	// 草オブジェクトを探す
-	return GetScene()->GetGameObject<CGrass>(m_pOwner->GetPos(), vNotTargetIDs);
+	// 誰も標的にしていない、一番近いオブジェクトを一度の走査で探す
+	return GetScene()->GetNearestGameObjectIf<CGrass>(m_pOwner->GetPos(), [](CGrass* pTarget)
+	{
+		return !pTarget->IsDestroy() && !pTarget->IsTargeted();
+	});
 }
 
 /******************************************//*

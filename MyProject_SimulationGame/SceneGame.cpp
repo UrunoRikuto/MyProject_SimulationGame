@@ -70,6 +70,9 @@ void CSceneGame::Init()
 void CSceneGame::Update()
 {
 	// 基底クラスの更新処理
+	// 動物の群れの近隣検索用の空間分割を、このステップの最初に作り直せるようにする
+	CAnimal::BeginUpdateStep();
+
 	{
 		PROFILE_SCOPE("Update: Scene objects");
 		CScene::Update();
@@ -95,17 +98,20 @@ void CSceneGame::Update()
 
 	// 削除可能なオブジェクトの削除処理
 	PROFILE_SCOPE("Update: RemoveDestroyed");
+	// 破棄が要求されたオブジェクトがない場合は、全オブジェクトを調べる必要がない
+	if (CGameObject::GetDestroyRequestCount() == 0) return;
+	CGameObject::ResetDestroyRequestCount();
+
 	for (auto& Objectlist : m_pGameObject_List)
 	{
 		Objectlist.remove_if([this](CGameObject* pObj)
 		{
 			if (pObj->IsDestroy())
 			{
-				NotifyMembershipChanged();
 				pObj->Uninit();
 				pObj->OnDestroy();
+				NotifyObjectRemoving(pObj);
 				SAFE_DELETE(pObj);
-				NotifyMembershipChanged();
 				return true;
 			}
 			return false;

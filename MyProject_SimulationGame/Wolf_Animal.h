@@ -6,6 +6,7 @@
 *//**************************************************/
 #pragma once
 #include "CarnivorousAnimal.h"
+#include "SpatialGrid.h"
 
 // 前方宣言
 class CHerbivorousAnimal;
@@ -45,8 +46,18 @@ private:
 	// @param fRadius：近隣として扱う距離
 	void RefreshNeighbors(const std::vector<CWolf_Animal*>& In_Wolfs, float fRadius);
 
+	// @brief 近隣の同種動物の情報を1頭分追加する
+	// @param pWolf：近隣として追加する狼
+	void AppendNeighbor(CWolf_Animal* pWolf);
+
 	// @brief 生成されている全てのオオカミ(群れ情報の更新用)
 	inline static std::vector<CWolf_Animal*> s_AllWolves;
+
+	// @brief 近隣検索用の空間分割(更新の1ステップに1回作り直す)
+	inline static CSpatialGrid<CWolf_Animal> s_Grid;
+
+	// @brief 空間分割を作った時の、更新のステップ数
+	inline static unsigned int s_nGridStep = 0;
 
 	// @brief 攻撃クールダウン（秒）
 	float m_fAttackCooldown =0.0f;

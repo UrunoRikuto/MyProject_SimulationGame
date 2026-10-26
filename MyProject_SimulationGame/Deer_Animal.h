@@ -6,6 +6,7 @@
 *//**************************************************/
 #pragma once
 #include "HerbivorousAnimal.h"
+#include "SpatialGrid.h"
 
 // @brief 鹿クラス
 class CDeer_Animal final : public CHerbivorousAnimal
@@ -40,8 +41,18 @@ private:
 	// @param fRadius：近隣として扱う距離
 	void RefreshNeighbors(const std::vector<CDeer_Animal*>& In_Deers, float fRadius);
 
+	// @brief 近隣の同種動物の情報を1頭分追加する
+	// @param pDeer：近隣として追加する鹿
+	void AppendNeighbor(CDeer_Animal* pDeer);
+
 	// @brief 生成されている全ての鹿(群れ情報の更新用)
 	inline static std::vector<CDeer_Animal*> s_AllDeer;
+
+	// @brief 近隣検索用の空間分割(更新の1ステップに1回作り直す)
+	inline static CSpatialGrid<CDeer_Animal> s_Grid;
+
+	// @brief 空間分割を作った時の、更新のステップ数
+	inline static unsigned int s_nGridStep = 0;
 
 	// @brief 0..1の乱数取得
 	float Rand01();

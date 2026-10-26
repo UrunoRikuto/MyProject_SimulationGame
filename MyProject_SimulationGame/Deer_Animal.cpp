@@ -439,23 +439,32 @@ void CDeer_Animal::RefreshNeighbors(const std::vector<CDeer_Animal*>& In_Deers, 
 		// 近隣として扱う距離より離れていたらスキップ
 		if (StructMath::Distance(GetPos(), deer->GetPos()) > fRadius) continue;
 
-		// 逃避AI取得
-		auto* pEscapeAI = dynamic_cast<CFlockEscapeAI*>(deer->m_pActionAI);
-
-		// 近隣情報作成
-		BoidsNeighbor neighbor;
-		// 位置
-		neighbor.v3Position = deer->m_tParam.m_f3Pos;
-		// 速度
-		neighbor.v3Velocity = deer->m_f3Velocity;
-
-		// 脅威情報共有
-		neighbor.bSetTarget = (pEscapeAI != nullptr) ? pEscapeAI->HasThreat() : false;
-		neighbor.pTargetPos = (pEscapeAI != nullptr) ? pEscapeAI->GetThreatPosition() : DirectX::XMFLOAT3(0, 0, 0);
-
-		// リストに追加
-		m_SameAnimalNeighbors.push_back(neighbor);
+		AppendNeighbor(deer);
 	}
+}
+
+/*****************************************//*
+	@brief　	| 近隣の同種動物の情報を1頭分追加する
+	@param　	| pDeer：近隣として追加する鹿
+*//*****************************************/
+void CDeer_Animal::AppendNeighbor(CDeer_Animal* pDeer)
+{
+	// 逃避AI取得
+	auto* pEscapeAI = dynamic_cast<CFlockEscapeAI*>(pDeer->m_pActionAI);
+
+	// 近隣情報作成
+	BoidsNeighbor neighbor;
+	// 位置
+	neighbor.v3Position = pDeer->m_tParam.m_f3Pos;
+	// 速度
+	neighbor.v3Velocity = pDeer->m_f3Velocity;
+
+	// 脅威情報共有
+	neighbor.bSetTarget = (pEscapeAI != nullptr) ? pEscapeAI->HasThreat() : false;
+	neighbor.pTargetPos = (pEscapeAI != nullptr) ? pEscapeAI->GetThreatPosition() : DirectX::XMFLOAT3(0, 0, 0);
+
+	// リストに追加
+	m_SameAnimalNeighbors.push_back(neighbor);
 }
 
 /*****************************************//*
@@ -474,5 +483,28 @@ void CDeer_Animal::RegisterToFlock(std::vector<CDeer_Animal*> In_Deers)
 *//*****************************************/
 void CDeer_Animal::RefreshFlock()
 {
-	RefreshNeighbors(s_AllDeer, Deer_Flock_Radius);
+	// 近隣検索用の空間分割は、更新の1ステップに1回だけ作り直す
+	if (s_nGridStep != CAnimal::GetUpdateStep())
+	{
+		s_Grid.Build(s_AllDeer, Deer_Flock_Radius);
+		s_nGridStep = CAnimal::GetUpdateStep();
+	}
+
+	m_SameAnimalNeighbors.clear();
+
+	// 周囲のマスにいる鹿だけを調べる(全頭との距離は調べない)
+	const DirectX::XMFLOAT3 myPos = GetPos();
+	const float fRadiusSq = Deer_Flock_Radius * Deer_Flock_Radius;
+	s_Grid.ForEachNear(myPos, [&](CDeer_Animal* deer)
+	{
+		if (deer == this || deer->IsDestroy() || deer->IsDead()) return;
+
+		const DirectX::XMFLOAT3 pos = deer->GetPos();
+		const float dx = myPos.x - pos.x;
+		const float dy = myPos.y - pos.y;
+		const float dz = myPos.z - pos.z;
+		if (dx * dx + dy * dy + dz * dz > fRadiusSq) return;
+
+		AppendNeighbor(deer);
+	});
 }

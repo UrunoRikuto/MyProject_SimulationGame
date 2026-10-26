@@ -15,6 +15,7 @@
 #include "ImguiSystem.h"
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <cfloat>
 
 namespace
@@ -325,13 +326,6 @@ bool CPioneer_Job::FindClearTarget()
 	const DirectX::XMFLOAT3 f3MyPos = m_pOwner->GetPos();
 
 	// 採取対象(木・岩・草)を、連携しているセルのキーから引けるようにする
-	std::map<int, CCollectTarget*> occupants;
-	for (CCollectTarget* pTarget : GetScene()->GetGameObjects<CCollectTarget>())
-	{
-		if (pTarget->IsDestroy()) continue;
-		occupants[MakeCellKey(pTarget->GetLinkedCellIndex())] = pTarget;
-	}
-
 	// 上下左右の隣接セルの方向
 	const int nDirX[4] = { 1, -1, 0, 0 };
 	const int nDirY[4] = { 0, 0, 1, -1 };
@@ -362,9 +356,8 @@ bool CPioneer_Job::FindClearTarget()
 				if (s_ClaimedCells.count(nKey) > 0) continue;
 
 				// セルに残っている採取対象を取得
-				CCollectTarget* pOccupant = nullptr;
-				auto it = occupants.find(nKey);
-				if (it != occupants.end()) pOccupant = it->second;
+				CCollectTarget* pOccupant = dynamic_cast<CCollectTarget*>(pNeighbor->GetObject());
+				if (pOccupant != nullptr && pOccupant->IsDestroy()) pOccupant = nullptr;
 
 				if (!IsClearableCell(pNeighbor, pOccupant)) continue;
 

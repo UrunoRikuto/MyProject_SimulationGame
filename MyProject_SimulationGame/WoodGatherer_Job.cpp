@@ -26,7 +26,11 @@ CWoodGatherer_Job::CWoodGatherer_Job()
 CCollectTarget* CWoodGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTargetIDs)
 {
 	// 木オブジェクトを探す
-	return GetScene()->GetGameObject<CWood>(m_pOwner->GetPos(), vNotTargetIDs);
+	// 誰も標的にしていない、一番近いオブジェクトを一度の走査で探す
+	return GetScene()->GetNearestGameObjectIf<CWood>(m_pOwner->GetPos(), [](CWood* pTarget)
+	{
+		return !pTarget->IsDestroy() && !pTarget->IsTargeted();
+	});
 }
 
 /******************************************//*

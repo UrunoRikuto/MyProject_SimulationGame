@@ -345,23 +345,32 @@ void CWolf_Animal::RefreshNeighbors(const std::vector<CWolf_Animal*>& In_Wolfs, 
 		float dist = StructMath::Distance(GetPos(), wolf->GetPos());
 		if (dist > fRadius) continue;
 
-		// 群れの動物の行動AI取得
-		auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(wolf->m_pActionAI);
-
-		// 近隣情報登録
-		BoidsNeighbor neighbor;
-		// 位置
-		neighbor.v3Position = { wolf->m_tParam.m_f3Pos.x, wolf->m_tParam.m_f3Pos.y, wolf->m_tParam.m_f3Pos.z };
-		// 速度
-		neighbor.v3Velocity = { wolf->m_f3Velocity.x, wolf->m_f3Velocity.y, wolf->m_f3Velocity.z };
-		// 標的設定有無
-		neighbor.bSetTarget = (pFlockAI != nullptr) ? pFlockAI->HasTarget() : false;
-		// 標的位置
-		neighbor.pTargetPos = (pFlockAI != nullptr) ? pFlockAI->GetTargetPosition() : DirectX::XMFLOAT3(0,0,0);
-
-		// リストに追加
-		m_SameAnimalNeighbors.push_back(neighbor);
+		AppendNeighbor(wolf);
 	}
+}
+
+/****************************************//*
+	@brief	| 近隣の同種動物の情報を1頭分追加する
+	@param	| pWolf：近隣として追加する狼
+*//****************************************/
+void CWolf_Animal::AppendNeighbor(CWolf_Animal* pWolf)
+{
+	// 群れの動物の行動AI取得
+	auto* pFlockAI = dynamic_cast<CFlockAttackAI*>(pWolf->m_pActionAI);
+
+	// 近隣情報登録
+	BoidsNeighbor neighbor;
+	// 位置
+	neighbor.v3Position = { pWolf->m_tParam.m_f3Pos.x, pWolf->m_tParam.m_f3Pos.y, pWolf->m_tParam.m_f3Pos.z };
+	// 速度
+	neighbor.v3Velocity = { pWolf->m_f3Velocity.x, pWolf->m_f3Velocity.y, pWolf->m_f3Velocity.z };
+	// 標的設定有無
+	neighbor.bSetTarget = (pFlockAI != nullptr) ? pFlockAI->HasTarget() : false;
+	// 標的位置
+	neighbor.pTargetPos = (pFlockAI != nullptr) ? pFlockAI->GetTargetPosition() : DirectX::XMFLOAT3(0,0,0);
+
+	// リストに追加
+	m_SameAnimalNeighbors.push_back(neighbor);
 }
 
 /****************************************//*
@@ -387,5 +396,28 @@ void CWolf_Animal::RegisterToFlock(std::vector<CWolf_Animal*> In_Wolfs)
 *//****************************************/
 void CWolf_Animal::RefreshFlock()
 {
-	RefreshNeighbors(s_AllWolves, Wolf_Flock_Radius);
+	// 近隣検索用の空間分割は、更新の1ステップに1回だけ作り直す
+	if (s_nGridStep != CAnimal::GetUpdateStep())
+	{
+		s_Grid.Build(s_AllWolves, Wolf_Flock_Radius);
+		s_nGridStep = CAnimal::GetUpdateStep();
+	}
+
+	m_SameAnimalNeighbors.clear();
+
+	// 周囲のマスにいる狼だけを調べる(全頭との距離は調べない)
+	const DirectX::XMFLOAT3 myPos = GetPos();
+	const float fRadiusSq = Wolf_Flock_Radius * Wolf_Flock_Radius;
+	s_Grid.ForEachNear(myPos, [&](CWolf_Animal* wolf)
+	{
+		if (wolf == this || wolf->IsDestroy() || wolf->IsDead()) return;
+
+		const DirectX::XMFLOAT3 pos = wolf->GetPos();
+		const float dx = myPos.x - pos.x;
+		const float dy = myPos.y - pos.y;
+		const float dz = myPos.z - pos.z;
+		if (dx * dx + dy * dy + dz * dz > fRadiusSq) return;
+
+		AppendNeighbor(wolf);
+	});
 }

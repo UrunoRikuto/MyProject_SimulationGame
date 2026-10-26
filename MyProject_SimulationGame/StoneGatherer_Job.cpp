@@ -26,7 +26,11 @@ CStoneGatherer_Job::CStoneGatherer_Job()
 CCollectTarget* CStoneGatherer_Job::SearchTarget(std::vector<ObjectID> vNotTargetIDs)
 {
 	// 石オブジェクトを探す
-	return GetScene()->GetGameObject<CStone>(m_pOwner->GetPos(), vNotTargetIDs);
+	// 誰も標的にしていない、一番近いオブジェクトを一度の走査で探す
+	return GetScene()->GetNearestGameObjectIf<CStone>(m_pOwner->GetPos(), [](CStone* pTarget)
+	{
+		return !pTarget->IsDestroy() && !pTarget->IsTargeted();
+	});
 }
 
 /******************************************//*

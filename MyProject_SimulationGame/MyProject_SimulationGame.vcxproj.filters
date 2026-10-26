@@ -432,6 +432,9 @@
     <ClInclude Include="Animal.h">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
     </ClInclude>
+    <ClInclude Include="SpatialGrid.h">
+      <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
+    </ClInclude>
     <ClInclude Include="CarnivorousAnimal.h">
       <Filter>コードファイル\GameObject\Entity\Animal\Base</Filter>
     </ClInclude>
