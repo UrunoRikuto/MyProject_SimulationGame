@@ -199,6 +199,8 @@ void CImguiSystem::Draw()
 	Release_DrawGameSpeed();
 	// 人間の職業設定表示
 	Release_DrawHuman();
+	// 人間の一覧表示(職業ごとの人数の増減と、人間ごとの職業設定)
+	Release_DrawHumanList();
 	// 倉庫の資源表示
 	Release_DrawBuildObject();
 
@@ -1173,6 +1175,185 @@ void CImguiSystem::Release_DrawHuman()
 
 	// ウィンドウの終了
 	ImGui::End();
+	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| 人間の一覧表示
+	@note		| 職業ごとの人数の増減と、人間ごとの職業設定をまとめて行える(人間が増えても選びやすいようにするため)
+*//****************************************/
+void CImguiSystem::Release_DrawHumanList()
+{
+	// 一覧ウィンドウの大きさと、人間情報ウィンドウとの間隔
+	const float List_Width = 440.0f;
+	const float List_Max_Height = 560.0f;
+	const float Table_Max_Height = 220.0f;
+	const float Human_Info_Width = 400.0f;
+	const float Margin = 10.0f;
+	const float Top = 45.0f;
+
+	ImGui::SetNextWindowPos(ImVec2(SCREEN_WIDTH - Human_Info_Width - List_Width - Margin, Top));
+	// 高さは内容(人数)に合わせて決まる
+	ImGui::SetNextWindowSizeConstraints(ImVec2(List_Width, 0.0f), ImVec2(List_Width, List_Max_Height));
+
+	ImGui::PushFont(m_pReleaseFont);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.07f, 0.12f, 0.88f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.15f, 0.20f, 0.40f, 0.95f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.20f, 0.28f, 0.55f, 0.95f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, ImVec4(0.15f, 0.20f, 0.40f, 0.95f));
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.45f, 0.55f, 0.90f, 0.90f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.18f, 0.22f, 0.35f, 0.90f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+
+	if (ImGui::Begin(u8"人間一覧", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::SetWindowFontScale(0.7f);
+
+		// 破棄されていない人間を集める
+		std::vector<CHuman*> Humans;
+		for (CHuman* pHuman : GetScene()->GetGameObjects<CHuman>())
+		{
+			if (!pHuman->IsDestroy()) Humans.push_back(pHuman);
+		}
+
+		// 解放済みの職業名と、職業ごとの人数
+		const std::vector<std::string> JobNames = CCivLevelManager::GetInstance()->GetUnlockJobNames();
+		std::unordered_map<std::string, int> JobCounts;
+		for (CHuman* pHuman : Humans) JobCounts[pHuman->GetHumanJob()->GetJobName()]++;
+		const int nNeetCount = JobCounts[JobName::Neet];
+
+		ImGui::Text(u8"人数: %d人 (無職: %d人)", static_cast<int>(Humans.size()), nNeetCount);
+
+		// 職業ごとの人数の増減(+は無職の人間を1人その職業に、-はその職業の人間を1人無職にする)
+		// 職業が増えても場所を取らないよう、2列に並べて表示する
+		ImGui::Separator();
+		ImGui::Text(u8"[職業ごとの人数]");
+		if (ImGui::BeginTable("JobTable", 8, ImGuiTableFlags_SizingFixedFit))
+		{
+			int nIndex = 0;
+			for (const std::string& jobName : JobNames)
+			{
+				if (jobName == JobName::Neet) continue;
+
+				const int nColumn = (nIndex % 2) * 4;
+				if (nIndex % 2 == 0) ImGui::TableNextRow();
+				++nIndex;
+
+				ImGui::PushID(jobName.c_str());
+				const int nCount = JobCounts[jobName];
+
+				ImGui::TableSetColumnIndex(nColumn);
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text(u8"%s", jobName.c_str());
+
+				ImGui::TableSetColumnIndex(nColumn + 1);
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text(u8"%d人", nCount);
+
+				ImGui::TableSetColumnIndex(nColumn + 2);
+				ImGui::BeginDisabled(nCount == 0);
+				if (ImGui::Button("-##Dec", ImVec2(26.0f, 0.0f)))
+				{
+					// 一覧の後ろの人間から無職に戻す
+					for (auto it = Humans.rbegin(); it != Humans.rend(); ++it)
+					{
+						if ((*it)->GetHumanJob()->GetJobName() != jobName) continue;
+						(*it)->SetHumanJob(CreateJobByName(JobName::Neet, **it));
+						break;
+					}
+				}
+				ImGui::EndDisabled();
+
+				ImGui::TableSetColumnIndex(nColumn + 3);
+				ImGui::BeginDisabled(nNeetCount == 0);
+				if (ImGui::Button("+##Inc", ImVec2(26.0f, 0.0f)))
+				{
+					// 一覧の前の無職の人間から割り当てる
+					for (CHuman* pHuman : Humans)
+					{
+						if (pHuman->GetHumanJob()->GetJobName() != JobName::Neet) continue;
+						pHuman->SetHumanJob(CreateJobByName(jobName, *pHuman));
+						break;
+					}
+				}
+				ImGui::EndDisabled();
+				ImGui::PopID();
+			}
+			ImGui::EndTable();
+		}
+
+		// 人間ごとの一覧(名前を押すと選択、職業欄から直接職業を変更できる)
+		ImGui::Separator();
+		static bool bNeetOnly = false;
+		ImGui::Checkbox(u8"無職のみ表示", &bNeetOnly);
+
+		const ImGuiTableFlags TableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit;
+		// 表示する人数に合わせた高さにする(人数が少ないときは小さく、多いときはスクロールさせる)
+		const int nRowCount = bNeetOnly ? nNeetCount : static_cast<int>(Humans.size());
+		const float fRowHeight = ImGui::GetFrameHeight() + ImGui::GetStyle().CellPadding.y * 2.0f;
+		const float fTableHeight = std::min(Table_Max_Height, fRowHeight * (nRowCount + 1) + 4.0f);
+		if (ImGui::BeginTable("HumanTable", 3, TableFlags, ImVec2(0.0f, fTableHeight)))
+		{
+			ImGui::TableSetupScrollFreeze(0, 1);
+			ImGui::TableSetupColumn(u8"名前", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+			ImGui::TableSetupColumn(u8"職業", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn(u8"空腹", ImGuiTableColumnFlags_WidthFixed, 45.0f);
+			ImGui::TableHeadersRow();
+
+			for (CHuman* pHuman : Humans)
+			{
+				const std::string currentJob = pHuman->GetHumanJob()->GetJobName();
+				if (bNeetOnly && currentJob != JobName::Neet) continue;
+
+				const bool isSelected = (pHuman == m_pHumanObject);
+				ObjectID id = pHuman->GetID();
+				const std::string name = id.m_sName + std::to_string(id.m_nSameCount + 1);
+
+				ImGui::TableNextRow();
+				ImGui::PushID(pHuman);
+				if (isSelected) ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImVec4(0.30f, 0.40f, 0.80f, 0.55f)));
+
+				// 名前: 押すと、その人間を選択してカメラで注視する
+				ImGui::TableSetColumnIndex(0);
+				if (ImGui::Selectable(name.c_str(), isSelected))
+				{
+					m_pHumanObject = pHuman;
+					m_pGameObject = m_pHumanObject;
+				}
+
+				// 職業: 直接変更する(変更した人間は選択状態にするが、カメラは動かさない)
+				ImGui::TableSetColumnIndex(1);
+				ImGui::SetNextItemWidth(-FLT_MIN);
+				if (ImGui::BeginCombo("##Job", currentJob.c_str()))
+				{
+					for (const std::string& jobName : JobNames)
+					{
+						if (ImGui::Selectable(jobName.c_str(), jobName == currentJob))
+						{
+							pHuman->SetHumanJob(CreateJobByName(jobName, *pHuman));
+							m_pHumanObject = pHuman;
+						}
+					}
+					ImGui::EndCombo();
+				}
+
+				// 空腹値: 少ないほど目立つ色にする
+				ImGui::TableSetColumnIndex(2);
+				const float fHungerRate = pHuman->GetHunger() / Max_Hunger;
+				const ImVec4 hungerColor = fHungerRate < 0.25f ? ImVec4(1.0f, 0.4f, 0.4f, 1.0f)
+					: fHungerRate < 0.5f ? ImVec4(1.0f, 0.85f, 0.3f, 1.0f)
+					: ImVec4(0.8f, 1.0f, 0.8f, 1.0f);
+				ImGui::TextColored(hungerColor, "%d", static_cast<int>(pHuman->GetHunger()));
+
+				ImGui::PopID();
+			}
+			ImGui::EndTable();
+		}
+	}
+	ImGui::End();
+
+	ImGui::PopStyleVar();
+	ImGui::PopStyleColor(6);
 	ImGui::PopFont();
 }
 

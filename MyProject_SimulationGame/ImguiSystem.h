@@ -187,6 +187,9 @@ private: //-- リリースモード --//
 	// @brief 人間の表示
 	void Release_DrawHuman();
 
+	// @brief 人間の一覧表示(職業ごとの人数の増減と、人間ごとの職業設定)
+	void Release_DrawHumanList();
+
 	// @brief 建築物の表示
 	void Release_DrawBuildObject();
 
