@@ -5,6 +5,7 @@
 			| シングルトンパターンで作成
 *//**************************************************/
 #include "GeneratorManager.h"
+#include "GoalManager.h"
 #include "Main.h"
 #include "FieldManager.h"
 #include <algorithm>
@@ -104,6 +105,13 @@ void CGeneratorManager::Update()
 	const float fDeltaSec = 1.0f / fFPS;
 	for (auto it = m_GenerateRequestList.begin(); it != m_GenerateRequestList.end();)
 	{
+		// 大飢餓の間は、木の再生成を待たせる(大飢餓が終わるまで、木は増えない)
+		if (it->m_GenerateType == GenerateType::Wood && CGoalManager::IsFamine())
+		{
+			++it;
+			continue;
+		}
+
 		// 経過時間を加算
 		it->m_fGenerateTime -= fDeltaSec;
 
