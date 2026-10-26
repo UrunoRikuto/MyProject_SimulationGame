@@ -40,6 +40,13 @@ namespace
 
 	// @brief 自動計測用に、結果を書き出すファイル
 	const char* const Result_Log_File = "goal_result.txt";
+
+	// @brief 0～1に収めた値を、なめらかに変化する値にする
+	float SmoothStep01(float fT)
+	{
+		fT = std::clamp(fT, 0.0f, 1.0f);
+		return fT * fT * (3.0f - 2.0f * fT);
+	}
 }
 
 /*****************************************//*
@@ -48,6 +55,7 @@ namespace
 void CGoalManager::Start()
 {
 	s_ePhase = Phase::Normal;
+	s_fFamineVisual = 0.0f;
 	s_eResult = Result::None;
 	s_bResultOpen = false;
 	s_nTick = 0;
@@ -212,6 +220,16 @@ void CGoalManager::Update()
 {
 	// 一定間隔で、人口と食料を数える
 	if (s_nTick++ % Count_Interval_Ticks == 0) RefreshCounts();
+
+	// 荒廃した見た目の強さ(大飢餓が近づくと強くなり、終わると弱くなる)
+	{
+		const float fElapsedDays = GetElapsedDays();
+		const float fFamineStart = static_cast<float>(Famine_Start_Day);
+		const float fFamineEnd = static_cast<float>(Famine_Start_Day + Famine_Duration_Days);
+		const float fRampIn = SmoothStep01((fElapsedDays - (fFamineStart - Visual_Ramp_In_Days)) / (Visual_Ramp_In_Days + 1.0f));
+		const float fRampOut = 1.0f - SmoothStep01((fElapsedDays - fFamineEnd) / Visual_Ramp_Out_Days);
+		s_fFamineVisual = fRampIn * fRampOut;
+	}
 
 	// 結果が決まった後は、段階の進行は止める
 	if (s_eResult != Result::None) return;

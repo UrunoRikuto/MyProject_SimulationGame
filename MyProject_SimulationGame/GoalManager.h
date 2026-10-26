@@ -33,6 +33,12 @@ public:
 	// @brief 大飢餓の間の、農作物が育つ速さの割合(%)
 	static constexpr int Famine_Crop_Growth_Percent = 50;
 
+	// @brief 荒廃した見た目に変わり始める、大飢餓が始まる何日前か(予兆の間に、少しずつ変わっていく)
+	static constexpr float Visual_Ramp_In_Days = 2.0f;
+
+	// @brief 大飢餓が終わってから、元の見た目に戻るまでの日数
+	static constexpr float Visual_Ramp_Out_Days = 3.0f;
+
 	// @brief 大飢餓が始まったときに、いなくなる鹿と狼の割合(%)
 	// @note 狼も減らさないと、残った鹿が狼に狩り尽くされてしまう
 	static constexpr int Animal_Loss_Percent = 50;
@@ -70,6 +76,10 @@ public:
 
 	// @brief 農作物が育つ速さの割合の取得(平常時は1.0、大飢餓の間はFamine_Crop_Growth_Percentに応じて遅くなる)
 	static float GetCropGrowthRate() { return s_ePhase == Phase::Famine ? static_cast<float>(Famine_Crop_Growth_Percent) / 100.0f : 1.0f; }
+
+	// @brief 荒廃した見た目の強さの取得(0:通常の見た目 1:完全に荒廃した見た目)
+	// @note 大飢餓が近づくと少しずつ強くなり、終わると少しずつ戻る。空・地面・木・草の色に使う
+	static float GetFamineVisualRate() { return s_fFamineVisual; }
 
 	// @brief 大飢餓の最中かどうかの取得
 	// @note 木の実が取れにくい、木・鹿・狼が補充されない、などの判定に使う
@@ -141,6 +151,8 @@ private:
 
 private:
 	inline static Phase s_ePhase = Phase::Normal;
+	// @brief 荒廃した見た目の強さ(0～1)
+	inline static float s_fFamineVisual = 0.0f;
 	inline static Result s_eResult = Result::None;
 	inline static bool s_bHeadless = false;
 	// @brief 結果の画面を表示中かどうか
