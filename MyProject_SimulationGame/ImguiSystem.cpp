@@ -148,6 +148,9 @@ void CImguiSystem::Uninit()
 *//****************************************/
 void CImguiSystem::Update()
 {
+	// 選択中のオブジェクトが破棄されている場合は、解放済みのポインタを触らないよう選択を解除する
+	ValidateSelection();
+
 	// 更新処理を止めている場合カメラの更新を行う
 	if(!m_bUpdate)CCamera::GetInstance()->Update();
 
@@ -1318,4 +1321,18 @@ void CImguiSystem::Release_DrawGameSpeed()
 
 	ImGui::End();
 	ImGui::PopFont();
+}
+
+/****************************************//*
+	@brief　	| 選択しているオブジェクトの確認
+	@note		| 選択中のオブジェクトが破棄されて解放済みになっている場合は、選択を解除する
+*//****************************************/
+void CImguiSystem::ValidateSelection()
+{
+	CScene* pScene = GetScene();
+	if (pScene == nullptr) return;
+
+	if (m_pGameObject && !pScene->Contains(m_pGameObject)) m_pGameObject = nullptr;
+	if (m_pHumanObject && !pScene->Contains(m_pHumanObject)) m_pHumanObject = nullptr;
+	if (m_pBuildObject && !pScene->Contains(m_pBuildObject)) m_pBuildObject = nullptr;
 }

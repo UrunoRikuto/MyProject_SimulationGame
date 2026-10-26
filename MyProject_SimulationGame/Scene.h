@@ -121,6 +121,21 @@ public:
 		return nullptr;
 	}
 
+	// @brief ゲームオブジェクトがこのシーンに存在するかどうかの確認
+	// @param pObj：確認するゲームオブジェクトのポインタ
+	// @return true:存在する false:存在しない(破棄・解放済み)
+	// @note 保持しているポインタが、破棄されて解放済みになっていないかの確認に使用する
+	bool Contains(const CGameObject* pObj)
+	{
+		if (pObj == nullptr) return false;
+
+		for (const CGameObject* pCandidate : GetKindOf<CGameObject>())
+		{
+			if (pCandidate == pObj) return true;
+		}
+		return false;
+	}
+
 	// @brief ゲームオブジェクトをIDで取得する(型指定版)
 	// @tparam T：取得するCGameObject型のゲームオブジェクトクラス
 	// @param inID：オブジェクトID

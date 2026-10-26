@@ -138,6 +138,10 @@ private: //-- デバックモード --//
 	// @brief インスペクター表示
 	void DrawInspecter();
 
+	// @brief 選択しているオブジェクトの確認
+	// @note 選択中のオブジェクトが破棄されて解放済みになっている場合は、選択を解除する
+	void ValidateSelection();
+
 	// @brief 建築依頼リスト
 	void DrawBuildRequestList();
 
