@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "SeasonManager.h"
+#include "TutorialManager.h"
 #include "Human.h"
 #include "Animal.h"
 #include "BuildManager.h"
@@ -152,6 +153,9 @@ void CImguiSystem::Update()
 	// 選択中のオブジェクトが破棄されている場合は、解放済みのポインタを触らないよう選択を解除する
 	ValidateSelection();
 
+	// チュートリアルの進行
+	CTutorialManager::Update();
+
 	// 更新処理を止めている場合カメラの更新を行う
 	if(!m_bUpdate)CCamera::GetInstance()->Update();
 
@@ -203,6 +207,9 @@ void CImguiSystem::Draw()
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
+
+	// チュートリアル表示(他のウィンドウの上に重ねる)
+	CTutorialManager::Draw(m_pReleaseFont);
 
 #ifdef _DEBUG
 
