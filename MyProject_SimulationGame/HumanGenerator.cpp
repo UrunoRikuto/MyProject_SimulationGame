@@ -10,13 +10,50 @@
 #include "ImguiSystem.h"
 #include "HumanHouse.h"
 #include "GeneratorManager.h"
+#include "StorageHouse.h"
+#include "Item.h"
 
 // @brief 家の空き枠を確認する間隔(秒)
 constexpr float Human_Vacancy_Check_Interval = 1.0f;
 
+// @brief 人口が少ない間は食料に関係なく生まれる人数
+constexpr int Human_Free_Birth_Population = 3;
+
+// @brief 新しく生まれる人間1人あたりに必要な食料の備蓄(空腹回復値の合計)
+constexpr float Human_Birth_Food_Reserve_Per_Human = 40.0f;
+
+/*****************************************
+	@brief　	| 食料の備蓄量を計算する処理
+	@return		| 貯蔵庫と人間が持っている食料の空腹回復値の合計
+*//*****************************************/
+static float CalcFoodReserve(CScene* pScene)
+{
+	float fReserve = 0.0f;
+
+	if (CStorageHouse* pStorage = pScene->GetGameObject<CStorageHouse>())
+	{
+		for (const CItem* pItem : pStorage->GetStoredItems())
+		{
+			fReserve += CItem::GetHungerRecoveryValue(pItem->GetItemType());
+		}
+	}
+
+	for (CHuman* pHuman : pScene->GetGameObjects<CHuman>())
+	{
+		if (pHuman->IsDestroy()) continue;
+		for (const CItem* pItem : pHuman->GetItemList())
+		{
+			fReserve += CItem::GetHungerRecoveryValue(pItem->GetItemType());
+		}
+	}
+
+	return fReserve;
+}
 
 /*****************************************
 	@brief　	| 生成処理
+	@note		| 人口が少ない間を除き、新しい人間の分の食料の備蓄がない場合は生まれない
+				| (食料がないまま生まれても、飢え死にと再生成を繰り返すだけになるため)
 *//*****************************************/
 void CHumanGenerator::Generate()
 {
@@ -48,6 +85,18 @@ void CHumanGenerator::Generate()
 
 	// 生成不可の場合は処理終了
 	if (!canGenerate)return;
+
+	// 人口が増える分の食料の備蓄がない場合は生まれない
+	int nPopulation = 0;
+	for (CHuman* pHuman : GetScene()->GetGameObjects<CHuman>())
+	{
+		if (!pHuman->IsDestroy()) nPopulation++;
+	}
+	if (nPopulation >= Human_Free_Birth_Population &&
+		CalcFoodReserve(GetScene()) < Human_Birth_Food_Reserve_Per_Human * static_cast<float>(nPopulation + 1))
+	{
+		return;
+	}
 
 	// 人間を生成
 	CHuman* pHuman = GetScene()->AddGameObject<CHuman>(Tag::GameObject, u8"人間");
