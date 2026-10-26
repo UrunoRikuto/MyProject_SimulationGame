@@ -17,6 +17,11 @@
 #include "Human.h"
 #include "JobOperator.h"
 #include "CivLevelManager.h"
+#include "GameTimeManager.h"
+#include "StorageHouse.h"
+#include "HerbivorousAnimal.h"
+#include "CarnivorousAnimal.h"
+#include <map>
 
 // @brief 倍速時に、1フレームでゲームの更新に使ってよい時間(ミリ秒)
 // @note これを超えた場合は、描画が止まらないよう残りの更新を打ち切る
@@ -66,6 +71,74 @@ void SetAutoProfile(float fSeconds, int nGameSpeed, int nExtraHumans)
 	g_nAutoProfileExtraHumans = nExtraHumans;
 }
 
+// @brief 自動計測中のバランス確認用のログを出力する(ゲーム内の一定時間ごとにCSVへ1行追記)
+static void WriteBalanceLog()
+{
+	constexpr int Log_Interval_Game_Seconds = 10;
+
+	CGameTimeManager* pTime = CGameTimeManager::GetInstance();
+	const int nTotalSeconds = pTime->GetGameDays() * 1000 + static_cast<int>(pTime->GetGameTime());
+	static int s_nLastLogged = -1;
+	const int nSlot = pTime->GetGameDays() * 1000 + static_cast<int>(pTime->GetGameTime()) / Log_Interval_Game_Seconds;
+	if (nSlot == s_nLastLogged) return;
+	s_nLastLogged = nSlot;
+
+	// 人間の集計
+	int nHumans = 0, nHungry = 0, nEating = 0, nResting = 0, nForaging = 0, nCarriedFood = 0;
+	float fHungerSum = 0.0f;
+	std::map<std::string, int> jobCount;
+	for (CHuman* pHuman : g_pScene->GetGameObjects<CHuman>())
+	{
+		if (pHuman->IsDestroy()) continue;
+		nHumans++;
+		fHungerSum += pHuman->GetHunger();
+		if (pHuman->GetHunger() < Warning_Hunger) nHungry++;
+		if (pHuman->GetHumanState() == CHuman::HUMAN_STATE::Eating) nEating++;
+		if (pHuman->GetHumanState() == CHuman::HUMAN_STATE::Resting) nResting++;
+		if (pHuman->GetHumanState() == CHuman::HUMAN_STATE::Foraging) nForaging++;
+		jobCount[pHuman->GetHumanJob()->GetJobName()]++;
+		for (const CItem* pItem : pHuman->GetItemList())
+		{
+			if (pItem->GetItemCategory() == CItem::ITEM_CATEGORY::CookedFood || pItem->GetItemCategory() == CItem::ITEM_CATEGORY::UnCookedFood) nCarriedFood++;
+		}
+	}
+
+	// 貯蔵庫の食料の集計
+	int nApple = 0, nMeat = 0, nBread = 0, nPie = 0;
+	if (CStorageHouse* pStorage = g_pScene->GetGameObject<CStorageHouse>())
+	{
+		for (const CItem* pItem : pStorage->GetStoredItems())
+		{
+			switch (pItem->GetItemType())
+			{
+			case CItem::ITEM_TYPE::Apple: nApple++; break;
+			case CItem::ITEM_TYPE::Meat: nMeat++; break;
+			case CItem::ITEM_TYPE::Bread: nBread++; break;
+			case CItem::ITEM_TYPE::ApplePie: nPie++; break;
+			default: break;
+			}
+		}
+	}
+
+	int nDeer = static_cast<int>(g_pScene->GetGameObjects<CHerbivorousAnimal>().size());
+	int nWolf = static_cast<int>(g_pScene->GetGameObjects<CCarnivorousAnimal>().size());
+
+	FILE* pFile = nullptr;
+	static bool s_bHeader = false;
+	fopen_s(&pFile, "balance_log.csv", s_bHeader ? "a" : "w");
+	if (pFile == nullptr) return;
+	if (!s_bHeader)
+	{
+		fprintf(pFile, "gameSec,day,humans,deaths,avgHunger,hungry,eating,resting,foraging,carriedFood,apple,meat,bread,pie,deer,wolf,jobs\n");
+		s_bHeader = true;
+	}
+	fprintf(pFile, "%d,%d,%d,%d,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,", nTotalSeconds, pTime->GetGameDays(), nHumans, CHuman::GetDeathCount(),
+		nHumans > 0 ? fHungerSum / static_cast<float>(nHumans) : 0.0f, nHungry, nEating, nResting, nForaging, nCarriedFood, nApple, nMeat, nBread, nPie, nDeer, nWolf);
+	for (const auto& kv : jobCount) fprintf(pFile, "%d ", kv.second);
+	fprintf(pFile, "\n");
+	fclose(pFile);
+}
+
 /****************************************//*
 	@brief　	| 自動計測用の処理
 	@note		| ゲームシーンの開始後に、人間の追加と、無職の人間への職業の割り当てを行う
@@ -91,6 +164,9 @@ static void UpdateAutoProfile()
 			}
 		}
 	}
+
+	// バランス確認用のログ
+	WriteBalanceLog();
 
 	// 一定間隔で、無職の人間に職業を割り当てる
 	if (++g_nAutoProfileJobTimer < 60) return;

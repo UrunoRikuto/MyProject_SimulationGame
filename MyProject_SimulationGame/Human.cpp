@@ -283,6 +283,9 @@ void CHuman::OnDestroy()
 	// ‘_‚Á‚Ä‚¢‚½–Ø‚Ì—\–ñ‚ğ‰ğœ
 	ReleaseForageTarget();
 
+	// €–S”‚ÌƒJƒEƒ“ƒg
+	s_nDeathCount++;
+
 	// lŠÔ‚Ì¶¬ˆË—Š‚ğì¬
 	CGeneratorManager::GetInstance()->AddGenerateRequest({
 			CGeneratorManager::GenerateType::Human,

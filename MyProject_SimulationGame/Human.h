@@ -109,6 +109,12 @@ public:
 	// @brief 職業ストラテジーの取得
 	IJob_Strategy* GetHumanJob() const { return m_pJob.get(); }
 
+	// @brief 人間の状態の取得
+	HUMAN_STATE GetHumanState() const { return m_eState; }
+
+	// @brief これまでに死亡した人間の数の取得
+	static int GetDeathCount() { return s_nDeathCount; }
+
 	// @brief 職業ストラテジーの設定
 	// @param job：設定する職業ストラテジーポインタ
 	void SetHumanJob(std::unique_ptr<IJob_Strategy> job);
@@ -153,6 +159,9 @@ private:
 private:
 	// @brief 人間の状態
 	HUMAN_STATE m_eState;
+
+	// @brief これまでに死亡した人間の数
+	inline static int s_nDeathCount = 0;
 
 	// @brief 食料の確保のために狙っている木のID
 	ObjectID m_ForageTargetID{ "", -1 };
