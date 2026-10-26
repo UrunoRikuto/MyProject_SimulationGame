@@ -68,19 +68,28 @@ public:
 
 	// @brief アイテムドロップ処理
 	// @return ドロップしたアイテムのベクター
-	std::vector<CItem*> DropItem() { return m_Status.m_DropItems; }
+	std::vector<CItem*> DropItem()
+	{
+		FilterDropItems();
+		return m_Status.m_DropItems;
+	}
 
 	// @brief ドロップアイテムの取り出し
 	// @return ドロップしたアイテムのベクター(呼び出し側に所有権が移り、対象のドロップアイテムは空になる)
 	// @note 同じフレームに別の人が採取し終えた場合に、同じアイテムを二重に受け取らないために使う
 	std::vector<CItem*> TakeDropItems()
 	{
+		FilterDropItems();
 		std::vector<CItem*> items;
 		items.swap(m_Status.m_DropItems);
 		return items;
 	}
 
 protected:
+	// @brief ドロップアイテムを、その時の状況に合わせて取捨選択する処理
+	// @note 採取し終えて、ドロップアイテムを取り出す直前に呼ばれる(季節によって取れないアイテムを除くなど)
+	virtual void FilterDropItems() {}
+
 	// @brief ターゲット標的に指定してきているゲームオブジェクトのID
 	ObjectID m_TargetingID;
 

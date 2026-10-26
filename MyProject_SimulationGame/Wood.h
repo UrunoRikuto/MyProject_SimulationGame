@@ -18,5 +18,10 @@ public:
 
 	// @brief 初期化処理
 	virtual void Init() override;
+
+protected:
+	// @brief ドロップアイテムを、その時の状況に合わせて取捨選択する処理
+	// @note 冬は木の実(リンゴ)が取れない
+	void FilterDropItems() override;
 };
 

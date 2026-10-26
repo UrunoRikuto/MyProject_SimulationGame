@@ -4,6 +4,7 @@
 	@note	| CGameObjectを継承
 *//**************************************************/
 #include "Wood.h"
+#include "SeasonManager.h"
 #include "ModelRenderer.h"
 #include "BillboardRenderer.h"
 #include "Oparation.h"
@@ -69,6 +70,28 @@ void CWood::Init()
 		{
 			// リンゴアイテムを追加
 			m_Status.m_DropItems.push_back(new CItem(CItem::ITEM_TYPE::Apple));
+		}
+	}
+}
+
+/*****************************************//*
+	@brief　	| ドロップアイテムを、その時の状況に合わせて取捨選択する処理
+	@note		| 冬は木の実(リンゴ)が取れないため、ドロップアイテムからリンゴを除く
+*//*****************************************/
+void CWood::FilterDropItems()
+{
+	if (CSeasonManager::GetSeason() != CSeasonManager::Season::Winter) return;
+
+	for (auto it = m_Status.m_DropItems.begin(); it != m_Status.m_DropItems.end();)
+	{
+		if ((*it)->GetItemType() == CItem::ITEM_TYPE::Apple)
+		{
+			delete* it;
+			it = m_Status.m_DropItems.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
 }
