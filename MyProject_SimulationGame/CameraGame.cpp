@@ -3,6 +3,7 @@
 	@brief	| ゲームカメラクラス実装
 *//**************************************************/
 #include "CameraGame.h"	
+#include "Terrain.h"
 #include "Input.h"
 #include "Oparation.h"
 #include "Main.h"
@@ -141,8 +142,9 @@ void CCameraGame::Update()
 		// 古いRadiusの値を保存
 		m_bSetOldRadius = true;
 
-		// 注視点を選択しているオブジェクトの座標にする
+		// 注視点を選択しているオブジェクトの座標にする(描画では、地形の高さの分だけ高くなっている)
 		m_f3Look = pObject->GetPos();
+		m_f3Look.y += CTerrain::GetHeight(m_f3Look.x, m_f3Look.z);
 
 		// マウスホイール、キー入力でズームや回転を計算
 		if (IsMouseWheelUp())m_fRadius -= 2.0f;

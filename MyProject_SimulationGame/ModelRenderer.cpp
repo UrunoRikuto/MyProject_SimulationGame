@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Profiler.h"
 #include "SeasonManager.h"
+#include "Terrain.h"
 
 // static batch map
 std::unordered_map<std::string, CModelRenderer::Batch> CModelRenderer::s_batches;
@@ -58,11 +59,18 @@ void CModelRenderer::Draw()
         if (batch.pModel == nullptr) return;
     }
 
+    // 地形の高さ(描画のときだけ足す。地面と空は対象外)
+    float fTerrainHeight = 0.0f;
+    if (m_sKey != "FieldGround" && m_sKey != "SkyBox")
+    {
+        fTerrainHeight = CTerrain::GetHeight(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.z);
+    }
+
     // ワールド行列
     DirectX::XMMATRIX world =
         DirectX::XMMatrixScaling(m_tParam.m_f3Size.x, m_tParam.m_f3Size.y, m_tParam.m_f3Size.z) *
         DirectX::XMMatrixRotationRollPitchYaw(m_tParam.m_f3Rotate.x, m_tParam.m_f3Rotate.y, m_tParam.m_f3Rotate.z) *
-        DirectX::XMMatrixTranslation(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y, m_tParam.m_f3Pos.z);
+        DirectX::XMMatrixTranslation(m_tParam.m_f3Pos.x, m_tParam.m_f3Pos.y + fTerrainHeight, m_tParam.m_f3Pos.z);
 
     // ピクセルシェーダーの色は、描画のたびに書き込まず、バッチごとに最後に設定された色をフラッシュ時に書き込む
     // (ピクセルシェーダーごとにまとめると、他のモデルの色で上書きされ、スカイボックスの色合いなどが反映されなくなるため)

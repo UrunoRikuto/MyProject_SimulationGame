@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Defines.h"
 #include "Camera.h"
+#include "Terrain.h"
 
 //--- 静的メンバ変数の実体定義
 Sprite::Data Sprite::m_data;
@@ -205,6 +206,13 @@ void Sprite::SetParam(RendererParam param, SpriteKind inKind)
 
 	CCamera* pCamera = CCamera::GetInstance();
 
+	// 3D空間に置くスプライトは、地形の高さの分だけ高くして描画する
+	DirectX::XMFLOAT3 f3Pos = param.m_f3Pos;
+	if (inKind == SpriteKind::World || inKind == SpriteKind::Billboard)
+	{
+		f3Pos.y += CTerrain::GetHeight(f3Pos.x, f3Pos.z);
+	}
+
 	DirectX::XMMATRIX mWorld = DirectX::XMMatrixIdentity();
 	DirectX::XMMATRIX mInvView = DirectX::XMMatrixIdentity();
 	// ワールド行列
@@ -224,14 +232,14 @@ void Sprite::SetParam(RendererParam param, SpriteKind inKind)
 	case SpriteKind::World:
 		mWorld =
 			DirectX::XMMatrixRotationRollPitchYaw(param.m_f3Rotate.x, param.m_f3Rotate.y, param.m_f3Rotate.z) *
-			DirectX::XMMatrixTranslation(param.m_f3Pos.x, param.m_f3Pos.y, param.m_f3Pos.z);
+			DirectX::XMMatrixTranslation(f3Pos.x, f3Pos.y, f3Pos.z);
 		mWorld = DirectX::XMMatrixTranspose(mWorld);
 		DirectX::XMStoreFloat4x4(&m_data.matrix[0], mWorld);
 		m_data.matrix[1] = pCamera->GetViewMatrix();
 		m_data.matrix[2] = pCamera->GetProjectionMatrix();
 		break;
 	case SpriteKind::Billboard:
-		m_data.matrix[0] = pCamera->GetBillboardWolrdMatrix(param.m_f3Pos);
+		m_data.matrix[0] = pCamera->GetBillboardWolrdMatrix(f3Pos);
 		m_data.matrix[1] = pCamera->GetViewMatrix();
 		m_data.matrix[2] = pCamera->GetProjectionMatrix();
 		break;
