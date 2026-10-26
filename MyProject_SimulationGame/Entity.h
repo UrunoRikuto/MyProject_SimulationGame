@@ -32,6 +32,10 @@ public:
 	// @brief 更新処理
 	void Update() override;
 
+	// @brief 画面外でも更新を続けるかどうかを取得
+	// @return 常にtrue(人間や動物は、画面外でも行動や空腹の進行を止めない)
+	bool IsAlwaysUpdate() const override { return true; }
+
 	// @brief インスペクター表示処理
 	int Inspecter(bool isEnd = true) override;
 

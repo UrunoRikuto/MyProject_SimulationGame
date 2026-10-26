@@ -69,6 +69,11 @@ public:
 	// @brief 描画処理
 	virtual void Draw();
 
+	// @brief 画面外でも更新を続けるかどうかを取得
+	// @return true:視錐台・距離によるカリングの対象外にして常に更新する false:画面外では更新しない
+	// @note 画面外で動きや空腹が止まってしまうと困る、人間や動物などの行動するオブジェクトで使用する
+	virtual bool IsAlwaysUpdate() const { return false; }
+
 	// @brief オブジェクトが破棄された時の処理
     virtual void OnDestroy();
 
