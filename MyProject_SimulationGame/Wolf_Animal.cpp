@@ -15,6 +15,10 @@
 // @brief 近隣の同種動物として扱う距離
 constexpr float Wolf_Flock_Radius = 20.0f;
 
+// @brief 獲物を仕留めた後の満腹の時間（秒）
+// @note 満腹の間は狩りをしない。常に狩り続けると、鹿が補充を待たずに全滅してしまうため
+constexpr float Wolf_Fed_Time = 480.0f;
+
 /****************************************//*
 	@brief	| コンストラクタ
 *//****************************************/
@@ -87,6 +91,12 @@ void CWolf_Animal::Update()
 		if (m_fAttackCooldown < 0.0f) m_fAttackCooldown = 0.0f;
 	}
 
+	// 満腹の時間を進める
+	if (m_fFedTimer > 0.0f)
+	{
+		m_fFedTimer -= fDeltaTime;
+	}
+
 	// 群れの情報(近隣の同種動物の位置・速度・標的)を最新の状態にする
 	if (CAnimal::s_bRefreshFlockInfo)
 	{
@@ -101,8 +111,15 @@ void CWolf_Animal::Update()
 	{
 	case CGameTimeManager::DAY_TIME::EVENING:
 	case CGameTimeManager::DAY_TIME::NIGHT:
-		// 夕方～夜は標的設定
-		pSetTarget = SetTarget();
+		// 夕方～夜は標的設定(満腹の間は狩りをしない)
+		if (m_fFedTimer <= 0.0f)
+		{
+			pSetTarget = SetTarget();
+		}
+		else if (auto* pFedAI = dynamic_cast<CFlockAttackAI*>(m_pActionAI))
+		{
+			pFedAI->ClearTarget();
+		}
 		break;
 	default:
 		// その他は標的解除
@@ -234,6 +251,12 @@ void CWolf_Animal::Update()
 			pTarget->TakeDamage(attackDamage);
 			// 攻撃クールダウンをセット
 			m_fAttackCooldown = attackInterval;
+
+			// 獲物を仕留めたら、しばらく満腹になって狩りをしない
+			if (pTarget->IsDead())
+			{
+				m_fFedTimer = Wolf_Fed_Time;
+			}
 		}
 	}
 

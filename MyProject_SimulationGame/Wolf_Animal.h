@@ -50,5 +50,9 @@ private:
 
 	// @brief 攻撃クールダウン（秒）
 	float m_fAttackCooldown =0.0f;
+
+	// @brief 満腹の残り時間（秒）
+	// @note 獲物を仕留めてから、この時間が過ぎるまでは狩りをしない
+	float m_fFedTimer =0.0f;
 };
 

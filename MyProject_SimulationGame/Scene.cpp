@@ -156,8 +156,8 @@ void CScene::Update()
     {
         for (auto obj : list)
         {
-            // GameObject以外ははカリング対象外
-            if (obj->GetTag() != Tag::GameObject)
+            // GameObject以外と、画面外でも行動を続けるオブジェクトはカリング対象外
+            if (obj->GetTag() != Tag::GameObject || obj->IsAlwaysUpdate())
             {
                 ProfileObject(false, obj, [&]() { obj->Update(); });
                 continue;
