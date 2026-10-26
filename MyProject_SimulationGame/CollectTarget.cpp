@@ -5,6 +5,7 @@
 *//**************************************************/
 #include "CollectTarget.h"
 #include "ModelRenderer.h"
+#include "GeneratorManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -83,6 +84,23 @@ void CCollectTarget::OnDestroy()
 	// 連携しているフィールドセルの使用状態を解除
 	CFieldCell* cell = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells()[(int)m_LinkedCellIndex.x][(int)m_LinkedCellIndex.y];
 	cell->SetUse(false);
+
+	// 採取対象があったセルが、まだ木・岩・草の土地であれば、一定時間後の再生成を依頼する
+	// (開拓で建築可能な土地に変わったセルは再生成しない)
+	switch (cell->GetCellType())
+	{
+	case CFieldCell::CellType::TREE:
+		CGeneratorManager::GetInstance()->RequestRegenerate(CGeneratorManager::GenerateType::Wood, cell->GetIndex());
+		break;
+	case CFieldCell::CellType::ROCK:
+		CGeneratorManager::GetInstance()->RequestRegenerate(CGeneratorManager::GenerateType::Stone, cell->GetIndex());
+		break;
+	case CFieldCell::CellType::GRASS:
+		CGeneratorManager::GetInstance()->RequestRegenerate(CGeneratorManager::GenerateType::Grass, cell->GetIndex());
+		break;
+	default:
+		break;
+	}
 
 	// 基底クラスのオブジェクト破棄時の処理
 	CGameObject::OnDestroy();

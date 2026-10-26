@@ -10,8 +10,12 @@
 // @brief 石ジェネレータークラス
 class CStoneGenerator final : public IGenerator
 {
+public:
+	// @brief 指定したセルに石を1個生成する処理
+	// @param n2Cell：生成先のセルのインデックス
+	void GenerateAt(const DirectX::XMINT2& n2Cell) override;
+
 private:
 	// @brief 生成処理
 	void Generate() override;
 };
-

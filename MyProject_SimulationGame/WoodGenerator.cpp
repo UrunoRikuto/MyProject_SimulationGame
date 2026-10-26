@@ -34,3 +34,18 @@ void CWoodGenerator::Generate()
 	// デバッグログの追加
 	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"木を") + std::to_string(createNum) + std::string(u8"個生成しました"), false);
 }
+
+/*****************************************//*
+	@brief　	| 指定したセルへの生成処理
+	@param　	| n2Cell：生成先のセルのインデックス
+	@note		| 時間経過による再生成で使用する
+				| 開拓などで木の生える土地ではなくなった場合や、既に何かが置かれている場合は生成しない
+*//*****************************************/
+void CWoodGenerator::GenerateAt(const DirectX::XMINT2& n2Cell)
+{
+	CFieldCell* pCell = GetGeneratableCell(n2Cell, CFieldCell::CellType::TREE);
+	if (pCell == nullptr) return;
+
+	// 木オブジェクトを生成し、セルに配置
+	GetScene()->AddGameObject<CWood>(Tag::GameObject, u8"木")->SetCreatePos(pCell);
+}
