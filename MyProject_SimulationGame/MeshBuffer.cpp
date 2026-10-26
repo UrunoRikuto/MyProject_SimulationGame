@@ -329,65 +329,60 @@ HRESULT MeshBuffer::UpdateInstanceBuffer(const void* pInst, UINT size, UINT coun
 	ID3D11DeviceContext* pContext = GetContext();
 	if (!pContext) return E_FAIL;
 
-	// 既存バッファがあり容量が十分な場合は UpdateSubresource で更新
-	if (m_pInstanceBuffer && m_desc.instanceSize == size && m_desc.instanceCount >= count)
-	{
-		// 防御的にコピーを作る（呼び出し元のメモリが一時領域や無効になっている可能性に備える）
-		size_t bytes = static_cast<size_t>(size) * count;
-		std::vector<char> tmp;
-		try { tmp.resize(bytes); }
-		catch (...) { return E_OUTOFMEMORY; }
-		memcpy(tmp.data(), pInst, bytes);
+	// pDstBox に nullptr を渡すとバッファ全体（確保時の旧サイズ）を上書き対象として扱われ、
+	// 新しい小さいサイズの範囲外を読み取ってしまう（GPUドライバ内でのアクセス違反の原因）。
+	// 更新範囲を実際に書き込むバイト数だけに限定する。
+	const size_t bytes = static_cast<size_t>(size) * count;
+	D3D11_BOX box = {};
+	box.left = 0;
+	box.right = static_cast<UINT>(bytes);
+	box.top = 0;
+	box.bottom = 1;
+	box.front = 0;
+	box.back = 1;
 
-		// pDstBox に nullptr を渡すとバッファ全体（確保時の旧サイズ）を上書き対象として扱われ、
-		// tmp（新しい小さいサイズ）の範囲外を読み取ってしまう（GPUドライバ内でのアクセス違反の原因）。
-		// 更新範囲を実際に書き込むバイト数だけに限定する。
-		D3D11_BOX box = {};
-		box.left = 0;
-		box.right = static_cast<UINT>(bytes);
-		box.top = 0;
-		box.bottom = 1;
-		box.front = 0;
-		box.back = 1;
-		pContext->UpdateSubresource(m_pInstanceBuffer, 0, &box, tmp.data(), 0, 0);
+	// 既存バッファがあり容量が十分な場合は UpdateSubresource で更新
+	if (m_pInstanceBuffer && m_desc.instanceSize == size && m_nInstanceCapacity >= count)
+	{
+		pContext->UpdateSubresource(m_pInstanceBuffer, 0, &box, pInst, 0, 0);
 		if (m_desc.pInstance)
 		{
-			memcpy_s((void*)m_desc.pInstance, static_cast<rsize_t>(m_desc.instanceSize) * m_desc.instanceCount, tmp.data(), static_cast<rsize_t>(size) * count);
-			m_desc.instanceCount = count;
+			memcpy_s(m_desc.pInstance, static_cast<rsize_t>(size) * m_nInstanceCapacity, pInst, bytes);
 		}
+		m_desc.instanceCount = count;
 		return S_OK;
 	}
 
-	//それ以外はバッファを再作成してコピー
+	// それ以外はバッファを再作成する
+	// (インスタンス数が少し増えるたびに作り直さずに済むよう、余裕を持った容量で確保する)
+	const UINT capacity = count + count / 2 + 16;
 	SAFE_RELEASE(m_pInstanceBuffer);
 	SAFE_DELETE_ARRAY(m_desc.pInstance);
+	m_nInstanceCapacity = 0;
 
 	// バッファ記述
 	D3D11_BUFFER_DESC bufDesc = {};
 	// インスタンスバッファは頂点バッファと同様に扱う（スロット1にセットする想定）
-	bufDesc.ByteWidth = size * count;
+	bufDesc.ByteWidth = size * capacity;
 	// インスタンスバッファは通常の頂点バッファと同じ使用方法で作成（動的にするかは用途次第）
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
 	// インスタンスバッファは頂点バッファとしてバインド
 	bufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	// 初期データ
-	D3D11_SUBRESOURCE_DATA subResource = {};
-	// インスタンスデータを初期データとして渡す
-	subResource.pSysMem = pInst;
 
-	// バッファ生成
-	HRESULT hr = pDevice->CreateBuffer(&bufDesc, &subResource, &m_pInstanceBuffer);
+	// バッファ生成(容量分を確保し、今回のインスタンス分だけを書き込む)
+	HRESULT hr = pDevice->CreateBuffer(&bufDesc, nullptr, &m_pInstanceBuffer);
 	if (FAILED(hr)) return hr;
+	pContext->UpdateSubresource(m_pInstanceBuffer, 0, &box, pInst, 0, 0);
 
 	// 内部コピーを作成
-	rsize_t instMemSize = static_cast<rsize_t>(size) * count;
-	// 外部から渡されたデータを内部コピーに保存
+	const rsize_t instMemSize = static_cast<rsize_t>(size) * capacity;
 	m_desc.pInstance = new char[instMemSize];
-	// 内部コピーに新しいデータを保存
-	memcpy_s(m_desc.pInstance, instMemSize, pInst, instMemSize);
-	// インスタンスサイズと数を記録
+	// 外部から渡されたデータを内部コピーに保存
+	memcpy_s(m_desc.pInstance, instMemSize, pInst, bytes);
+	// インスタンスサイズと数、容量を記録
 	m_desc.instanceSize = size;
 	m_desc.instanceCount = count;
+	m_nInstanceCapacity = capacity;
 
 	return S_OK;
 }

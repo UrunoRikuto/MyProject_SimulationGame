@@ -25,6 +25,8 @@ namespace
 	// @note フィールドが広いほど動物の数が多く、狩られる数も増えるため、広さに比例して増やす(100x100のときに1頭)
 	constexpr int Animal_Respawn_Batch = (CFieldGrid::GridSizeX * CFieldGrid::GridSizeY) / (100 * 100);
 
+	// @brief 補充先のセルを探すために、ランダムなセルを調べる最大回数
+	constexpr int Animal_Spawn_Max_Tries = 1000;
 
 	// @brief 人間からこの距離以内には動物を補充しない
 	constexpr float Animal_Spawn_Safe_Distance = 30.0f;
@@ -141,11 +143,8 @@ void CAnimalGenerator::Update()
 void CAnimalGenerator::RespawnDeer()
 {
 	// 補充できるセルがなければ何もしない
-	std::vector<CFieldCell*> cells = CollectSpawnCells(CFieldCell::TerritoryType::Deer);
-	if (cells.empty()) return;
-
-	// 補充先のセルをランダムに選ぶ
-	CFieldCell* pCell = cells[rand() % cells.size()];
+	CFieldCell* pCell = PickSpawnCell(CFieldCell::TerritoryType::Deer);
+	if (pCell == nullptr) return;
 
 	CDeer_Animal* pDeer = GetScene()->AddGameObject<CDeer_Animal>(Tag::GameObject, u8"鹿");
 	if (pDeer == nullptr) return;
@@ -153,8 +152,8 @@ void CAnimalGenerator::RespawnDeer()
 	pDeer->RegisterToCell(pCell->GetIndex());
 	pCell->SetUse(true);
 
-	// 群れの登録
-	pDeer->RegisterToFlock(GetAliveAnimals<CDeer_Animal>());
+	// 群れの登録(近隣の情報は、次の更新で最新の状態に作り直されるため、全頭を登録しなくてよい)
+	pDeer->RegisterToFlock(CAnimal::s_bRefreshFlockInfo ? std::vector<CDeer_Animal*>() : GetAliveAnimals<CDeer_Animal>());
 
 	// デバッグログに補充した旨を追加
 	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"鹿を1頭補充しました(現在") + std::to_string(GetAliveAnimals<CDeer_Animal>().size()) + std::string(u8"頭 / 目標") + std::to_string(m_nTargetDeer) + std::string(u8"頭)"), false);
@@ -166,11 +165,8 @@ void CAnimalGenerator::RespawnDeer()
 void CAnimalGenerator::RespawnWolf()
 {
 	// 補充できるセルがなければ何もしない
-	std::vector<CFieldCell*> cells = CollectSpawnCells(CFieldCell::TerritoryType::Wolf);
-	if (cells.empty()) return;
-
-	// 補充先のセルをランダムに選ぶ
-	CFieldCell* pCell = cells[rand() % cells.size()];
+	CFieldCell* pCell = PickSpawnCell(CFieldCell::TerritoryType::Wolf);
+	if (pCell == nullptr) return;
 
 	CWolf_Animal* pWolf = GetScene()->AddGameObject<CWolf_Animal>(Tag::GameObject, u8"狼");
 	if (pWolf == nullptr) return;
@@ -178,21 +174,22 @@ void CAnimalGenerator::RespawnWolf()
 	pWolf->RegisterToCell(pCell->GetIndex());
 	pCell->SetUse(true);
 
-	// 群れの登録(ホーム位置も設定される)
-	pWolf->RegisterToFlock(GetAliveAnimals<CWolf_Animal>());
+	// 群れの登録(ホーム位置も設定される。近隣の情報は、次の更新で最新の状態に作り直される)
+	pWolf->RegisterToFlock(CAnimal::s_bRefreshFlockInfo ? std::vector<CWolf_Animal*>() : GetAliveAnimals<CWolf_Animal>());
 
 	// デバッグログに補充した旨を追加
 	CImguiSystem::GetInstance()->AddDebugLog(std::string(u8"狼を1頭補充しました(現在") + std::to_string(GetAliveAnimals<CWolf_Animal>().size()) + std::string(u8"頭 / 目標") + std::to_string(m_nTargetWolf) + std::string(u8"頭)"), false);
 }
 
 /*****************************************//*
-	@brief　	| 動物を補充できるセルを集める処理
+	@brief　	| 動物を補充するセルを1つ選ぶ処理
 	@param　	| eTerritory：補充する動物の縄張りタイプ
-	@return　	| 補充できるセルのリスト
+	@return　	| 補充先のセル、見つからなかった場合はnullptr
 	@note		| 縄張り内で、何も置かれていない空き地(初期生成と同じ条件)のうち、
 				| 人間から一定距離以上離れているセルだけを対象にする
+				| 全セルを調べず、ランダムなセルを一定回数だけ調べる(補充のたびに処理が止まらないようにするため)
 *//*****************************************/
-std::vector<CFieldCell*> CAnimalGenerator::CollectSpawnCells(CFieldCell::TerritoryType eTerritory) const
+CFieldCell* CAnimalGenerator::PickSpawnCell(CFieldCell::TerritoryType eTerritory) const
 {
 	// 人間の位置を取得
 	std::vector<DirectX::XMFLOAT3> humanPositions;
@@ -203,37 +200,35 @@ std::vector<CFieldCell*> CAnimalGenerator::CollectSpawnCells(CFieldCell::Territo
 			humanPositions.push_back(pHuman->GetPos());
 		}
 	}
-
 	const float fSafeDistanceSq = Animal_Spawn_Safe_Distance * Animal_Spawn_Safe_Distance;
 
-	std::vector<CFieldCell*> spawnCells;
-	for (const std::vector<CFieldCell*>& cells : CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells())
+	const std::vector<std::vector<CFieldCell*>>& fieldCells = CFieldManager::GetInstance()->GetFieldGrid()->GetFieldCells();
+	for (int nTry = 0; nTry < Animal_Spawn_Max_Tries; ++nTry)
 	{
-		for (CFieldCell* pCell : cells)
+		CFieldCell* pCell = fieldCells[rand() % CFieldGrid::GridSizeX][rand() % CFieldGrid::GridSizeY];
+
+		// 縄張り内の、何も置かれていない空き地のみ
+		if (pCell->GetTerritoryType() != eTerritory) continue;
+		if (pCell->GetCellType() != CFieldCell::CellType::EMPTY) continue;
+		if (pCell->IsUse()) continue;
+
+		// 人間の近くには補充しない
+		const DirectX::XMFLOAT3 cellPos = pCell->GetPos();
+		bool bNearHuman = false;
+		for (const DirectX::XMFLOAT3& humanPos : humanPositions)
 		{
-			// 縄張り内の、何も置かれていない空き地のみ
-			if (pCell->GetTerritoryType() != eTerritory) continue;
-			if (pCell->GetCellType() != CFieldCell::CellType::EMPTY) continue;
-			if (pCell->IsUse()) continue;
-
-			// 人間の近くには補充しない
-			const DirectX::XMFLOAT3 cellPos = pCell->GetPos();
-			bool bNearHuman = false;
-			for (const DirectX::XMFLOAT3& humanPos : humanPositions)
+			const float dx = cellPos.x - humanPos.x;
+			const float dz = cellPos.z - humanPos.z;
+			if (dx * dx + dz * dz <= fSafeDistanceSq)
 			{
-				const float dx = cellPos.x - humanPos.x;
-				const float dz = cellPos.z - humanPos.z;
-				if (dx * dx + dz * dz <= fSafeDistanceSq)
-				{
-					bNearHuman = true;
-					break;
-				}
+				bNearHuman = true;
+				break;
 			}
-			if (bNearHuman) continue;
-
-			spawnCells.push_back(pCell);
 		}
+		if (bNearHuman) continue;
+
+		return pCell;
 	}
 
-	return spawnCells;
+	return nullptr;
 }

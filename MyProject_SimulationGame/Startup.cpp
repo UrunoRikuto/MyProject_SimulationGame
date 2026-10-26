@@ -11,9 +11,30 @@
 #include <crtdbg.h>
 #include "Defines.h"
 #include "imgui_impl_win32.h"
+#include "Profiler.h"
 
 // timeGetTime周りの使用
 #pragma comment(lib, "winmm.lib")
+
+/****************************************//*
+	@brief	| 高精度タイマーによる現在時刻(ミリ秒)の取得
+	@return	| 現在時刻(ミリ秒、小数部あり)
+	@note	| timeGetTimeは、整数のミリ秒でしか測れない上に、OSの省電力機能などでタイマーの分解能が粗く(約15.6ms)なると、
+			| フレームの間隔が不安定になってカクつくため、フレームの時間管理には使用しない
+*//****************************************/
+static double HiResNowMs()
+{
+	static LARGE_INTEGER s_Frequency = []()
+	{
+		LARGE_INTEGER f;
+		QueryPerformanceFrequency(&f);
+		return f;
+	}();
+
+	LARGE_INTEGER counter;
+	QueryPerformanceCounter(&counter);
+	return static_cast<double>(counter.QuadPart) * 1000.0 / static_cast<double>(s_Frequency.QuadPart);
+}
 
 //--- プロトタイプ宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -112,39 +133,71 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//--- FPS制御
 	timeBeginPeriod(1);
-	DWORD countStartTime = timeGetTime();
-	DWORD preExecTime = countStartTime;
-	DWORD time = timeGetTime();	//現在の処理時間
-	DWORD oldTime = time;		//以前に実行した時間
-	DWORD fpsTime = time;		//fpsの計測し始め
-	DWORD fpsCount = 0;			//FPS値計測カウンタ
+
+	// 省電力機能(EcoQoS)による、実行速度やタイマーの分解能の制限を受けないようにする
+	{
+		PROCESS_POWER_THROTTLING_STATE throttling = {};
+		throttling.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
+		throttling.ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
+#ifdef PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION
+		throttling.ControlMask |= PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
+#endif
+		throttling.StateMask = 0;
+		SetProcessInformation(GetCurrentProcess(), ProcessPowerThrottling, &throttling, sizeof(throttling));
+	}
+
+	// フレーム間の待ち時間用の、高分解能の待機タイマー(使えない環境ではnullptrになり、Sleepで待つ)
+	HANDLE hFrameTimer = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
 
 	//--- ウィンドウの管理
 	// フレーム時間（ミリ秒）
-	const DWORD frameDuration = 1000 / FPS;
-	const DWORD spinWindow = 2; // 最後に短時間スピンするウィンドウ（ms）
+	// (整数のミリ秒(16ms)にすると約62.5FPSになり、60Hzの画面とのずれで一定間隔ごとにコマ落ちするため、小数のまま扱う)
+	const double frameDuration = 1000.0 / FPS;
+	const double spinWindow = 2.0; // 最後に短時間スピンするウィンドウ（ms）
+
+	// 次のフレームを始める時刻(毎回「今の時刻+フレーム時間」にせず、決まった間隔で進めることで、処理時間のばらつきが積み重ならないようにする)
+	double nextFrameTime = HiResNowMs();
+	DWORD fpsTime = static_cast<DWORD>(nextFrameTime);	//fpsの計測し始め
+	DWORD fpsCount = 0;									//FPS値計測カウンタ
 
 	while (!g_bEnd)
 	{
 		// 1) 保留中のメッセージをすべて処理
-		while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
 		{
-			if (message.message == WM_QUIT) { g_bEnd = true; break; }
-			TranslateMessage(&message);
-			DispatchMessage(&message);
+			PROFILE_SCOPE("Loop: Messages");
+			while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+			{
+				if (message.message == WM_QUIT) { g_bEnd = true; break; }
+				TranslateMessage(&message);
+				DispatchMessage(&message);
+			}
 		}
 		if (g_bEnd) break;
 
-		// 2) 現在時刻は1回だけ取得
-		DWORD now = timeGetTime();
-		DWORD elapsed = now - oldTime;
-		if (elapsed < frameDuration)
+		// 2) 次のフレームの時刻まで待つ
+		double now = HiResNowMs();
+		if (now < nextFrameTime)
 		{
-			DWORD remaining = frameDuration - elapsed;
-			if (remaining > spinWindow + 1)
+			PROFILE_SCOPE("Loop: Wait");
+			const double remaining = nextFrameTime - now;
+			if (remaining > spinWindow + 1.0)
 			{
-				// 長めの待ち：他スレッドに譲るが短すぎない
-				Sleep(remaining - spinWindow);
+				// 長めの待ち：他スレッドに譲るが短すぎない(最後のスピン分を除いた時間だけ待つ)
+				const double waitMs = remaining - spinWindow;
+				if (hFrameTimer != nullptr)
+				{
+					// 高分解能タイマーで待つ(Sleepはタイマーの分解能が粗いと、大きく待ち過ぎてカクつく)
+					LARGE_INTEGER dueTime;
+					dueTime.QuadPart = -static_cast<LONGLONG>(waitMs * 10000.0);
+					if (SetWaitableTimer(hFrameTimer, &dueTime, 0, nullptr, nullptr, FALSE))
+					{
+						WaitForSingleObject(hFrameTimer, INFINITE);
+					}
+				}
+				else
+				{
+					Sleep(static_cast<DWORD>(waitMs));
+				}
 			}
 			else
 			{
@@ -153,25 +206,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 
 			// 最後に、残りのごく短い時間をスピン（高応答性確保）
-			while ((timeGetTime() - oldTime) < frameDuration) { /* tight wait */ }
+			while (HiResNowMs() < nextFrameTime) { /* tight wait */ }
 		}
 
 		// 3) フレーム更新/描画
-		now = timeGetTime();
-		if (now - oldTime >= frameDuration)
-		{
-			Update();
-			Draw();
-			oldTime = now;
+		Update();
+		Draw();
 
-			// FPS カウント等（既存ロジックを使う）
-			fpsCount++;
-			if (now - fpsTime >= 1000) { myFPS = fpsCount; fpsCount = 0; fpsTime = now; }
+		// 次のフレームの時刻を進める(大きく遅れた場合は、遅れを取り戻そうとせず立て直す)
+		nextFrameTime += frameDuration;
+		now = HiResNowMs();
+		if (now - nextFrameTime > frameDuration * 2.0)
+		{
+			nextFrameTime = now;
 		}
+
+		// FPS カウント等
+		fpsCount++;
+		if (now - fpsTime >= 1000.0) { myFPS = fpsCount; fpsCount = 0; fpsTime = static_cast<DWORD>(now); }
 	}
 
 
 	// 終了時
+	if (hFrameTimer != nullptr) CloseHandle(hFrameTimer);
 	timeEndPeriod(1);
 	Uninit();
 	UnregisterClass(wcex.lpszClassName, hInstance);

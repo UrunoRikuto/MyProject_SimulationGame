@@ -26,10 +26,11 @@ private:
 	// @brief 狼を1頭補充する処理
 	void RespawnWolf();
 
-	// @brief 動物を補充できるセルを集める処理
+	// @brief 動物を補充するセルを1つ選ぶ処理
 	// @param eTerritory：補充する動物の縄張りタイプ
-	// @return 補充できるセルのリスト(人間から離れた、縄張り内の未使用の空き地)
-	std::vector<CFieldCell*> CollectSpawnCells(CFieldCell::TerritoryType eTerritory) const;
+	// @return 補充先のセル(人間から離れた、縄張り内の未使用の空き地)、見つからなかった場合はnullptr
+	// @note 全セルを調べると補充のたびに処理が止まるため、ランダムなセルを一定回数だけ調べて、最初に条件に合ったものを選ぶ
+	CFieldCell* PickSpawnCell(CFieldCell::TerritoryType eTerritory) const;
 
 private:
 	// @brief 鹿の目標数

@@ -237,6 +237,18 @@ void CProfiler::EndFrame()
 		m_nFrames++;
 		m_nWindowFrames++;
 		RecordWorstFrame(fInterval);
+
+		// 遅いフレームのうち、更新・描画・待ち・メッセージ処理のどれにも計上されない時間が半分以上のもの(OSによる停止など)を数える
+		if (fInterval > 20.0)
+		{
+			double fWork = 0.0;
+			for (const Entry& e : m_Sections)
+			{
+				if (e.m_sName == "Main::Update" || e.m_sName == "Main::Draw" || e.m_sName == "Loop: Wait" || e.m_sName == "Loop: Messages") fWork += e.m_fFrame;
+			}
+			m_nSlowFrames++;
+			if (fWork < fInterval * 0.5) m_nSlowOutsideFrames++;
+		}
 	}
 	m_fLastFrameEnd = fNow;
 
@@ -288,6 +300,8 @@ std::string CProfiler::BuildReport() const
 		over20, n > 0 ? 100.0 * static_cast<double>(over20) / static_cast<double>(n) : 0.0,
 		over33, n > 0 ? 100.0 * static_cast<double>(over33) / static_cast<double>(n) : 0.0,
 		over50, n > 0 ? 100.0 * static_cast<double>(over50) / static_cast<double>(n) : 0.0);
+	out += buf;
+	snprintf(buf, sizeof(buf), "slow frames (>20ms): %lld   of which over half of the time was unaccounted for by Update/Draw/wait/messages (OS stall etc.): %lld\n", m_nSlowFrames, m_nSlowOutsideFrames);
 	out += buf;
 	if (m_nGpuCount > 0)
 	{

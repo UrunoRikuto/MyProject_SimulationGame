@@ -383,7 +383,8 @@ void BeginDrawDirectX()
 void EndDrawDirectX()
 {
 	EndGpuTimer();
-	g_pSwapChain->Present(0, 0);
+	// 垂直同期を待って表示する(待たないと、画面の更新タイミングとずれて、コマ落ちやティアリングが起きる)
+	g_pSwapChain->Present(1, 0);
 }
 
 /*************************//*

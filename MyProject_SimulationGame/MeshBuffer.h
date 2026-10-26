@@ -101,6 +101,10 @@ private:
 	ID3D11Buffer* m_pIdxBuffer;
 	// @brief インスタンスバッファ
 	ID3D11Buffer* m_pInstanceBuffer;
+
+	// @brief インスタンスバッファに確保している容量(インスタンス数)
+	// @note 毎フレームのインスタンス数の増減で、バッファを作り直さずに済むよう、余裕を持って確保する
+	UINT m_nInstanceCapacity = 0;
 	// @brief バッファ記述情報
 	Description m_desc;
 

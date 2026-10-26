@@ -138,6 +138,12 @@ private:
 	// @brief 計測が有効かどうか
 	inline static bool s_bEnabled = false;
 
+	// @brief 20msを超えた遅いフレームの数
+	long long m_nSlowFrames = 0;
+
+	// @brief 遅いフレームのうち、更新・描画の処理時間が間隔の半分未満だった(待ち・メッセージ処理・OSの割り込みなど、処理の外で時間がかかった)フレームの数
+	long long m_nSlowOutsideFrames = 0;
+
 	// @brief 区間の項目
 	std::vector<Entry> m_Sections;
 	std::unordered_map<const void*, size_t> m_SectionIndex;

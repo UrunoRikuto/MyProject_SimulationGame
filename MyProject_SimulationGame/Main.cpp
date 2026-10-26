@@ -322,6 +322,7 @@ void Update()
 	{
 		if (g_bSceneChanging)
 		{
+			PROFILE_SCOPE("Update: Scene change (Uninit/Init)");
 			g_pScene->Uninit();
 			delete g_pScene;
 			g_pScene = g_pNextScene;
