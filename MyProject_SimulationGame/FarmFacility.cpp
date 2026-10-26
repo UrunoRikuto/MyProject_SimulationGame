@@ -10,6 +10,7 @@
 #include "BuildManager.h"
 #include "Item_Material.h"
 #include "CivLevelManager.h"
+#include "GoalManager.h"
 
 /*****************************************//*
 	@brief　	| コンストラクタ
@@ -218,7 +219,8 @@ void CFarmFacility::ProgressCrops()
 	if (m_pCropList.empty()) return;
 
 	// 成長進行度の取得
-	float fGrowthAmount = GetCropGrowthProgressAmount();
+	// (大飢餓の間は、農作物が育ちにくい)
+	float fGrowthAmount = GetCropGrowthProgressAmount() * CGoalManager::GetCropGrowthRate();
 
 	// 農作物リストを走査し、成長進行度を進める
 	for (auto& crop : m_pCropList)
